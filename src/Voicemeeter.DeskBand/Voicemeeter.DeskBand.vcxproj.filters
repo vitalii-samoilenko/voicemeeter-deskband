@@ -16,11 +16,17 @@
     <Filter Include="Header Files\estd">
       <UniqueIdentifier>{59a1cbcd-ffd6-4705-9262-c86098eb6c38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\windows">
+    <Filter Include="Header Files\Windows">
       <UniqueIdentifier>{c52e226a-4d65-4c8b-8b63-73822ef8122a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\windows">
+    <Filter Include="Header Files\Windows\Presentation">
+      <UniqueIdentifier>{11d37594-81fa-4af9-bca5-ac1f91b7b018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Windows">
       <UniqueIdentifier>{4d9ff1b8-f300-4f2d-bef1-4af0965b4b57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Windows\Presentation">
+      <UniqueIdentifier>{f6d07ed2-ee79-475c-a077-9c774458dd40}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,38 +36,32 @@
     <ClCompile Include="errormessagebox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="windows\handlererror.cpp">
-      <Filter>Source Files\windows</Filter>
-    </ClCompile>
     <ClCompile Include="windows\window.cpp">
-      <Filter>Source Files\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\windowserror.cpp">
-      <Filter>Source Files\windows</Filter>
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="windows\mainwindow.cpp">
-      <Filter>Source Files\windows</Filter>
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="windows\panel.cpp">
-      <Filter>Source Files\windows</Filter>
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="windows\stackpanel.cpp">
-      <Filter>Source Files\windows</Filter>
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="windows\control.cpp">
-      <Filter>Source Files\windows</Filter>
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="windows\checkbox.cpp">
-      <Filter>Source Files\windows</Filter>
+    <ClCompile Include="windows\circularstatecontrol.cpp">
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="windows\drawingengine.cpp">
-      <Filter>Source Files\windows</Filter>
+    <ClCompile Include="Windows\Presentation\drawingengine.cpp">
+      <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
-    <ClCompile Include="windows\comerror.cpp">
-      <Filter>Source Files\windows</Filter>
+    <ClCompile Include="Windows\statecontrol.cpp">
+      <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="windows\checkboxscene.cpp">
-      <Filter>Source Files\windows</Filter>
+    <ClCompile Include="Windows\Presentation\scene.cpp">
+      <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,50 +77,47 @@
     <ClInclude Include="estd\isinvocable.h">
       <Filter>Header Files\estd</Filter>
     </ClInclude>
-    <ClInclude Include="windows\handlererror.h">
-      <Filter>Header Files\windows</Filter>
-    </ClInclude>
     <ClInclude Include="windows\mainwindow.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\window.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="windows\windowserror.h">
-      <Filter>Header Files\windows</Filter>
+    <ClInclude Include="windows\error.h">
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\resultcodes.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\panel.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\stackpanel.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\control.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="windows\checkbox.h">
-      <Filter>Header Files\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\style.h">
-      <Filter>Header Files\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\drawingengine.h">
-      <Filter>Header Files\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\comerror.h">
-      <Filter>Header Files\windows</Filter>
+    <ClInclude Include="windows\statecontrol.h">
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\wrappers.h">
-      <Filter>Header Files\windows</Filter>
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="windows\scene.h">
-      <Filter>Header Files\windows</Filter>
+    <ClInclude Include="Windows\Presentation\scene.h">
+      <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
-    <ClInclude Include="windows\checkboxscene.h">
-      <Filter>Header Files\windows</Filter>
+    <ClInclude Include="Windows\Presentation\statescene.h">
+      <Filter>Header Files\Windows\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\Presentation\style.h">
+      <Filter>Header Files\Windows\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\Presentation\drawingengine.h">
+      <Filter>Header Files\Windows\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\circularstatecontrol.h">
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

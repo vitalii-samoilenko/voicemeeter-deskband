@@ -35,7 +35,7 @@ namespace Voicemeeter {
 				Panel(const Panel&) = delete;
 				Panel(Panel&&) = delete;
 
-				~Panel() = 0 { };
+				~Panel() = default;
 
 				Panel& operator=(const Panel&) = delete;
 				Panel& operator=(Panel&&) = delete;
@@ -45,7 +45,7 @@ namespace Voicemeeter {
 
 				template<typename T, typename ...Args>
 				T* MakeControl(ratio_type r, Args... args) {
-					m_packs.emplace_back(r, new T{ *this, std::forward<Args>(args)... });
+					m_packs.emplace_back(r, std::make_unique(new T{ *this, std::forward<Args>(args)... }));
 
 					return reinterpret_cast<T*>(std::get<pControl>(m_packs.back()).get());
 				}

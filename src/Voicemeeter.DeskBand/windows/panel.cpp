@@ -24,13 +24,13 @@ void Panel::Initialize() {
 		WS_CHILD,
 		m_rWndParent.get_hWnd()
 	);
-	for (pack_type& pack : m_packs) {
-		std::get<pControl>(pack)->Initialize();
+	for (const pack_type& rPack : get_rPacks()) {
+		std::get<pControl>(rPack)->Initialize();
 	}
 }
 void Panel::Show(int nCmdShow) {
 	Window::Show(nCmdShow);
-	for (const pack_type& pack : get_rPacks()) {
-		std::get<pControl>(pack)->Show(SW_SHOWDEFAULT);
+	for (const pack_type& rPack : get_rPacks()) {
+		std::get<pControl>(rPack)->Show(SW_SHOWDEFAULT);
 	}
 }

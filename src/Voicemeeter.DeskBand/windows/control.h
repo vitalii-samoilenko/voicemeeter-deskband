@@ -1,6 +1,7 @@
 #pragma once
 
-#include "scene.h"
+#include "window.h"
+#include "Presentation/scene.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -9,22 +10,18 @@ namespace Voicemeeter {
 
 			class Control : public Window {
 				Panel& m_rPnlParent;
-				DrawingEngine& m_rDrwEngine;
 
 			protected:
-				inline DrawingEngine& get_rDrwEngine() const noexcept {
-					return m_rDrwEngine;
-				};
-				virtual Scene& get_rScene() noexcept = 0 { };
+				virtual Presentation::Scene& get_rScene() noexcept = 0 { };
 
 				virtual LRESULT OnCreate() override;
-				virtual LRESULT OnSize() override;
+				virtual LRESULT OnSize(UINT w, UINT h) override;
+				virtual LRESULT OnPaint() override;
 
 				Control(
 					std::once_flag& rWndClassGuard,
 					LPCWSTR lpszClassName,
-					Panel& rPnlParent,
-					DrawingEngine& rDrwEngine
+					Panel& rPnlParent
 				);
 
 			public:
@@ -32,7 +29,7 @@ namespace Voicemeeter {
 				Control(const Control&) = delete;
 				Control(Control&&) = delete;
 
-				~Control() = 0 { };
+				~Control() = default;
 
 				Control& operator=(const Control&) = delete;
 				Control& operator=(Control&&) = delete;

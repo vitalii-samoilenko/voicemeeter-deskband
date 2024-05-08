@@ -12,7 +12,7 @@ namespace Voicemeeter {
 				static std::once_flag PnlStackClassGuard;
 
 			protected:
-				virtual LRESULT OnSize() override;
+				virtual LRESULT OnSize(UINT w, UINT h) override;
 
 			public:
 				explicit StackPanel(

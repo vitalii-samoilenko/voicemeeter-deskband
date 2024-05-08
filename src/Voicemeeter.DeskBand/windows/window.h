@@ -16,8 +16,8 @@ namespace Voicemeeter {
 				virtual LRESULT OnCreate();
 				virtual LRESULT OnDestroy();
 				virtual LRESULT OnPaint();
-				virtual LRESULT OnSize();
-				virtual LRESULT OnLButtonDown(int x, int y);
+				virtual LRESULT OnSize(UINT w, UINT h);
+				virtual LRESULT OnLButtonDown(LONG x, LONG y);
 
 				Window(
 					std::once_flag& rWndClassGuard,
@@ -48,7 +48,7 @@ namespace Voicemeeter {
 				Window(const Window&) = delete;
 				Window(Window&&) = delete;
 
-				virtual ~Window() = 0 { };
+				virtual ~Window() = default;
 
 				Window& operator=(const Window&) = delete;
 				Window& operator=(Window&&) = delete;

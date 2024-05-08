@@ -1,15 +1,16 @@
 #include <windows.h>
 
 #include "estd/guard.h"
-#include "windows/mainwindow.h"
-#include "windows/stackpanel.h"
-#include "windows/checkbox.h"
-#include "windows/windowserror.h"
-#include "windows/comerror.h"
+#include "Windows/Presentation/drawingengine.h"
+#include "Windows/mainwindow.h"
+#include "Windows/stackpanel.h"
+#include "Windows/circularstatecontrol.h"
+#include "Windows/error.h"
 #include "errormessagebox.h"
 #include "messages.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
+using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
 int WINAPI wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -28,9 +29,9 @@ int WINAPI wWinMain(
 		pWndMain = new MainWindow{ hInstance };
 
 		Panel* pPnlMain{ pWndMain->MakePanel<StackPanel<orientation::right>>() };
-		pPnlMain->MakeControl<Checkbox, DrawingEngine&>(std::make_pair(1U, 1U), *pDrwEngine, L"A");
-		pPnlMain->MakeControl<Checkbox, DrawingEngine&>(std::make_pair(1U, 1U), *pDrwEngine, L"B");
-		pPnlMain->MakeControl<Checkbox, DrawingEngine&>(std::make_pair(0U, 1U), *pDrwEngine, L"SLIDER");
+		pPnlMain->MakeControl<CircularStateControl>(std::make_pair(1U, 1U), 2L);
+		pPnlMain->MakeControl<CircularStateControl>(std::make_pair(1U, 1U), 2L);
+		pPnlMain->MakeControl<CircularStateControl>(std::make_pair(0U, 1U), 2L);
 
 		pWndMain->Initialize();
 		pWndMain->Show(nShowCmd);

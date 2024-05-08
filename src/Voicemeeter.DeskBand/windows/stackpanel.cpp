@@ -9,22 +9,19 @@ template<orientation O>
 std::once_flag StackPanel<O>::PnlStackClassGuard{};
 
 template<>
-LRESULT StackPanel<orientation::right>::OnSize() {
-	RECT rc{};
-	wGetClientRect(get_hWnd(), &rc);
-	LONG pnlRight{ rc.right };
-
+LRESULT StackPanel<orientation::right>::OnSize(UINT w, UINT h) {
+	UINT left{ 0U };
 	for (const pack_type& rPack : get_rPacks()) {
-		const std::unique_ptr<Control>& rpControl{ std::get<pControl>(rPack) };
-		if (rpControl->get_hWnd()) {
+		const std::unique_ptr<Control>& rpCtrl{ std::get<pControl>(rPack) };
+		if (rpCtrl->get_hWnd()) {
 			const ratio_type& rRatio{ std::get<ratio>(rPack) };
 
-			rc.right = rc.bottom * std::get<width>(rRatio) / std::get<height>(rRatio);
-			if (!rc.right) {
-				rc.right = max(0L, pnlRight - rc.left);
+			UINT right{ h * std::get<width>(rRatio) / std::get<height>(rRatio) };
+			if (!right) {
+				right = max(0U, w - left);
 			}
-			wMoveWindow(rpControl->get_hWnd(), rc.left, rc.top, rc.right, rc.bottom, FALSE);
-			rc.left += rc.right;
+			wMoveWindow(rpCtrl->get_hWnd(), left, 0U, right, h, FALSE);
+			left += right;
 		}
 	}
 

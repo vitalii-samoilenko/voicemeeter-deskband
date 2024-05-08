@@ -132,37 +132,34 @@
   <ItemGroup>
     <ClCompile Include="errormessagebox.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="windows\checkbox.cpp" />
-    <ClCompile Include="windows\checkboxscene.cpp" />
-    <ClCompile Include="windows\comerror.cpp" />
+    <ClCompile Include="windows\circularstatecontrol.cpp" />
     <ClCompile Include="windows\control.cpp" />
-    <ClCompile Include="windows\drawingengine.cpp" />
-    <ClCompile Include="windows\handlererror.cpp" />
     <ClCompile Include="windows\mainwindow.cpp" />
     <ClCompile Include="windows\panel.cpp" />
+    <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
+    <ClCompile Include="Windows\Presentation\scene.cpp" />
     <ClCompile Include="windows\stackpanel.cpp" />
+    <ClCompile Include="Windows\statecontrol.cpp" />
     <ClCompile Include="windows\window.cpp" />
-    <ClCompile Include="windows\windowserror.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errormessagebox.h" />
     <ClInclude Include="estd\guard.h" />
     <ClInclude Include="estd\isinvocable.h" />
     <ClInclude Include="messages.h" />
-    <ClInclude Include="windows\checkbox.h" />
-    <ClInclude Include="windows\checkboxscene.h" />
-    <ClInclude Include="windows\comerror.h" />
+    <ClInclude Include="Windows\circularstatecontrol.h" />
+    <ClInclude Include="Windows\Presentation\drawingengine.h" />
+    <ClInclude Include="Windows\Presentation\statescene.h" />
+    <ClInclude Include="Windows\Presentation\style.h" />
+    <ClInclude Include="windows\statecontrol.h" />
     <ClInclude Include="windows\control.h" />
-    <ClInclude Include="windows\drawingengine.h" />
-    <ClInclude Include="windows\handlererror.h" />
     <ClInclude Include="windows\mainwindow.h" />
     <ClInclude Include="windows\panel.h" />
+    <ClInclude Include="Windows\Presentation\scene.h" />
     <ClInclude Include="windows\resultcodes.h" />
-    <ClInclude Include="windows\scene.h" />
     <ClInclude Include="windows\stackpanel.h" />
-    <ClInclude Include="windows\style.h" />
     <ClInclude Include="windows\window.h" />
-    <ClInclude Include="windows\windowserror.h" />
+    <ClInclude Include="windows\error.h" />
     <ClInclude Include="windows\wrappers.h" />
   </ItemGroup>
   <ItemGroup>

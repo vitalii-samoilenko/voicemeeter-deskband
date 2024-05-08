@@ -5,18 +5,15 @@
 #include "wrappers.h"
 #include "resultcodes.h"
 #include "../messages.h"
-
 #include "stackpanel.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
 
 std::once_flag MainWindow::WndMainClassGuard{};
 
-LRESULT MainWindow::OnSize() {
+LRESULT MainWindow::OnSize(UINT w, UINT h) {
 	if (m_pPanel) {
-		RECT rc{};
-		wGetClientRect(get_hWnd(), &rc);
-		wMoveWindow(m_pPanel->get_hWnd(), rc.left, rc.top, rc.right, rc.bottom, FALSE);
+		wMoveWindow(m_pPanel->get_hWnd(), 0U, 0U, w, h, FALSE);
 		wInvalidateRect(get_hWnd(), NULL, FALSE);
 		wUpdateWindow(get_hWnd());
 	}

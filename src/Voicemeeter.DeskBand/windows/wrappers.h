@@ -1,9 +1,23 @@
 #pragma once
 
-#include "windowserror.h"
+#include "error.h"
 #include "../messages.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
+
+inline bool ThrowIfFailed(HRESULT code, const char* what, HRESULT ignore) {
+	if (FAILED(code)) {
+		if (code == ignore) {
+			return true;
+		}
+		throw com_error{ code, what };
+	}
+	return false;
+}
+
+inline void ThrowIfFailed(HRESULT code, const char* what) {
+	ThrowIfFailed(code, what, S_OK);
+}
 
 inline void wRegisterClassW(
     _In_ CONST WNDCLASSW* lpWndClass

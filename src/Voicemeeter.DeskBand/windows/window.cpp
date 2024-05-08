@@ -3,8 +3,6 @@
 #include <windowsx.h>
 
 #include "wrappers.h"
-#include "handlererror.h"
-#include "comerror.h"
 #include "resultcodes.h"
 #include "../errormessagebox.h"
 
@@ -19,10 +17,10 @@ LRESULT Window::OnDestroy() {
 LRESULT Window::OnPaint() {
 	return LRESULT_CODES::OK;
 }
-LRESULT Window::OnSize() {
+LRESULT Window::OnSize(UINT w, UINT h) {
 	return LRESULT_CODES::OK;
 }
-LRESULT Window::OnLButtonDown(int x, int y) {
+LRESULT Window::OnLButtonDown(LONG x, LONG y) {
 	return LRESULT_CODES::OK;
 }
 
@@ -94,7 +92,7 @@ LRESULT CALLBACK Window::WindowProcW(
 				case WM_PAINT:
 					return pWindow->OnPaint();
 				case WM_SIZE:
-					return pWindow->OnSize();
+					return pWindow->OnSize(LOWORD(lParam), HIWORD(lParam));
 				case WM_LBUTTONDOWN:
 					return pWindow->OnLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 				}

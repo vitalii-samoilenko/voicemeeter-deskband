@@ -1,7 +1,7 @@
 #pragma once
 
 #include "panel.h"
-#include "windowserror.h"
+#include "error.h"
 #include "../messages.h"
 
 namespace Voicemeeter {
@@ -13,7 +13,7 @@ namespace Voicemeeter {
 				std::unique_ptr<Panel> m_pPanel;
 
 			protected:
-				virtual LRESULT OnSize() override;
+				virtual LRESULT OnSize(UINT w, UINT h) override;
 				virtual LRESULT OnDestroy() override;
 
 			public:
