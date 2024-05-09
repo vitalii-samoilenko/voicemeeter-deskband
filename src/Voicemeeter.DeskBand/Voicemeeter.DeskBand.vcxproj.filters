@@ -101,9 +101,6 @@
     <ClInclude Include="windows\wrappers.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Windows\Presentation\scene.h">
-      <Filter>Header Files\Windows\Presentation</Filter>
-    </ClInclude>
     <ClInclude Include="Windows\Presentation\style.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>

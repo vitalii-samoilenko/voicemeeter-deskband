@@ -153,7 +153,6 @@
     <ClInclude Include="windows\control.h" />
     <ClInclude Include="windows\mainwindow.h" />
     <ClInclude Include="windows\panel.h" />
-    <ClInclude Include="Windows\Presentation\scene.h" />
     <ClInclude Include="windows\resultcodes.h" />
     <ClInclude Include="windows\stackpanel.h" />
     <ClInclude Include="windows\window.h" />

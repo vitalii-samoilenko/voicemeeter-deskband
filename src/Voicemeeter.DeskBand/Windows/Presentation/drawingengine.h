@@ -38,7 +38,6 @@ namespace Voicemeeter {
 
 					class Context {
 						friend class DrawingEngine;
-						friend class Resource;
 
 						CComPtr<ID2D1DeviceContext6> m_pCtxDevD2d1;
 						CComPtr<IDXGISwapChain4> m_pSwChDxgi;
@@ -47,6 +46,10 @@ namespace Voicemeeter {
 						Context();
 
 					public:
+						class Resource {
+
+						};
+
 						Context(const Context&) = delete;
 						Context(Context&&) = default;
 
@@ -55,6 +58,7 @@ namespace Voicemeeter {
 						Context& operator=(const Context&) = delete;
 						Context& operator=(Context&&) = default;
 
+						Resource Bind(const Manifest::Primitive& rPrimitive);
 						void BeginDraw();
 						void EndDraw();
 						void Resize(UINT w, UINT h);
