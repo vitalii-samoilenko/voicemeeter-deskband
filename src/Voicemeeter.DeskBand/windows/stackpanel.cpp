@@ -11,12 +11,12 @@ std::once_flag StackPanel<O>::PnlStackClassGuard{};
 template<>
 LRESULT StackPanel<orientation::right>::OnSize(UINT w, UINT h) {
 	UINT left{ 0U };
-	for (const pack_type& rPack : get_rPacks()) {
+	for (const pack_type& rPack : get_rcPack()) {
 		const std::unique_ptr<Control>& rpCtrl{ std::get<pControl>(rPack) };
 		if (rpCtrl->get_hWnd()) {
-			const ratio_type& rRatio{ std::get<ratio>(rPack) };
+			const ratio_type& rR{ std::get<ratio>(rPack) };
 
-			UINT right{ h * std::get<width>(rRatio) / std::get<height>(rRatio) };
+			UINT right{ h * std::get<width>(rR) / std::get<height>(rR) };
 			if (!right) {
 				right = max(0U, w - left);
 			}

@@ -5,9 +5,7 @@
 #include "Windows/mainwindow.h"
 #include "Windows/stackpanel.h"
 #include "Windows/circularstatecontrol.h"
-#include "Windows/error.h"
 #include "errormessagebox.h"
-#include "messages.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
 using namespace Voicemeeter::DeskBand::Windows::Presentation;

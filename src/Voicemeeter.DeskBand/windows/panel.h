@@ -24,11 +24,11 @@ namespace Voicemeeter {
 
 			private:
 				Window& m_rWndParent;
-				std::vector<pack_type> m_packs;
+				std::vector<pack_type> m_cPack;
 
 			public:
-				inline const std::vector<pack_type>& get_rPacks() const noexcept {
-					return m_packs;
+				inline const std::vector<pack_type>& get_rcPack() const noexcept {
+					return m_cPack;
 				};
 
 				Panel() = delete;
@@ -45,9 +45,9 @@ namespace Voicemeeter {
 
 				template<typename T, typename ...Args>
 				T* MakeControl(ratio_type r, Args... args) {
-					m_packs.emplace_back(r, std::make_unique(new T{ *this, std::forward<Args>(args)... }));
+					m_cPack.emplace_back(r, std::make_unique(new T{ *this, std::forward<Args>(args)... }));
 
-					return reinterpret_cast<T*>(std::get<pControl>(m_packs.back()).get());
+					return reinterpret_cast<T*>(std::get<pControl>(m_cPack.back()).get());
 				}
 			};
 		}

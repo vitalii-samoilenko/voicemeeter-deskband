@@ -5,18 +5,11 @@
 
 using namespace Voicemeeter::DeskBand::Windows;
 
-inline bool ThrowIfFailed(HRESULT code, const char* what, HRESULT ignore) {
+inline bool ThrowIfFailed(HRESULT code, const char* what) {
 	if (FAILED(code)) {
-		if (code == ignore) {
-			return true;
-		}
 		throw com_error{ code, what };
 	}
 	return false;
-}
-
-inline void ThrowIfFailed(HRESULT code, const char* what) {
-	ThrowIfFailed(code, what, S_OK);
 }
 
 inline void wRegisterClassW(

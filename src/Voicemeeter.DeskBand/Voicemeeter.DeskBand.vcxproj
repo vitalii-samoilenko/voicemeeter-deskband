@@ -137,7 +137,6 @@
     <ClCompile Include="windows\mainwindow.cpp" />
     <ClCompile Include="windows\panel.cpp" />
     <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
-    <ClCompile Include="Windows\Presentation\scene.cpp" />
     <ClCompile Include="windows\stackpanel.cpp" />
     <ClCompile Include="Windows\statecontrol.cpp" />
     <ClCompile Include="windows\window.cpp" />
@@ -149,7 +148,6 @@
     <ClInclude Include="messages.h" />
     <ClInclude Include="Windows\circularstatecontrol.h" />
     <ClInclude Include="Windows\Presentation\drawingengine.h" />
-    <ClInclude Include="Windows\Presentation\statescene.h" />
     <ClInclude Include="Windows\Presentation\style.h" />
     <ClInclude Include="windows\statecontrol.h" />
     <ClInclude Include="windows\control.h" />

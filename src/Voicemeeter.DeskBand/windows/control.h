@@ -1,7 +1,6 @@
 #pragma once
 
 #include "window.h"
-#include "Presentation/scene.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -12,8 +11,6 @@ namespace Voicemeeter {
 				Panel& m_rPnlParent;
 
 			protected:
-				virtual Presentation::Scene& get_rScene() noexcept = 0 { };
-
 				virtual LRESULT OnCreate() override;
 				virtual LRESULT OnSize(UINT w, UINT h) override;
 				virtual LRESULT OnPaint() override;

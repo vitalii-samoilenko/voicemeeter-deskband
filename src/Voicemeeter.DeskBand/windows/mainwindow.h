@@ -10,7 +10,7 @@ namespace Voicemeeter {
 			class MainWindow : public Window {
 				static std::once_flag WndMainClassGuard;
 
-				std::unique_ptr<Panel> m_pPanel;
+				std::unique_ptr<Panel> m_pPnl;
 
 			protected:
 				virtual LRESULT OnSize(UINT w, UINT h) override;
@@ -34,13 +34,13 @@ namespace Voicemeeter {
 
 				template<typename T, typename ...Args>
 				T* MakePanel(Args... args) {
-					if (m_pPanel) {
+					if (m_pPnl) {
 						throw windows_error{ MSG_ERR_GENERAL, "Panel is already made" };
 					}
 
-					m_pPanel.reset(new T{ *this, std::forward(args)... });
+					m_pPnl.reset(new T{ *this, std::forward(args)... });
 
-					return reinterpret_cast<T*>(m_pPanel.get());
+					return reinterpret_cast<T*>(m_pPnl.get());
 				}
 			};
 		}

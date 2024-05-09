@@ -60,9 +60,6 @@
     <ClCompile Include="Windows\statecontrol.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\Presentation\scene.cpp">
-      <Filter>Source Files\Windows\Presentation</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errormessagebox.h">
@@ -105,9 +102,6 @@
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Windows\Presentation\scene.h">
-      <Filter>Header Files\Windows\Presentation</Filter>
-    </ClInclude>
-    <ClInclude Include="Windows\Presentation\statescene.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
     <ClInclude Include="Windows\Presentation\style.h">

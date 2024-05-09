@@ -1,7 +1,6 @@
 #pragma once
 
 #include "control.h"
-#include "Presentation/statescene.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -9,13 +8,9 @@ namespace Voicemeeter {
 			class StateControl : public Control {
 				static std::once_flag CtlStateClassGuard;
 
-				std::unique_ptr<Presentation::StateScene> m_pScene;
 				LONG m_state;
 
 			protected:
-				inline virtual Presentation::StateScene& get_rScene() noexcept override {
-					return *m_pScene.get();
-				};
 				inline void set_state(LONG state) noexcept {
 					m_state = state;
 				}

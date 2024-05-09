@@ -15,7 +15,7 @@ Panel::Panel(
 		rWndParent.get_hInstance()
 	}
   , m_rWndParent{ rWndParent }
-  , m_packs{} {
+  , m_cPack{} {
 
 	}
 
@@ -24,13 +24,13 @@ void Panel::Initialize() {
 		WS_CHILD,
 		m_rWndParent.get_hWnd()
 	);
-	for (const pack_type& rPack : get_rPacks()) {
+	for (const pack_type& rPack : get_rcPack()) {
 		std::get<pControl>(rPack)->Initialize();
 	}
 }
 void Panel::Show(int nCmdShow) {
 	Window::Show(nCmdShow);
-	for (const pack_type& rPack : get_rPacks()) {
+	for (const pack_type& rPack : get_rcPack()) {
 		std::get<pControl>(rPack)->Show(SW_SHOWDEFAULT);
 	}
 }

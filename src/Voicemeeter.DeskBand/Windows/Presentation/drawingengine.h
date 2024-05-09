@@ -2,10 +2,12 @@
 
 #include <unordered_map>
 #include <vector>
+#include <utility>
 
-#include "d2d1_2.h"
-#include "dwrite.h"
-#pragma comment(lib, "dwrite")
+#include <d3d11_4.h>
+#pragma comment(lib, "d3d11_4")
+#include <dwrite_3.h>
+#pragma comment(lib, "dwrite_3")
 #include <atlbase.h>
 
 #include "style.h"
@@ -15,44 +17,51 @@ namespace Voicemeeter {
 		namespace Windows {
 			namespace Presentation {
 				class DrawingEngine {
-					Style m_style;
-					CComPtr<ID2D1Factory> m_pFactory;
-					CComPtr<IDWriteFactory> m_pDwFactory;
+					const Style& m_rStyle;
+					CComPtr<ID3D11Device5> m_pDevD3d11;
+					CComPtr<IDXGIDevice4> m_pDevDxgi;
+					CComPtr<IDXGIAdapter3> m_pAdDxgi;
+					CComPtr<IDXGIFactory5> m_pFctDxgi;
+					CComPtr<ID2D1Factory7> m_pFctD2d1;
+					CComPtr<ID2D1Device6> m_pDevD2d1;
+					CComPtr<IDWriteFactory7> m_pFctDw;
 
 				public:
-					enum class resource_type {
-						btn_round_normal,
-						btn_round_active,
-						bh_sub,
-						bh_active
-					};
-					class Snapshot {
+					class Manifest {
 						friend class DrawingEngine;
 
-						CComPtr<ID2D1HwndRenderTarget> m_pTarget;
-						std::vector<CComPtr<ID2D1Resource>> m_resources;
+					public:
+						class Primitive {
+
+						};
+					};
+
+					class Context {
+						friend class DrawingEngine;
+						friend class Resource;
+
+						CComPtr<ID2D1DeviceContext6> m_pCtxDevD2d1;
+						CComPtr<IDXGISwapChain4> m_pSwChDxgi;
+						CComPtr<ID2D1Bitmap1> m_pBmpD2d1;
+
+						Context();
 
 					public:
-						inline ID2D1HwndRenderTarget* get_pTarget() const noexcept {
-							return m_pTarget;
-						}
-						template<typename T>
-						inline const T* get_pPrimitive(size_t i) const {
-							return m_primitives[i];
-						}
+						Context(const Context&) = delete;
+						Context(Context&&) = default;
 
-						Snapshot() = default;
-						Snapshot(const Snapshot&) = delete;
-						Snapshot(Snapshot&&) = default;
+						~Context() = default;
 
-						~Snapshot() = default;
+						Context& operator=(const Context&) = delete;
+						Context& operator=(Context&&) = default;
 
-						Snapshot& operator=(const Snapshot&) = delete;
-						Snapshot& operator=(Snapshot&&) = default;
+						void BeginDraw();
+						void EndDraw();
+						void Resize(UINT w, UINT h);
 					};
 
 					explicit DrawingEngine(
-						Style style
+						const Style& rStyle
 					);
 					DrawingEngine() = delete;
 					DrawingEngine(const DrawingEngine&) = delete;
@@ -63,9 +72,8 @@ namespace Voicemeeter {
 					DrawingEngine& operator=(const DrawingEngine&) = delete;
 					DrawingEngine& operator=(DrawingEngine&&) = default;
 
-					Snapshot Initialize(
-						HWND hWnd,
-						const std::vector<resource_type>& resources
+					Context Initialize(
+						HWND hWnd
 					);
 				};
 			}

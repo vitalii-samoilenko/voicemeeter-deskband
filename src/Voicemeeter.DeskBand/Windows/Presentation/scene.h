@@ -1,7 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include "../window.h"
-#include "drawingengine.h"
+#include "resource.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -10,14 +12,14 @@ namespace Voicemeeter {
 				class Scene {
 					Window& m_rWnd;
 					DrawingEngine& m_rDrwEngine;
-					const std::vector<DrawingEngine::resource_type>& m_resources;
-					DrawingEngine::Snapshot m_snapshot;
+					std::vector<Brush> m_cBrush;
+					std::vector<Glyph> m_cGlyph;
+					std::unique_ptr<Frame> m_pFrame;
 
 				protected:
 					Scene(
 						Window& rWnd,
-						DrawingEngine& rDrwEngine,
-						const std::vector<DrawingEngine::resource_type>& resources
+						DrawingEngine& rDrwEngine
 					);
 
 				public:
@@ -31,8 +33,8 @@ namespace Voicemeeter {
 
 					virtual void Initialize();
 					virtual void Resize(UINT w, UINT h);
-					virtual bool ContainsPoint(LONG x, LONG y) = 0 { };
-					virtual HRESULT Draw() = 0 { };
+					bool ContainsPoint(LONG x, LONG y);
+					virtual void Draw() = 0 { };
 				};
 			}
 		}

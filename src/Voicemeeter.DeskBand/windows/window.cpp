@@ -63,13 +63,12 @@ LRESULT CALLBACK Window::WindowProcW(
 	WPARAM wParam,
 	LPARAM lParam
 ) {
-	Window* pWindow{ nullptr };
+	Window* pWnd{ nullptr };
 	if (uMsg == WM_NCCREATE) {
-		LPCREATESTRUCTW lpCreate{ reinterpret_cast<LPCREATESTRUCTW>(lParam) };
-		pWindow = reinterpret_cast<Window*>(lpCreate->lpCreateParams);
-		pWindow->m_hWnd = hWnd;
+		pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
+		pWnd->m_hWnd = hWnd;
 
-		if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow))) {
+		if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
 			return FALSE;
 		}
 	}
@@ -81,20 +80,20 @@ LRESULT CALLBACK Window::WindowProcW(
 			return LRESULT_CODES::OK;
 		};
 		try {
-			pWindow = wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA);
+			pWnd = wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA);
 
-			if (pWindow) {
+			if (pWnd) {
 				switch (uMsg) {
 				case WM_CREATE:
-					return pWindow->OnCreate();
+					return pWnd->OnCreate();
 				case WM_DESTROY:
-					return pWindow->OnDestroy();
+					return pWnd->OnDestroy();
 				case WM_PAINT:
-					return pWindow->OnPaint();
+					return pWnd->OnPaint();
 				case WM_SIZE:
-					return pWindow->OnSize(LOWORD(lParam), HIWORD(lParam));
+					return pWnd->OnSize(LOWORD(lParam), HIWORD(lParam));
 				case WM_LBUTTONDOWN:
-					return pWindow->OnLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+					return pWnd->OnLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 				}
 			}
 		}
