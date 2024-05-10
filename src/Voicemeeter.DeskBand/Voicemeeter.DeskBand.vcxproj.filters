@@ -39,26 +39,11 @@
     <ClCompile Include="windows\window.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="windows\mainwindow.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\panel.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\stackpanel.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\control.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\circularstatecontrol.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Windows\Presentation\drawingengine.cpp">
       <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\statecontrol.cpp">
-      <Filter>Source Files\Windows</Filter>
+    <ClCompile Include="Windows\Presentation\context.cpp">
+      <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,9 +59,6 @@
     <ClInclude Include="estd\isinvocable.h">
       <Filter>Header Files\estd</Filter>
     </ClInclude>
-    <ClInclude Include="windows\mainwindow.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="windows\window.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
@@ -84,18 +66,6 @@
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\resultcodes.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\panel.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\stackpanel.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\control.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\statecontrol.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="windows\wrappers.h">
@@ -106,9 +76,6 @@
     </ClInclude>
     <ClInclude Include="Windows\Presentation\drawingengine.h">
       <Filter>Header Files\Windows\Presentation</Filter>
-    </ClInclude>
-    <ClInclude Include="Windows\circularstatecontrol.h">
-      <Filter>Header Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

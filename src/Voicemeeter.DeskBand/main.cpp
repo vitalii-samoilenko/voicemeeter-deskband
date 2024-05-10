@@ -2,9 +2,8 @@
 
 #include "estd/guard.h"
 #include "Windows/Presentation/drawingengine.h"
-#include "Windows/mainwindow.h"
-#include "Windows/stackpanel.h"
-#include "Windows/circularstatecontrol.h"
+#include "Windows/window.h"
+#include "Windows/error.h"
 #include "errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
@@ -17,22 +16,17 @@ int WINAPI wWinMain(
 	_In_ int nShowCmd
 ) {
 	DrawingEngine* pDrwEngine{ nullptr };
-	MainWindow* pWndMain{ nullptr };
-	auto mainGuard = estd::make_guard([&pDrwEngine , &pWndMain]()->void {
+	Window* pWnd{ nullptr };
+	auto mainGuard = estd::make_guard([&pDrwEngine , &pWnd]()->void {
 		delete pDrwEngine;
-		delete pWndMain;
+		delete pWnd;
 	});
 	try {
 		pDrwEngine = new DrawingEngine(Style::Default());
-		pWndMain = new MainWindow{ hInstance };
+		pWnd = new Window{ hInstance };
 
-		Panel* pPnlMain{ pWndMain->MakePanel<StackPanel<orientation::right>>() };
-		pPnlMain->MakeControl<CircularStateControl>(std::make_pair(1U, 1U), 2L);
-		pPnlMain->MakeControl<CircularStateControl>(std::make_pair(1U, 1U), 2L);
-		pPnlMain->MakeControl<CircularStateControl>(std::make_pair(0U, 1U), 2L);
-
-		pWndMain->Initialize();
-		pWndMain->Show(nShowCmd);
+		pWnd->Initialize();
+		pWnd->Show(nShowCmd);
 	}
 	catch (const windows_error& e) {
 		ErrorMessageBox(e.code());

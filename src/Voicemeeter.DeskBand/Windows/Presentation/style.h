@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d2d1_3.h>
-#pragma comment(lib, "d2d1_3")
+#pragma comment(lib, "d2d1")
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -17,9 +17,9 @@ namespace Voicemeeter {
 						};
 					}
 
-					LPCWSTR lpszFontFamilyName;
+					LPCWSTR lpszMainFontFamilyName;
 					D2D1_COLOR_F Main;
-					D2D1_COLOR_F Sub;
+					D2D1_COLOR_F Front;
 					D2D1_COLOR_F Active;
 				};
 			}
