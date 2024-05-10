@@ -20,6 +20,7 @@ namespace Voicemeeter {
 				public:
 					class Context {
 					public:
+						class Brush;
 						class Text {
 						public:
 							Text(const Text&) = delete;
@@ -30,13 +31,43 @@ namespace Voicemeeter {
 							Text& operator=(const Text&) = delete;
 							Text& operator=(Text&&) = default;
 
+							void Draw(const Brush& brush) const;
+
 						private:
 							friend class DrawingEngine;
 							friend class Font;
 
-							Text() = default;
+							inline Text(Context& ctx)
+								: m_ctx{ ctx } {
 
-							CComPtr<IDWriteTextFormat3> m_pFmtDw;
+							};
+
+							Context& m_ctx;
+							CComPtr<IDWriteTextLayout4> m_pLayoutDw;
+						};
+						class Glyph {
+						public:
+							Glyph(const Glyph&) = delete;
+							Glyph(Glyph&&) = default;
+
+							~Glyph() = default;
+
+							Glyph& operator=(const Glyph&) = delete;
+							Glyph& operator=(Glyph&&) = default;
+
+							void Draw(const Brush& brush) const;
+
+						private:
+							friend class DrawingEngine;
+							friend class Outline;
+
+							inline Glyph(Context& ctx)
+								: m_ctx{ ctx } {
+
+							};
+
+							Context& m_ctx;
+							CComPtr<ID2D1GeometryRealization> m_pRealizationD2;
 						};
 						class Brush {
 						public:
@@ -51,28 +82,17 @@ namespace Voicemeeter {
 						private:
 							friend class DrawingEngine;
 							friend class Color;
-
-							Brush() = default;
-
-							CComPtr<ID2D1SolidColorBrush> m_pBrushD2;
-						};
-						class Icon {
-						public:
-							Icon(const Icon&) = delete;
-							Icon(Icon&&) = default;
-
-							~Icon() = default;
-
-							Icon& operator=(const Icon&) = delete;
-							Icon& operator=(Icon&&) = default;
-
-						private:
-							friend class DrawingEngine;
+							friend class Text;
 							friend class Glyph;
 
-							Icon() = default;
+							inline Brush(Context& ctx)
+								: m_ctx{ ctx }
+								, m_pBrushD2{ NULL } {
 
-							//CComPtr<ID2D1SolidColorBrush> m_pBrushD2;
+							}
+
+							Context& m_ctx;
+							CComPtr<ID2D1SolidColorBrush> m_pBrushD2;
 						};
 
 						Context(const Context&) = delete;
@@ -83,9 +103,9 @@ namespace Voicemeeter {
 						Context& operator=(const Context&) = delete;
 						Context& operator=(Context&&) = default;
 
-						void BeginDraw();
-						void EndDraw();
-						void Resize(UINT w, UINT h);
+						void BeginDraw() const;
+						void EndDraw() const;
+						void Resize(UINT w, UINT h) const;
 
 					private:
 						friend class DrawingEngine;
@@ -93,11 +113,18 @@ namespace Voicemeeter {
 						friend class Color;
 						friend class Icon;
 
+						IDWriteFactory7& m_fctDw;
 						CComPtr<ID2D1DeviceContext6> m_pCtxDevD2;
 						CComPtr<IDXGISwapChain4> m_pSwChDx;
 						CComPtr<ID2D1Bitmap1> m_pBmpD2;
 
-						Context() = default;
+						inline Context(IDWriteFactory7& fctDw)
+							: m_fctDw{ fctDw }
+							, m_pCtxDevD2{ NULL }
+							, m_pSwChDx{ NULL }
+							, m_pBmpD2{ NULL } {
+
+						};
 					};
 
 					class Manifest {
@@ -112,7 +139,9 @@ namespace Voicemeeter {
 							Font& operator=(const Font&) = delete;
 							Font& operator=(Font&&) = delete;
 
-							Context::Text Bind(const Context& ctx);
+							Context::Text Bind(Context& ctx,
+								const LPCWSTR text, FLOAT w, FLOAT h
+							) const;
 
 						private:
 							friend class DrawingEngine;
@@ -120,7 +149,10 @@ namespace Voicemeeter {
 
 							CComPtr<IDWriteTextFormat3> m_pFmtDw;
 
-							Font() = default;
+							inline Font()
+								: m_pFmtDw{ NULL } {
+
+							}
 						};
 						class Color {
 						public:
@@ -132,27 +164,55 @@ namespace Voicemeeter {
 							Color& operator=(const Color&) = delete;
 							Color& operator=(Color&&) = delete;
 
-							Context::Brush Bind(const Context& ctx);
+							Context::Brush Bind(Context& ctx) const;
 
 						private:
 							friend class DrawingEngine;
 							friend class Manifest;
 
-							D2D1_COLOR_F m_color;
+							D2D1_COLOR_F m_colorD2;
 
-							Color() = default;
+							inline Color()
+								: m_colorD2{} {
+
+							};
 						};
-						class Glyph {
+						class Outline {
 						public:
-							Glyph(const Glyph&) = delete;
-							Glyph(Glyph&&) = delete;
+							Outline(const Outline&) = delete;
+							Outline(Outline&&) = delete;
 
-							~Glyph() = default;
+							~Outline() = default;
 
-							Glyph& operator=(const Glyph&) = delete;
-							Glyph& operator=(Glyph&&) = delete;
+							Outline& operator=(const Outline&) = delete;
+							Outline& operator=(Outline&&) = delete;
 
-							Context::Icon Bind(const Context& ctx);
+							Context::Glyph Bind(Context& ctx) const;
+
+						private:
+							friend class DrawingEngine;
+							friend class Manifest;
+
+							FLOAT m_w;
+							CComPtr<ID2D1Geometry> m_pGmtD2;
+
+							inline Outline()
+								: m_w{ 0.F }
+								, m_pGmtD2{ NULL } {
+
+							}
+						};
+						class Interior {
+						public:
+							Interior(const Interior&) = delete;
+							Interior(Interior&&) = delete;
+
+							~Interior() = default;
+
+							Interior& operator=(const Interior&) = delete;
+							Interior& operator=(Interior&&) = delete;
+
+							Context::Glyph Bind(Context& ctx) const;
 
 						private:
 							friend class DrawingEngine;
@@ -160,7 +220,10 @@ namespace Voicemeeter {
 
 							CComPtr<ID2D1Geometry> m_pGmtD2;
 
-							Glyph() = default;
+							inline Interior()
+								: m_pGmtD2{ NULL } {
+
+							}
 						};
 
 						inline const Font& get_fMain() const noexcept {
@@ -172,8 +235,11 @@ namespace Voicemeeter {
 						inline const Color& get_cActive() const noexcept {
 							return m_cActive;
 						}
-						inline const Glyph& get_iBtnRoundFrame() const noexcept {
-							return m_iBtnRoundFrame;
+						inline const Outline& get_oBtnRound() const noexcept {
+							return m_oBtnRound;
+						}
+						inline const Interior& get_iBtnRound() const noexcept {
+							return m_iBtnRound;
 						}
 
 						Manifest(const Manifest&) = delete;
@@ -190,9 +256,17 @@ namespace Voicemeeter {
 						Font m_fMain;
 						Color m_cFront;
 						Color m_cActive;
-						Glyph m_iBtnRoundFrame;
+						Outline m_oBtnRound;
+						Interior m_iBtnRound;
 
-						Manifest() = default;
+						inline Manifest()
+							: m_fMain{}
+							, m_cFront{}
+							, m_cActive{}
+							, m_oBtnRound{}
+							, m_iBtnRound{} {
+
+						}
 					};
 
 					explicit DrawingEngine(const Style& style);
@@ -207,7 +281,7 @@ namespace Voicemeeter {
 
 					Context Initialize(
 						HWND hWnd
-					);
+					) const;
 
 					private:
 						CComPtr<ID3D11Device5> m_pDevD3;

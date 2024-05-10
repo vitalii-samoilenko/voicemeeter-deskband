@@ -132,7 +132,6 @@
   <ItemGroup>
     <ClCompile Include="errormessagebox.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Windows\Presentation\context.cpp" />
     <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
     <ClCompile Include="windows\window.cpp" />
   </ItemGroup>

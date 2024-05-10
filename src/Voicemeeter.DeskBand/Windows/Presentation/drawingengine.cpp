@@ -5,22 +5,102 @@
 
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
-DrawingEngine::Context::Text DrawingEngine::Manifest::Font::Bind(const DrawingEngine::Context& ctx) {
-	DrawingEngine::Context::Text text{};
-	m_pFmtDw.CopyTo(&text.m_pFmtDw);
-	return text;
+static const FLOAT BTN_ROUND_R{ 23.F };
+static const FLOAT SHAPE_MAX_ZOOM_FACTOR{ 2.F };
+
+void DrawingEngine::Context::Text::Draw(const DrawingEngine::Context::Brush& brush) const {
+	m_ctx.m_pCtxDevD2->DrawTextLayout(
+		D2D1::Point2F(),
+		m_pLayoutDw,
+		brush.m_pBrushD2
+	);
+}
+void DrawingEngine::Context::Glyph::Draw(const DrawingEngine::Context::Brush& brush) const {
+	m_ctx.m_pCtxDevD2->DrawGeometryRealization(
+		m_pRealizationD2,
+		brush.m_pBrushD2
+	);
 }
 
-DrawingEngine::Context::Brush DrawingEngine::Manifest::Color::Bind(const Context& ctx) {
-	DrawingEngine::Context::Brush brush{};
+void DrawingEngine::Context::BeginDraw() const {
+	m_pCtxDevD2->BeginDraw();
+}
+void DrawingEngine::Context::EndDraw() const {
+	ThrowIfFailed(m_pCtxDevD2->EndDraw(
+
+	), "Drawing failure");
+	DXGI_PRESENT_PARAMETERS params{
+		0, NULL,
+		NULL, NULL
+	};
+	ThrowIfFailed(m_pSwChDx->Present1(
+		1, 0,
+		&params
+	), "Presentation failure");
+}
+void DrawingEngine::Context::Resize(UINT w, UINT h) const {
+	m_pSwChDx->ResizeBuffers1(
+		0,
+		w, h,
+		DXGI_FORMAT_UNKNOWN,
+		0,
+		NULL, NULL
+	);
+}
+
+DrawingEngine::Context::Text DrawingEngine::Manifest::Font::Bind(DrawingEngine::Context& ctx,
+	const LPCWSTR text, FLOAT w, FLOAT h
+) const {
+	DrawingEngine::Context::Text t{ ctx };
+	ThrowIfFailed(ctx.m_fctDw.CreateTextLayout(
+		text, static_cast<UINT32>(wcslen(text)),
+		m_pFmtDw,
+		w, h,
+		reinterpret_cast<IDWriteTextLayout**>(& t.m_pLayoutDw)
+	), "Text creation failed");
+	return t;
+}
+DrawingEngine::Context::Brush DrawingEngine::Manifest::Color::Bind(DrawingEngine::Context& ctx) const {
+	DrawingEngine::Context::Brush b{ ctx };
 	ThrowIfFailed(ctx.m_pCtxDevD2->CreateSolidColorBrush(
-		m_color,
-		&brush.m_pBrushD2
+		m_colorD2,
+		&b.m_pBrushD2
 	), "Brush creation failed");
-	return brush;
+	return b;
 }
-
-static const FLOAT BTN_ROUND_FRAME_R{ 23.F };
+DrawingEngine::Context::Glyph DrawingEngine::Manifest::Outline::Bind(DrawingEngine::Context& ctx) const {
+	FLOAT dpiX{ 0.F };
+	FLOAT dpiY{ 0.F };
+	ctx.m_pCtxDevD2->GetDpi(&dpiX, &dpiY);
+	DrawingEngine::Context::Glyph g{ ctx };
+	ThrowIfFailed(ctx.m_pCtxDevD2->CreateStrokedGeometryRealization(
+		m_pGmtD2,
+		D2D1::ComputeFlatteningTolerance(
+			D2D1::Matrix3x2F::Identity(),
+			dpiX, dpiY,
+			SHAPE_MAX_ZOOM_FACTOR
+		),
+		m_w, NULL,
+		&g.m_pRealizationD2
+	), "Glyph creation failed");
+	return g;
+}
+DrawingEngine::Context::Glyph DrawingEngine::Manifest::Interior::Bind(DrawingEngine::Context& ctx) const {
+	FLOAT dpiX{ 0.F };
+	FLOAT dpiY{ 0.F };
+	ctx.m_pCtxDevD2->GetDpi(&dpiX, &dpiY);
+	DrawingEngine::Context::Glyph g{ ctx };
+	ThrowIfFailed(ctx.m_pCtxDevD2->CreateFilledGeometryRealization(
+		m_pGmtD2,
+		D2D1::ComputeFlatteningTolerance(
+			D2D1::Matrix3x2F::Identity(),
+			dpiX, dpiY,
+			SHAPE_MAX_ZOOM_FACTOR
+		),
+		&g.m_pRealizationD2
+	), "Glyph creation failed");
+	return g;
+}
 
 DrawingEngine::DrawingEngine(const Style& style)
 	: m_pDevD3{ NULL }
@@ -88,21 +168,29 @@ DrawingEngine::DrawingEngine(const Style& style)
 		L"",
 		&m_manifest.m_fMain.m_pFmtDw
 	), "Main font creation failed");
-	m_manifest.m_cFront.m_color = style.Front;
-	m_manifest.m_cActive.m_color = style.Active;
+	m_manifest.m_cFront.m_colorD2 = style.Front;
+	m_manifest.m_cActive.m_colorD2 = style.Active;
+	m_manifest.m_oBtnRound.m_w = 2.F;
 	ThrowIfFailed(m_pFctD2->CreateEllipseGeometry(
 		D2D1::Ellipse(
-			D2D1::Point2F(BTN_ROUND_FRAME_R, BTN_ROUND_FRAME_R),
-			BTN_ROUND_FRAME_R, BTN_ROUND_FRAME_R
+			D2D1::Point2F(BTN_ROUND_R, BTN_ROUND_R),
+			BTN_ROUND_R, BTN_ROUND_R
 		),
-		reinterpret_cast<ID2D1EllipseGeometry**>(&m_manifest.m_iBtnRoundFrame.m_pGmtD2)
-	), "Round button frame creation failed");
+		reinterpret_cast<ID2D1EllipseGeometry**>(&m_manifest.m_oBtnRound.m_pGmtD2)
+	), "Round button outline creation failed");
+	ThrowIfFailed(m_pFctD2->CreateEllipseGeometry(
+		D2D1::Ellipse(
+			D2D1::Point2F(BTN_ROUND_R, BTN_ROUND_R),
+			BTN_ROUND_R, BTN_ROUND_R
+		),
+		reinterpret_cast<ID2D1EllipseGeometry**>(&m_manifest.m_iBtnRound.m_pGmtD2)
+	), "Round button interior creation failed");
 }
 
 DrawingEngine::Context DrawingEngine::Initialize(
 	HWND hWnd
-) {
-	Context ctx{};
+) const {
+	Context ctx{*m_pFctDw};
 
 	ThrowIfFailed(m_pDevD2->CreateDeviceContext(
 		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
@@ -143,8 +231,6 @@ DrawingEngine::Context DrawingEngine::Initialize(
 		0,
 		IID_PPV_ARGS(&pSfDx)
 	), "Failed to get surface");
-
-
 
 	FLOAT dpiX{ 0.F };
 	FLOAT dpiY{ 0.F };

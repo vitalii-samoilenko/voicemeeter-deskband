@@ -42,9 +42,6 @@
     <ClCompile Include="Windows\Presentation\drawingengine.cpp">
       <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\Presentation\context.cpp">
-      <Filter>Source Files\Windows\Presentation</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errormessagebox.h">
