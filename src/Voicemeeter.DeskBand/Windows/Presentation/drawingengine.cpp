@@ -5,6 +5,7 @@
 
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
+static const FLOAT FONT_SIZE_DEFAULT{ 18.F };
 static const FLOAT BTN_ROUND_R{ 23.F };
 static const FLOAT SHAPE_MAX_ZOOM_FACTOR{ 2.F };
 
@@ -25,6 +26,9 @@ void DrawingEngine::Context::Glyph::Draw(const DrawingEngine::Context::Brush& br
 void DrawingEngine::Context::BeginDraw() const {
 	m_pCtxDevD2->BeginDraw();
 }
+void DrawingEngine::Context::SetTransform(D2D1_MATRIX_3X2_F t) {
+	m_pCtxDevD2->SetTransform(t);
+}
 void DrawingEngine::Context::EndDraw() const {
 	ThrowIfFailed(m_pCtxDevD2->EndDraw(
 
@@ -39,20 +43,45 @@ void DrawingEngine::Context::EndDraw() const {
 	), "Presentation failure");
 }
 void DrawingEngine::Context::Resize(UINT w, UINT h) const {
-	m_pSwChDx->ResizeBuffers1(
+	m_pCtxDevD2->SetTarget(NULL);
+
+	m_pSwChDx->ResizeBuffers(
 		0,
 		w, h,
 		DXGI_FORMAT_UNKNOWN,
-		0,
-		NULL, NULL
+		0
 	);
+
+	CComPtr<IDXGISurface2> pSfDx{ NULL };
+	ThrowIfFailed(m_pSwChDx->GetBuffer(
+		0,
+		IID_PPV_ARGS(&pSfDx)
+	), "Failed to get surface");
+
+	FLOAT dpiX{ 0.F };
+	FLOAT dpiY{ 0.F };
+	m_pCtxDevD2->GetDpi(&dpiX, &dpiY);
+	CComPtr<ID2D1Bitmap1> pBmpD2{ NULL };
+	ThrowIfFailed(m_pCtxDevD2->CreateBitmapFromDxgiSurface(
+		pSfDx,
+		D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+			D2D1::PixelFormat(
+				DXGI_FORMAT_B8G8R8A8_UNORM,
+				D2D1_ALPHA_MODE_PREMULTIPLIED
+			),
+			dpiX, dpiY
+		),
+		&pBmpD2
+	), "Bitmap creation failed");
+	m_pCtxDevD2->SetTarget(pBmpD2);
 }
 
 DrawingEngine::Context::Text DrawingEngine::Manifest::Font::Bind(DrawingEngine::Context& ctx,
 	const LPCWSTR text, FLOAT w, FLOAT h
 ) const {
 	DrawingEngine::Context::Text t{ ctx };
-	ThrowIfFailed(ctx.m_fctDw.CreateTextLayout(
+	ThrowIfFailed(ctx.m_pFctDw->CreateTextLayout(
 		text, static_cast<UINT32>(wcslen(text)),
 		m_pFmtDw,
 		w, h,
@@ -112,14 +141,14 @@ DrawingEngine::DrawingEngine(const Style& style)
 	, m_pFctDw{ NULL }
 	, m_manifest{} {
 	D3D_FEATURE_LEVEL featureLevels[]{
-		D3D_FEATURE_LEVEL_12_1
+		D3D_FEATURE_LEVEL_11_1
 	};
 	CComPtr<ID3D11Device> pDevD3d{ NULL };
 	ThrowIfFailed(D3D11CreateDevice(
 		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+		D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG,
 		featureLevels,
 		ARRAYSIZE(featureLevels),
 		D3D11_SDK_VERSION,
@@ -134,6 +163,9 @@ DrawingEngine::DrawingEngine(const Style& style)
 	ThrowIfFailed(m_pDevD3->QueryInterface(
 		&m_pDevDx
 	), "DXGI device creation failed");
+	ThrowIfFailed(m_pDevDx->SetMaximumFrameLatency(
+		1
+	), "Failed to update maximum frame latency");
 	CComPtr<IDXGIAdapter> pAdDx{ NULL };
 	ThrowIfFailed(m_pDevDx->GetAdapter(
 		&pAdDx
@@ -164,7 +196,7 @@ DrawingEngine::DrawingEngine(const Style& style)
 	ThrowIfFailed(m_pFctDw->CreateTextFormat(
 		style.lpszMainFontFamilyName, nullptr,
 		NULL, 0U,
-		12.F,
+		FONT_SIZE_DEFAULT,
 		L"",
 		&m_manifest.m_fMain.m_pFmtDw
 	), "Main font creation failed");
@@ -187,10 +219,12 @@ DrawingEngine::DrawingEngine(const Style& style)
 	), "Round button interior creation failed");
 }
 
-DrawingEngine::Context DrawingEngine::Initialize(
-	HWND hWnd
-) const {
-	Context ctx{*m_pFctDw};
+DrawingEngine::Context DrawingEngine::Initialize(HWND hWnd) {
+	Context ctx{};
+
+	ThrowIfFailed(m_pFctDw.CopyTo(
+		&ctx.m_pFctDw
+	), "DirectWire factory sharing failed");
 
 	ThrowIfFailed(m_pDevD2->CreateDeviceContext(
 		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
@@ -222,32 +256,6 @@ DrawingEngine::Context DrawingEngine::Initialize(
 	ThrowIfFailed(pSwChDx->QueryInterface(
 		&ctx.m_pSwChDx
 	), "Swap chain creation failed");
-	ThrowIfFailed(ctx.m_pSwChDx->SetMaximumFrameLatency(
-		1
-	), "Failed to update maximum frame latency");
-
-	CComPtr<IDXGISurface2> pSfDx{ NULL };
-	ThrowIfFailed(ctx.m_pSwChDx->GetBuffer(
-		0,
-		IID_PPV_ARGS(&pSfDx)
-	), "Failed to get surface");
-
-	FLOAT dpiX{ 0.F };
-	FLOAT dpiY{ 0.F };
-	ctx.m_pCtxDevD2->GetDpi(&dpiX, &dpiY);
-	ThrowIfFailed(ctx.m_pCtxDevD2->CreateBitmapFromDxgiSurface(
-		pSfDx,
-		D2D1::BitmapProperties1(
-			D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-			D2D1::PixelFormat(
-				DXGI_FORMAT_B8G8R8A8_UNORM,
-				D2D1_ALPHA_MODE_STRAIGHT
-			),
-			dpiX, dpiY
-		),
-		&ctx.m_pBmpD2
-	), "Bitmap creation failed");
-	ctx.m_pCtxDevD2->SetTarget(ctx.m_pBmpD2);
 
 	return ctx;
 }

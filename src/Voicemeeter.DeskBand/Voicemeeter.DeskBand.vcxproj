@@ -133,6 +133,7 @@
     <ClCompile Include="errormessagebox.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
+    <ClCompile Include="Windows\Presentation\scene.cpp" />
     <ClCompile Include="windows\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="estd\isinvocable.h" />
     <ClInclude Include="messages.h" />
     <ClInclude Include="Windows\Presentation\drawingengine.h" />
+    <ClInclude Include="Windows\Presentation\scene.h" />
     <ClInclude Include="Windows\Presentation\style.h" />
     <ClInclude Include="windows\resultcodes.h" />
     <ClInclude Include="windows\window.h" />

@@ -11,16 +11,16 @@ namespace Voicemeeter {
 					static inline Style Default() {
 						return Style{
 							L"Arial",
-							D2D1::ColorF(44 / 255.F, 61 / 255.f, 77 / 255.f),
-							D2D1::ColorF(125 / 255.f, 156 / 255.f, 177 / 255.f),
-							D2D1::ColorF(112 / 255.f, 195 / 255.f, 153 / 255.f)
+							D2D1::ColorF(44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F),
+							D2D1::ColorF(125 / 255.F, 156 / 255.F, 177 / 255.F, 1.F),
+							D2D1::ColorF(112 / 255.F, 195 / 255.F, 153 / 255.F, 1.F)
 						};
 					}
 
-					LPCWSTR lpszMainFontFamilyName;
-					D2D1_COLOR_F Main;
-					D2D1_COLOR_F Front;
-					D2D1_COLOR_F Active;
+					const LPCWSTR lpszMainFontFamilyName;
+					const D2D1_COLOR_F Main;
+					const D2D1_COLOR_F Front;
+					const D2D1_COLOR_F Active;
 				};
 			}
 		}

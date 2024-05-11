@@ -2,6 +2,7 @@
 
 #include <windowsx.h>
 
+#include "../estd/guard.h"
 #include "wrappers.h"
 #include "resultcodes.h"
 #include "../errormessagebox.h"
@@ -10,13 +11,15 @@ using namespace Voicemeeter::DeskBand::Windows;
 
 static const LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
 
-Window::Window(HINSTANCE hInstance)
+Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 	: m_hInstance{ hInstance }
-	, m_hWnd{ NULL } {
+	, m_hWnd{ NULL }
+	, m_scene{ scene } {
 	WNDCLASSW wndClass{};
 	wndClass.lpszClassName = LPSZ_CLASS_NAME;
 	wndClass.hInstance = hInstance;
 	wndClass.lpfnWndProc = WindowProcW;
+	wndClass.hCursor = wLoadCursorW(NULL, IDC_ARROW);
 	wRegisterClassW(&wndClass);
 }
 
@@ -32,6 +35,7 @@ void Window::Initialize() {
 		m_hInstance,
 		this
 	);
+	m_scene.Initialize(m_hWnd);
 }
 void Window::Show(int nCmdShow) {
 	ShowWindow(
@@ -70,6 +74,23 @@ LRESULT CALLBACK Window::WindowProcW(
 					PostQuitMessage(0);
 
 					return LRESULT_CODES::OK;
+				case WM_SIZE: {
+					RECT r{ 0L, 0L, LOWORD(lParam), HIWORD(lParam) };
+					pWnd->m_scene.Resize(r.right, r.bottom);
+					wInvalidateRect(pWnd->m_hWnd, &r, FALSE);
+
+					return LRESULT_CODES::OK;
+				}
+				case WM_PAINT: {
+					PAINTSTRUCT ps{};
+					wBeginPaint(pWnd->m_hWnd, &ps);
+					auto paintGuard = estd::make_guard([pWnd, &ps]()->void {
+						EndPaint(pWnd->m_hWnd, &ps);
+						});
+					pWnd->m_scene.Draw();
+
+					return LRESULT_CODES::OK;
+				}
 				}
 			}
 		}

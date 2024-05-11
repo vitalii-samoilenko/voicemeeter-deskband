@@ -137,3 +137,14 @@ inline void wInvalidateRect(
 		throw windows_error{ "Rectangle invalidation failed" };
 	}
 }
+
+inline HCURSOR wLoadCursorW(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCWSTR lpCursorName
+) {
+	HCURSOR hCursor{ LoadCursorW(hInstance, lpCursorName) };
+	if (hCursor == NULL) {
+		throw windows_error{ "Failed to load cursor" };
+	}
+	return hCursor;
+}

@@ -1,7 +1,4 @@
-#include <windows.h>
-
 #include "estd/guard.h"
-#include "Windows/Presentation/drawingengine.h"
 #include "Windows/window.h"
 #include "Windows/error.h"
 #include "errormessagebox.h"
@@ -15,15 +12,19 @@ int WINAPI wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 ) {
+	Style style{ Style::Default() };
 	DrawingEngine* pDrwEngine{ nullptr };
+	Scene* pScene{ nullptr };
 	Window* pWnd{ nullptr };
-	auto mainGuard = estd::make_guard([&pDrwEngine , &pWnd]()->void {
+	auto mainGuard = estd::make_guard([&pDrwEngine, &pScene, &pWnd]()->void {
 		delete pDrwEngine;
+		delete pScene;
 		delete pWnd;
 	});
 	try {
-		pDrwEngine = new DrawingEngine(Style::Default());
-		pWnd = new Window{ hInstance };
+		pDrwEngine = new DrawingEngine(style);
+		pScene = new Scene(*pDrwEngine);
+		pWnd = new Window{ hInstance, *pScene };
 
 		pWnd->Initialize();
 		pWnd->Show(nShowCmd);

@@ -42,6 +42,9 @@
     <ClCompile Include="Windows\Presentation\drawingengine.cpp">
       <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
+    <ClCompile Include="Windows\Presentation\scene.cpp">
+      <Filter>Source Files\Windows\Presentation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errormessagebox.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
     <ClInclude Include="Windows\Presentation\drawingengine.h">
+      <Filter>Header Files\Windows\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\Presentation\scene.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
   </ItemGroup>

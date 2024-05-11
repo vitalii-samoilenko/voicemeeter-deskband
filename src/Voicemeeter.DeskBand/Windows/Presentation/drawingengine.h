@@ -1,9 +1,5 @@
 #pragma once
 
-#include <unordered_map>
-#include <vector>
-#include <utility>
-
 #include <d3d11_4.h>
 #pragma comment(lib, "d3d11")
 #include <dwrite_3.h>
@@ -95,6 +91,10 @@ namespace Voicemeeter {
 							CComPtr<ID2D1SolidColorBrush> m_pBrushD2;
 						};
 
+						inline static Context Empty() {
+							return Context{};
+						}
+
 						Context(const Context&) = delete;
 						Context(Context&&) = default;
 
@@ -104,6 +104,7 @@ namespace Voicemeeter {
 						Context& operator=(Context&&) = default;
 
 						void BeginDraw() const;
+						void SetTransform(D2D1_MATRIX_3X2_F t);
 						void EndDraw() const;
 						void Resize(UINT w, UINT h) const;
 
@@ -113,20 +114,17 @@ namespace Voicemeeter {
 						friend class Color;
 						friend class Icon;
 
-						IDWriteFactory7& m_fctDw;
+						CComPtr<IDWriteFactory7> m_pFctDw;
 						CComPtr<ID2D1DeviceContext6> m_pCtxDevD2;
 						CComPtr<IDXGISwapChain4> m_pSwChDx;
-						CComPtr<ID2D1Bitmap1> m_pBmpD2;
 
-						inline Context(IDWriteFactory7& fctDw)
-							: m_fctDw{ fctDw }
+						inline Context()
+							: m_pFctDw{ NULL }
 							, m_pCtxDevD2{ NULL }
-							, m_pSwChDx{ NULL }
-							, m_pBmpD2{ NULL } {
+							, m_pSwChDx{ NULL } {
 
 						};
 					};
-
 					class Manifest {
 					public:
 						class Font {
@@ -269,6 +267,10 @@ namespace Voicemeeter {
 						}
 					};
 
+					inline const Manifest& get_manifest() const {
+						return m_manifest;
+					}
+
 					explicit DrawingEngine(const Style& style);
 					DrawingEngine() = delete;
 					DrawingEngine(const DrawingEngine&) = delete;
@@ -279,9 +281,7 @@ namespace Voicemeeter {
 					DrawingEngine& operator=(const DrawingEngine&) = delete;
 					DrawingEngine& operator=(DrawingEngine&&) = delete;
 
-					Context Initialize(
-						HWND hWnd
-					) const;
+					Context Initialize(HWND hWnd);
 
 					private:
 						CComPtr<ID3D11Device5> m_pDevD3;

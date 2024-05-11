@@ -1,13 +1,13 @@
 #pragma once
 
-#include <windows.h>
+#include "Presentation/scene.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace Windows {
 			class Window {
 			public:
-				explicit Window(HINSTANCE hInstance);
+				Window(HINSTANCE hInstance, Presentation::Scene& scene);
 				Window() = delete;
 				Window(const Window&) = delete;
 				Window(Window&&) = delete;
@@ -23,6 +23,7 @@ namespace Voicemeeter {
 			private:
 				HINSTANCE m_hInstance;
 				HWND m_hWnd;
+				Presentation::Scene& m_scene;
 
 				static LRESULT WindowProcW(
 					HWND hWnd,
