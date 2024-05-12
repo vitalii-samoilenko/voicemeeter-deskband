@@ -148,3 +148,33 @@ inline HCURSOR wLoadCursorW(
 	}
 	return hCursor;
 }
+
+inline HANDLE wCreateEventW(
+	_In_opt_ LPSECURITY_ATTRIBUTES lpEventAttributes,
+	_In_ BOOL bManualReset,
+	_In_ BOOL bInitialState,
+	_In_opt_ LPCWSTR lpName
+) {
+	HANDLE event{ CreateEventW(
+		lpEventAttributes,
+		bManualReset,
+		bInitialState,
+		lpName
+	) };
+	if (event == NULL) {
+		throw windows_error{ "Event creation failed" };
+	}
+	return event;
+}
+
+inline void wWaitForSingleObject(
+	_In_ HANDLE hHandle,
+	_In_ DWORD dwMilliseconds
+) {
+	if (WaitForSingleObject(
+		hHandle,
+		dwMilliseconds
+	) != 0L) {
+		throw windows_error{ "Failed to wait for single object" };
+	}
+}

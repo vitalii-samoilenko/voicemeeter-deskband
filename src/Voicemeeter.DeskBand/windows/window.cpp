@@ -1,7 +1,5 @@
 #include "window.h"
 
-#include <windowsx.h>
-
 #include "../estd/guard.h"
 #include "wrappers.h"
 #include "resultcodes.h"
@@ -37,7 +35,7 @@ void Window::Initialize() {
 	);
 	m_scene.Initialize(m_hWnd);
 }
-void Window::Show(int nCmdShow) {
+void Window::Show(int nCmdShow) const {
 	ShowWindow(
 		m_hWnd,
 		nCmdShow
@@ -50,59 +48,55 @@ LRESULT CALLBACK Window::WindowProcW(
 	WPARAM wParam,
 	LPARAM lParam
 ) {
-	Window* pWnd{ nullptr };
-	if (uMsg == WM_NCCREATE) {
-		pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
-		pWnd->m_hWnd = hWnd;
+	auto shutdown = [](DWORD errCode)->LRESULT {
+		ErrorMessageBox(errCode);
+		PostQuitMessage(0);
 
-		if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
-			return FALSE;
-		}
-	} else {
-		auto shutdown = [](DWORD errCode)->LRESULT {
-			ErrorMessageBox(errCode);
+		return LRESULT_CODES::OK;
+	};
+	try{
+		Window* pWnd{ wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
+
+		switch (uMsg) {
+		case WM_NCCREATE:
+			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
+			pWnd->m_hWnd = hWnd;
+
+			if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
+				return FALSE;
+			}
+			break;
+		case WM_DESTROY:
 			PostQuitMessage(0);
 
 			return LRESULT_CODES::OK;
-		};
-		try {
-			pWnd = wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA);
+		case WM_SIZE: {
+			RECT r{ 0L, 0L, LOWORD(lParam), HIWORD(lParam) };
+			pWnd->m_scene.Resize(r.right, r.bottom);
+			wInvalidateRect(hWnd, &r, FALSE);
 
-			if (pWnd) {
-				switch (uMsg) {
-				case WM_DESTROY:
-					PostQuitMessage(0);
+			return LRESULT_CODES::OK;
+		}
+		case WM_PAINT: {
+			PAINTSTRUCT ps{};
+			wBeginPaint(hWnd, &ps);
+			auto paintGuard = estd::make_guard([hWnd, &ps]()->void {
+				EndPaint(hWnd, &ps);
+			});
+			pWnd->m_scene.Draw();
 
-					return LRESULT_CODES::OK;
-				case WM_SIZE: {
-					RECT r{ 0L, 0L, LOWORD(lParam), HIWORD(lParam) };
-					pWnd->m_scene.Resize(r.right, r.bottom);
-					wInvalidateRect(pWnd->m_hWnd, &r, FALSE);
-
-					return LRESULT_CODES::OK;
-				}
-				case WM_PAINT: {
-					PAINTSTRUCT ps{};
-					wBeginPaint(pWnd->m_hWnd, &ps);
-					auto paintGuard = estd::make_guard([pWnd, &ps]()->void {
-						EndPaint(pWnd->m_hWnd, &ps);
-						});
-					pWnd->m_scene.Draw();
-
-					return LRESULT_CODES::OK;
-				}
-				}
-			}
+			return LRESULT_CODES::OK;
 		}
-		catch (const windows_error& e) {
-			return shutdown(e.code());
 		}
-		catch (const com_error& e) {
-			return shutdown(e.code());
-		}
-		catch (...) {
-			return shutdown(MSG_ERR_GENERAL);
-		}
+	}
+	catch (const windows_error& e) {
+		return shutdown(e.code());
+	}
+	catch (const com_error& e) {
+		return shutdown(e.code());
+	}
+	catch (...) {
+		return shutdown(MSG_ERR_GENERAL);
 	}
 	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }

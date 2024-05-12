@@ -1,4 +1,3 @@
-#include "estd/guard.h"
 #include "Windows/window.h"
 #include "Windows/error.h"
 #include "errormessagebox.h"
@@ -13,18 +12,13 @@ int WINAPI wWinMain(
 	_In_ int nShowCmd
 ) {
 	Style style{ Style::Default() };
-	DrawingEngine* pDrwEngine{ nullptr };
-	Scene* pScene{ nullptr };
-	Window* pWnd{ nullptr };
-	auto mainGuard = estd::make_guard([&pDrwEngine, &pScene, &pWnd]()->void {
-		delete pDrwEngine;
-		delete pScene;
-		delete pWnd;
-	});
+	std::unique_ptr<DrawingEngine> pDrwEngine{ nullptr };
+	std::unique_ptr<Scene> pScene{ nullptr };
+	std::unique_ptr<Window> pWnd{ nullptr };
 	try {
-		pDrwEngine = new DrawingEngine(style);
-		pScene = new Scene(*pDrwEngine);
-		pWnd = new Window{ hInstance, *pScene };
+		pDrwEngine.reset(new DrawingEngine(style));
+		pScene.reset(new Scene(*pDrwEngine));
+		pWnd.reset(new Window{ hInstance, *pScene });
 
 		pWnd->Initialize();
 		pWnd->Show(nShowCmd);
