@@ -31,8 +31,8 @@ namespace Voicemeeter {
 						Context& operator=(const Context&) = delete;
 						Context& operator=(Context&&) = delete;
 
-						void Update() const;
 						void Render();
+						void Update() const;
 						void Resize(UINT w, UINT h);
 
 					private:

@@ -230,31 +230,14 @@ std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
 		&ctx->m_pSwapChain
 	), "DXGI Swap chain upgrade failed");
 
-	//ThrowIfFailed(m_pFactory->MakeWindowAssociation(
-	//	hWnd,
-	//	DXGI_MWA_NO_WINDOW_CHANGES
-	//), "Failed to disable DXGI window monitoring");
+	ThrowIfFailed(m_pFactory->MakeWindowAssociation(
+		hWnd,
+		DXGI_MWA_NO_WINDOW_CHANGES
+	), "Failed to disable DXGI window monitoring");
 
 	ctx->m_rtvDescSize = m_pDevice->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_RTV
 	);
-
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle{
-		ctx->m_pRtvHeap->GetCPUDescriptorHandleForHeapStart()
-	};
-	for (UINT frame{ 0U }; frame < FrameCount; ++frame) {
-		ThrowIfFailed(ctx->m_pSwapChain->GetBuffer(
-			frame,
-			IID_PPV_ARGS(&ctx->m_pRenderTargets[frame])
-		), "Failed to get swap chain buffer");
-		m_pDevice->CreateRenderTargetView(
-			ctx->m_pRenderTargets[frame].Get(), nullptr,
-			rtvHandle
-		);
-		rtvHandle.Offset(1, ctx->m_rtvDescSize);
-	}
-
-	ctx->m_frame = ctx->m_pSwapChain->GetCurrentBackBufferIndex();
 
 	m_pDevice.CopyTo(&ctx->m_pDevice);
 
