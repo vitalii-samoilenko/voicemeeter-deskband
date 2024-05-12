@@ -20,7 +20,6 @@ int WINAPI wWinMain(
 		pScene.reset(new Scene(*pDrwEngine));
 		pWnd.reset(new Window{ hInstance, *pScene });
 
-		pWnd->Initialize();
 		pWnd->Show(nShowCmd);
 	}
 	catch (const windows_error& e) {

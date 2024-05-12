@@ -51,17 +51,27 @@ namespace Voicemeeter {
 						ComPtr<ID3D12Resource2> m_pRenderTargets[FrameCount];
 						UINT m_frame;
 
-						inline Context() noexcept
-							: m_pDevice{ nullptr }
-							, m_pQueue{ nullptr }
-							, m_pAllocator{ nullptr }
-							, m_pList{ nullptr }
-							, m_pFence{ nullptr }
-							, m_fenceEvent{ NULL }
+						inline Context(
+							ID3D12Device8* pDevice,
+							ID3D12CommandQueue* pQueue,
+							ID3D12CommandAllocator* pAllocator,
+							ID3D12GraphicsCommandList5* pList,
+							ID3D12Fence1* pFence,
+							HANDLE fenceEvent,
+							ID3D12DescriptorHeap* pRtvHeap,
+							IDXGISwapChain4* pSwapChain,
+							UINT m_rtvDescSize
+						) noexcept
+							: m_pDevice{ pDevice }
+							, m_pQueue{ pQueue }
+							, m_pAllocator{ pAllocator }
+							, m_pList{ pList }
+							, m_pFence{ pFence }
+							, m_fenceEvent{ fenceEvent }
 							, m_fenceValue{ 0U }
-							, m_pRtvHeap{ nullptr }
-							, m_pSwapChain{ nullptr }
-							, m_rtvDescSize{ 0U }
+							, m_pRtvHeap{ pRtvHeap }
+							, m_pSwapChain{ pSwapChain }
+							, m_rtvDescSize{ m_rtvDescSize }
 							, m_pRenderTargets{ nullptr, nullptr }
 							, m_frame{ 0U } {
 

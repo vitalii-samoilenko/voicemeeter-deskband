@@ -178,3 +178,13 @@ inline void wWaitForSingleObject(
 		throw windows_error{ "Failed to wait for single object" };
 	}
 }
+
+inline void wCloseHandle(
+	_In_ _Post_ptr_invalid_ HANDLE hObject
+) {
+	if (CloseHandle(
+		hObject
+	) == FALSE) {
+		throw windows_error{ "Failed to close handle" };
+	}
+}

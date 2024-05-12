@@ -1,5 +1,6 @@
 #include "drawingengine.h"
 
+#include "../../estd/guard.h"
 #include "../wrappers.h"
 #include "../../messages.h"
 
@@ -35,7 +36,7 @@ void DrawingEngine::Context::Render() {
 		m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
 		static_cast<INT>(m_frame), m_rtvDescSize
 	};
-	const FLOAT bkg[]{ 44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F };
+	const ColorF bkg{ 44 / 255.F, 61 / 255.F, 77 / 255.F, 0.F };
 	m_pList->ClearRenderTargetView(
 		rtvHandle,
 		bkg,
@@ -146,7 +147,7 @@ DrawingEngine::DrawingEngine(const Style& style)
 		flags,
 		IID_PPV_ARGS(&m_pFactory)
 	), "DXGI factory creation failed");
-	ComPtr<IDXGIAdapter4> pAdapter{ nullptr };
+
 	ThrowIfFailed(D3D12CreateDevice(
 		nullptr,
 		D3D_FEATURE_LEVEL_12_1,
@@ -155,7 +156,14 @@ DrawingEngine::DrawingEngine(const Style& style)
 }
 
 std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
-	std::unique_ptr<DrawingEngine::Context> ctx{ new DrawingEngine::Context{} };
+	ComPtr<ID3D12CommandQueue> pQueue{ nullptr };
+	ComPtr<ID3D12CommandAllocator> pAllocator{ nullptr };
+	ComPtr<ID3D12GraphicsCommandList5> pList{ nullptr };
+	ComPtr<ID3D12Fence1> pFence{ nullptr };
+	HANDLE fenceEvent{ NULL };
+	ComPtr<ID3D12DescriptorHeap> pRtvHeap{ nullptr };
+	ComPtr<IDXGISwapChain4> pSwapChain{ nullptr };
+	UINT rtvDescSize{ 0U };
 
 	D3D12_COMMAND_QUEUE_DESC qDesc{
 		D3D12_COMMAND_LIST_TYPE_DIRECT,			//.Type
@@ -165,33 +173,38 @@ std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
 	};
 	ThrowIfFailed(m_pDevice->CreateCommandQueue(
 		&qDesc,
-		IID_PPV_ARGS(&ctx->m_pQueue)
+		IID_PPV_ARGS(&pQueue)
 	), "D3D12 command queue creation failed");
 
 	ThrowIfFailed(m_pDevice->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(&ctx->m_pAllocator)
+		IID_PPV_ARGS(&pAllocator)
 	), "D3D12 command allocator creation failed");
 
 	ThrowIfFailed(m_pDevice->CreateCommandList1(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		D3D12_COMMAND_LIST_FLAG_NONE,
-		IID_PPV_ARGS(&ctx->m_pList)
+		IID_PPV_ARGS(&pList)
 	), "D3D12 command list creation failed");
 
 	ThrowIfFailed(m_pDevice->CreateFence(
 		0U,
 		D3D12_FENCE_FLAG_NONE,
-		IID_PPV_ARGS(&ctx->m_pFence)
+		IID_PPV_ARGS(&pFence)
 	), "D3D12 fence creation failed");
 
-	ctx->m_fenceEvent = wCreateEventW(
+	fenceEvent = wCreateEventW(
 		NULL,
 		FALSE,
 		FALSE,
 		NULL
 	);
+	auto fenceGuard = estd::make_guard([&fenceEvent]()->void {
+		if (fenceEvent) {
+			wCloseHandle(fenceEvent);
+		}
+	});
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{
 		D3D12_DESCRIPTOR_HEAP_TYPE_RTV,		//.Type
@@ -201,7 +214,7 @@ std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
 	};
 	ThrowIfFailed(m_pDevice->CreateDescriptorHeap(
 		&rtvHeapDesc,
-		IID_PPV_ARGS(&ctx->m_pRtvHeap)
+		IID_PPV_ARGS(&pRtvHeap)
 	), "RTV descriptor heap creation failed");
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
@@ -215,19 +228,19 @@ std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
 		FrameCount,							//.BufferCount
 		DXGI_SCALING_NONE,					//.Scaling
 		DXGI_SWAP_EFFECT_FLIP_DISCARD,		//.SwapEffect
-		DXGI_ALPHA_MODE_UNSPECIFIED,		//.AlphaMode
+		DXGI_ALPHA_MODE_IGNORE,				//.AlphaMode
 		0U									//.Flags
 	};
-	ComPtr<IDXGISwapChain1> pSwapChain{ nullptr };
+	ComPtr<IDXGISwapChain1> pSwapChain1{ nullptr };
 	ThrowIfFailed(m_pFactory->CreateSwapChainForHwnd(
-		ctx->m_pQueue.Get(),
+		pQueue.Get(),
 		hWnd,
 		&swapChainDesc, nullptr,
 		nullptr,
-		&pSwapChain
+		&pSwapChain1
 	), "DXGI Swap chain creation failed");
-	ThrowIfFailed(pSwapChain.As(
-		&ctx->m_pSwapChain
+	ThrowIfFailed(pSwapChain1.As(
+		&pSwapChain
 	), "DXGI Swap chain upgrade failed");
 
 	ThrowIfFailed(m_pFactory->MakeWindowAssociation(
@@ -235,11 +248,22 @@ std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
 		DXGI_MWA_NO_WINDOW_CHANGES
 	), "Failed to disable DXGI window monitoring");
 
-	ctx->m_rtvDescSize = m_pDevice->GetDescriptorHandleIncrementSize(
+	rtvDescSize = m_pDevice->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_RTV
 	);
 
-	m_pDevice.CopyTo(&ctx->m_pDevice);
+	std::unique_ptr<DrawingEngine::Context> ctx{ new DrawingEngine::Context{
+		m_pDevice.Get(),
+		pQueue.Get(),
+		pAllocator.Get(),
+		pList.Get(),
+		pFence.Get(),
+		fenceEvent,
+		pRtvHeap.Get(),
+		pSwapChain.Get(),
+		rtvDescSize
+	} };
+	fenceEvent = NULL;
 
 	return ctx;
 }

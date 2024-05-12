@@ -33,5 +33,6 @@ int ErrorMessageBox(
 		NULL
 	);
 	return MessageBoxW(NULL, lpErrBuff, lpCptBuff,
-		MB_OK | MB_ICONERROR | MB_SERVICE_NOTIFICATION);
+		MB_OK | MB_ICONERROR | MB_SERVICE_NOTIFICATION
+	);
 }

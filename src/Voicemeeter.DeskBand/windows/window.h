@@ -17,11 +17,9 @@ namespace Voicemeeter {
 				Window& operator=(const Window&) = delete;
 				Window& operator=(Window&&) = delete;
 
-				void Initialize();
 				void Show(int nCmdShow) const;
 
 			private:
-				HINSTANCE m_hInstance;
 				HWND m_hWnd;
 				Presentation::Scene& m_scene;
 

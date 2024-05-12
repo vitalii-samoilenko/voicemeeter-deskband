@@ -26,7 +26,6 @@ namespace Voicemeeter {
 
 					void Initialize(HWND hWnd);
 					void Resize(UINT w, UINT h) const;
-					void Draw() const;
 
 				private:
 					DrawingEngine& m_drwEngine;
