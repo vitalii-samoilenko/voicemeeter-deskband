@@ -1,12 +1,12 @@
 #include "window.h"
 
 #include "wrappers.h"
-#include "resultcodes.h"
 #include "../errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
 
 static const LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
+static const LRESULT OK{ 0 };
 
 Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 	: m_hWnd{ NULL }
@@ -54,7 +54,7 @@ LRESULT CALLBACK Window::WindowProcW(
 		ErrorMessageBox(errCode);
 		PostQuitMessage(0);
 
-		return LRESULT_CODES::OK;
+		return OK;
 	};
 	try{
 		Window* pWnd{ wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
@@ -71,11 +71,11 @@ LRESULT CALLBACK Window::WindowProcW(
 		case WM_DESTROY:
 			PostQuitMessage(0);
 
-			return LRESULT_CODES::OK;
+			return OK;
 		case WM_SIZE: {
 			pWnd->m_scene.Resize(LOWORD(lParam), HIWORD(lParam));
 
-			return LRESULT_CODES::OK;
+			return OK;
 		}
 		}
 	}

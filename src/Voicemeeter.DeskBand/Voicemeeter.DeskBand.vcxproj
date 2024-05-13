@@ -146,7 +146,6 @@
     <ClInclude Include="Windows\Presentation\drawingengine.h" />
     <ClInclude Include="Windows\Presentation\scene.h" />
     <ClInclude Include="Windows\Presentation\style.h" />
-    <ClInclude Include="windows\resultcodes.h" />
     <ClInclude Include="windows\window.h" />
     <ClInclude Include="windows\error.h" />
     <ClInclude Include="windows\wrappers.h" />

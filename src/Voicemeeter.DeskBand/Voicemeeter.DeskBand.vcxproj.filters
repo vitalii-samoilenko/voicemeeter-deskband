@@ -68,9 +68,6 @@
     <ClInclude Include="windows\error.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="windows\resultcodes.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="windows\wrappers.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
