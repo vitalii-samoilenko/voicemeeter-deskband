@@ -1,6 +1,7 @@
 #pragma once
 
-#include<memory>
+#include <memory>
+#include <array>
 
 #include <wrl/client.h>
 #include <dxgi1_6.h>
@@ -18,10 +19,10 @@ namespace Voicemeeter {
 		namespace Windows {
 			namespace Presentation {
 				class DrawingEngine {
-					static constexpr UINT FrameCount{ 2U };
-
 				public:
 					class Context {
+						static constexpr UINT FrameCount{ 2U };
+
 					public:
 						Context(const Context&) = delete;
 						Context(Context&&) = delete;
@@ -32,50 +33,31 @@ namespace Voicemeeter {
 						Context& operator=(Context&&) = delete;
 
 						void Render();
-						void Update() const;
+						void Update();
 						void Resize(UINT w, UINT h);
 
 					private:
 						friend class DrawingEngine;
 
+						struct Frame {
+							UINT64 Id{ 0U };
+							ComPtr<ID3D12CommandAllocator> pAllocator{ nullptr };
+							ComPtr<ID3D12GraphicsCommandList5> pList{ nullptr };
+							ComPtr<ID3D12Resource2> pRenderTarget{ nullptr };
+						};
+
 						ComPtr<ID3D12Device8> m_pDevice;
 						ComPtr<ID3D12CommandQueue> m_pQueue;
-						ComPtr<ID3D12CommandAllocator> m_pAllocator;
-						ComPtr<ID3D12GraphicsCommandList5> m_pList;
-						ComPtr<ID3D12Fence1> m_pFence;
-						HANDLE m_fenceEvent;
-						UINT64 m_fenceValue;
 						ComPtr<ID3D12DescriptorHeap> m_pRtvHeap;
-						ComPtr<IDXGISwapChain4> m_pSwapChain;
 						UINT m_rtvDescSize;
-						ComPtr<ID3D12Resource2> m_ppRenderTarget[FrameCount];
-						UINT m_frame;
+						ComPtr<IDXGISwapChain4> m_pSwapChain;
+						std::array<Frame, FrameCount> m_pFrame;
+						UINT m_frameIndex;
+						ComPtr<ID3D12Fence1> m_pFence;
+						UINT64 m_fenceValue;
+						HANDLE m_fenceEvent;
 
-						inline Context(
-							ID3D12Device8* pDevice,
-							ID3D12CommandQueue* pQueue,
-							ID3D12CommandAllocator* pAllocator,
-							ID3D12GraphicsCommandList5* pList,
-							ID3D12Fence1* pFence,
-							HANDLE fenceEvent,
-							ID3D12DescriptorHeap* pRtvHeap,
-							IDXGISwapChain4* pSwapChain,
-							UINT m_rtvDescSize
-						) noexcept
-							: m_pDevice{ pDevice }
-							, m_pQueue{ pQueue }
-							, m_pAllocator{ pAllocator }
-							, m_pList{ pList }
-							, m_pFence{ pFence }
-							, m_fenceEvent{ fenceEvent }
-							, m_fenceValue{ 0U }
-							, m_pRtvHeap{ pRtvHeap }
-							, m_pSwapChain{ pSwapChain }
-							, m_rtvDescSize{ m_rtvDescSize }
-							, m_ppRenderTarget{ nullptr, nullptr }
-							, m_frame{ 0U } {
-
-						};
+						Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd);
 
 						void WaitForGpu();
 					};

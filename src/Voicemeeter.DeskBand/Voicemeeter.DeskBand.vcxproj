@@ -135,6 +135,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
     <ClCompile Include="Windows\Presentation\scene.cpp" />
+    <ClCompile Include="Windows\Presentation\context.cpp" />
     <ClCompile Include="windows\window.cpp" />
   </ItemGroup>
   <ItemGroup>
