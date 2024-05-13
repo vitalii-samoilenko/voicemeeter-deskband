@@ -24,7 +24,7 @@ void DrawingEngine::Context::Render() {
 
 	CD3DX12_RESOURCE_BARRIER presentToTarget{
 		CD3DX12_RESOURCE_BARRIER::Transition(
-			m_pRenderTargets[m_frame].Get(),
+			m_ppRenderTarget[m_frame].Get(),
 			D3D12_RESOURCE_STATE_PRESENT,
 			D3D12_RESOURCE_STATE_RENDER_TARGET
 	) };
@@ -36,16 +36,15 @@ void DrawingEngine::Context::Render() {
 		m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
 		static_cast<INT>(m_frame), m_rtvDescSize
 	};
-	const ColorF bkg{ 44 / 255.F, 61 / 255.F, 77 / 255.F, 0.F };
 	m_pList->ClearRenderTargetView(
 		rtvHandle,
-		bkg,
+		ColorF{ 44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F },
 		0U, nullptr
 	);
 
 	CD3DX12_RESOURCE_BARRIER targetToPresent{
 		CD3DX12_RESOURCE_BARRIER::Transition(
-			m_pRenderTargets[m_frame].Get(),
+			m_ppRenderTarget[m_frame].Get(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET,
 			D3D12_RESOURCE_STATE_PRESENT
 		)
@@ -74,18 +73,18 @@ void DrawingEngine::Context::Resize(UINT w, UINT h) {
 	WaitForGpu();
 
 	for (UINT frame{ 0U }; frame < FrameCount; ++frame) {
-		m_pRenderTargets[frame].Reset();
+		m_ppRenderTarget[frame].Reset();
 	}
 
 	UINT nodes[FrameCount]{ 0U, 0U };
-	IUnknown* pQueues[FrameCount]{ m_pQueue.Get(), m_pQueue.Get() };
+	IUnknown* ppQueue[FrameCount]{ m_pQueue.Get(), m_pQueue.Get() };
 	ThrowIfFailed(m_pSwapChain->ResizeBuffers1(
 		FrameCount,
 		w, h,
 		DXGI_FORMAT_UNKNOWN,
 		0U,
 		nodes,
-		pQueues
+		ppQueue
 	), "Buffer resizing failed");
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle{
@@ -94,10 +93,10 @@ void DrawingEngine::Context::Resize(UINT w, UINT h) {
 	for (UINT frame{ 0U }; frame < FrameCount; ++frame) {
 		ThrowIfFailed(m_pSwapChain->GetBuffer(
 			frame,
-			IID_PPV_ARGS(&m_pRenderTargets[frame])
+			IID_PPV_ARGS(&m_ppRenderTarget[frame])
 		), "Failed to get swap chain buffer");
 		m_pDevice->CreateRenderTargetView(
-			m_pRenderTargets[frame].Get(), nullptr,
+			m_ppRenderTarget[frame].Get(), nullptr,
 			rtvHandle
 		);
 		rtvHandle.Offset(1, m_rtvDescSize);

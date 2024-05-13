@@ -24,7 +24,7 @@ Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 	};
 	wRegisterClassW(&wndClass);
 	wCreateWindowExW(
-		0,
+		WS_EX_NOREDIRECTIONBITMAP,
 		LPSZ_CLASS_NAME,
 		NULL,
 		WS_OVERLAPPEDWINDOW,

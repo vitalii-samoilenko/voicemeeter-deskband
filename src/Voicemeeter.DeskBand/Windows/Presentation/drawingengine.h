@@ -48,7 +48,7 @@ namespace Voicemeeter {
 						ComPtr<ID3D12DescriptorHeap> m_pRtvHeap;
 						ComPtr<IDXGISwapChain4> m_pSwapChain;
 						UINT m_rtvDescSize;
-						ComPtr<ID3D12Resource2> m_pRenderTargets[FrameCount];
+						ComPtr<ID3D12Resource2> m_ppRenderTarget[FrameCount];
 						UINT m_frame;
 
 						inline Context(
@@ -72,7 +72,7 @@ namespace Voicemeeter {
 							, m_pRtvHeap{ pRtvHeap }
 							, m_pSwapChain{ pSwapChain }
 							, m_rtvDescSize{ m_rtvDescSize }
-							, m_pRenderTargets{ nullptr, nullptr }
+							, m_ppRenderTarget{ nullptr, nullptr }
 							, m_frame{ 0U } {
 
 						};
