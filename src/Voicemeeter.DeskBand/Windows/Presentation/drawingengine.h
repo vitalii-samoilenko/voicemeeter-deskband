@@ -53,13 +53,13 @@ namespace Voicemeeter {
 						ComPtr<IDXGISwapChain4> m_pSwapChain;
 						std::array<Frame, FrameCount> m_pFrame;
 						UINT m_frameIndex;
+						UINT64 m_frameId;
 						ComPtr<ID3D12Fence1> m_pFence;
-						UINT64 m_fenceValue;
 						HANDLE m_fenceEvent;
 
 						Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd);
 
-						void WaitForGpu();
+						void WaitForFrame(UINT64 id);
 					};
 					class Manifest {
 					public:

@@ -5,25 +5,16 @@
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
 DrawingEngine::Context::~Context() {
-	WaitForGpu();
+	WaitForFrame(m_frameId);
 
-	CloseHandle(m_fenceEvent);
+	wCloseHandle(m_fenceEvent);
 }
 
 void DrawingEngine::Context::Render() {
 	Frame& frame{ m_pFrame[m_frameIndex] };
 
-	if (m_pFence->GetCompletedValue() < frame.Id) {
-		ThrowIfFailed(m_pFence->SetEventOnCompletion(
-			frame.Id,
-			m_fenceEvent
-		), "Failed to set fence event");
-		wWaitForSingleObject(
-			m_fenceEvent,
-			INFINITE
-		);
-	}
-	frame.Id = ++m_fenceValue;
+	WaitForFrame(frame.Id);
+	frame.Id = ++m_frameId;
 
 	ThrowIfFailed(frame.pAllocator->Reset(
 	), "Command allocator reset failed");
@@ -71,7 +62,6 @@ void DrawingEngine::Context::Update() {
 
 	ID3D12CommandList* ppList[]{ frame.pList.Get()};
 	m_pQueue->ExecuteCommandLists(_countof(ppList), ppList);
-	m_pQueue->Signal(m_pFence.Get(), frame.Id);
 
 	DXGI_PRESENT_PARAMETERS params{
 		0, NULL,
@@ -81,11 +71,12 @@ void DrawingEngine::Context::Update() {
 		0U, 0U,
 		&params
 	), "Failed to present frame");
-
 	m_frameIndex = m_pSwapChain->GetCurrentBackBufferIndex();
+
+	m_pQueue->Signal(m_pFence.Get(), frame.Id);
 }
 void DrawingEngine::Context::Resize(UINT w, UINT h) {
-	WaitForGpu();
+	WaitForFrame(m_frameId);
 
 	for (Frame& frame : m_pFrame) {
 		frame.pRenderTarget.Reset();
@@ -128,8 +119,8 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 	, m_pSwapChain{ nullptr }
 	, m_pFrame{}
 	, m_frameIndex{ 0U }
+	, m_frameId{ 0U }
 	, m_pFence{ nullptr }
-	, m_fenceValue{ 0U }
 	, m_fenceEvent{ NULL } {
 	D3D12_COMMAND_QUEUE_DESC qDesc{
 		D3D12_COMMAND_LIST_TYPE_DIRECT,			//.Type
@@ -215,18 +206,15 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 	);
 }
 
-void DrawingEngine::Context::WaitForGpu() {
-	ThrowIfFailed(m_pQueue->Signal(
-		m_pFence.Get(),
-		++m_fenceValue
-	), "Fence signal failed");
-
-	ThrowIfFailed(m_pFence->SetEventOnCompletion(
-		m_fenceValue,
-		m_fenceEvent
-	), "Failed to set fence event");
-	wWaitForSingleObject(
-		m_fenceEvent,
-		INFINITE
-	);
+void DrawingEngine::Context::WaitForFrame(UINT64 id) {
+	if (m_pFence->GetCompletedValue() < id) {
+		ThrowIfFailed(m_pFence->SetEventOnCompletion(
+			id,
+			m_fenceEvent
+		), "Failed to set fence event");
+		wWaitForSingleObject(
+			m_fenceEvent,
+			INFINITE
+		);
+	}
 }
