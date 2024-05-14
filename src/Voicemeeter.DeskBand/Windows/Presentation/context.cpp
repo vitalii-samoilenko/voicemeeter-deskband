@@ -61,7 +61,7 @@ void DrawingEngine::Context::Update() {
 	Frame& frame{ m_pFrame[m_frameIndex] };
 
 	ID3D12CommandList* ppList[]{ frame.pList.Get()};
-	m_pQueue->ExecuteCommandLists(_countof(ppList), ppList);
+	m_pQueue->ExecuteCommandLists(std::size(ppList), ppList);
 
 	DXGI_PRESENT_PARAMETERS params{
 		0, NULL,
