@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.props" Condition="Exists('..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.props')" />
   <ItemGroup Label="ProjectConfigurations">
@@ -136,6 +136,7 @@
     <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
     <ClCompile Include="Windows\Presentation\scene.cpp" />
     <ClCompile Include="Windows\Presentation\context.cpp" />
+    <ClCompile Include="Windows\Presentation\sprite.cpp" />
     <ClCompile Include="windows\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="messages.h" />
     <ClInclude Include="Windows\Presentation\drawingengine.h" />
     <ClInclude Include="Windows\Presentation\scene.h" />
+    <ClInclude Include="Windows\Presentation\sprite.h" />
     <ClInclude Include="Windows\Presentation\style.h" />
     <ClInclude Include="windows\window.h" />
     <ClInclude Include="windows\error.h" />

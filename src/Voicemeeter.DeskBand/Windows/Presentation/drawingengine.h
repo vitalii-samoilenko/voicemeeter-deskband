@@ -9,6 +9,8 @@
 #include <d3d12.h>
 #pragma comment(lib, "d3d12")
 #include <d3dx12.h>
+#include <dcomp.h>
+#pragma comment(lib, "dcomp")
 
 #include "style.h"
 
@@ -51,6 +53,7 @@ namespace Voicemeeter {
 						ComPtr<ID3D12DescriptorHeap> m_pRtvHeap;
 						UINT m_rtvDescSize;
 						ComPtr<IDXGISwapChain4> m_pSwapChain;
+						ComPtr<IDCompositionTarget> m_pCompTarget;
 						std::array<Frame, FrameCount> m_pFrame;
 						UINT m_frameIndex;
 						UINT64 m_frameId;

@@ -2,6 +2,8 @@
 
 #include "../wrappers.h"
 
+#include "sprite.h"
+
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
 DrawingEngine::Context::~Context() {
@@ -76,6 +78,9 @@ void DrawingEngine::Context::Update() {
 	m_pQueue->Signal(m_pFence.Get(), frame.Id);
 }
 void DrawingEngine::Context::Resize(UINT w, UINT h) {
+	w = max(w, 8U);
+	h = max(h, 8U);
+
 	WaitForFrame(m_frameId);
 
 	for (Frame& frame : m_pFrame) {
@@ -117,28 +122,21 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 	, m_pRtvHeap{ nullptr }
 	, m_rtvDescSize{ 0U }
 	, m_pSwapChain{ nullptr }
+	, m_pCompTarget{ nullptr }
 	, m_pFrame{}
 	, m_frameIndex{ 0U }
 	, m_frameId{ 0U }
 	, m_pFence{ nullptr }
 	, m_fenceEvent{ NULL } {
-	D3D12_COMMAND_QUEUE_DESC qDesc{
-		D3D12_COMMAND_LIST_TYPE_DIRECT,			//.Type
-		D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,	//.Priority
-		D3D12_COMMAND_QUEUE_FLAG_NONE,			//.Flags
-		0U										//.NodeMask
-	};
+	D3D12_COMMAND_QUEUE_DESC qDesc{};
 	ThrowIfFailed(pDevice->CreateCommandQueue(
 		&qDesc,
 		IID_PPV_ARGS(&m_pQueue)
 	), "D3D12 command queue creation failed");
 
-	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{
-		D3D12_DESCRIPTOR_HEAP_TYPE_RTV,		//.Type
-		FrameCount,							//.NumDescriptors
-		D3D12_DESCRIPTOR_HEAP_FLAG_NONE,	//.Flags
-		0U									//.NodeMask
-	};
+	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
+	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	rtvHeapDesc.NumDescriptors = FrameCount;
 	ThrowIfFailed(pDevice->CreateDescriptorHeap(
 		&rtvHeapDesc,
 		IID_PPV_ARGS(&m_pRtvHeap)
@@ -147,25 +145,20 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		D3D12_DESCRIPTOR_HEAP_TYPE_RTV
 	);
 
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
-		0U, 0U,								//.Width, .Height
-		DXGI_FORMAT_R8G8B8A8_UNORM,			//.Format
-		FALSE,								//.Stereo
-		DXGI_SAMPLE_DESC{					//.SmapleDesc
-			1U, 0U							//.Count, .Quality
-		},
-		DXGI_USAGE_RENDER_TARGET_OUTPUT,	//.BufferUsage
-		FrameCount,							//.BufferCount
-		DXGI_SCALING_NONE,					//.Scaling
-		DXGI_SWAP_EFFECT_FLIP_DISCARD,		//.SwapEffect
-		DXGI_ALPHA_MODE_IGNORE,				//.AlphaMode
-		0U									//.Flags
-	};
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = 8U;
+	swapChainDesc.Height = 8U;
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = FrameCount;
+	swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
+	swapChainDesc.SampleDesc.Count = 1U;
 	ComPtr<IDXGISwapChain1> pSwapChain1{ nullptr };
-	ThrowIfFailed(pFactory->CreateSwapChainForHwnd(
+	ThrowIfFailed(pFactory->CreateSwapChainForComposition(
 		m_pQueue.Get(),
-		hWnd,
-		&swapChainDesc, nullptr,
+		&swapChainDesc,
 		nullptr,
 		&pSwapChain1
 	), "DXGI Swap chain creation failed");
@@ -177,6 +170,29 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		hWnd,
 		DXGI_MWA_NO_WINDOW_CHANGES
 	), "Failed to disable DXGI window monitoring");
+
+	ComPtr<IDCompositionDevice> pCompDevice{ nullptr };
+	ThrowIfFailed(DCompositionCreateDevice3(
+		NULL,
+		IID_PPV_ARGS(&pCompDevice)
+	), "Composition device creation failed");
+	ThrowIfFailed(pCompDevice->CreateTargetForHwnd(
+		hWnd,
+		TRUE,
+		&m_pCompTarget
+	), "Composition target creation failed");
+	ComPtr<IDCompositionVisual> pCompVisual{ nullptr };
+	ThrowIfFailed(pCompDevice->CreateVisual(
+		&pCompVisual
+	), "Composition visual creation failed");
+	ThrowIfFailed(pCompVisual->SetContent(
+		m_pSwapChain.Get()
+	), "Failed to set composition visual content");
+	ThrowIfFailed(m_pCompTarget->SetRoot(
+		pCompVisual.Get()
+	), "Failed to set composition target root");
+	ThrowIfFailed(pCompDevice->Commit(
+	), "Failed to commit composition device");
 
 	for (Frame& frame : m_pFrame) {
 		ThrowIfFailed(pDevice->CreateCommandAllocator(
@@ -204,6 +220,9 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		FALSE,
 		NULL
 	);
+
+	Sprite s{};
+	s.LoadSprite();
 }
 
 void DrawingEngine::Context::WaitForFrame(UINT64 id) {

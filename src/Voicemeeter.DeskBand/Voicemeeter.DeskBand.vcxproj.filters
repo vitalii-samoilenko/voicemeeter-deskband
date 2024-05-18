@@ -48,6 +48,9 @@
     <ClCompile Include="Windows\Presentation\context.cpp">
       <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
+    <ClCompile Include="Windows\Presentation\sprite.cpp">
+      <Filter>Source Files\Windows\Presentation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errormessagebox.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
     <ClInclude Include="Windows\Presentation\scene.h">
+      <Filter>Header Files\Windows\Presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\Presentation\sprite.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
   </ItemGroup>
