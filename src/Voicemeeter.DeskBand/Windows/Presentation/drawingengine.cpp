@@ -33,8 +33,8 @@ DrawingEngine::DrawingEngine(const Style& style)
 	), "D3D12 device creation failed");
 }
 
-std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd) {
+std::unique_ptr<DrawingEngine::Context> DrawingEngine::Initialize(HWND hWnd, IDCompositionVisual* pCompVisual) {
 	return std::unique_ptr<DrawingEngine::Context>{ new DrawingEngine::Context{
-		m_pFactory.Get(), m_pDevice.Get(), hWnd
+		m_pFactory.Get(), m_pDevice.Get(), hWnd, pCompVisual
 	} };
 }

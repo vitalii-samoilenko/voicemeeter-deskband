@@ -60,7 +60,7 @@ namespace Voicemeeter {
 						ComPtr<ID3D12Fence1> m_pFence;
 						HANDLE m_fenceEvent;
 
-						Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd);
+						Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd, IDCompositionVisual* pCompVisual);
 
 						void WaitForFrame(UINT64 id);
 					};
@@ -96,7 +96,7 @@ namespace Voicemeeter {
 					DrawingEngine& operator=(const DrawingEngine&) = delete;
 					DrawingEngine& operator=(DrawingEngine&&) = delete;
 
-					std::unique_ptr<Context> Initialize(HWND hWnd);
+					std::unique_ptr<Context> Initialize(HWND hWnd, IDCompositionVisual* pCompVisual);
 
 					private:
 						Manifest m_manifest;

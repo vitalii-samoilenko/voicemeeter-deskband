@@ -10,7 +10,8 @@ static const LRESULT OK{ 0 };
 
 Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 	: m_hWnd{ NULL }
-	, m_scene{ scene } {
+	, m_scene { scene }
+	, m_pCompTarget{ nullptr } {
 	WNDCLASSW wndClass{
 		0U,								//.style
 		WindowProcW,					//.lpfnWndProc
@@ -34,7 +35,29 @@ Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 		hInstance,
 		this
 	);
-	m_scene.Initialize(m_hWnd);
+
+	ComPtr<IDCompositionDevice> pCompDevice;
+	ThrowIfFailed(DCompositionCreateDevice3(
+		NULL,
+		IID_PPV_ARGS(&pCompDevice)
+	), "Composition device creation failed");
+	ThrowIfFailed(pCompDevice->CreateTargetForHwnd(
+		m_hWnd,
+		TRUE,
+		&m_pCompTarget
+	), "Composition target creation failed");
+	ComPtr<IDCompositionVisual> pCompVisual;
+	ThrowIfFailed(pCompDevice->CreateVisual(
+		&pCompVisual
+	), "Composition visual creation failed");
+
+	m_scene.Initialize(m_hWnd, pCompVisual.Get());
+
+	ThrowIfFailed(m_pCompTarget->SetRoot(
+		pCompVisual.Get()
+	), "Failed to set composition target root");
+	ThrowIfFailed(pCompDevice->Commit(
+	), "Failed to commit composition device");
 }
 
 void Window::Show(int nCmdShow) const {

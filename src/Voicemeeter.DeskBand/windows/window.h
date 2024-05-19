@@ -22,6 +22,7 @@ namespace Voicemeeter {
 			private:
 				HWND m_hWnd;
 				Presentation::Scene& m_scene;
+				ComPtr<IDCompositionTarget> m_pCompTarget;
 
 				static LRESULT WindowProcW(
 					HWND hWnd,

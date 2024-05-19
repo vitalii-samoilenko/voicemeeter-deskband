@@ -1,7 +1,5 @@
 #pragma once
 
-#include <windows.h>
-
 #include "drawingengine.h"
 
 namespace Voicemeeter {
@@ -24,7 +22,7 @@ namespace Voicemeeter {
 					Scene& operator=(const Scene&) = delete;
 					Scene& operator=(Scene&&) = delete;
 
-					void Initialize(HWND hWnd);
+					void Initialize(HWND hWnd, IDCompositionVisual* pCompVisual);
 					void Resize(UINT w, UINT h) const;
 
 				private:

@@ -9,8 +9,9 @@ namespace Voicemeeter {
 			namespace Presentation {
 				class Sprite {
 				public:
+					using BYTE = unsigned char;
 					struct Region {
-						size_t Offset;
+						const void* pData;
 						size_t RowPitch;
 						size_t SlicePitch;
 					};
@@ -24,7 +25,7 @@ namespace Voicemeeter {
 
 					Region get_Region(Sprite_element element, size_t mipmap) const;
 
-					Sprite() = default;
+					Sprite();
 					Sprite(const Sprite&) = delete;
 					Sprite(Sprite&&) = delete;
 
@@ -33,9 +34,8 @@ namespace Voicemeeter {
 					Sprite& operator=(const Sprite&) = delete;
 					Sprite& operator=(Sprite&&) = delete;
 
-					std::vector<unsigned char> LoadSprite();
-
 				private:
+					std::vector<BYTE> m_buffer;
 					std::array<std::vector<Region>, MIPMAP_COUNT> m_manifest;
 				};
 			}

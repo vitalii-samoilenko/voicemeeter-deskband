@@ -116,7 +116,7 @@ void DrawingEngine::Context::Resize(UINT w, UINT h) {
 	m_frameIndex = m_pSwapChain->GetCurrentBackBufferIndex();
 }
 
-DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd)
+DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd, IDCompositionVisual* pCompVisual)
 	: m_pDevice{ pDevice }
 	, m_pQueue{ nullptr }
 	, m_pRtvHeap{ nullptr }
@@ -171,28 +171,9 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		DXGI_MWA_NO_WINDOW_CHANGES
 	), "Failed to disable DXGI window monitoring");
 
-	ComPtr<IDCompositionDevice> pCompDevice{ nullptr };
-	ThrowIfFailed(DCompositionCreateDevice3(
-		NULL,
-		IID_PPV_ARGS(&pCompDevice)
-	), "Composition device creation failed");
-	ThrowIfFailed(pCompDevice->CreateTargetForHwnd(
-		hWnd,
-		TRUE,
-		&m_pCompTarget
-	), "Composition target creation failed");
-	ComPtr<IDCompositionVisual> pCompVisual{ nullptr };
-	ThrowIfFailed(pCompDevice->CreateVisual(
-		&pCompVisual
-	), "Composition visual creation failed");
 	ThrowIfFailed(pCompVisual->SetContent(
 		m_pSwapChain.Get()
 	), "Failed to set composition visual content");
-	ThrowIfFailed(m_pCompTarget->SetRoot(
-		pCompVisual.Get()
-	), "Failed to set composition target root");
-	ThrowIfFailed(pCompDevice->Commit(
-	), "Failed to commit composition device");
 
 	for (Frame& frame : m_pFrame) {
 		ThrowIfFailed(pDevice->CreateCommandAllocator(
@@ -208,6 +189,10 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		), "D3D12 command list creation failed");
 	}
 
+	{
+		Sprite s{};
+	}
+
 	ThrowIfFailed(pDevice->CreateFence(
 		0U,
 		D3D12_FENCE_FLAG_NONE,
@@ -220,9 +205,6 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		FALSE,
 		NULL
 	);
-
-	Sprite s{};
-	s.LoadSprite();
 }
 
 void DrawingEngine::Context::WaitForFrame(UINT64 id) {
