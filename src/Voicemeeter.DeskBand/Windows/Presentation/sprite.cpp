@@ -19,12 +19,11 @@ static constexpr size_t P_SIZE{ 32 / sizeof(Sprite::BYTE) };
 
 using Microsoft::WRL::ComPtr;
 
-static void DrawSprite(Sprite::buffer_type& buffer, Sprite::manifest_type& manifest) {
-	D2D1_ELLIPSE out{ D2D1::Ellipse(D2D1::Point2F(OUT_R, OUT_R), OUT_R, OUT_R) };
-	FLOAT stroke{ 2.F };
+using MipmapLevel = std::array<WICRect, 4>;
+using MipmapLevels = std::array<MipmapLevel, Sprite::MIPMAP_COUNT>;
 
-	using MipmapLevel = std::array<WICRect, 4>;
-	std::array<MipmapLevel, Sprite::MIPMAP_COUNT> ppRect{
+inline static MipmapLevels GetLayout(const Sprite::manifest_type& manifest) {
+	return MipmapLevels{
 		MipmapLevel{
 			WICRect{
 				2 * OUT_R, 0,
@@ -70,6 +69,13 @@ static void DrawSprite(Sprite::buffer_type& buffer, Sprite::manifest_type& manif
 			}
 		}
 	};
+}
+
+static void DrawSprite(Sprite::buffer_type& buffer, const Sprite::manifest_type& manifest) {
+	MipmapLevels ppRect{ GetLayout(manifest) };
+
+	D2D1_ELLIPSE out{ D2D1::Ellipse(D2D1::Point2F(OUT_R, OUT_R), OUT_R, OUT_R) };
+	FLOAT stroke{ 2.F };
 
 	ThrowIfFailed(CoInitialize(
 		NULL
@@ -278,6 +284,46 @@ static void DrawSprite(Sprite::buffer_type& buffer, Sprite::manifest_type& manif
 		}
 	}
 }
+
+static void LoadSprite(Sprite::buffer_type& buffer, const Sprite::manifest_type& manifest) {
+	MipmapLevels ppRect{ GetLayout(manifest) };
+
+	WICPixelFormatGUID format{ GUID_WICPixelFormat32bppBGR };
+
+	ThrowIfFailed(CoInitialize(
+		NULL
+	), "COM initialization failed");
+
+	ComPtr<IWICImagingFactory2> pWicFactory{ nullptr };
+	ThrowIfFailed(CoCreateInstance(
+		CLSID_WICImagingFactory,
+		NULL,
+		CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&pWicFactory)
+	), "WIC factory creation failed");
+
+	ComPtr<IWICBitmapDecoder> pDecoder{ nullptr };
+	ThrowIfFailed(pWicFactory->CreateDecoderFromFilename(
+		LR"(sprite.bmp)", NULL, GENERIC_READ,
+		WICDecodeMetadataCacheOnLoad,
+		&pDecoder
+	), "Decoder creation failed");
+	ComPtr<IWICBitmapFrameDecode> pFrame{ nullptr };
+	ThrowIfFailed(pDecoder->GetFrame(
+		0U, &pFrame
+	), "Frame creation failed");
+
+	for (size_t mipmap{ 0 }; mipmap < Sprite::MIPMAP_COUNT; ++mipmap) {
+		for (size_t element{ Sprite::out_a_act }; element <= Sprite::out_b_inact; ++element) {
+			ThrowIfFailed(pFrame->CopyPixels(
+				&ppRect[mipmap][element],
+				manifest[mipmap][element].RowPitch,
+				manifest[mipmap][element].SlicePitch,
+				manifest[mipmap][element].pData
+			), "Bitmap copy failed");
+		}
+	}
+}
 #endif
 
 Sprite::Region Sprite::get_Region(Sprite_element element, size_t mipmap) const {
@@ -299,6 +345,7 @@ Sprite::Sprite()
 		}
 	}
 #ifndef NDEBUG
-	DrawSprite(m_buffer, m_manifest);
+	//DrawSprite(m_buffer, m_manifest);
+	LoadSprite(m_buffer, m_manifest);
 #endif
 }

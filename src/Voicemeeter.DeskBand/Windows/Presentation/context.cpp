@@ -1,5 +1,8 @@
 #include "drawingengine.h"
 
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler")
+
 #include "../wrappers.h"
 
 #include "sprite.h"
@@ -22,15 +25,24 @@ void DrawingEngine::Context::Render() {
 	), "Command allocator reset failed");
 	ThrowIfFailed(frame.pList->Reset(
 		frame.pAllocator.Get(),
-		nullptr
+		m_pState.Get()
 	), "Command list reset failed");
+
+	frame.pList->SetGraphicsRootSignature(m_pRoot.Get());
+	ID3D12DescriptorHeap* ppHeaps[] = { m_pSrvHeap.Get() };
+	frame.pList->SetDescriptorHeaps(std::size(ppHeaps), ppHeaps);
+	frame.pList->SetGraphicsRoot32BitConstants(0U, 4U, ColorF{ 112 / 255.F, 195 / 255.F, 153 / 255.F, 1.F }, 0U);
+	frame.pList->SetGraphicsRootDescriptorTable(1, m_pSrvHeap->GetGPUDescriptorHandleForHeapStart());
+	frame.pList->RSSetViewports(1U, &m_viewport);
+	frame.pList->RSSetScissorRects(1U, &m_scissor);
 
 	CD3DX12_RESOURCE_BARRIER presentToTarget{
 		CD3DX12_RESOURCE_BARRIER::Transition(
 			frame.pRenderTarget.Get(),
 			D3D12_RESOURCE_STATE_PRESENT,
 			D3D12_RESOURCE_STATE_RENDER_TARGET
-	) };
+		)
+	};
 	frame.pList->ResourceBarrier(
 		1U, &presentToTarget
 	);
@@ -39,11 +51,16 @@ void DrawingEngine::Context::Render() {
 		m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
 		static_cast<INT>(m_frameIndex), m_rtvDescSize
 	};
+	frame.pList->OMSetRenderTargets(1U, &rtvHandle, FALSE, nullptr);
+	frame.pList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	frame.pList->IASetVertexBuffers(0U, 1U, &m_vertView);
+
 	frame.pList->ClearRenderTargetView(
 		rtvHandle,
 		ColorF{ 44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F },
 		0U, nullptr
 	);
+	frame.pList->DrawInstanced(4U, 1U, 0U, 0U);
 
 	CD3DX12_RESOURCE_BARRIER targetToPresent{
 		CD3DX12_RESOURCE_BARRIER::Transition(
@@ -80,6 +97,10 @@ void DrawingEngine::Context::Update() {
 void DrawingEngine::Context::Resize(UINT w, UINT h) {
 	w = max(w, 8U);
 	h = max(h, 8U);
+
+	m_viewport.Width = m_scissor.right = w;
+	m_viewport.Height = m_scissor.bottom = h;
+	m_viewport.MaxDepth = 1.F;
 
 	WaitForFrame(m_frameId);
 
@@ -119,20 +140,63 @@ void DrawingEngine::Context::Resize(UINT w, UINT h) {
 DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd, IDCompositionVisual* pCompVisual)
 	: m_pDevice{ pDevice }
 	, m_pQueue{ nullptr }
+	, m_pRoot{ nullptr }
 	, m_pRtvHeap{ nullptr }
+	, m_pSrvHeap{ nullptr }
 	, m_rtvDescSize{ 0U }
 	, m_pSwapChain{ nullptr }
-	, m_pCompTarget{ nullptr }
 	, m_pFrame{}
 	, m_frameIndex{ 0U }
 	, m_frameId{ 0U }
 	, m_pFence{ nullptr }
-	, m_fenceEvent{ NULL } {
+	, m_fenceEvent{ NULL }
+	, m_vertView{}
+	, m_vert{ nullptr }
+	, m_text{ nullptr }
+	, m_viewport{}
+	, m_scissor{} {
 	D3D12_COMMAND_QUEUE_DESC qDesc{};
 	ThrowIfFailed(pDevice->CreateCommandQueue(
 		&qDesc,
 		IID_PPV_ARGS(&m_pQueue)
 	), "D3D12 command queue creation failed");
+
+	CD3DX12_DESCRIPTOR_RANGE ranges[1]{};
+	ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1U, 0U);
+
+	CD3DX12_ROOT_PARAMETER params[2]{};
+	params[0].InitAsConstants(4U, 0U, 0U, D3D12_SHADER_VISIBILITY_PIXEL);
+	params[1].InitAsDescriptorTable(1U, &ranges[0], D3D12_SHADER_VISIBILITY_PIXEL);
+
+	D3D12_STATIC_SAMPLER_DESC sampler{};
+	sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
+	sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler.MipLODBias = 0;
+	sampler.MaxAnisotropy = 0;
+	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	sampler.MinLOD = 0.F;
+	sampler.MaxLOD = D3D12_FLOAT32_MAX;
+	sampler.ShaderRegister = 0U;
+	sampler.RegisterSpace = 0U;
+	sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	CD3DX12_ROOT_SIGNATURE_DESC rootDesc{};
+	rootDesc.Init(std::size(params), params, 1U, &sampler, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	ComPtr<ID3DBlob> signature{ nullptr };
+	ComPtr<ID3DBlob> error{ nullptr };
+	ThrowIfFailed(D3D12SerializeRootSignature(
+		&rootDesc,
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		&signature, &error
+	), "Root signature serialization failed");
+	ThrowIfFailed(pDevice->CreateRootSignature(
+		0U,
+		signature->GetBufferPointer(), signature->GetBufferSize(),
+		IID_PPV_ARGS(&m_pRoot)
+	), "Root signature creation failed");
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -189,10 +253,6 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		), "D3D12 command list creation failed");
 	}
 
-	{
-		Sprite s{};
-	}
-
 	ThrowIfFailed(pDevice->CreateFence(
 		0U,
 		D3D12_FENCE_FLAG_NONE,
@@ -205,6 +265,215 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		FALSE,
 		NULL
 	);
+
+	{
+		Sprite s{};
+		Sprite::Region out_a_act{ s.get_Region(Sprite::out_a_act, 1) };
+
+		D3D12_HEAP_PROPERTIES textureHeapProps{ D3D12_HEAP_TYPE_DEFAULT };
+		D3D12_RESOURCE_DESC textureDesc{};
+		textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		textureDesc.Width = out_a_act.Width;
+		textureDesc.Height = out_a_act.Height;
+		textureDesc.DepthOrArraySize = 1U;
+		textureDesc.MipLevels = 1U;
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.SampleDesc.Count = 1U;
+		ThrowIfFailed(pDevice->CreateCommittedResource(
+			&textureHeapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&textureDesc,
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			nullptr,
+			IID_PPV_ARGS(&m_text)
+		), "Texture creation failed");
+
+		ComPtr<ID3D12Resource> pTextureUploadHeap{ nullptr };
+		D3D12_HEAP_PROPERTIES uploadHeapProps{ D3D12_HEAP_TYPE_UPLOAD };
+		D3D12_RESOURCE_DESC uploadHeapDesc{
+			CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(m_text.Get(), 0, 1))
+		};
+		ThrowIfFailed(pDevice->CreateCommittedResource(
+			&uploadHeapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&uploadHeapDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&pTextureUploadHeap)
+		), "Texture upload heap creation failed");
+
+		Frame& frame{ m_pFrame[0] };
+		frame.Id = ++m_frameIndex;
+
+		ThrowIfFailed(frame.pAllocator->Reset(
+		), "Command allocator reset failed");
+		ThrowIfFailed(frame.pList->Reset(
+			frame.pAllocator.Get(),
+			nullptr
+		), "Command list reset failed");
+
+		D3D12_SUBRESOURCE_DATA textureData{};
+		textureData.pData = out_a_act.pData;
+		textureData.RowPitch = out_a_act.RowPitch;
+		textureData.SlicePitch = out_a_act.SlicePitch;
+		UpdateSubresources(frame.pList.Get(), m_text.Get(), pTextureUploadHeap.Get(), 0, 0, 1, &textureData);
+
+		CD3DX12_RESOURCE_BARRIER copyToShader{
+			CD3DX12_RESOURCE_BARRIER::Transition(
+				m_text.Get(),
+				D3D12_RESOURCE_STATE_COPY_DEST,
+				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+			)
+		};
+		frame.pList->ResourceBarrier(1U, &copyToShader);
+
+		ThrowIfFailed(frame.pList->Close(
+		), "Failed to close command list");
+
+		ID3D12CommandList* ppList[]{ frame.pList.Get() };
+		m_pQueue->ExecuteCommandLists(std::size(ppList), ppList);
+		m_pQueue->Signal(m_pFence.Get(), frame.Id);
+
+		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+		srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		srvHeapDesc.NumDescriptors = 1;
+		srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		ThrowIfFailed(pDevice->CreateDescriptorHeap(
+			&srvHeapDesc,
+			IID_PPV_ARGS(&m_pSrvHeap)
+		), "SRV descriptor heap creation failed");
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = textureDesc.Format;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.Texture2D.MipLevels = 1;
+		pDevice->CreateShaderResourceView(m_text.Get(), &srvDesc, m_pSrvHeap->GetCPUDescriptorHandleForHeapStart());
+
+		struct Vertex {
+			FLOAT xyz[3];
+			FLOAT uv[2];
+		};
+		Vertex v[4]{
+			Vertex{
+				{ -1.F, 1.F, 0.F },
+				{ 0.F, 0.F }
+			},
+			Vertex{
+				{ 1.F, 1.F, 0.F },
+				{ 1.F, 0.F }
+			},
+			Vertex{
+				{ -1.F, -1.F, 0.F },
+				{ 0.F, 1.F }
+			},
+			Vertex{
+				{ 1.F, -1.F, 0.F },
+				{ 1.F, 1.F }
+			},
+		};
+		size_t vSize{ sizeof(v) };
+
+		// Note: using upload heaps to transfer static data like vert buffers is not 
+		// recommended. Every time the GPU needs it, the upload heap will be marshalled 
+		// over. Please read up on Default Heap usage. An upload heap is used here for 
+		// code simplicity and because there are very few verts to actually transfer.
+		CD3DX12_HEAP_PROPERTIES uploadProps{ D3D12_HEAP_TYPE_UPLOAD };
+		CD3DX12_RESOURCE_DESC bufferDesc{
+			CD3DX12_RESOURCE_DESC::Buffer(vSize)
+		};
+		ThrowIfFailed(pDevice->CreateCommittedResource(
+			&uploadProps,
+			D3D12_HEAP_FLAG_NONE,
+			&bufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&m_vert)
+		), "Vertex buffer creation failed");
+
+		void* pVBegin;
+		CD3DX12_RANGE readRange(0, 0);
+		ThrowIfFailed(m_vert->Map(
+			0U, &readRange,
+			&pVBegin
+		), "Failed to map vertex buffer");
+		memcpy(pVBegin, v, vSize);
+		m_vert->Unmap(0U, nullptr);
+
+		m_vertView.BufferLocation = m_vert->GetGPUVirtualAddress();
+		m_vertView.StrideInBytes = sizeof(Vertex);
+		m_vertView.SizeInBytes = vSize;
+
+		ComPtr<ID3DBlob> vertexShader;
+		ComPtr<ID3DBlob> pixelShader;
+
+#if defined(_DEBUG)
+		// Enable better shader debugging with the graphics debugging tools.
+		UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+		UINT compileFlags = 0;
+#endif
+
+		ThrowIfFailed(D3DCompileFromFile(
+			L"shaders.hlsl",
+			nullptr, nullptr,
+			"VSMain", "vs_5_0",
+			compileFlags, 0U,
+			&vertexShader, nullptr
+		), "Vertex shader compilation failed");
+		ThrowIfFailed(D3DCompileFromFile(
+			L"shaders.hlsl",
+			nullptr, nullptr,
+			"PSMain", "ps_5_0",
+			compileFlags, 0U,
+			&pixelShader, nullptr
+		), "Pixel shader compilation failed");
+
+		// Define the vertex input layout.
+		D3D12_INPUT_ELEMENT_DESC inputElementDescs[]{
+			{ "POSITION", 0U, DXGI_FORMAT_R32G32B32_FLOAT, 0U, 0U, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0U },
+			{ "TEXCOORD", 0U, DXGI_FORMAT_R32G32_FLOAT, 0U, 12U, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0U }
+		};
+
+		const D3D12_BLEND_DESC AlphaBlend{
+			FALSE, // AlphaToCoverageEnable
+			FALSE, // IndependentBlendEnable
+			{
+				TRUE, // BlendEnable
+				FALSE, // LogicOpEnable
+				D3D12_BLEND_ONE, // SrcBlend
+				D3D12_BLEND_INV_SRC_ALPHA, // DestBlend
+				D3D12_BLEND_OP_ADD, // BlendOp
+				D3D12_BLEND_ONE, // SrcBlendAlpha
+				D3D12_BLEND_INV_SRC_ALPHA, // DestBlendAlpha
+				D3D12_BLEND_OP_ADD, // BlendOpAlpha
+				D3D12_LOGIC_OP_CLEAR, // LogicOp
+				D3D12_COLOR_WRITE_ENABLE_ALL // RenderTargetWriteMask
+			}
+		};
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
+		psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+		psoDesc.pRootSignature = m_pRoot.Get();
+		psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader.Get());
+		psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader.Get());
+		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		psoDesc.BlendState = AlphaBlend;
+		psoDesc.DepthStencilState.DepthEnable = FALSE;
+		psoDesc.DepthStencilState.StencilEnable = FALSE;
+		psoDesc.SampleMask = UINT_MAX;
+		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		psoDesc.NumRenderTargets = 1;
+		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		psoDesc.SampleDesc.Count = 1;
+		ThrowIfFailed(pDevice->CreateGraphicsPipelineState(
+			&psoDesc,
+			IID_PPV_ARGS(&m_pState)
+		), "Pipeline state creation failed");
+
+		WaitForFrame(frame.Id);
+	}
 }
 
 void DrawingEngine::Context::WaitForFrame(UINT64 id) {

@@ -6,6 +6,7 @@
 #include <wrl/client.h>
 #include <dxgi1_6.h>
 #pragma comment(lib, "dxgi")
+#include <initguid.h>
 #include <d3d12.h>
 #pragma comment(lib, "d3d12")
 #include <d3dx12.h>
@@ -50,15 +51,23 @@ namespace Voicemeeter {
 
 						ComPtr<ID3D12Device8> m_pDevice;
 						ComPtr<ID3D12CommandQueue> m_pQueue;
+						ComPtr<ID3D12RootSignature> m_pRoot;
+						ComPtr<ID3D12PipelineState> m_pState;
 						ComPtr<ID3D12DescriptorHeap> m_pRtvHeap;
+						ComPtr<ID3D12DescriptorHeap> m_pSrvHeap;
 						UINT m_rtvDescSize;
 						ComPtr<IDXGISwapChain4> m_pSwapChain;
-						ComPtr<IDCompositionTarget> m_pCompTarget;
 						std::array<Frame, FrameCount> m_pFrame;
 						UINT m_frameIndex;
 						UINT64 m_frameId;
 						ComPtr<ID3D12Fence1> m_pFence;
 						HANDLE m_fenceEvent;
+
+						D3D12_VERTEX_BUFFER_VIEW m_vertView;
+						ComPtr<ID3D12Resource> m_vert;
+						ComPtr<ID3D12Resource> m_text;
+						D3D12_VIEWPORT m_viewport;
+						D3D12_RECT m_scissor;
 
 						Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice, HWND hWnd, IDCompositionVisual* pCompVisual);
 

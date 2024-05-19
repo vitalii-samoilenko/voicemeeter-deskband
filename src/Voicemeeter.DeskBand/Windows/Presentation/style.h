@@ -4,7 +4,7 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace Windows {
 			namespace Presentation {
-				using ColorF = FLOAT[4];
+				using ColorF = float[4];
 
 				struct Style {
 					static inline Style Default() {
