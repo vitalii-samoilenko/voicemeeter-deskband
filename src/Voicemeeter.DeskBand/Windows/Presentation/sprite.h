@@ -10,8 +10,11 @@ namespace Voicemeeter {
 				class Sprite {
 				public:
 					using BYTE = unsigned char;
+
 					struct Region {
-						const void* pData;
+						size_t Width;
+						size_t Height;
+						BYTE* pData;
 						size_t RowPitch;
 						size_t SlicePitch;
 					};
@@ -22,6 +25,9 @@ namespace Voicemeeter {
 						out_b_inact = 3
 					};
 					static constexpr size_t MIPMAP_COUNT{ 2 };
+
+					using buffer_type = std::vector<BYTE>;
+					using manifest_type = std::array<std::vector<Region>, MIPMAP_COUNT>;
 
 					Region get_Region(Sprite_element element, size_t mipmap) const;
 
@@ -35,8 +41,8 @@ namespace Voicemeeter {
 					Sprite& operator=(Sprite&&) = delete;
 
 				private:
-					std::vector<BYTE> m_buffer;
-					std::array<std::vector<Region>, MIPMAP_COUNT> m_manifest;
+					buffer_type m_buffer;
+					manifest_type m_manifest;
 				};
 			}
 		}

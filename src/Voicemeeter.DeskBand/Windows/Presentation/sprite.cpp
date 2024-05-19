@@ -19,46 +19,54 @@ static constexpr size_t P_SIZE{ 32 / sizeof(Sprite::BYTE) };
 
 using Microsoft::WRL::ComPtr;
 
-static void DrawSprite(std::vector<BYTE>& buffer) {
+static void DrawSprite(Sprite::buffer_type& buffer, Sprite::manifest_type& manifest) {
 	D2D1_ELLIPSE out{ D2D1::Ellipse(D2D1::Point2F(OUT_R, OUT_R), OUT_R, OUT_R) };
 	FLOAT stroke{ 2.F };
 
-	using MipmapLevel = std::array<WICRect, Sprite::out_b_inact + 1>;
-	std::array<MipmapLevel, Sprite::MIPMAP_COUNT> regions{
-		MipmapLevel{ // MIP 0
-			WICRect{ // out_a_act
+	using MipmapLevel = std::array<WICRect, 4>;
+	std::array<MipmapLevel, Sprite::MIPMAP_COUNT> ppRect{
+		MipmapLevel{
+			WICRect{
 				2 * OUT_R, 0,
-				4 * OUT_R, 4 * OUT_R
+				static_cast<INT>(manifest[0][Sprite::out_a_act].Width),
+				static_cast<INT>(manifest[0][Sprite::out_a_act].Height)
 			},
-			WICRect{ // out_b_act
+			WICRect{
 				6 * OUT_R, 0,
-				4 * OUT_R, 4 * OUT_R
+				static_cast<INT>(manifest[0][Sprite::out_b_act].Width),
+				static_cast<INT>(manifest[0][Sprite::out_b_act].Height)
 			},
-			WICRect{ // out_a_inact
+			WICRect{
 				2 * OUT_R, 4 * OUT_R,
-				4 * OUT_R, 4 * OUT_R
+				static_cast<INT>(manifest[0][Sprite::out_a_inact].Width),
+				static_cast<INT>(manifest[0][Sprite::out_a_inact].Height)
 			},
-			WICRect{ // out_b_inact
+			WICRect{
 				6 * OUT_R, 4 * OUT_R,
-				4 * OUT_R, 4 * OUT_R
+				static_cast<INT>(manifest[0][Sprite::out_b_inact].Width),
+				static_cast<INT>(manifest[0][Sprite::out_b_inact].Height)
 			}
 		},
-		MipmapLevel{ // MIP 1
-			WICRect{ // out_a_act
+		MipmapLevel{
+			WICRect{
 				0, 0,
-				2 * OUT_R, 2 * OUT_R
+				static_cast<INT>(manifest[1][Sprite::out_a_act].Width),
+				static_cast<INT>(manifest[1][Sprite::out_a_act].Height)
 			},
-			WICRect{ // out_b_act
+			WICRect{
 				0, 2 * OUT_R,
-				2 * OUT_R, 2 * OUT_R
+				static_cast<INT>(manifest[1][Sprite::out_b_act].Width),
+				static_cast<INT>(manifest[1][Sprite::out_b_act].Height)
 			},
-			WICRect{ // out_a_inact
+			WICRect{
 				0, 4 * OUT_R,
-				2 * OUT_R, 2 * OUT_R
+				static_cast<INT>(manifest[1][Sprite::out_a_inact].Width),
+				static_cast<INT>(manifest[1][Sprite::out_a_inact].Height)
 			},
-			WICRect{ // out_b_inact
+			WICRect{
 				0, 6 * OUT_R,
-				2 * OUT_R, 2 * OUT_R
+				static_cast<INT>(manifest[1][Sprite::out_b_inact].Width),
+				static_cast<INT>(manifest[1][Sprite::out_b_inact].Height)
 			}
 		}
 	};
@@ -199,28 +207,28 @@ static void DrawSprite(std::vector<BYTE>& buffer) {
 	pRenderTarget->BeginDraw();
 	pRenderTarget->Clear(back);
 	// out_a_act 1x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(regions[1][Sprite::out_a_act].X, regions[1][Sprite::out_a_act].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(ppRect[1][Sprite::out_a_act].X, ppRect[1][Sprite::out_a_act].Y));
 	DrawAct(pOutALayout.Get());
 	// out_b_act 1x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(regions[1][Sprite::out_b_act].X, regions[1][Sprite::out_b_act].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(ppRect[1][Sprite::out_b_act].X, ppRect[1][Sprite::out_b_act].Y));
 	DrawAct(pOutBLayout.Get());
 	// out_a_inact 1x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(regions[1][Sprite::out_a_inact].X, regions[1][Sprite::out_a_inact].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(ppRect[1][Sprite::out_a_inact].X, ppRect[1][Sprite::out_a_inact].Y));
 	DrawInact(pOutALayout.Get());
 	// out_b_inact 1x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(regions[1][Sprite::out_b_inact].X, regions[1][Sprite::out_b_inact].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(ppRect[1][Sprite::out_b_inact].X, ppRect[1][Sprite::out_b_inact].Y));
 	DrawInact(pOutBLayout.Get());
 	// out_a_act 2x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(regions[0][Sprite::out_a_act].X, regions[0][Sprite::out_a_act].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(ppRect[0][Sprite::out_a_act].X, ppRect[0][Sprite::out_a_act].Y));
 	DrawAct(pOutALayout.Get());
 	// out_b_act 2x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(regions[0][Sprite::out_b_act].X, regions[0][Sprite::out_b_act].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(ppRect[0][Sprite::out_b_act].X, ppRect[0][Sprite::out_b_act].Y));
 	DrawAct(pOutBLayout.Get());
 	// out_a_inact 2x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(regions[0][Sprite::out_a_inact].X, regions[0][Sprite::out_a_inact].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(ppRect[0][Sprite::out_a_inact].X, ppRect[0][Sprite::out_a_inact].Y));
 	DrawInact(pOutALayout.Get());
 	// out_b_inact 2x
-	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(regions[0][Sprite::out_b_inact].X, regions[0][Sprite::out_b_inact].Y));
+	pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(2.F, 2.F) * D2D1::Matrix3x2F::Translation(ppRect[0][Sprite::out_b_inact].X, ppRect[0][Sprite::out_b_inact].Y));
 	DrawInact(pOutBLayout.Get());
 	ThrowIfFailed(pRenderTarget->EndDraw(
 	), "Sprite creation failed");
@@ -259,18 +267,14 @@ static void DrawSprite(std::vector<BYTE>& buffer) {
 		pBmp.Get(), NULL
 	), "Frame write failed");
 
-	for (size_t offset{ 0 }, mipmap{ 0 }; mipmap < Sprite::MIPMAP_COUNT; ++mipmap) {
+	for (size_t mipmap{ 0 }; mipmap < Sprite::MIPMAP_COUNT; ++mipmap) {
 		for (size_t element{ Sprite::out_a_act }; element <= Sprite::out_b_inact; ++element) {
-			size_t rowPitch{ regions[mipmap][element].Width * P_SIZE };
-			size_t slicePitch{ rowPitch * regions[mipmap][element].Height };
-
 			ThrowIfFailed(pBmp->CopyPixels(
-				&regions[mipmap][element],
-				rowPitch,
-				slicePitch, &buffer[offset]
+				&ppRect[mipmap][element],
+				manifest[mipmap][element].RowPitch,
+				manifest[mipmap][element].SlicePitch,
+				manifest[mipmap][element].pData
 			), "Bitmap copy failed");
-
-			offset += slicePitch;
 		}
 	}
 }
@@ -283,12 +287,10 @@ Sprite::Region Sprite::get_Region(Sprite_element element, size_t mipmap) const {
 Sprite::Sprite()
 	: m_buffer(SPRITE_WIDTH * SPRITE_HEGHT * P_SIZE)
 	, m_manifest{} {
-#ifndef NDEBUG
-	DrawSprite(m_buffer);
-#endif
 	for (size_t offset{ 0 }, mipmap{ 0 }, d{ OUT_R * 4 }; mipmap < MIPMAP_COUNT; ++mipmap, d /= 2) {
 		for (size_t element{ out_a_act }, rowPitch{ d * P_SIZE }, slicePitch{ rowPitch * d }; element <= out_b_inact; ++element) {
 			m_manifest[mipmap].push_back(Region{
+				d, d,
 				&m_buffer[offset],
 				rowPitch,
 				slicePitch
@@ -296,4 +298,7 @@ Sprite::Sprite()
 			offset += slicePitch;
 		}
 	}
+#ifndef NDEBUG
+	DrawSprite(m_buffer, m_manifest);
+#endif
 }
