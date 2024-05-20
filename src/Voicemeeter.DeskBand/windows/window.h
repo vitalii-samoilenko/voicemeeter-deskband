@@ -23,6 +23,7 @@ namespace Voicemeeter {
 				HWND m_hWnd;
 				Presentation::Scene& m_scene;
 				ComPtr<IDCompositionTarget> m_pCompTarget;
+				UINT m_dpi;
 
 				static LRESULT WindowProcW(
 					HWND hWnd,

@@ -1,5 +1,6 @@
 #include "Windows/window.h"
 #include "Windows/error.h"
+#include "Windows/wrappers.h"
 #include "errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
@@ -11,11 +12,15 @@ int WINAPI wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 ) {
-	Style style{ Style::Default() };
+	const Style style{ Style::Default() };
 	std::unique_ptr<DrawingEngine> pDrwEngine{ nullptr };
 	std::unique_ptr<Scene> pScene{ nullptr };
 	std::unique_ptr<Window> pWnd{ nullptr };
 	try {
+		ThrowIfFailed(CoInitialize(
+			NULL
+		), "COM initialization failed");
+
 		pDrwEngine.reset(new DrawingEngine(style));
 		pScene.reset(new Scene(*pDrwEngine));
 		pWnd.reset(new Window{ hInstance, *pScene });

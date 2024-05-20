@@ -5,31 +5,36 @@
 
 using namespace Voicemeeter::DeskBand::Windows;
 
-static const LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
-static const LRESULT OK{ 0 };
+static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
+static constexpr DWORD EX_STYLE{ WS_EX_NOREDIRECTIONBITMAP };
+static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
+
+static constexpr LRESULT OK{ 0 };
 
 Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 	: m_hWnd{ NULL }
 	, m_scene { scene }
-	, m_pCompTarget{ nullptr } {
-	WNDCLASSW wndClass{
-		0U,								//.style
-		WindowProcW,					//.lpfnWndProc
-		0, 0,							//.cbClsExtra, .cbWndExtra
-		hInstance,						//.hInstance
-		NULL,							//.hIcon
-		wLoadCursorW(NULL, IDC_ARROW),	//.hCursor
-		NULL,							//.hbrBackground
-		NULL,							//.lpszMenuName
-		LPSZ_CLASS_NAME					//.lpszClassName
-	};
+	, m_pCompTarget{ nullptr }
+	, m_dpi{ USER_DEFAULT_SCREEN_DPI } {
+	wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
+	RECT rc{};
+	rc.bottom = 46;
+	rc.right = 3 * rc.bottom;
+	wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, m_dpi);
+
+	WNDCLASSW wndClass{};
+	wndClass.hInstance = hInstance;
+	wndClass.lpszClassName = LPSZ_CLASS_NAME;
+	wndClass.lpfnWndProc = WindowProcW;
+	wndClass.hCursor = wLoadCursorW(NULL, IDC_ARROW);
 	wRegisterClassW(&wndClass);
 	wCreateWindowExW(
-		WS_EX_NOREDIRECTIONBITMAP,
+		EX_STYLE,
 		LPSZ_CLASS_NAME,
 		NULL,
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		STYLE,
+		CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top,
 		NULL,
 		NULL,
 		hInstance,
@@ -83,23 +88,46 @@ LRESULT CALLBACK Window::WindowProcW(
 		Window* pWnd{ wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
 
 		switch (uMsg) {
-		case WM_NCCREATE:
+		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
+			pWnd->m_dpi = GetDpiForWindow(hWnd);
 
 			if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
 				return FALSE;
 			}
-			break;
-		case WM_DESTROY:
+		} break;
+		case WM_DESTROY: {
 			PostQuitMessage(0);
-
-			return OK;
+		} return OK;
 		case WM_SIZE: {
 			pWnd->m_scene.Resize(LOWORD(lParam), HIWORD(lParam));
+		} return OK;
+		case WM_GETDPISCALEDSIZE: {
+			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };
 
-			return OK;
-		}
+			RECT rc{};
+			wGetClientRect(hWnd, &rc);
+			rc.right *= scale;
+			rc.bottom *= scale;
+			wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, wParam);
+
+			LPSIZE pSize{ reinterpret_cast<LPSIZE>(lParam) };
+			pSize->cx = rc.right - rc.left;
+			pSize->cy = rc.bottom - rc.top;
+
+			pWnd->m_dpi = wParam;
+		} return TRUE;
+		case WM_DPICHANGED: {
+			const LPRECT pRc{ reinterpret_cast<LPRECT>(lParam) };
+
+			wSetWindowPos(
+				hWnd, NULL,
+				pRc->left, pRc->top,
+				pRc->right - pRc->left, pRc->bottom - pRc->top,
+				0U
+			);
+		} return OK;
 		}
 	}
 	catch (const windows_error& e) {

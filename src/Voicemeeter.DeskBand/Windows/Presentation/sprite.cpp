@@ -77,10 +77,6 @@ static void DrawSprite(Sprite::buffer_type& buffer, const Sprite::manifest_type&
 	D2D1_ELLIPSE out{ D2D1::Ellipse(D2D1::Point2F(OUT_R, OUT_R), OUT_R, OUT_R) };
 	FLOAT stroke{ 2.F };
 
-	ThrowIfFailed(CoInitialize(
-		NULL
-	), "COM initialization failed");
-
 	ComPtr<IWICImagingFactory2> pWicFactory{ nullptr };
 	ThrowIfFailed(CoCreateInstance(
 		CLSID_WICImagingFactory,
@@ -289,10 +285,6 @@ static void LoadSprite(Sprite::buffer_type& buffer, const Sprite::manifest_type&
 	MipmapLevels ppRect{ GetLayout(manifest) };
 
 	WICPixelFormatGUID format{ GUID_WICPixelFormat32bppBGR };
-
-	ThrowIfFailed(CoInitialize(
-		NULL
-	), "COM initialization failed");
 
 	ComPtr<IWICImagingFactory2> pWicFactory{ nullptr };
 	ThrowIfFailed(CoCreateInstance(

@@ -128,14 +128,14 @@ inline void wInvalidateRect(
 	_In_opt_ HWND hWnd,
 	_In_opt_ CONST RECT* lpRect,
 	_In_ BOOL bErase
-) {
-	if (InvalidateRect(
-		hWnd,
-		lpRect,
-		bErase
-	) == FALSE) {
-		throw windows_error{ "Rectangle invalidation failed" };
-	}
+		) {
+			if (InvalidateRect(
+				hWnd,
+				lpRect,
+				bErase
+			) == FALSE) {
+				throw windows_error{ "Rectangle invalidation failed" };
+			}
 }
 
 inline HCURSOR wLoadCursorW(
@@ -186,5 +186,52 @@ inline void wCloseHandle(
 		hObject
 	) == FALSE) {
 		throw windows_error{ "Failed to close handle" };
+	}
+}
+
+inline void wSetProcessDpiAwarenessContext(
+	_In_ DPI_AWARENESS_CONTEXT value
+) {
+	if (SetProcessDpiAwarenessContext(
+		value
+	) == FALSE) {
+		throw windows_error{ "Failed to set process DPI awareness" };
+	}
+}
+
+inline void wAdjustWindowRectExForDpi(
+	_Inout_ LPRECT lpRect,
+	_In_ DWORD dwStyle,
+	_In_ BOOL bMenu,
+	_In_ DWORD dwExStyle,
+	_In_ UINT dpi
+) {
+	if (AdjustWindowRectExForDpi(
+		lpRect,
+		dwStyle,
+		bMenu,
+		dwExStyle,
+		dpi
+	) == FALSE) {
+		throw windows_error{ "Failed to adjust window rectangle for DPI" };
+	}
+}
+
+inline void wSetWindowPos(
+	_In_ HWND hWnd,
+	_In_opt_ HWND hWndInsertAfter,
+	_In_ int X,
+	_In_ int Y,
+	_In_ int cx,
+	_In_ int cy,
+	_In_ UINT uFlags
+) {
+	if (SetWindowPos(
+		hWnd,
+		hWndInsertAfter,
+		X, Y, cx, cy,
+		uFlags
+	) == FALSE) {
+		throw windows_error{ "Failed to set window position" };
 	}
 }
