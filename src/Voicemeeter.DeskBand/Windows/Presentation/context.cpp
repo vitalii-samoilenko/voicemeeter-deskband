@@ -33,8 +33,6 @@ void DrawingEngine::Context::Render() {
 	frame.pList->SetDescriptorHeaps(std::size(ppHeaps), ppHeaps);
 	frame.pList->SetGraphicsRoot32BitConstants(0U, 4U, ColorF{ 112 / 255.F, 195 / 255.F, 153 / 255.F, 1.F }, 0U);
 	frame.pList->SetGraphicsRootDescriptorTable(1, m_pSrvHeap->GetGPUDescriptorHandleForHeapStart());
-	frame.pList->RSSetViewports(1U, &m_viewport);
-	frame.pList->RSSetScissorRects(1U, &m_scissor);
 
 	CD3DX12_RESOURCE_BARRIER presentToTarget{
 		CD3DX12_RESOURCE_BARRIER::Transition(
@@ -60,6 +58,24 @@ void DrawingEngine::Context::Render() {
 		ColorF{ 44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F },
 		0U, nullptr
 	);
+	D3D12_VIEWPORT v{ m_viewport };
+	v.Width /= 3;
+	D3D12_RECT s{ m_scissor };
+	s.right /= 3;
+	frame.pList->RSSetViewports(1U, &v);
+	frame.pList->RSSetScissorRects(1U, &s);
+	frame.pList->DrawInstanced(4U, 1U, 0U, 0U);
+	v.TopLeftX += v.Width;
+	s.left = s.right;
+	s.right *= 2;
+	frame.pList->RSSetViewports(1U, &v);
+	frame.pList->RSSetScissorRects(1U, &s);
+	frame.pList->DrawInstanced(4U, 1U, 0U, 0U);
+	v.TopLeftX += v.Width;
+	s.left = s.right;
+	s.right = m_scissor.right;
+	frame.pList->RSSetViewports(1U, &v);
+	frame.pList->RSSetScissorRects(1U, &s);
 	frame.pList->DrawInstanced(4U, 1U, 0U, 0U);
 
 	CD3DX12_RESOURCE_BARRIER targetToPresent{
@@ -268,15 +284,29 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 
 	{
 		Sprite s{};
-		Sprite::Region out_a_act{ s.get_Region(Sprite::out_a_act, 1) };
+		Sprite::Region out_a_0{ s.get_Region(Sprite::out_a_inact, 0) };
+		Sprite::Region out_a_1{ s.get_Region(Sprite::out_a_inact, 1) };
+
+		D3D12_SUBRESOURCE_DATA textureData[]{
+			D3D12_SUBRESOURCE_DATA{
+				out_a_0.pData,
+				static_cast<LONG_PTR>(out_a_0.RowPitch),
+				static_cast<LONG_PTR>(out_a_0.SlicePitch),
+			},
+			D3D12_SUBRESOURCE_DATA{
+				out_a_1.pData,
+				static_cast<LONG_PTR>(out_a_1.RowPitch),
+				static_cast<LONG_PTR>(out_a_1.SlicePitch),
+			}
+		};
 
 		D3D12_HEAP_PROPERTIES textureHeapProps{ D3D12_HEAP_TYPE_DEFAULT };
 		D3D12_RESOURCE_DESC textureDesc{};
 		textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		textureDesc.Width = out_a_act.Width;
-		textureDesc.Height = out_a_act.Height;
+		textureDesc.Width = out_a_0.Width;
+		textureDesc.Height = out_a_0.Height;
 		textureDesc.DepthOrArraySize = 1U;
-		textureDesc.MipLevels = 1U;
+		textureDesc.MipLevels = std::size(textureData);
 		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		textureDesc.SampleDesc.Count = 1U;
 		ThrowIfFailed(pDevice->CreateCommittedResource(
@@ -291,7 +321,7 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		ComPtr<ID3D12Resource> pTextureUploadHeap{ nullptr };
 		D3D12_HEAP_PROPERTIES uploadHeapProps{ D3D12_HEAP_TYPE_UPLOAD };
 		D3D12_RESOURCE_DESC uploadHeapDesc{
-			CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(m_text.Get(), 0, 1))
+			CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(m_text.Get(), 0, std::size(textureData)))
 		};
 		ThrowIfFailed(pDevice->CreateCommittedResource(
 			&uploadHeapProps,
@@ -312,11 +342,7 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 			nullptr
 		), "Command list reset failed");
 
-		D3D12_SUBRESOURCE_DATA textureData{};
-		textureData.pData = out_a_act.pData;
-		textureData.RowPitch = out_a_act.RowPitch;
-		textureData.SlicePitch = out_a_act.SlicePitch;
-		UpdateSubresources(frame.pList.Get(), m_text.Get(), pTextureUploadHeap.Get(), 0, 0, 1, &textureData);
+		UpdateSubresources(frame.pList.Get(), m_text.Get(), pTextureUploadHeap.Get(), 0, 0, std::size(textureData), textureData);
 
 		CD3DX12_RESOURCE_BARRIER copyToShader{
 			CD3DX12_RESOURCE_BARRIER::Transition(
@@ -347,7 +373,7 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		srvDesc.Format = textureDesc.Format;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MipLevels = std::size(textureData);
 		pDevice->CreateShaderResourceView(m_text.Get(), &srvDesc, m_pSrvHeap->GetCPUDescriptorHandleForHeapStart());
 
 		struct Vertex {
