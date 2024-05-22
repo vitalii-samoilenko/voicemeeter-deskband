@@ -235,3 +235,45 @@ inline void wSetWindowPos(
 		throw windows_error{ "Failed to set window position" };
 	}
 }
+
+inline HRSRC wFindResourceW(
+	_In_opt_ HMODULE hModule,
+	_In_ LPCWSTR lpName,
+	_In_ LPCWSTR lpType
+) {
+	HRSRC hRsrc{ FindResourceW(
+		hModule,
+		lpName,
+		lpType
+	) };
+	if (hRsrc == NULL) {
+		throw windows_error{ "Failed to find resource" };
+	}
+	return hRsrc;
+}
+
+inline HGLOBAL wLoadResource(
+	_In_opt_ HMODULE hModule,
+	_In_ HRSRC hResInfo
+) {
+	HGLOBAL hGlobal{ LoadResource(
+		hModule,
+		hResInfo
+	) };
+	if (hGlobal == NULL) {
+		throw windows_error{ "Failed to load resource" };
+	}
+	return hGlobal;
+}
+
+inline LPVOID wLockResource(
+	_In_ HGLOBAL hResData
+) {
+	LPVOID pData{ LockResource(
+		hResData
+	) };
+	if (pData == NULL) {
+		throw windows_error{ "Failed to lock resource" };
+	}
+	return pData;
+}

@@ -5,7 +5,7 @@
 
 #include "../wrappers.h"
 
-#include "sprite.h"
+#include "atlas.h"
 
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
@@ -283,20 +283,20 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 	);
 
 	{
-		Sprite s{};
-		Sprite::Region out_a_0{ s.get_Region(Sprite::out_a_inact, 0) };
-		Sprite::Region out_a_1{ s.get_Region(Sprite::out_a_inact, 1) };
+		Atlas a{};
+		Atlas::Image out_a_0{ a.get_Image(Atlas::out_a_inact, 0) };
+		Atlas::Image out_a_1{ a.get_Image(Atlas::out_a_inact, 1) };
 
 		D3D12_SUBRESOURCE_DATA textureData[]{
 			D3D12_SUBRESOURCE_DATA{
 				out_a_0.pData,
-				static_cast<LONG_PTR>(out_a_0.RowPitch),
-				static_cast<LONG_PTR>(out_a_0.SlicePitch),
+				static_cast<LONG_PTR>(out_a_0.Width),
+				static_cast<LONG_PTR>(out_a_0.Width * out_a_0.Height),
 			},
 			D3D12_SUBRESOURCE_DATA{
 				out_a_1.pData,
-				static_cast<LONG_PTR>(out_a_1.RowPitch),
-				static_cast<LONG_PTR>(out_a_1.SlicePitch),
+				static_cast<LONG_PTR>(out_a_1.Width),
+				static_cast<LONG_PTR>(out_a_1.Width * out_a_1.Height),
 			}
 		};
 
@@ -307,7 +307,7 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		textureDesc.Height = out_a_0.Height;
 		textureDesc.DepthOrArraySize = 1U;
 		textureDesc.MipLevels = std::size(textureData);
-		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.Format = DXGI_FORMAT_R8_UNORM;
 		textureDesc.SampleDesc.Count = 1U;
 		ThrowIfFailed(pDevice->CreateCommittedResource(
 			&textureHeapProps,

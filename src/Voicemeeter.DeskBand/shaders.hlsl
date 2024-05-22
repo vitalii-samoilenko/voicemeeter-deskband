@@ -20,7 +20,7 @@ PSInput VSMain(float4 position : POSITION, float4 uv : TEXCOORD)
 float4 PSMain(PSInput input) : SV_TARGET
 {
     float4 color = g_color;
-    float4 sample = g_texture.Sample(g_sampler, input.uv);
-    color *= sample.y;
+    float sample = g_texture.Sample(g_sampler, input.uv);
+    color *= sample;
     return color;
 }

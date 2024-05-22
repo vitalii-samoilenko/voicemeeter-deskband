@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Windows\Presentation">
       <UniqueIdentifier>{f6d07ed2-ee79-475c-a077-9c774458dd40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\atlas">
+      <UniqueIdentifier>{e08472e8-0b99-48a0-8341-bb1c080f67ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,7 +51,7 @@
     <ClCompile Include="Windows\Presentation\context.cpp">
       <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\Presentation\sprite.cpp">
+    <ClCompile Include="Windows\Presentation\atlas.cpp">
       <Filter>Source Files\Windows\Presentation</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,29 +86,59 @@
     <ClInclude Include="Windows\Presentation\scene.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
-    <ClInclude Include="Windows\Presentation\sprite.h">
+    <ClInclude Include="Windows\Presentation\atlas.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="Messages.mc" />
+    <ClInclude Include="sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Messages.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="atlas.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="atlas\out_a_act_0.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_a_act_1.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_a_inact_0.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_a_inact_1.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_b_act_0.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_b_act_1.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_b_inact_0.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
+    <None Include="atlas\out_b_inact_1.pxl">
+      <Filter>Resource Files\atlas</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="sprite.bmp">
+    <CustomBuild Include="messages.mc">
       <Filter>Resource Files</Filter>
-    </Image>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders.hlsl">
+    <CopyFileToFolders Include="shaders.hlsl">
       <Filter>Resource Files</Filter>
-    </FxCompile>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -17,10 +17,6 @@ int WINAPI wWinMain(
 	std::unique_ptr<Scene> pScene{ nullptr };
 	std::unique_ptr<Window> pWnd{ nullptr };
 	try {
-		ThrowIfFailed(CoInitialize(
-			NULL
-		), "COM initialization failed");
-
 		pDrwEngine.reset(new DrawingEngine(style));
 		pScene.reset(new Scene(*pDrwEngine));
 		pWnd.reset(new Window{ hInstance, *pScene });
