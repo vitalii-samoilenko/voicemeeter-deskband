@@ -88,6 +88,10 @@ static constexpr MipmapLevels PP_IMAGE{
 		}
 	}
 };
+static WICPixelFormatGUID WIC_FORMAT{ GUID_WICPixelFormat32bppBGR };
+static constexpr DXGI_FORMAT DX_FORMAT{ DXGI_FORMAT_B8G8R8A8_UNORM };
+static constexpr size_t PIXEL_SIZE{ 4 };
+static constexpr size_t TAKE_PIXEL{ 2 };
 
 class com_error : public std::runtime_error {
 public:
@@ -139,10 +143,9 @@ int main() {
 	), "Direct2D factory creation failed");
 
 	ComPtr<IWICBitmap> pBmp{ nullptr };
-	WICPixelFormatGUID format{ GUID_WICPixelFormat32bppBGR };
 	ThrowIfFailed(pWicFactory->CreateBitmap(
 		ATLAS_WIDTH, ATLAS_HEGHT,
-		format,
+		WIC_FORMAT,
 		WICBitmapCacheOnDemand,
 		&pBmp
 	), "Bitmap creation failed");
@@ -153,7 +156,7 @@ int main() {
 		D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
-				DXGI_FORMAT_B8G8R8A8_UNORM,
+				DX_FORMAT,
 				D2D1_ALPHA_MODE_IGNORE
 			)
 		),
@@ -292,7 +295,7 @@ int main() {
 		ATLAS_WIDTH, ATLAS_HEGHT
 	), "Frame size update failed");
 	ThrowIfFailed(pFrame->SetPixelFormat(
-		&format
+		&WIC_FORMAT
 	), "Frame pixel format update failed");
 	ThrowIfFailed(pFrame->WriteSource(
 		pBmp.Get(), NULL
@@ -301,7 +304,7 @@ int main() {
 	for (size_t mipmap{ 0 }; mipmap < MIPMAP_COUNT; ++mipmap) {
 		for (size_t id{ out_a_act }; id <= out_b_inact; ++id) {
 			const WICRect& rect{ PP_IMAGE[mipmap][id] };
-			const INT stride{ rect.Width * 4 };
+			const INT stride{ rect.Width * PIXEL_SIZE };
 			const INT size{ rect.Height * stride };
 
 			std::vector<BYTE> buffer(size);
@@ -319,10 +322,10 @@ int main() {
 
 			size_t count{ 0 };
 			for (const BYTE byte : buffer) {
-				if (count == 2) {
+				if (count == TAKE_PIXEL) {
 					pxl << byte;
 				}
-				if (++count == 4) {
+				if (++count == PIXEL_SIZE) {
 					count = 0;
 				};
 			}

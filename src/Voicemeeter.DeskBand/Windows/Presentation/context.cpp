@@ -1,11 +1,10 @@
 #include "drawingengine.h"
 
-#include <d3dcompiler.h>
-#pragma comment(lib, "d3dcompiler")
-
 #include "../wrappers.h"
 
 #include "atlas.h"
+#include "../../vertex.h"
+#include "../../pixel.h"
 
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
@@ -430,31 +429,6 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		m_vertView.StrideInBytes = sizeof(Vertex);
 		m_vertView.SizeInBytes = vSize;
 
-		ComPtr<ID3DBlob> vertexShader;
-		ComPtr<ID3DBlob> pixelShader;
-
-#if defined(_DEBUG)
-		// Enable better shader debugging with the graphics debugging tools.
-		UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-		UINT compileFlags = 0;
-#endif
-
-		ThrowIfFailed(D3DCompileFromFile(
-			L"shaders.hlsl",
-			nullptr, nullptr,
-			"VSMain", "vs_5_0",
-			compileFlags, 0U,
-			&vertexShader, nullptr
-		), "Vertex shader compilation failed");
-		ThrowIfFailed(D3DCompileFromFile(
-			L"shaders.hlsl",
-			nullptr, nullptr,
-			"PSMain", "ps_5_0",
-			compileFlags, 0U,
-			&pixelShader, nullptr
-		), "Pixel shader compilation failed");
-
 		// Define the vertex input layout.
 		D3D12_INPUT_ELEMENT_DESC inputElementDescs[]{
 			{ "POSITION", 0U, DXGI_FORMAT_R32G32B32_FLOAT, 0U, 0U, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0U },
@@ -481,8 +455,8 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
 		psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
 		psoDesc.pRootSignature = m_pRoot.Get();
-		psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader.Get());
-		psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader.Get());
+		psoDesc.VS = CD3DX12_SHADER_BYTECODE(VS_MAIN, std::size(VS_MAIN));
+		psoDesc.PS = CD3DX12_SHADER_BYTECODE(PS_MAIN, std::size(PS_MAIN));
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 		psoDesc.BlendState = AlphaBlend;

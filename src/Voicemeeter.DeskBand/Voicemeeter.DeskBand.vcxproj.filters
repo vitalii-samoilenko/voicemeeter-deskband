@@ -31,6 +31,9 @@
     <Filter Include="Resource Files\atlas">
       <UniqueIdentifier>{e08472e8-0b99-48a0-8341-bb1c080f67ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{28550f16-1190-4bc0-b8b5-ba4c9653e06f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,10 +92,13 @@
     <ClInclude Include="Windows\Presentation\atlas.h">
       <Filter>Header Files\Windows\Presentation</Filter>
     </ClInclude>
-    <ClInclude Include="sprite.h">
+    <ClInclude Include="atlas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="atlas.h">
+    <ClInclude Include="pixel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -137,8 +143,11 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="shaders.hlsl">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
+    <FxCompile Include="shaders\vertex.hlsl">
+      <Filter>Resource Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\pixel.hlsl">
+      <Filter>Resource Files\shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

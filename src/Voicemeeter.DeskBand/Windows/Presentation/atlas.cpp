@@ -29,13 +29,11 @@ static constexpr id_mp_rsrc P_MAP[]{
 Atlas::Atlas()
 	: m_ppImage{} {
 	for (const id_mp_rsrc& map : P_MAP) {
-		size_t size{ static_cast<size_t>(pow(2., MIPMAP_COUNT - 1 - std::get<mipmap>(map))) * OUTPUT_D };
+		Image& img{ m_ppImage[std::get<mipmap>(map)][std::get<image_id>(map)] };
+		img.Width = img.Height = static_cast<size_t>(pow(2., MIPMAP_COUNT - 1 - std::get<mipmap>(map))) * OUTPUT_D;
 
 		HRSRC hRsrc{ wFindResourceW(NULL, MAKEINTRESOURCEW(std::get<resource_id>(map)), LP_PIXEL_NAME) };
 		HGLOBAL hGlobal{ wLoadResource(NULL, hRsrc) };
-		m_ppImage[std::get<mipmap>(map)].push_back(Image{
-			size, size,
-			wLockResource(hGlobal)
-		});
+		img.pData = wLockResource(hGlobal);
 	}
 }

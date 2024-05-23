@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <vector>
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -36,7 +35,7 @@ namespace Voicemeeter {
 					Atlas& operator=(Atlas&&) = delete;
 
 				private:
-					std::array<std::vector<Image>, MIPMAP_COUNT> m_ppImage;
+					std::array<std::array<Image, out_b_inact + 1>, MIPMAP_COUNT> m_ppImage;
 				};
 			}
 		}
