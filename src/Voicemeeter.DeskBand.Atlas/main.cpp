@@ -304,7 +304,7 @@ int main() {
 	for (size_t mipmap{ 0 }; mipmap < MIPMAP_COUNT; ++mipmap) {
 		for (size_t id{ out_a_act }; id <= out_b_inact; ++id) {
 			const WICRect& rect{ PP_IMAGE[mipmap][id] };
-			const INT stride{ rect.Width * PIXEL_SIZE };
+			const INT stride{ rect.Width * static_cast<INT>(PIXEL_SIZE) };
 			const INT size{ rect.Height * stride };
 
 			std::vector<BYTE> buffer(size);
