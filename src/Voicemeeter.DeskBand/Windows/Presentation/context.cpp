@@ -3,8 +3,7 @@
 #include "../wrappers.h"
 
 #include "atlas.h"
-#include "../../vertex.h"
-#include "../../pixel.h"
+#include "../../shaders.h"
 
 using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
@@ -453,7 +452,7 @@ DrawingEngine::Context::Context(IDXGIFactory7* pFactory, ID3D12Device8* pDevice,
 		};
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
-		psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+		psoDesc.InputLayout = { inputElementDescs, std::size(inputElementDescs) };
 		psoDesc.pRootSignature = m_pRoot.Get();
 		psoDesc.VS = CD3DX12_SHADER_BYTECODE(VS_MAIN, std::size(VS_MAIN));
 		psoDesc.PS = CD3DX12_SHADER_BYTECODE(PS_MAIN, std::size(PS_MAIN));

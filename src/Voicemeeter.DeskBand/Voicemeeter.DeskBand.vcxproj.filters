@@ -34,6 +34,9 @@
     <Filter Include="Resource Files\shaders">
       <UniqueIdentifier>{28550f16-1190-4bc0-b8b5-ba4c9653e06f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\shaders">
+      <UniqueIdentifier>{477caf53-4ee9-44ff-bf6f-873cd4cb888c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -95,10 +98,19 @@
     <ClInclude Include="atlas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pixel.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="shaders\pixel.Debug.h">
+      <Filter>Header Files\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="vertex.h">
+    <ClInclude Include="shaders\pixel.Release.h">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\vertex.Debug.h">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\vertex.Release.h">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
