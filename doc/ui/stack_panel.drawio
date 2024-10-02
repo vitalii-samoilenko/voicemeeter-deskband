@@ -1,0 +1,37 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram name="Page-1" id="jj1WC7M-LP929Yz6_Nja">
+    <mxGraphModel dx="830" dy="486" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-8" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="320" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="zEEWq430eKEG_tHL_lll-1" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="350" width="100" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="zEEWq430eKEG_tHL_lll-2" value="Top to bottom" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="140" y="350" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-9" value="Left to right" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="320" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-10" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="440" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-11" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="390" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-12" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.tick" vertex="1" parent="1">
+          <mxGeometry x="144.5" y="380" width="25.5" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-13" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="420" width="150" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="1fFjQNG1zH5zYWEm42nU-14" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="405" width="10" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

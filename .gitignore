@@ -397,3 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 *.bin
+
+# DrawIO
+
+*.drawio.bkp

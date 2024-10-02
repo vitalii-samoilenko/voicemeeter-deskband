@@ -10,11 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9551B66A-11B9-4E7A-825B-959A2F9E6E7B}"
-	ProjectSection(SolutionItems) = preProject
-		samples\btn_round_normal.png = samples\btn_round_normal.png
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.Atlas", "src\Voicemeeter.DeskBand.Atlas\Voicemeeter.DeskBand.Atlas.vcxproj", "{1600652E-24A9-4B04-A76E-67713D613F6F}"
 EndProject
 Global
