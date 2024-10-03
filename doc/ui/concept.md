@@ -18,7 +18,6 @@ Base render element
 
 Tree structured list of components
 
-- Abstract
 - Component as representative
 
 ### Component

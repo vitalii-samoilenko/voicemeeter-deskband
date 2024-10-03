@@ -9,7 +9,7 @@ More convenient simple sound management:
 ![System setup](system_setup.svg)
 
 - Volume adjustment
-- Active output switch (speakers/headphones/remote device)
+- Active output switch (speakers/headphones/remote device/communication channel)
 - Remote device support
 
 Plenty of space always available in the taskbar
