@@ -54,3 +54,15 @@ Maintains internal state and state change policy
 ## Scalability
 
 ![Scalability](scalability.svg)
+
+## Indentation
+
+## Interactivity
+
+- Mouse left button click
+- Mouse right button click
+- Mouse scroll
+- Mouse left button down
+- Mouse move (left button down)
+- Mouse left button up
+- Key down
