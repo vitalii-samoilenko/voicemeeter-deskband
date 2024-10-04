@@ -1,56 +1,12 @@
-# Scene
+## Fader gain
 
-![Scene](scene.svg)
+![Fader gain image](fader_gain.png)
 
-## Canvas
+- Default: `rgb(112, 195, 153)`
+- Overload: `rgb(248, 99, 77)`
 
-Render target for glyphs
+![Fader gain scetch](fader_gain.svg)
 
-- Resizable
+## Output
 
-### Glyph
-
-Base render element
-
-- Scalable
-
-## Composition
-
-Tree structured list of components
-
-- Component as representative
-
-### Component
-
-Base UI element
-
-- Scalable
-- Interactive
-
-#### Panel
-
-Arranged group of components
-
-- Passive
-
-##### Stack panel
-
-Arranges components starting from anchor side in non-overlapping way
-
-![Stack panel](stack_panel.svg)
-
-#### Control
-
-Functional component
-
-- Visible
-
-##### State control
-
-Maintains internal state and state change policy
-
-![State control](state_control.svg)
-
-## Scalability
-
-![Scalability](scalability.svg)
+![Output image](output.png)
