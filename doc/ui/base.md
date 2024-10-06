@@ -26,6 +26,7 @@ Base UI element
 
 - Scalable
 - Interactive
+- Visible
 
 #### Panel
 
@@ -43,11 +44,11 @@ Arranges components starting from anchor side in non-overlapping way
 
 Functional component
 
-- Visible
+- Active
 
 ##### State control
 
-Maintains internal state and state change policy
+Maintains internal state, state change policy and displays a glyph as state visual representation
 
 ![State control](state_control.svg)
 
@@ -57,12 +58,12 @@ Maintains internal state and state change policy
 
 ## Indentation
 
+![Indentation](indentation.svg)
+
 ## Interactivity
 
-- Mouse left button click
-- Mouse right button click
-- Mouse scroll
+- Mouse wheel
 - Mouse left button down
+- Mouse right button down
 - Mouse move (left button down)
 - Mouse left button up
-- Key down
