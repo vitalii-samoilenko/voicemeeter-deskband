@@ -12,7 +12,10 @@ Render target for glyphs
 
 Base render element
 
+- Visible
 - Scalable
+
+#### FrameGlyph
 
 ## Composition
 
@@ -24,9 +27,9 @@ Tree structured group of components
 
 Base UI element
 
+- Visible
 - Scalable
 - Interactive
-- Visible
 
 #### Panel
 
