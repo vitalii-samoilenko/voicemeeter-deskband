@@ -1,11 +1,11 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
   <diagram name="Page-1" id="e7vitAf72NwZrpKz9_Ie">
-    <mxGraphModel dx="691" dy="405" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="988" dy="578" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="SsSPNky9ufYv8PUrd012-2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" parent="1" vertex="1">
-          <mxGeometry x="330" y="30" width="210" height="130" as="geometry" />
+          <mxGeometry x="330" y="30" width="370" height="130" as="geometry" />
         </mxCell>
         <mxCell id="SsSPNky9ufYv8PUrd012-1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" parent="1" vertex="1">
           <mxGeometry x="100" y="30" width="220" height="130" as="geometry" />
@@ -23,10 +23,10 @@
           <mxGeometry x="130" y="100" width="30" height="30" as="geometry" />
         </mxCell>
         <mxCell id="uDKXjKk5Kg-mjDR0Opt4-10" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.tick" parent="1" vertex="1">
-          <mxGeometry x="134.5" y="90" width="25.5" height="30" as="geometry" />
+          <mxGeometry x="174.5" y="90" width="25.5" height="30" as="geometry" />
         </mxCell>
         <mxCell id="VQ7dve10hfscTf-xHSSG-2" value="Slider" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="360" y="30" width="150" height="30" as="geometry" />
+          <mxGeometry x="360" y="30" width="310" height="30" as="geometry" />
         </mxCell>
         <mxCell id="VQ7dve10hfscTf-xHSSG-3" value="&amp;nbsp;- range state change policy" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="360" y="60" width="150" height="30" as="geometry" />
@@ -35,7 +35,13 @@
           <mxGeometry x="360" y="105" width="150" height="10" as="geometry" />
         </mxCell>
         <mxCell id="VQ7dve10hfscTf-xHSSG-5" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="470" y="90" width="10" height="40" as="geometry" />
+          <mxGeometry x="390" y="90" width="10" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="i381zsknQ22UG-OCCyQv-1" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="105" width="150" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="i381zsknQ22UG-OCCyQv-2" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="90" width="10" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

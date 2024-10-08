@@ -15,8 +15,6 @@ Base render element
 - Visible
 - Scalable
 
-#### FrameGlyph
-
 ## Composition
 
 Tree structured group of components
@@ -68,5 +66,5 @@ Maintains internal state, state change policy and displays a glyph as state visu
 - Mouse wheel
 - Mouse left button down
 - Mouse right button down
-- Mouse move (left button down)
+- Mouse move (track enabled)
 - Mouse left button up
