@@ -6,6 +6,7 @@
 
 Render target for glyphs
 
+- Visible
 - Resizable
 
 ### Glyph
@@ -49,7 +50,7 @@ Functional component
 
 ##### State control
 
-Maintains internal state, state change policy and displays a glyph as state visual representation
+Maintains and updates internal state, displays a glyph as state visual representation
 
 ![State control](state_control.svg)
 
