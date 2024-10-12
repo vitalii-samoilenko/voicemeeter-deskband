@@ -14,6 +14,7 @@ Render target for glyphs
 Base render element
 
 - Visible
+- Movable
 - Scalable
 
 ## Composition
@@ -27,6 +28,7 @@ Tree structured group of components
 Base UI element
 
 - Visible
+- Movable
 - Scalable
 - Interactive
 
