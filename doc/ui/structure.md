@@ -1,5 +1,7 @@
 # Solution
 
+![Component diagram](component_diagram.svg)
+
 ## Class structure
 
 ![Class diagram](class_diagram.svg)
@@ -9,6 +11,8 @@
 ![Object diagram](object_diagram.svg)
 
 ## Scalability
+
+![Sequence diagram](resize.svg)
 
 ## Interactivity
 

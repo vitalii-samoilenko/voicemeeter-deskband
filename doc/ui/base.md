@@ -52,7 +52,7 @@ Functional component
 
 ##### State control
 
-Maintains and updates internal state, displays a glyph as state visual representation
+Maintains internal state, reacts to user input with state change, promotes updated state to the system, displays a glyph as state visual representation
 
 ![State control](state_control.svg)
 
