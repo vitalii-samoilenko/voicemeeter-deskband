@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 #include "error.h"
 #include "../messages.h"
 

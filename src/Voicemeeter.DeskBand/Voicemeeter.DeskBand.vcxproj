@@ -142,29 +142,15 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="errormessagebox.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Windows\Presentation\drawingengine.cpp" />
-    <ClCompile Include="Windows\Presentation\scene.cpp" />
-    <ClCompile Include="Windows\Presentation\context.cpp" />
-    <ClCompile Include="Windows\Presentation\atlas.cpp" />
+    <ClCompile Include="Windows\errormessagebox.cpp" />
     <ClCompile Include="windows\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="errormessagebox.h" />
     <ClInclude Include="estd\guard.h" />
     <ClInclude Include="estd\isinvocable.h" />
     <ClInclude Include="messages.h" />
-    <ClInclude Include="atlas.h" />
-    <ClInclude Include="shaders.h" />
-    <ClInclude Include="shaders\pixel.Debug.h" />
-    <ClInclude Include="shaders\pixel.Release.h" />
-    <ClInclude Include="shaders\vertex.Debug.h" />
-    <ClInclude Include="shaders\vertex.Release.h" />
-    <ClInclude Include="Windows\Presentation\drawingengine.h" />
-    <ClInclude Include="Windows\Presentation\scene.h" />
-    <ClInclude Include="Windows\Presentation\atlas.h" />
-    <ClInclude Include="Windows\Presentation\style.h" />
+    <ClInclude Include="Windows\errormessagebox.h" />
     <ClInclude Include="windows\window.h" />
     <ClInclude Include="windows\error.h" />
     <ClInclude Include="windows\wrappers.h" />
@@ -183,61 +169,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="atlas.rc" />
     <ResourceCompile Include="messages.rc" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="atlas\out_a_act_0.pxl" />
-    <None Include="atlas\out_a_act_1.pxl" />
-    <None Include="atlas\out_a_inact_0.pxl" />
-    <None Include="atlas\out_a_inact_1.pxl" />
-    <None Include="atlas\out_b_act_0.pxl" />
-    <None Include="atlas\out_b_act_1.pxl" />
-    <None Include="atlas\out_b_inact_0.pxl" />
-    <None Include="atlas\out_b_inact_1.pxl" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shaders\pixel.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)%(Filename).$(Configuration).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)%(Filename).$(Configuration).h</HeaderFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.5</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.5</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ObjectFileOutput>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_MAIN</VariableName>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PS_MAIN</VariableName>
-    </FxCompile>
-    <FxCompile Include="shaders\vertex.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.5</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.5</ShaderModel>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RelativeDir)%(Filename).$(Configuration).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RelativeDir)%(Filename).$(Configuration).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ObjectFileOutput>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_MAIN</VariableName>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VS_MAIN</VariableName>
-    </FxCompile>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.targets" Condition="Exists('..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Direct3D.D3D12.1.613.3\build\native\Microsoft.Direct3D.D3D12.targets'))" />
-  </Target>
 </Project>

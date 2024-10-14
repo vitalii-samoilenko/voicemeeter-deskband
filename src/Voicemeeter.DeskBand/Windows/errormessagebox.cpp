@@ -1,8 +1,8 @@
 #include "errormessagebox.h"
 
-#include "estd/guard.h"
+#include "../estd/guard.h"
 
-int ErrorMessageBox(
+int Voicemeeter::DeskBand::Windows::ErrorMessageBox(
 	DWORD cptCode,
 	DWORD errCode
 ) {

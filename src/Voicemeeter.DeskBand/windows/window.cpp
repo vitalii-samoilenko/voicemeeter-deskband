@@ -1,7 +1,7 @@
 #include "window.h"
 
 #include "wrappers.h"
-#include "../errormessagebox.h"
+#include "errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
 
@@ -11,16 +11,14 @@ static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
 
 static constexpr LRESULT OK{ 0 };
 
-Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
+Window::Window(HINSTANCE hInstance)
 	: m_hWnd{ NULL }
-	, m_scene { scene }
-	, m_pCompTarget{ nullptr }
 	, m_dpi{ USER_DEFAULT_SCREEN_DPI } {
 	wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
-	rc.bottom = 46;
-	rc.right = 3 * rc.bottom;
+	rc.bottom = 40;
+	rc.right = 251;
 	wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, m_dpi);
 
 	WNDCLASSW wndClass{};
@@ -40,29 +38,6 @@ Window::Window(HINSTANCE hInstance, Presentation::Scene& scene)
 		hInstance,
 		this
 	);
-
-	ComPtr<IDCompositionDevice> pCompDevice;
-	ThrowIfFailed(DCompositionCreateDevice3(
-		NULL,
-		IID_PPV_ARGS(&pCompDevice)
-	), "Composition device creation failed");
-	ThrowIfFailed(pCompDevice->CreateTargetForHwnd(
-		m_hWnd,
-		TRUE,
-		&m_pCompTarget
-	), "Composition target creation failed");
-	ComPtr<IDCompositionVisual> pCompVisual;
-	ThrowIfFailed(pCompDevice->CreateVisual(
-		&pCompVisual
-	), "Composition visual creation failed");
-
-	m_scene.Initialize(m_hWnd, pCompVisual.Get());
-
-	ThrowIfFailed(m_pCompTarget->SetRoot(
-		pCompVisual.Get()
-	), "Failed to set composition target root");
-	ThrowIfFailed(pCompDevice->Commit(
-	), "Failed to commit composition device");
 }
 
 void Window::Show(int nCmdShow) const {
@@ -101,7 +76,7 @@ LRESULT CALLBACK Window::WindowProcW(
 			PostQuitMessage(0);
 		} return OK;
 		case WM_SIZE: {
-			pWnd->m_scene.Resize(LOWORD(lParam), HIWORD(lParam));
+			//pWnd->m_scene.Resize(LOWORD(lParam), HIWORD(lParam));
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };

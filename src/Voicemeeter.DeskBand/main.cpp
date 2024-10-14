@@ -1,10 +1,11 @@
+#include <memory>
+
 #include "Windows/window.h"
 #include "Windows/error.h"
 #include "Windows/wrappers.h"
-#include "errormessagebox.h"
+#include "Windows/errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
-using namespace Voicemeeter::DeskBand::Windows::Presentation;
 
 int WINAPI wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -12,14 +13,9 @@ int WINAPI wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 ) {
-	const Style style{ Style::Default() };
-	std::unique_ptr<DrawingEngine> pDrwEngine{ nullptr };
-	std::unique_ptr<Scene> pScene{ nullptr };
 	std::unique_ptr<Window> pWnd{ nullptr };
 	try {
-		pDrwEngine.reset(new DrawingEngine(style));
-		pScene.reset(new Scene(*pDrwEngine));
-		pWnd.reset(new Window{ hInstance, *pScene });
+		pWnd.reset(new Window{ hInstance });
 
 		pWnd->Show(nShowCmd);
 	}
