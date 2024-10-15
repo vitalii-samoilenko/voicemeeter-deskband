@@ -1,5 +1,7 @@
 #include <memory>
 
+#include <windows.h>
+
 #include "Windows/window.h"
 #include "Windows/error.h"
 #include "Windows/wrappers.h"

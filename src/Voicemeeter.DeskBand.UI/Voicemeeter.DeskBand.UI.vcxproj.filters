@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{7551a84d-20d3-475f-aac2-36eb1463da54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Traits">
+      <UniqueIdentifier>{6c63a0df-680d-4bf9-bbfa-d700da520d08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies">
+      <UniqueIdentifier>{cc8934a6-383d-49a3-8216-0f8eed5f8fb1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Graphics\ICanvas.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits\IVisible.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits\IMovable.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits\IResizable.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits\IScalable.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits\IInteractive.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\IGlyph.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IMouseTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\IInteractivityPolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\IGlyphUpdatePolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\IStateChangePolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\IStatePromotionPolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="IAppMouseTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

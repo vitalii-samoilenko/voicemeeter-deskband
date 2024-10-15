@@ -7,7 +7,7 @@ namespace Voicemeeter {
 		namespace Windows {
 			class Window {
 			public:
-				Window(HINSTANCE hInstance);
+				explicit Window(HINSTANCE hInstance);
 				Window() = delete;
 				Window(const Window&) = delete;
 				Window(Window&&) = delete;

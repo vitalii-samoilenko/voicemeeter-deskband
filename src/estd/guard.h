@@ -1,12 +1,12 @@
 #pragma once
 
-#include "isinvocable.h"
+#include "type_traits.h"
 
 namespace estd {
 	template<typename Func>
 	class guard {
-		static_assert(Is_invocable<void, Func>(),
-			"Func type must be invocable with no arguments and void return type");
+		static_assert(is_invocable<void, Func>(),
+			"Func must be invocable with no arguments and void return type");
 
 	public:
 		inline explicit guard(Func release) noexcept
