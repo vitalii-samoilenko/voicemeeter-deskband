@@ -21,14 +21,14 @@ const linear_algebra::vector Scene::get_Size() {
 	return m_pCanvas->get_Size();
 }
 
-void Scene::Redraw(linear_algebra::vector region) {
-	m_pCanvas->Redraw(region);
-	m_pComposition->Redraw(region);
+void Scene::Redraw(linear_algebra::vector point, linear_algebra::vector vertex) {
+	m_pCanvas->Redraw(point, vertex);
+	m_pComposition->Redraw(point, vertex);
 }
 
-void Scene::Resize(linear_algebra::vector size) {
-	m_pCanvas->Resize(size);
-	m_pComposition->Rescale(size);
+void Scene::Resize(linear_algebra::vector vertex) {
+	m_pCanvas->Resize(vertex);
+	m_pComposition->Rescale(vertex);
 }
 
 bool Scene::MouseLDown(linear_algebra::vector point) {

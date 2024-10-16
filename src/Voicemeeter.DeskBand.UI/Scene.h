@@ -34,8 +34,8 @@ namespace Voicemeeter {
 				const virtual linear_algebra::vector get_Position() override;
 				const virtual linear_algebra::vector get_Size() override;
 
-				virtual void Redraw(linear_algebra::vector region) override;
-				virtual void Resize(linear_algebra::vector size) override;
+				virtual void Redraw(linear_algebra::vector point, linear_algebra::vector vertex) override;
+				virtual void Resize(linear_algebra::vector vertex) override;
 				virtual bool MouseLDown(linear_algebra::vector point) override;
 				virtual bool MouseRDown(linear_algebra::vector point) override;
 				virtual bool MouseWheel(linear_algebra::vector point, int delta) override;

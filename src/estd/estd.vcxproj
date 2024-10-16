@@ -23,6 +23,9 @@
     <ClInclude Include="linear_algebra.h" />
     <ClInclude Include="type_traits.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="linear_algebra.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

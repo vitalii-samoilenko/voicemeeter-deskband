@@ -14,4 +14,9 @@ namespace linear_algebra {
 		vector& operator=(const vector&) = default;
 		vector& operator=(vector&&) = default;
 	};
+
+	vector operator+(const vector& lhs, const vector& rhs);
+	vector operator-(const vector& lhs, const vector& rhs);
+
+	bool is_outside(vector point, vector vertex);
 }

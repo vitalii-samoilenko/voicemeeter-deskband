@@ -3,9 +3,9 @@
 #include <type_traits>
 
 namespace estd {
-	template<typename R, typename T>
+	template<typename R, typename T, typename... A>
 	constexpr bool is_invocable() {
-		return std::_Is_invocable_r<R, T>::value;
+		return std::_Is_invocable_r<R, T, A...>::value;
 	}
 
 	template<typename Base, typename Derived>

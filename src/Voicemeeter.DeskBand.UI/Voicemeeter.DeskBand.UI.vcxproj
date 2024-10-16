@@ -71,9 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)src\</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)src\;</IncludePath>
     <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <SourcePath>$(VC_SourcePath);</SourcePath>
+    <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,10 +142,16 @@
     <ClInclude Include="IMouseTracker.h" />
     <ClInclude Include="IPanel.h" />
     <ClInclude Include="IScene.h" />
+    <ClInclude Include="Panels\StackPanel.h" />
+    <ClInclude Include="Policies\CircularStateChangePolicy.h" />
     <ClInclude Include="Policies\IGlyphUpdatePolicy.h" />
     <ClInclude Include="Policies\IInteractivityPolicy.h" />
     <ClInclude Include="Policies\IStateChangePolicy.h" />
     <ClInclude Include="Policies\IStatePromotionPolicy.h" />
+    <ClInclude Include="Policies\PreconfiguredGlyphUpdatePolicy.h" />
+    <ClInclude Include="Policies\PreconfiguredInteractivityPolicy.h" />
+    <ClInclude Include="Policies\PreconfiguredStatePromotionPolicy.h" />
+    <ClInclude Include="Policies\RangeStateChangePolicy.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Traits\IInteractive.h" />
     <ClInclude Include="Traits\IMovable.h" />

@@ -15,7 +15,6 @@ namespace Voicemeeter {
 						"TComponent must be derived from IComponent");
 
 				public:
-					IInteractivityPolicy() = delete;
 					IInteractivityPolicy(const IInteractivityPolicy&) = delete;
 					IInteractivityPolicy(IInteractivityPolicy&&) = delete;
 
@@ -24,11 +23,14 @@ namespace Voicemeeter {
 					IInteractivityPolicy& operator=(const IInteractivityPolicy&) = delete;
 					IInteractivityPolicy& operator=(IInteractivityPolicy&&) = delete;
 
-					const virtual bool MouseLDown(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
-					const virtual bool MouseRDown(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
-					const virtual bool MouseWheel(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point, int delta) = 0;
-					const virtual bool MouseMove(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
-					const virtual bool MouseLUp(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
+					const virtual void MouseLDown(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
+					const virtual void MouseRDown(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
+					const virtual void MouseWheel(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point, int delta) = 0;
+					const virtual void MouseMove(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
+					const virtual void MouseLUp(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) = 0;
+
+				protected:
+					IInteractivityPolicy() = default;
 				};
 			}
 		}

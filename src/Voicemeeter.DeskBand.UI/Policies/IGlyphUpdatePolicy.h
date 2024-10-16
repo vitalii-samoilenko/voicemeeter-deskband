@@ -16,16 +16,18 @@ namespace Voicemeeter {
 						"TGlyph must be derived from IGlyph");
 
 				public:
-					IGlyphUpdatePolicy() = delete;
 					IGlyphUpdatePolicy(const IGlyphUpdatePolicy&) = delete;
 					IGlyphUpdatePolicy(IGlyphUpdatePolicy&&) = delete;
 
-					virtual ~IGlyphUpdatePolicy() = 0;
+					virtual ~IGlyphUpdatePolicy() = default;
 
 					IGlyphUpdatePolicy& operator=(const IGlyphUpdatePolicy&) = delete;
 					IGlyphUpdatePolicy& operator=(IGlyphUpdatePolicy&&) = delete;
 
 					const virtual void Update(estd::remove_cvref_t<TGlyph>& glyph, const estd::remove_cvref_t<TState>& state) = 0;
+
+				protected:
+					IGlyphUpdatePolicy() = default;
 				};
 			}
 		}

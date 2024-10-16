@@ -22,6 +22,9 @@
     <Filter Include="Header Files\Policies">
       <UniqueIdentifier>{cc8934a6-383d-49a3-8216-0f8eed5f8fb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Panels">
+      <UniqueIdentifier>{20a51a6c-1ea1-447b-a945-f0aab021b1e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\ICanvas.h">
@@ -77,6 +80,24 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\PreconfiguredGlyphUpdatePolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\PreconfiguredStatePromotionPolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\PreconfiguredInteractivityPolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\CircularStateChangePolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\RangeStateChangePolicy.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Panels\StackPanel.h">
+      <Filter>Header Files\Panels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

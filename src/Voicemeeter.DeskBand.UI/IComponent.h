@@ -12,14 +12,16 @@ namespace Voicemeeter {
 		namespace UI {
 			class IComponent : public IVisible, public IScalable, public IMovable, public IInteractive {
 			public:
-				IComponent() = delete;
 				IComponent(const IComponent&) = delete;
 				IComponent(IComponent&&) = delete;
 
-				virtual ~IComponent() = 0;
+				virtual ~IComponent() = default;
 
 				IComponent& operator=(const IComponent&) = delete;
 				IComponent& operator=(IComponent&&) = delete;
+
+			protected:
+				IComponent() = default;
 			};
 		}
 	}
