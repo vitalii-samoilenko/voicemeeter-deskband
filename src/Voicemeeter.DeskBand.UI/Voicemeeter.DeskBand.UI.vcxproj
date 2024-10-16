@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -71,7 +71,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\estd;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)src\</IncludePath>
+    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,7 +111,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -142,6 +144,7 @@
     <ClInclude Include="Policies\IInteractivityPolicy.h" />
     <ClInclude Include="Policies\IStateChangePolicy.h" />
     <ClInclude Include="Policies\IStatePromotionPolicy.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Traits\IInteractive.h" />
     <ClInclude Include="Traits\IMovable.h" />
     <ClInclude Include="Traits\IResizable.h" />
@@ -149,9 +152,7 @@
     <ClInclude Include="Traits\IVisible.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\estd\estd.vcxproj">
-      <Project>{be6dd8b6-c8ae-4bb1-8cc1-612f5f262b60}</Project>
-    </ProjectReference>
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

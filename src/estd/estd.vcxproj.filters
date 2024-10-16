@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="guard.h">
+    <ClInclude Include="memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="type_traits.h">

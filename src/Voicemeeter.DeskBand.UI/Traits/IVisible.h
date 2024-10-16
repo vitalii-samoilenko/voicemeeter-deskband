@@ -1,6 +1,6 @@
 #pragma once
 
-#include "linear_algebra.h"
+#include "estd/linear_algebra.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -8,11 +8,8 @@ namespace Voicemeeter {
 			namespace Traits {
 				class IVisible {
 				public:
-					IVisible() = delete;
 					IVisible(const IVisible&) = delete;
 					IVisible(IVisible&&) = delete;
-
-					~IVisible() = delete;
 
 					IVisible& operator=(const IVisible&) = delete;
 					IVisible& operator=(IVisible&&) = delete;
@@ -21,6 +18,11 @@ namespace Voicemeeter {
 					const virtual linear_algebra::vector get_Size() = 0;
 
 					virtual void Redraw(linear_algebra::vector region) = 0;
+
+				protected:
+					IVisible() = default;
+
+					~IVisible() = default;
 				};
 			}
 		}

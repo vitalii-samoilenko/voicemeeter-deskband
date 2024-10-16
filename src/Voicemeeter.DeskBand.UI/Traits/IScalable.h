@@ -1,6 +1,6 @@
 #pragma once
 
-#include "linear_algebra.h"
+#include "estd/linear_algebra.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {

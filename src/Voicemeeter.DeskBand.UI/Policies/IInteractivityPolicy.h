@@ -1,7 +1,7 @@
 #pragma once
 
-#include "type_traits.h"
-#include "linear_algebra.h"
+#include "estd/type_traits.h"
+#include "estd/linear_algebra.h"
 
 #include "../IComponent.h"
 

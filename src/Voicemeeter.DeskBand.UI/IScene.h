@@ -11,14 +11,16 @@ namespace Voicemeeter {
 		namespace UI {
 			class IScene : public IVisible, public IResizable, public IInteractive {
 			public:
-				IScene() = delete;
 				IScene(const IScene&) = delete;
 				IScene(IScene&&) = delete;
 
-				virtual ~IScene() = 0;
+				virtual ~IScene() = default;
 
 				IScene& operator=(const IScene&) = delete;
 				IScene& operator=(IScene&&) = delete;
+
+			protected:
+				IScene() = default;
 			};
 		}
 	}

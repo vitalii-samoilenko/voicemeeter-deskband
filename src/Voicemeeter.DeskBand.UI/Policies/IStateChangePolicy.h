@@ -1,6 +1,6 @@
 #pragma once
 
-#include "type_traits.h"
+#include "estd/type_traits.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
