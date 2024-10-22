@@ -14,7 +14,7 @@ namespace Voicemeeter {
 					IScalable& operator=(const IScalable&) = delete;
 					IScalable& operator=(IScalable&&) = delete;
 
-					const virtual linear_algebra::vector get_BaseSize() = 0;
+					virtual linear_algebra::vector get_BaseSize() const = 0;
 
 					virtual void Rescale(linear_algebra::vector vertex) = 0;
 

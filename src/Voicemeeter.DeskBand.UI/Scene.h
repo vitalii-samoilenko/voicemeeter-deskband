@@ -15,12 +15,12 @@ using namespace Voicemeeter::DeskBand::UI::Graphics;
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
-			class Scene : public IScene, public IMouseTracker {
+			class Scene final : public IScene, public IMouseTracker {
 			public:
 				Scene(
 					IAppMouseTracker* pAppMouseTracker,
-					IComponent* pComposition,
-					ICanvas* pCanvas
+					std::unique_ptr<IComponent> pComposition,
+					std::unique_ptr<ICanvas> pCanvas
 				);
 				Scene() = delete;
 				Scene(const Scene&) = delete;
@@ -31,8 +31,8 @@ namespace Voicemeeter {
 				Scene& operator=(const Scene&) = delete;
 				Scene& operator=(Scene&&) = delete;
 
-				const virtual linear_algebra::vector get_Position() override;
-				const virtual linear_algebra::vector get_Size() override;
+				virtual linear_algebra::vector get_Position() const override;
+				virtual linear_algebra::vector get_Size() const override;
 
 				virtual void Redraw(linear_algebra::vector point, linear_algebra::vector vertex) override;
 				virtual void Resize(linear_algebra::vector vertex) override;

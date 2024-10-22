@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Panels">
       <UniqueIdentifier>{20a51a6c-1ea1-447b-a945-f0aab021b1e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Panels">
+      <UniqueIdentifier>{f5119d72-9360-4f52-9984-d2a500b3a0cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Controls">
+      <UniqueIdentifier>{5e1d7b2d-4630-4463-9d94-f0785319389e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\ICanvas.h">
@@ -103,6 +109,12 @@
   <ItemGroup>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Panels\StackPanel.cpp">
+      <Filter>Source Files\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="Controls\StateControl.h">
+      <Filter>Header Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

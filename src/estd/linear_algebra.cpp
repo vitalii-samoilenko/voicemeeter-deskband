@@ -16,8 +16,21 @@ vector linear_algebra::operator-(const vector& lhs, const vector& rhs) {
 	};
 }
 
-bool linear_algebra::is_outside(vector point, vector vertex) {
+bool linear_algebra::is_inside(vector point, vector vertex) {
 	vector distance{ point - vertex };
 
-	return distance.x < 0 || distance.y < 0;
+	return distance.x < 0 && distance.y < 0;
+}
+
+bool linear_algebra::is_overlapping(vector lhs_point, vector lhs_vertex, vector rhs_point, vector rhs_vertex) {
+	linear_algebra::vector abs_vertex{ lhs_point + lhs_vertex };
+	if (!linear_algebra::is_inside(rhs_point, abs_vertex)) {
+		return false;
+	}
+	abs_vertex = rhs_point + rhs_vertex;
+	if (!linear_algebra::is_inside(lhs_point, abs_vertex)) {
+		return false;
+	}
+
+	return true;
 }

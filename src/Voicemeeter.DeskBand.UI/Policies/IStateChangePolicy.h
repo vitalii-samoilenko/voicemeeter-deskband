@@ -15,9 +15,9 @@ namespace Voicemeeter {
 					IStateChangePolicy& operator=(const IStateChangePolicy&) = delete;
 					IStateChangePolicy& operator=(IStateChangePolicy&&) = delete;
 
-					const virtual bool SetNext(estd::remove_cvref_t<TState>& state) = 0;
-					const virtual bool SetPrevious(estd::remove_cvref_t<TState>& state) = 0;
-					const virtual bool Set(estd::remove_cvref_t<TState>& dst, estd::remove_cvref_t<TState>& src) = 0;
+					virtual bool SetNext(estd::remove_cvref_t<TState>& state) const = 0;
+					virtual bool SetPrevious(estd::remove_cvref_t<TState>& state) const = 0;
+					virtual bool Set(estd::remove_cvref_t<TState>& dst, estd::remove_cvref_t<TState>& src) const = 0;
 
 				protected:
 					IStateChangePolicy() = default;

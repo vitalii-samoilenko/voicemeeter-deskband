@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iterator>
 #include <type_traits>
 
 namespace estd {
@@ -14,10 +15,8 @@ namespace estd {
 	}
 
 	template<typename T>
-	struct remove_cvref {
-		using type = typename std::remove_cv_t<std::remove_reference_t<T>>;
-	};
+	using remove_cvref_t = typename std::_Remove_cvref_t<T>;
 
 	template<typename T>
-	using remove_cvref_t = typename remove_cvref<T>::type;
+	using iterator_value_type_t = typename std::iterator_traits<T>::value_type;
 }

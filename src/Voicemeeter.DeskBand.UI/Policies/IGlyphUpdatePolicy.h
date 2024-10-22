@@ -24,7 +24,7 @@ namespace Voicemeeter {
 					IGlyphUpdatePolicy& operator=(const IGlyphUpdatePolicy&) = delete;
 					IGlyphUpdatePolicy& operator=(IGlyphUpdatePolicy&&) = delete;
 
-					const virtual void Update(estd::remove_cvref_t<TGlyph>& glyph, const estd::remove_cvref_t<TState>& state) = 0;
+					virtual void Update(estd::remove_cvref_t<TGlyph>& glyph, const estd::remove_cvref_t<TState>& state) const = 0;
 
 				protected:
 					IGlyphUpdatePolicy() = default;

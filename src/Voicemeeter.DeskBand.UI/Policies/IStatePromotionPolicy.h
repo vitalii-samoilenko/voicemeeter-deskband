@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					IStatePromotionPolicy& operator=(const IStatePromotionPolicy&) = delete;
 					IStatePromotionPolicy& operator=(IStatePromotionPolicy&&) = delete;
 
-					const virtual void Promote(const estd::remove_cvref_t<TState>& state) = 0;
+					virtual void Promote(const estd::remove_cvref_t<TState>& state) const = 0;
 
 				protected:
 					IStatePromotionPolicy() = default;

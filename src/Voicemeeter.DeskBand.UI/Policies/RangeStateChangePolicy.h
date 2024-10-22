@@ -7,7 +7,7 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace Policies {
 				template<typename TState, TState Min, TState Max, TState Delta>
-				class RangeStateChangePolicy : public IStateChangePolicy<TState> {
+				class RangeStateChangePolicy final : public IStateChangePolicy<TState> {
 					static_assert(std::is_arithmetic_v<TState>(),
 						"TState must be of arithmetic type"));
 
@@ -21,7 +21,7 @@ namespace Voicemeeter {
 					RangeStateChangePolicy& operator=(const RangeStateChangePolicy&) = delete;
 					RangeStateChangePolicy& operator=(RangeStateChangePolicy&&) = delete;
 
-					const virtual bool SetNext(estd::remove_cvref_t<TState>& state) override {
+					virtual bool SetNext(estd::remove_cvref_t<TState>& state) const override {
 						if (Max == state) {
 
 							return false;
@@ -33,7 +33,7 @@ namespace Voicemeeter {
 
 						return true;
 					};
-					const virtual bool SetPrevious(estd::remove_cvref_t<TState>& state) override {
+					virtual bool SetPrevious(estd::remove_cvref_t<TState>& state) const override {
 						if (state == Min) {
 
 							return false;
@@ -45,7 +45,7 @@ namespace Voicemeeter {
 
 						return true;
 					};
-					const virtual bool Set(estd::remove_cvref_t<TState>& dst, estd::remove_cvref_t<TState>& src) override {
+					virtual bool Set(estd::remove_cvref_t<TState>& dst, estd::remove_cvref_t<TState>& src) const override {
 						if (dst == src) {
 
 							return false;

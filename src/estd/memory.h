@@ -1,16 +1,18 @@
 #pragma once
 
+#include <utility>
+
 #include "type_traits.h"
 
 namespace estd {
 	template<typename Func>
-	class guard {
+	class guard final {
 		static_assert(is_invocable<void, Func>(),
 			"Func must be invocable with no arguments and void return type");
 
 	public:
 		inline explicit guard(Func release) noexcept
-			: m_release{ release } {
+			: m_release{ std::move(release) } {
 
 		}
 		guard(const guard&) = delete;
