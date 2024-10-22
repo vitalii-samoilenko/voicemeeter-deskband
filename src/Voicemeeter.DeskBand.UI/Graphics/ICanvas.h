@@ -11,7 +11,6 @@ namespace Voicemeeter {
 			namespace Graphics {
 				class ICanvas : public IVisible, public IResizable {
 				public:
-					ICanvas() = delete;
 					ICanvas(const ICanvas&) = delete;
 					ICanvas(ICanvas&&) = delete;
 
@@ -19,6 +18,9 @@ namespace Voicemeeter {
 
 					ICanvas& operator=(const ICanvas&) = delete;
 					ICanvas& operator=(ICanvas&&) = delete;
+
+				protected:
+					ICanvas() = default;
 				};
 			}
 		}

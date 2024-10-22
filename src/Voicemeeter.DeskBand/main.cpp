@@ -3,8 +3,8 @@
 #include <windows.h>
 
 #include "Windows/window.h"
-#include "Windows/error.h"
-#include "Windows/wrappers.h"
+#include "Voicemeeter.DeskBand.Windows/error.h"
+#include "Voicemeeter.DeskBand.Windows/wrappers.h"
 #include "Windows/errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;

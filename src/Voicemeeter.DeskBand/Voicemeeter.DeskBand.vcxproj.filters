@@ -38,12 +38,6 @@
     <ClInclude Include="windows\window.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="windows\error.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="windows\wrappers.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="Windows\errormessagebox.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>

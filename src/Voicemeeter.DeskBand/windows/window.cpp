@@ -1,6 +1,6 @@
 #include "window.h"
 
-#include "wrappers.h"
+#include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 #include "errormessagebox.h"
 
 using namespace Voicemeeter::DeskBand::Windows;
