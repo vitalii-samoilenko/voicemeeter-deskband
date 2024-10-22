@@ -134,13 +134,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Component.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />
     <ClInclude Include="IAppMouseTracker.h" />
     <ClInclude Include="IComponent.h" />
-    <ClInclude Include="IControl.h" />
+    <ClInclude Include="Control.h" />
     <ClInclude Include="IMouseTracker.h" />
-    <ClInclude Include="IPanel.h" />
+    <ClInclude Include="Panel.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="Panels\StackPanel.h" />
     <ClInclude Include="Policies\CircularStateChangePolicy.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Traits\IVisible.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="Controls\StateControl.h" />
     <ClCompile Include="Panels\StackPanel.cpp" />
     <ClCompile Include="Scene.cpp" />
