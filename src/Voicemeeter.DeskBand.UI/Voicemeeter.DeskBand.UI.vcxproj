@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Builder.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />

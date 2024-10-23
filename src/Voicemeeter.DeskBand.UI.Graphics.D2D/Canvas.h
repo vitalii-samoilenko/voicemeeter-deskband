@@ -30,6 +30,9 @@ namespace Voicemeeter {
 						Canvas& operator=(const Canvas&) = delete;
 						Canvas& operator=(Canvas&&) = delete;
 
+						virtual const ::linear_algebra::vector& get_Position() const override;
+						virtual const ::linear_algebra::vector& get_Size() const override;
+
 						virtual void Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override;
 						virtual void Resize(const ::linear_algebra::vector& vertex) override;
 

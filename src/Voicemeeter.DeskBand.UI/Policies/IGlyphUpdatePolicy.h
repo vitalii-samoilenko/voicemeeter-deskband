@@ -15,7 +15,7 @@ namespace Voicemeeter {
 				template<typename TGlyph, typename TState>
 				class IGlyphUpdatePolicy {
 					static_assert(
-						::std::is_base_of_v<IGlyph, TGlyph>,
+						::std::is_base_of_v<IGlyph, ::estd::remove_cvref_t<TGlyph>>,
 						"TGlyph must be derived from IGlyph");
 
 				public:

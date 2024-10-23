@@ -14,36 +14,36 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace Graphics {
 				namespace D2D {
-					template<typename TBundle, typename TParam = void>
+					template<typename TBundle, typename TParam>
 					class BundleGlyph final : public Glyph {
 						static_assert(
 							::std::conditional_t<
-								::std::is_void_v<TParam>,
-								::estd::is_invocable_r<void, TFunc, Canvas&, const ::linear_algebra::vector&, const ::linear_algebra::vector&>,
-								::estd::is_invocable_r<void, TFunc, Canvas&, const ::linear_algebra::vector&, const ::linear_algebra::vector&, ::estd::remove_cvref_t<TParam>&>>(),
+								::std::is_void_v<::estd::remove_cvref_t<TParam>>,
+								::estd::is_invocable_r<void, ::estd::remove_cvref_t<TBundle>, Canvas&, const ::linear_algebra::vector&, const ::linear_algebra::vector&>,
+								::estd::is_invocable_r<void, ::estd::remove_cvref_t<TBundle>, Canvas&, const ::linear_algebra::vector&, const ::linear_algebra::vector&, ::estd::remove_cvref_t<TParam>&>>(),
 							"TBundle must be invocable with Canvas&, const vector&, const vector& and TParam& arguments and void return type");
 
 					public:
 						template<
 							::std::enable_if_t<
-								::std::is_void_v<TParam>,
+								::std::is_void_v<::estd::remove_cvref_t<TParam>>,
 								bool> = true>
 						BundleGlyph(
 							Canvas& canvas,
 							const ::linear_algebra::vector& baseVertex,
-							TBundle bundle
+							::estd::remove_cvref_t<TBundle>& bundle
 						) : Glyph{ canvas, baseVertex }
 						  , m_bundle{ ::std::move(bundle) } {
 
 						};
 						template<
 							::std::enable_if_t<
-								::std::negation_v<::std::is_void_v<TParam>>,
+								::std::negation_v<::std::is_void_v<::estd::remove_cvref_t<TParam>>>,
 								bool> = true>
 						BundleGlyph(
 							Canvas& canvas,
 							const ::linear_algebra::vector& baseVertex,
-							TBundle bundle
+							::estd::remove_cvref_t<TBundle>& bundle
 						) : Glyph{ canvas, baseVertex }
 						  , m_param{}
 						  , m_bundle{ ::std::move(bundle) } {
@@ -60,7 +60,7 @@ namespace Voicemeeter {
 
 						template<
 							::std::enable_if_t<
-								::std::negation_v<::std::is_void_v<TParam>>,
+								::std::negation_v<::std::is_void_v<::estd::remove_cvref_t<TParam>>>,
 								bool> = true>
 						inline void set_Param(::estd::remove_cvref_t<Param>& param) {
 							m_param = std::move(param);
@@ -69,14 +69,14 @@ namespace Voicemeeter {
 					protected:
 						template<
 							::std::enable_if_t<
-								::std::is_void_v<TParam>,
+								::std::is_void_v<::estd::remove_cvref_t<TParam>>,
 								bool> = true>
 						virtual void OnDraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override {
 							m_bundle(m_canvas, point, vertex);
 						};
 						template<
 							::std::enable_if_t<
-								::std::negation_v<::std::is_void_v<TParam>>,
+								::std::negation_v<::std::is_void_v<::estd::remove_cvref_t<TParam>>>,
 								bool> = true>
 						virtual void OnDraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override {
 							m_bundle(m_canvas, point, vertex, m_param);
@@ -84,7 +84,7 @@ namespace Voicemeeter {
 
 					private:
 						::estd::remove_cvref_t<TParam> m_param;
-						TBundle m_bundle;
+						::estd::remove_cvref_t<TBundle>& m_bundle;
 					};
 				}
 			}

@@ -13,7 +13,7 @@ namespace Voicemeeter {
 				template<typename TState, TState Min, TState Max, TState Delta>
 				class CircularStateChangePolicy final : public IStateChangePolicy<TState> {
 					static_assert(
-						::std::is_arithmetic_v<TState>,
+						::std::is_arithmetic_v<::estd::remove_cvref_t<TState>>,
 						"TState must be of arithmetic type"));
 
 				public:

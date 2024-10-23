@@ -28,14 +28,14 @@ namespace Voicemeeter {
 					template<typename TIterator,
 						::std::enable_if_t<
 							::std::is_same_v<
-								::estd::iterator_value_type_t<TIterator>,
+								::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
 								::std::unique_ptr<IComponent>>,
 							bool> = true>
 					StackPanel(
 						const ::linear_algebra::vector& baseMarginTopLeft,
 						const ::linear_algebra::vector& baseMarginBottomRight,
-						TIterator begin,
-						TIterator end
+						::estd::remove_cvref_t<TIterator> begin,
+						::estd::remove_cvref_t<TIterator> end
 					);
 
 					StackPanel() = delete;
@@ -97,14 +97,14 @@ namespace Voicemeeter {
 				template<typename TIterator,
 					::std::enable_if_t<
 						::std::is_same_v<
-							::estd::iterator_value_type_t<TIterator>,
+							::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
 							::std::unique_ptr<IComponent>>,
 						bool>>
 				StackPanel<Direction::Right>::StackPanel(
 					const ::linear_algebra::vector& baseMarginTopLeft,
 					const ::linear_algebra::vector& baseMarginBottomRight,
-					TIterator begin,
-					TIterator end
+					::estd::remove_cvref_t<TIterator> begin,
+					::estd::remove_cvref_t<TIterator> end
 				) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
 				  , m_baseVertex{}
 				  , m_cpComponent{} {
@@ -122,14 +122,14 @@ namespace Voicemeeter {
 				template<typename TIterator,
 					::std::enable_if_t<
 						::std::is_same_v<
-							::estd::iterator_value_type_t<TIterator>,
+							::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
 							::std::unique_ptr<IComponent>>,
 						bool>>
 				StackPanel<Direction::Down>::StackPanel(
 					const ::linear_algebra::vector& baseMarginTopLeft,
 					const ::linear_algebra::vector& baseMarginBottomRight,
-					TIterator begin,
-					TIterator end
+					::estd::remove_cvref_t<TIterator> begin,
+					::estd::remove_cvref_t<TIterator> end
 				) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
 				  , m_baseVertex{}
 				  , m_cpComponent{} {

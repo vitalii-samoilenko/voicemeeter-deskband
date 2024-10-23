@@ -13,12 +13,12 @@ namespace Voicemeeter {
 				template<typename TGlyph, typename TState, typename TFunc>
 				class PreconfiguredGlyphUpdatePolicy final : public IGlyphUpdatePolicy<TGlyph, TState> {
 					static_assert(
-						::estd::is_invocable_r<void, TFunc, ::estd::remove_cvref_t<TGlyph>&, const ::estd::remove_cvref_t<TState>&>(),
+						::estd::is_invocable_r<void, ::estd::remove_cvref_t<TFunc>, ::estd::remove_cvref_t<TGlyph>&, const ::estd::remove_cvref_t<TState>&>(),
 						"TFunc must be invocable with TGlyph& and const TState& arguments and void return type");
 
 				public:
 					explicit PreconfiguredGlyphUpdatePolicy(
-						TFunc onUpdate
+						::estd::remove_cvref_t<TFunc>& onUpdate
 					) : m_onUpdate{ ::std::move(onUpdate) } {
 
 					}
@@ -36,7 +36,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					TFunc m_onUpdate;
+					::estd::remove_cvref_t<TFunc> m_onUpdate;
 				};
 			}
 		}

@@ -14,7 +14,7 @@ namespace Voicemeeter {
 				template<typename TComponent>
 				class IInteractivityPolicy {
 					static_assert(
-						::std::is_base_of_v<IComponent, TComponent>,
+						::std::is_base_of_v<IComponent, ::estd::remove_cvref_t<TComponent>>,
 						"TComponent must be derived from IComponent");
 
 				public:

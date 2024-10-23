@@ -35,6 +35,17 @@ Canvas::Canvas(
 	), "Render target creation failed");
 }
 
+const ::linear_algebra::vector& Canvas::get_Position() const {
+	return ::linear_algebra::Origin;
+}
+const ::linear_algebra::vector& Canvas::get_Size() const {
+	const D2D1_SIZE_F& size{ m_pD2dRenderTarget->GetSize() };
+	return {
+		static_cast<int>(size.width),
+		static_cast<int>(size.height)
+	};
+}
+
 void Canvas::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
 
 }

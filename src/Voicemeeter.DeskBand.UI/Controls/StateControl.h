@@ -20,17 +20,17 @@ namespace Voicemeeter {
 				template<typename TState, typename TGlyph>
 				class StateControl final : public Control {
 					static_assert(
-						::std::is_base_of_v<IGlyph, TGlyph>,
+						::std::is_base_of_v<IGlyph, ::estd::remove_cvref_t<TGlyph>>,
 						"TGlyph must be derived from IGlyph");
 
 				public:
 					StateControl(
 						const ::linear_algebra::vector& baseMarginTopLeft,
 						const ::linear_algebra::vector& baseMarginBottomRight,
-						::std::unique_ptr<TGlyph> pGlyph,
-						::std::shared_ptr<IStateChangePolicy<TState>> pStateChangePolicy,
-						::std::unique_ptr<IStatePromotionPolicy<TState>> pStatePromotionPolicy,
-						::std::shared_ptr<IGlyphUpdatePolicy<TGlyph, TState>> pGlyphUpdatePolicy,
+						::std::unique_ptr<::estd::remove_cvref_t<TGlyph>> pGlyph,
+						::std::shared_ptr<IStateChangePolicy<::estd::remove_cvref_t<TState>>> pStateChangePolicy,
+						::std::unique_ptr<IStatePromotionPolicy<::estd::remove_cvref_t<TState>>> pStatePromotionPolicy,
+						::std::shared_ptr<IGlyphUpdatePolicy<::estd::remove_cvref_t<TGlyph>, ::estd::remove_cvref_t<TState>>> pGlyphUpdatePolicy,
 						::std::shared_ptr<IInteractivityPolicy<StateControl>> pInteractivityPolicy
 					) : Control{ baseMarginTopLeft, baseMarginBottomRight }
 					  , m_state{}
@@ -50,7 +50,7 @@ namespace Voicemeeter {
 					StateControl& operator=(const StateControl&) = delete;
 					StateControl& operator=(StateControl&&) = delete;
 
-					::estd::remove_cvref_t<TState> get_State() const {
+					const ::estd::remove_cvref_t<TState>& get_State() const {
 						return m_state;
 					};
 
@@ -113,11 +113,11 @@ namespace Voicemeeter {
 					};
 
 				private:
-					TState m_state;
-					::std::unique_ptr<TGlyph> m_pGlyph;
-					::std::shared_ptr<IStateChangePolicy<TState>> m_pStateChangePolicy;
-					::std::unique_ptr<IStatePromotionPolicy<TState>> m_pStatePromotionPolicy;
-					::std::shared_ptr<IGlyphUpdatePolicy<TGlyph, TState>> m_pGlyphUpdatePolicy;
+					::estd::remove_cvref_t<TState> m_state;
+					::std::unique_ptr<::estd::remove_cvref_t<TGlyph>> m_pGlyph;
+					::std::shared_ptr<IStateChangePolicy<::estd::remove_cvref_t<TState>>> m_pStateChangePolicy;
+					::std::unique_ptr<IStatePromotionPolicy<::estd::remove_cvref_t<TState>>> m_pStatePromotionPolicy;
+					::std::shared_ptr<IGlyphUpdatePolicy<::estd::remove_cvref_t<TGlyph>, ::estd::remove_cvref_t<TState>>> m_pGlyphUpdatePolicy;
 					::std::shared_ptr<IInteractivityPolicy<StateControl>> m_pInteractivityPolicy;
 
 					void OnSet(bool promote) {

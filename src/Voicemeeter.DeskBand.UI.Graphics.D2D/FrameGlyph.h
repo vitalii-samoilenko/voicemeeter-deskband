@@ -20,12 +20,12 @@ namespace Voicemeeter {
 						template<typename TIterator,
 							::std::enable_if_t<
 								::std::is_same_v<
-									::estd::iterator_value_type_t<TIterator>,
+									::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
 									::std::unique_ptr<IGlyph>>,
 								bool> = true>
 						FrameGlyph(
-							TIterator begin,
-							TIterator end
+							::estd::remove_cvref_t<TIterator> begin,
+							::estd::remove_cvref_t<TIterator> end
 						) : m_frame{}
 						  , m_cpGlyph{} {
 							for (; begin != end; ++begin) {

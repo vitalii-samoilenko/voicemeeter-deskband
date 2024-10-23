@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h" />
+    <ClInclude Include="Builder.h" />
     <ClInclude Include="FrameGlyph.h" />
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="BundleGlyph.h" />
