@@ -30,8 +30,8 @@ namespace Voicemeeter {
 						Canvas& operator=(const Canvas&) = delete;
 						Canvas& operator=(Canvas&&) = delete;
 
-						virtual void Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) override;
-						virtual void Resize(::linear_algebra::vector vertex) override;
+						virtual void Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override;
+						virtual void Resize(const ::linear_algebra::vector& vertex) override;
 
 						inline ID2D1HwndRenderTarget* get_pRenderTarget() const {
 							return m_pD2dRenderTarget.Get();

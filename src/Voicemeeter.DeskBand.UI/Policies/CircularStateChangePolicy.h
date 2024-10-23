@@ -45,6 +45,10 @@ namespace Voicemeeter {
 						return true;
 					};
 					virtual bool Set(::estd::remove_cvref_t<TState>& dst, ::estd::remove_cvref_t<TState>& src) const override {
+						if (dst == src) {
+							return false;
+						}
+
 						if (src < Min) {
 							dst = Max;
 						} else if (Max < src) {

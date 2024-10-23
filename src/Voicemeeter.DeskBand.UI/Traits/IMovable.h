@@ -14,7 +14,7 @@ namespace Voicemeeter {
 					IMovable& operator=(const IMovable&) = delete;
 					IMovable& operator=(IMovable&&) = delete;
 
-					virtual void Move(::linear_algebra::vector point) = 0;
+					virtual void Move(const ::linear_algebra::vector& point) = 0;
 
 				protected:
 					IMovable() = default;

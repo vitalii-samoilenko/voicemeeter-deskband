@@ -12,7 +12,7 @@ using namespace ::Voicemeeter::DeskBand::UI::Graphics::D2D;
 
 Glyph::Glyph(
 	Canvas& canvas,
-	::linear_algebra::vector baseVertex
+	const ::linear_algebra::vector& baseVertex
 ) : m_canvas{ canvas }
   , m_point{}
   , m_vertex{ baseVertex }
@@ -20,17 +20,17 @@ Glyph::Glyph(
 
 }
 
-::linear_algebra::vector Glyph::get_Position() const {
+const ::linear_algebra::vector& Glyph::get_Position() const {
 	return m_point;
 }
-::linear_algebra::vector Glyph::get_Size() const {
+const ::linear_algebra::vector& Glyph::get_Size() const {
 	return m_vertex;
 }
-::linear_algebra::vector Glyph::get_BaseSize() const {
+const ::linear_algebra::vector& Glyph::get_BaseSize() const {
 	return m_baseVertex;
 }
 
-void Glyph::Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) {
+void Glyph::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
 	ID2D1HwndRenderTarget* pRenderTarget{ m_canvas.get_pRenderTarget() };
 
 	pRenderTarget->BeginDraw();
@@ -46,19 +46,17 @@ void Glyph::Redraw(::linear_algebra::vector point, ::linear_algebra::vector vert
 	), "Render failed");
 };
 
-void Glyph::Move(::linear_algebra::vector point) {
+void Glyph::Move(const ::linear_algebra::vector& point) {
 	m_point = point;
 }
 
-void Glyph::Rescale(::linear_algebra::vector vertex) {
+void Glyph::Rescale(const ::linear_algebra::vector& vertex) {
 	double scale{
 		::std::min<double>(
 			static_cast<double>(vertex.x) / m_baseVertex.x,
 			static_cast<double>(vertex.y) / m_baseVertex.y)
 	};
 
-	m_vertex = {
-		static_cast<int>(m_baseVertex.x * scale),
-		static_cast<int>(m_baseVertex.y * scale)
-	};
+	m_vertex.x = m_baseVertex.x * scale;
+	m_vertex.y = m_baseVertex.y * scale;
 };

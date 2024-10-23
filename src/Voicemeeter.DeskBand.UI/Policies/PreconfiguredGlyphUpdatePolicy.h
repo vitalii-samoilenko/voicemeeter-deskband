@@ -10,15 +10,15 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
-				template<typename TGlyph, typename TState, typename Func>
+				template<typename TGlyph, typename TState, typename TFunc>
 				class PreconfiguredGlyphUpdatePolicy final : public IGlyphUpdatePolicy<TGlyph, TState> {
 					static_assert(
-						::estd::is_invocable_r<void, Func, ::estd::remove_cvref_t<TGlyph>&, const ::estd::remove_cvref_t<TState>&>(),
-						"Func must be invocable with TGlyph and TState arguments and void return type");
+						::estd::is_invocable_r<void, TFunc, ::estd::remove_cvref_t<TGlyph>&, const ::estd::remove_cvref_t<TState>&>(),
+						"TFunc must be invocable with TGlyph& and const TState& arguments and void return type");
 
 				public:
 					explicit PreconfiguredGlyphUpdatePolicy(
-						Func onUpdate
+						TFunc onUpdate
 					) : m_onUpdate{ ::std::move(onUpdate) } {
 
 					}
@@ -36,7 +36,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					Func m_onUpdate;
+					TFunc m_onUpdate;
 				};
 			}
 		}

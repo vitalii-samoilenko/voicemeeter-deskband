@@ -1,3 +1,5 @@
+#include <limits>
+
 #include "linear_algebra.h"
 
 using namespace linear_algebra;
@@ -16,13 +18,22 @@ vector linear_algebra::operator-(const vector& lhs, const vector& rhs) {
 	};
 }
 
-bool linear_algebra::is_inside(vector point, vector vertex) {
-	vector distance{ point - vertex };
+vector Origin{};
+vector Infinity{
+	::std::numeric_limits<int>::max(),
+	::std::numeric_limits<int>::max()
+};
 
-	return distance.x < 0 && distance.y < 0;
+bool linear_algebra::is_inside(
+	const vector& point,
+	const vector& vertex) {
+	return point.x - vertex.x < 0
+		&& point.y - vertex.y < 0;
 }
 
-bool linear_algebra::is_overlapping(vector lhs_point, vector lhs_vertex, vector rhs_point, vector rhs_vertex) {
+bool linear_algebra::is_overlapping(
+	const vector& lhs_point, const vector& lhs_vertex,
+	const vector& rhs_point, const vector& rhs_vertex) {
 	vector abs_vertex{ lhs_point + lhs_vertex };
 	if (!is_inside(rhs_point, abs_vertex)) {
 		return false;
@@ -31,6 +42,5 @@ bool linear_algebra::is_overlapping(vector lhs_point, vector lhs_vertex, vector 
 	if (!is_inside(lhs_point, abs_vertex)) {
 		return false;
 	}
-
 	return true;
 }

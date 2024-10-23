@@ -16,8 +16,8 @@ namespace Voicemeeter {
 
 			protected:
 				Control(
-					::linear_algebra::vector baseMarginTopLeft,
-					::linear_algebra::vector baseMarginBottomRight
+					const ::linear_algebra::vector& baseMarginTopLeft,
+					const ::linear_algebra::vector& baseMarginBottomRight
 				) : Component{ baseMarginTopLeft, baseMarginBottomRight } {
 
 				};

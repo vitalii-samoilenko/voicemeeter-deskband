@@ -32,8 +32,8 @@ namespace Voicemeeter {
 								::std::unique_ptr<IComponent>>,
 							bool> = true>
 					StackPanel(
-						::linear_algebra::vector baseMarginTopLeft,
-						::linear_algebra::vector baseMarginBottomRight,
+						const ::linear_algebra::vector& baseMarginTopLeft,
+						const ::linear_algebra::vector& baseMarginBottomRight,
 						TIterator begin,
 						TIterator end
 					);
@@ -48,32 +48,38 @@ namespace Voicemeeter {
 					StackPanel& operator=(StackPanel&&) = delete;
 
 				protected:
-					virtual ::linear_algebra::vector OnGet_BaseSize() const override {
+					virtual const ::linear_algebra::vector& OnGet_Position() const override {
+						return m_cpComponent.front()->get_Position();
+					};
+					virtual const ::linear_algebra::vector& OnGet_Size() const override {
+						return m_vertex;
+					};
+					virtual const ::linear_algebra::vector& OnGet_BaseSize() const override {
 						return m_baseVertex;
 					};
 
-					virtual void OnRedraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) override {
+					virtual void OnRedraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							pComponent->Redraw(point, vertex);
 						}
 					};
-					virtual ::linear_algebra::vector OnRescale(::linear_algebra::vector vertex) override;
-					virtual void OnMove(::linear_algebra::vector point) override;
-					virtual void OnMouseLDown(::linear_algebra::vector point) override {
+					virtual void OnRescale(const ::linear_algebra::vector& vertex) override;
+					virtual void OnMove(const ::linear_algebra::vector& point) override;
+					virtual void OnMouseLDown(const ::linear_algebra::vector& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseLDown(point)) {
 								break;
 							}
 						}
 					};
-					virtual void OnMouseRDown(::linear_algebra::vector point) override {
+					virtual void OnMouseRDown(const ::linear_algebra::vector& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseRDown(point)) {
 								break;
 							}
 						}
 					};
-					virtual void OnMouseWheel(::linear_algebra::vector point, int delta) override {
+					virtual void OnMouseWheel(const ::linear_algebra::vector& point, int delta) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseWheel(point, delta)) {
 								break;
@@ -82,6 +88,7 @@ namespace Voicemeeter {
 					};
 
 				private:
+					::linear_algebra::vector m_vertex;
 					::linear_algebra::vector m_baseVertex;
 					::std::vector<::std::unique_ptr<IComponent>> m_cpComponent;
 				};
@@ -94,20 +101,22 @@ namespace Voicemeeter {
 							::std::unique_ptr<IComponent>>,
 						bool>>
 				StackPanel<Direction::Right>::StackPanel(
-					::linear_algebra::vector baseMarginTopLeft,
-					::linear_algebra::vector baseMarginBottomRight,
+					const ::linear_algebra::vector& baseMarginTopLeft,
+					const ::linear_algebra::vector& baseMarginBottomRight,
 					TIterator begin,
 					TIterator end
 				) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
 				  , m_baseVertex{}
 				  , m_cpComponent{} {
+					::linear_algebra::vector virtual_vertex{};
 					for (; begin != end; ++begin) {
-						m_baseVertex.y = ::std::max(m_baseVertex.y, (*begin)->get_BaseSize().y);
-
+						virtual_vertex.y = ::std::max(virtual_vertex.y, (*begin)->get_BaseSize().y);
 						m_cpComponent.emplace_back(::std::move(*begin));
 					}
 
-					m_baseVertex = OnRescale(m_baseVertex);
+					OnRescale(virtual_vertex);
+
+					m_baseVertex = m_vertex;
 				};
 				template<>
 				template<typename TIterator,
@@ -117,30 +126,32 @@ namespace Voicemeeter {
 							::std::unique_ptr<IComponent>>,
 						bool>>
 				StackPanel<Direction::Down>::StackPanel(
-					::linear_algebra::vector baseMarginTopLeft,
-					::linear_algebra::vector baseMarginBottomRight,
+					const ::linear_algebra::vector& baseMarginTopLeft,
+					const ::linear_algebra::vector& baseMarginBottomRight,
 					TIterator begin,
 					TIterator end
 				) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
 				  , m_baseVertex{}
 				  , m_cpComponent{} {
+					::linear_algebra::vector virtualVertex{};
 					for (; begin != end; ++begin) {
-						m_baseVertex.x = ::std::max(m_baseVertex.x, (*begin)->get_BaseSize().x);
-
+						virtualVertex.x = ::std::max(virtualVertex.x, (*begin)->get_BaseSize().x);
 						m_cpComponent.emplace_back(::std::move(*begin));
 					}
 
-					m_baseVertex = OnRescale(m_baseVertex);
+					OnRescale(virtualVertex);
+
+					m_baseVertex = m_vertex;
 				};
 
 				template<>
-				::linear_algebra::vector StackPanel<Direction::Right>::OnRescale(::linear_algebra::vector vertex);
+				void StackPanel<Direction::Right>::OnRescale(const ::linear_algebra::vector& vertex);
 				template<>
-				::linear_algebra::vector StackPanel<Direction::Down>::OnRescale(::linear_algebra::vector vertex);
+				void StackPanel<Direction::Down>::OnRescale(const ::linear_algebra::vector& vertex);
 				template<>
-				void StackPanel<Direction::Right>::OnMove(::linear_algebra::vector point);
+				void StackPanel<Direction::Right>::OnMove(const ::linear_algebra::vector& point);
 				template<>
-				void StackPanel<Direction::Down>::OnMove(::linear_algebra::vector point);
+				void StackPanel<Direction::Down>::OnMove(const ::linear_algebra::vector& point);
 			};
 		}
 	}

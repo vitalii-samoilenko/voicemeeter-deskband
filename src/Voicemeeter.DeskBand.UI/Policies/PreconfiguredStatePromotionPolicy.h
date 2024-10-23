@@ -10,15 +10,15 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
-				template<typename TState, typename Func>
+				template<typename TState, typename TFunc>
 				class PreconfiguredStatePromotionPolicy final : public IStatePromotionPolicy<TState> {
 					static_assert(
-						::estd::is_invocable_r<void, Func, const ::estd::remove_cvref_t<TState>&>(),
-						"Func must be invocable with TState argument and void return type");
+						::estd::is_invocable_r<void, TFunc, const ::estd::remove_cvref_t<TState>&>(),
+						"TFunc must be invocable with const TState& argument and void return type");
 
 				public:
 					explicit PreconfiguredStatePromotionPolicy(
-						Func onPromote
+						TFunc onPromote
 					) : m_onPromote{ ::std::move(onPromote) } {
 
 					}
@@ -36,7 +36,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					Func m_onPromote;
+					TFunc m_onPromote;
 				};
 			}
 		}

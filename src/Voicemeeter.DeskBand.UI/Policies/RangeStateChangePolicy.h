@@ -26,52 +26,41 @@ namespace Voicemeeter {
 
 					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const override {
 						if (Max == state) {
-
 							return false;
 						} else if (Max - Delta < state) {
 							state = Max;
 						} else {
 							state += Delta;
 						}
-
 						return true;
 					};
 					virtual bool SetPrevious(::estd::remove_cvref_t<TState>& state) const override {
 						if (state == Min) {
-
 							return false;
 						} else if (state < Min + Delta) {
 							state = Min;
 						} else {
 							state -= Delta;
 						}
-
 						return true;
 					};
 					virtual bool Set(::estd::remove_cvref_t<TState>& dst, ::estd::remove_cvref_t<TState>& src) const override {
 						if (dst == src) {
-
 							return false;
 						}
-
 						if (Max < src) {
 							if (Max == dst) {
-								
 								return false;
 							}
-
 							dst = Max;
 						} else if (src < Min) {
 							if (dst == Min) {
-
 								return false;
 							}
-
 							dst = Min;
 						} else {
 							dst = src;
 						}
-
 						return true;
 					};
 				};

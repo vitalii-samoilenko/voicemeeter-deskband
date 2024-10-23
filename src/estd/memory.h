@@ -16,13 +16,13 @@ namespace estd {
 		inline explicit guard(Func release) noexcept
 			: m_release{ ::std::move(release) } {
 
-		}
+		};
 		guard(const guard&) = delete;
 		guard(guard&&) noexcept = default;
 
 		inline ~guard() {
 			m_release();
-		}
+		};
 
 		guard& operator=(const guard&) = delete;
 		guard& operator=(guard&&) noexcept = default;

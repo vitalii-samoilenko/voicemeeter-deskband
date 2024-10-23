@@ -22,23 +22,23 @@ namespace Voicemeeter {
 						Glyph& operator=(const Glyph&) = delete;
 						Glyph& operator=(Glyph&&) = delete;
 
-						virtual ::linear_algebra::vector get_Position() const override final;
-						virtual ::linear_algebra::vector get_Size() const override final;
-						virtual ::linear_algebra::vector get_BaseSize() const override final;
+						virtual const ::linear_algebra::vector& get_Position() const override final;
+						virtual const ::linear_algebra::vector& get_Size() const override final;
+						virtual const ::linear_algebra::vector& get_BaseSize() const override final;
 
-						virtual void Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) override final;
-						virtual void Move(::linear_algebra::vector point) override final;
-						virtual void Rescale(::linear_algebra::vector vertex) override final;
+						virtual void Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override final;
+						virtual void Move(const ::linear_algebra::vector& point) override final;
+						virtual void Rescale(const ::linear_algebra::vector& vertex) override final;
 
 					protected:
 						Canvas& m_canvas;
 
 						Glyph(
 							Canvas& pCanvas,
-							::linear_algebra::vector baseVertex
+							const ::linear_algebra::vector& baseVertex
 						);
 
-						virtual void OnDraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) = 0;
+						virtual void OnDraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) = 0;
 
 					private:
 						::linear_algebra::vector m_point;

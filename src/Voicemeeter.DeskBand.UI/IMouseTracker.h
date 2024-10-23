@@ -18,6 +18,7 @@ namespace Voicemeeter {
 
 			protected:
 				IMouseTracker() = default;
+
 				~IMouseTracker() = default;
 			};
 		}

@@ -14,10 +14,10 @@ namespace Voicemeeter {
 					IVisible& operator=(const IVisible&) = delete;
 					IVisible& operator=(IVisible&&) = delete;
 
-					virtual ::linear_algebra::vector get_Position() const = 0;
-					virtual ::linear_algebra::vector get_Size() const = 0;
+					virtual const ::linear_algebra::vector& get_Position() const = 0;
+					virtual const ::linear_algebra::vector& get_Size() const = 0;
 
-					virtual void Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) = 0;
+					virtual void Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) = 0;
 
 				protected:
 					IVisible() = default;

@@ -5,37 +5,35 @@
 using namespace ::Voicemeeter::DeskBand::UI;
 
 Component::Component(
-	::linear_algebra::vector baseMarginTopLeft,
-	::linear_algebra::vector baseMarginBottomRight
-) : m_point{}
-  , m_vertex{}
-  , m_marginTopLeft{ baseMarginTopLeft }
+	const ::linear_algebra::vector& baseMarginTopLeft,
+	const ::linear_algebra::vector& baseMarginBottomRight
+) : m_marginTopLeft{ baseMarginTopLeft }
   , m_marginBottomRight{ baseMarginBottomRight }
   , m_baseMarginTopLeft{ baseMarginTopLeft }
   , m_baseMarginBottomRight{ baseMarginBottomRight } {
 
 }
 
-::linear_algebra::vector Component::get_Position() const {
-	return m_point;
+const ::linear_algebra::vector& Component::get_Position() const {
+	return OnGet_Position() - m_marginTopLeft;
 }
-::linear_algebra::vector Component::get_Size() const {
-	return m_vertex;
+const ::linear_algebra::vector& Component::get_Size() const {
+	return OnGet_Size() + m_marginTopLeft + m_marginBottomRight;
 }
-::linear_algebra::vector Component::get_BaseSize() const {
+const ::linear_algebra::vector& Component::get_BaseSize() const {
 	return OnGet_BaseSize() + m_baseMarginTopLeft + m_baseMarginBottomRight;
 }
 
-void Component::Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) {
+void Component::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
 	if (!::linear_algebra::is_overlapping(
 			point, vertex,
-			m_point + m_marginTopLeft, m_vertex - m_marginBottomRight)) {
+			OnGet_Position(), OnGet_Size())) {
 		return;
 	}
 
 	OnRedraw(point, vertex);
 }
-void Component::Rescale(::linear_algebra::vector vertex) {
+void Component::Rescale(const ::linear_algebra::vector& vertex) {
 	::linear_algebra::vector baseVertex{ get_BaseSize() };
 
 	double scale{
@@ -44,67 +42,56 @@ void Component::Rescale(::linear_algebra::vector vertex) {
 			static_cast<double>(vertex.y) / baseVertex.y)
 	};
 
-	vertex = {
-		static_cast<int>(baseVertex.x * scale),
-		static_cast<int>(baseVertex.y * scale)
-	};
-	m_marginTopLeft = {
-		static_cast<int>(m_baseMarginTopLeft.x * scale),
-		static_cast<int>(m_baseMarginTopLeft.y * scale)
-	};
-	m_marginBottomRight = {
-		static_cast<int>(m_baseMarginTopLeft.x * scale),
-		static_cast<int>(m_baseMarginTopLeft.y * scale)
-	};
-	m_vertex = OnRescale(vertex - m_marginTopLeft - m_marginBottomRight)
-		+ m_marginTopLeft
-		+ m_marginBottomRight;
-}
-void Component::Move(::linear_algebra::vector point) {
-	m_point = point;
+	m_marginTopLeft.x = m_baseMarginTopLeft.x * scale;
+	m_marginTopLeft.y = m_baseMarginTopLeft.y * scale;
+	m_marginBottomRight.x = m_baseMarginTopLeft.x * scale;
+	m_marginBottomRight.y = m_baseMarginTopLeft.y * scale;
 
+	OnRescale(vertex - m_marginTopLeft - m_marginBottomRight);
+}
+void Component::Move(const ::linear_algebra::vector& point) {
 	OnMove(point + m_marginTopLeft);
 }
-bool Component::MouseLDown(::linear_algebra::vector point) {
+bool Component::MouseLDown(const ::linear_algebra::vector& point) {
 	if (!::linear_algebra::is_inside(
-			point - m_point,
-			m_vertex)) {
+			point - get_Position(),
+			get_Size())) {
 		return false;
 	}
 
 	if (::linear_algebra::is_inside(
-			point - m_point - m_marginTopLeft,
-			m_vertex - m_marginBottomRight)) {
+			point - OnGet_Position(),
+			OnGet_BaseSize())) {
 		OnMouseLDown(point);
 	}
 
 	return true;
 }
-bool Component::MouseRDown(::linear_algebra::vector point) {
+bool Component::MouseRDown(const ::linear_algebra::vector& point) {
 	if (!::linear_algebra::is_inside(
-			point - m_point,
-			m_vertex)) {
+			point - get_Position(),
+			get_Size())) {
 		return false;
 	}
 
 	if (::linear_algebra::is_inside(
-			point - m_point - m_marginTopLeft,
-			m_vertex - m_marginBottomRight)) {
+			point - OnGet_Position(),
+			OnGet_BaseSize())) {
 		OnMouseRDown(point);
 	}
 
 	return true;
 }
-bool Component::MouseWheel(::linear_algebra::vector point, int delta) {
+bool Component::MouseWheel(const ::linear_algebra::vector& point, int delta) {
 	if (!::linear_algebra::is_inside(
-			point - m_point,
-			m_vertex)) {
+			point - get_Position(),
+			get_Size())) {
 		return false;
 	}
 
 	if (::linear_algebra::is_inside(
-			point - m_point - m_marginTopLeft,
-			m_vertex - m_marginBottomRight)) {
+			point - OnGet_Position(),
+			OnGet_BaseSize())) {
 		OnMouseWheel(point, delta);
 	}
 
