@@ -2,13 +2,18 @@
 
 #include <type_traits>
 
+#include "estd/type_traits.h"
+
+#include "IStateChangePolicy.h"
+
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
 				template<typename TState, TState Min, TState Max, TState Delta>
 				class CircularStateChangePolicy final : public IStateChangePolicy<TState> {
-					static_assert(std::is_arithmetic_v<TState>(),
+					static_assert(
+						::std::is_arithmetic_v<TState>,
 						"TState must be of arithmetic type"));
 
 				public:
@@ -21,7 +26,7 @@ namespace Voicemeeter {
 					CircularStateChangePolicy& operator=(const CircularStateChangePolicy&) = delete;
 					CircularStateChangePolicy& operator=(CircularStateChangePolicy&&) = delete;
 
-					virtual bool SetNext(estd::remove_cvref_t<TState>& state) const override {
+					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const override {
 						if (Max - Delta < state) {
 							state = Min;
 						} else {
@@ -30,7 +35,7 @@ namespace Voicemeeter {
 
 						return true;
 					};
-					virtual bool SetPrevious(estd::remove_cvref_t<TState>& state) const override {
+					virtual bool SetPrevious(::estd::remove_cvref_t<TState>& state) const override {
 						if (state < Min + Delta) {
 							state = Max;
 						} else {
@@ -39,7 +44,7 @@ namespace Voicemeeter {
 
 						return true;
 					};
-					virtual bool Set(estd::remove_cvref_t<TState>& dst, estd::remove_cvref_t<TState>& src) const override {
+					virtual bool Set(::estd::remove_cvref_t<TState>& dst, ::estd::remove_cvref_t<TState>& src) const override {
 						if (src < Min) {
 							dst = Max;
 						} else if (Max < src) {

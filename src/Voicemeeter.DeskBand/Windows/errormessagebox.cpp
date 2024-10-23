@@ -2,13 +2,13 @@
 
 #include "errormessagebox.h"
 
-int Voicemeeter::DeskBand::Windows::ErrorMessageBox(
+int ::Voicemeeter::DeskBand::Windows::ErrorMessageBox(
 	DWORD cptCode,
 	DWORD errCode
 ) {
 	LPWSTR lpCptBuff{ NULL };
 	LPWSTR lpErrBuff{ NULL };
-	auto guardBuff = estd::make_guard([&lpCptBuff, &lpErrBuff]()->void {
+	auto guardBuff = ::estd::make_guard([&lpCptBuff, &lpErrBuff]()->void {
 		LocalFree(lpCptBuff);
 		LocalFree(lpErrBuff);
 	});

@@ -1,6 +1,6 @@
 #include "Component.h"
 
-using namespace Voicemeeter::DeskBand::UI;
+using namespace ::Voicemeeter::DeskBand::UI;
 
 linear_algebra::vector Component::get_Position() const {
 	return m_point;

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fba8b401-c90f-41eb-8fac-12e592874b55}</ProjectGuid>
-    <RootNamespace>VoicemeeterDeskBandUIGraphicsGDI</RootNamespace>
+    <ProjectGuid>{c55c74a6-d812-446d-94e1-75fe1aa95797}</ProjectGuid>
+    <RootNamespace>VoicemeeterDeskBandUIGraphicsD2D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -132,10 +132,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Canvas.cpp" />
+    <ClInclude Include="Canvas.h" />
+    <ClInclude Include="FrameGlyph.h" />
+    <ClInclude Include="Glyph.h" />
+    <ClInclude Include="BundleGlyph.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Canvas.h" />
+    <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="FrameGlyph.cpp" />
+    <ClCompile Include="Glyph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\estd\estd.vcxproj">

@@ -3,7 +3,7 @@
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 #include "errormessagebox.h"
 
-using namespace Voicemeeter::DeskBand::Windows;
+using namespace ::Voicemeeter::DeskBand::Windows;
 
 static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
 static constexpr DWORD EX_STYLE{ WS_EX_NOREDIRECTIONBITMAP };

@@ -4,7 +4,6 @@
 #include <utility>
 
 #include "estd/linear_algebra.h"
-#include "estd/type_traits.h"
 
 #include "../Control.h"
 #include "../Policies/IStateChangePolicy.h"
@@ -12,7 +11,7 @@
 #include "../Policies/IGlyphUpdatePolicy.h"
 #include "../Policies/IInteractivityPolicy.h"
 
-using namespace Voicemeeter::DeskBand::UI::Policies;
+using namespace ::Voicemeeter::DeskBand::UI::Policies;
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -20,23 +19,24 @@ namespace Voicemeeter {
 			namespace Controls {
 				template<typename TState, typename TGlyph>
 				class StateControl final : public Control {
-					static_assert(estd::is_base_of<IGlyph, TGlyph>(),
+					static_assert(
+						::std::is_base_of_v<IGlyph, TGlyph>,
 						"TGlyph must be derived from IGlyph");
 
 				public:
 					StateControl(
-						std::unique_ptr<TGlyph> pGlyph,
-						std::shared_ptr<IStateChangePolicy<TState>> pStateChangePolicy,
-						std::unique_ptr<IStatePromotionPolicy<TState>> pStatePromotionPolicy,
-						std::shared_ptr<IGlyphUpdatePolicy<TGlyph, TState>> pGlyphUpdatePolicy,
-						std::shared_ptr<IInteractivityPolicy<StateControl>> pInteractivityPolicy
+						::std::unique_ptr<TGlyph> pGlyph,
+						::std::shared_ptr<IStateChangePolicy<TState>> pStateChangePolicy,
+						::std::unique_ptr<IStatePromotionPolicy<TState>> pStatePromotionPolicy,
+						::std::shared_ptr<IGlyphUpdatePolicy<TGlyph, TState>> pGlyphUpdatePolicy,
+						::std::shared_ptr<IInteractivityPolicy<StateControl>> pInteractivityPolicy
 					) : m_state{}
-					  , m_pGlyph{ std::move(pGlyph) }
-					  , m_pStateChangePolicy{ std::move(pStateChangePolicy) }
-					  , m_pStatePromotionPolicy{ std::move(pStatePromotionPolicy) }
-					  , m_pGlyphUpdatePolicy{ std::move(pGlyphUpdatePolicy) }
-					  , m_pInteractivityPolicy{ std::move(pInteractivityPolicy) } {
-
+					  , m_pGlyph{ ::std::move(pGlyph) }
+					  , m_pStateChangePolicy{ ::std::move(pStateChangePolicy) }
+					  , m_pStatePromotionPolicy{ ::std::move(pStatePromotionPolicy) }
+					  , m_pGlyphUpdatePolicy{ ::std::move(pGlyphUpdatePolicy) }
+					  , m_pInteractivityPolicy{ ::std::move(pInteractivityPolicy) } {
+						m_baseVertex = m_pGlyph->get_baseSize();
 					};
 					StateControl() = delete;
 					StateControl(const StateControl&) = delete;
@@ -47,7 +47,7 @@ namespace Voicemeeter {
 					StateControl& operator=(const StateControl&) = delete;
 					StateControl& operator=(StateControl&&) = delete;
 
-					estd::remove_cvref_t<TState> get_State() const {
+					::estd::remove_cvref_t<TState> get_State() const {
 						return m_state;
 					};
 
@@ -65,7 +65,7 @@ namespace Voicemeeter {
 
 						OnSet(true);
 					}
-					void Set(estd::remove_cvref_t<TState>& src, bool promote) {
+					void Set(::estd::remove_cvref_t<TState>& src, bool promote) {
 						if (!m_pStateChangePolicy->Set(m_state, src)) {
 							return;
 						}
@@ -85,6 +85,8 @@ namespace Voicemeeter {
 					};
 					virtual void OnRescale(linear_algebra::vector vertex) override {
 						m_pGlyph->Rescale(vertex);
+
+						m_vertex = m_pGlyph->get_Size();
 					};
 					virtual void OnMove(linear_algebra::vector point) override {
 						m_pGlyph->Move(point);
@@ -101,11 +103,11 @@ namespace Voicemeeter {
 
 				private:
 					TState m_state;
-					std::unique_ptr<TGlyph> m_pGlyph;
-					std::shared_ptr<IStateChangePolicy<TState>> m_pStateChangePolicy;
-					std::unique_ptr<IStatePromotionPolicy<TState>> m_pStatePromotionPolicy;
-					std::shared_ptr<IGlyphUpdatePolicy<TGlyph, TState>> m_pGlyphUpdatePolicy;
-					std::shared_ptr<IInteractivityPolicy<StateControl>> m_pInteractivityPolicy;
+					::std::unique_ptr<TGlyph> m_pGlyph;
+					::std::shared_ptr<IStateChangePolicy<TState>> m_pStateChangePolicy;
+					::std::unique_ptr<IStatePromotionPolicy<TState>> m_pStatePromotionPolicy;
+					::std::shared_ptr<IGlyphUpdatePolicy<TGlyph, TState>> m_pGlyphUpdatePolicy;
+					::std::shared_ptr<IInteractivityPolicy<StateControl>> m_pInteractivityPolicy;
 
 					void OnSet(bool promote) {
 						if (promote) {

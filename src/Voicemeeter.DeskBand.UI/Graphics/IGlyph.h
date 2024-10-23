@@ -4,7 +4,7 @@
 #include "../Traits/IMovable.h"
 #include "../Traits/IScalable.h"
 
-using namespace Voicemeeter::DeskBand::UI::Traits;
+using namespace ::Voicemeeter::DeskBand::UI::Traits;
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -12,7 +12,6 @@ namespace Voicemeeter {
 			namespace Graphics {
 				class IGlyph : public IVisible, public IMovable, public IScalable {
 				public:
-					IGlyph() = delete;
 					IGlyph(const IGlyph&) = delete;
 					IGlyph(IGlyph&&) = delete;
 
@@ -20,6 +19,9 @@ namespace Voicemeeter {
 
 					IGlyph& operator=(const IGlyph&) = delete;
 					IGlyph& operator=(IGlyph&&) = delete;
+
+				protected:
+					IGlyph() = default;
 				};
 			}
 		}

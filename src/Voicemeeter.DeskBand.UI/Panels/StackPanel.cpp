@@ -2,14 +2,14 @@
 
 #include "StackPanel.h"
 
-using namespace Voicemeeter::DeskBand::UI::Panels;
+using namespace ::Voicemeeter::DeskBand::UI::Panels;
 
 template<>
 void StackPanel<Direction::Right>::OnRescale(linear_algebra::vector vertex) {
-	vertex.x = std::numeric_limits<int>::max();
+	vertex.x = ::std::numeric_limits<int>::max();
 	linear_algebra::vector point{ m_point };
 
-	for (const std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(point);
 		pComponent->Rescale(vertex);
 
@@ -21,10 +21,10 @@ void StackPanel<Direction::Right>::OnRescale(linear_algebra::vector vertex) {
 }
 template<>
 void StackPanel<Direction::Down>::OnRescale(linear_algebra::vector vertex) {
-	vertex.y = std::numeric_limits<int>::max();
+	vertex.y = ::std::numeric_limits<int>::max();
 	linear_algebra::vector point{ m_point };
 
-	for (const std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(point);
 		pComponent->Rescale(vertex);
 
@@ -36,7 +36,7 @@ void StackPanel<Direction::Down>::OnRescale(linear_algebra::vector vertex) {
 }
 template<>
 void StackPanel<Direction::Right>::OnMove(linear_algebra::vector point) {
-	for (const std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(point);
 
 		point.x += pComponent->get_Size().x;
@@ -44,7 +44,7 @@ void StackPanel<Direction::Right>::OnMove(linear_algebra::vector point) {
 }
 template<>
 void StackPanel<Direction::Down>::OnMove(linear_algebra::vector point) {
-	for (const std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(point);
 
 		point.y += pComponent->get_Size().y;

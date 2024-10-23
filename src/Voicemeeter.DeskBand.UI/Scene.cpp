@@ -2,16 +2,16 @@
 
 #include "Scene.h"
 
-using namespace Voicemeeter::DeskBand::UI;
-using namespace Voicemeeter::DeskBand::UI::Graphics;
+using namespace ::Voicemeeter::DeskBand::UI;
+using namespace ::Voicemeeter::DeskBand::UI::Graphics;
 
 Scene::Scene(
-	IAppMouseTracker* pAppMouseTracker,
-	std::unique_ptr<IComponent> pComposition,
-	std::unique_ptr<ICanvas> pCanvas
-) : m_pAppMouseTracker{ pAppMouseTracker }
-  , m_pComposition{ std::move(pComposition) }
-  , m_pCanvas{ std::move(pCanvas) }
+	IAppMouseTracker& appMouseTracker,
+	::std::unique_ptr<IComponent> pComposition,
+	::std::unique_ptr<ICanvas> pCanvas
+) : m_appMouseTracker{ appMouseTracker }
+  , m_pComposition{ ::std::move(pComposition) }
+  , m_pCanvas{ ::std::move(pCanvas) }
   , m_pPinned{ nullptr } {
 
 }
@@ -46,13 +46,13 @@ void Scene::MouseMove(linear_algebra::vector point) {
 void Scene::MouseLUp(linear_algebra::vector point) {
 	m_pPinned->MouseLUp(point);
 }
-void Scene::EnableMouseTrack(IComponent* pComponent) {
-	m_pPinned = pComponent;
+void Scene::EnableMouseTrack(IComponent& pComponent) {
+	m_pPinned = &pComponent;
 
-	m_pAppMouseTracker->EnableMouseTrack();
+	m_appMouseTracker.EnableMouseTrack();
 }
-void Scene::DisableMouseTrack(IComponent* pComponent) {
-	m_pAppMouseTracker->DisableMouseTrack();
+void Scene::DisableMouseTrack(IComponent& pComponent) {
+	m_appMouseTracker.DisableMouseTrack();
 
 	m_pPinned = nullptr;
 }

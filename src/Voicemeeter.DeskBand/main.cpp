@@ -7,7 +7,7 @@
 #include "Voicemeeter.DeskBand.Windows/wrappers.h"
 #include "Windows/errormessagebox.h"
 
-using namespace Voicemeeter::DeskBand::Windows;
+using namespace ::Voicemeeter::DeskBand::Windows;
 
 int WINAPI wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -15,7 +15,7 @@ int WINAPI wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 ) {
-	std::unique_ptr<Window> pWnd{ nullptr };
+	::std::unique_ptr<Window> pWnd{ nullptr };
 	try {
 		pWnd.reset(new Window{ hInstance });
 

@@ -174,8 +174,8 @@
     <ProjectReference Include="..\estd\estd.vcxproj">
       <Project>{be6dd8b6-c8ae-4bb1-8cc1-612f5f262b60}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Voicemeeter.DeskBand.UI.Graphics.GDI\Voicemeeter.DeskBand.UI.Graphics.GDI.vcxproj">
-      <Project>{fba8b401-c90f-41eb-8fac-12e592874b55}</Project>
+    <ProjectReference Include="..\Voicemeeter.DeskBand.UI.Graphics.D2D\Voicemeeter.DeskBand.UI.Graphics.D2D.vcxproj">
+      <Project>{c55c74a6-d812-446d-94e1-75fe1aa95797}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.DeskBand.UI\Voicemeeter.DeskBand.UI.vcxproj">
       <Project>{8ebf00e4-20be-4230-97ba-8dd20f2f35cb}</Project>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include <utility>
 
 #include "type_traits.h"
@@ -7,12 +8,13 @@
 namespace estd {
 	template<typename Func>
 	class guard final {
-		static_assert(is_invocable<void, Func>(),
+		static_assert(
+			is_invocable_r<void, Func>(),
 			"Func must be invocable with no arguments and void return type");
 
 	public:
 		inline explicit guard(Func release) noexcept
-			: m_release{ std::move(release) } {
+			: m_release{ ::std::move(release) } {
 
 		}
 		guard(const guard&) = delete;

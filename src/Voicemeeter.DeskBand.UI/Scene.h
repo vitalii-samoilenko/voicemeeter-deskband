@@ -10,7 +10,7 @@
 #include "Graphics/ICanvas.h"
 #include "IComponent.h"
 
-using namespace Voicemeeter::DeskBand::UI::Graphics;
+using namespace ::Voicemeeter::DeskBand::UI::Graphics;
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -18,9 +18,9 @@ namespace Voicemeeter {
 			class Scene final : public IScene, public IMouseTracker {
 			public:
 				Scene(
-					IAppMouseTracker* pAppMouseTracker,
-					std::unique_ptr<IComponent> pComposition,
-					std::unique_ptr<ICanvas> pCanvas
+					IAppMouseTracker& appMouseTracker,
+					::std::unique_ptr<IComponent> pComposition,
+					::std::unique_ptr<ICanvas> pCanvas
 				);
 				Scene() = delete;
 				Scene(const Scene&) = delete;
@@ -41,13 +41,13 @@ namespace Voicemeeter {
 				virtual bool MouseWheel(linear_algebra::vector point, int delta) override;
 				virtual void MouseMove(linear_algebra::vector point) override;
 				virtual void MouseLUp(linear_algebra::vector point) override;
-				virtual void EnableMouseTrack(IComponent* pComponent) override;
-				virtual void DisableMouseTrack(IComponent* pComponent) override;
+				virtual void EnableMouseTrack(IComponent& pComponent) override;
+				virtual void DisableMouseTrack(IComponent& pComponent) override;
 
 			private:
-				IAppMouseTracker* m_pAppMouseTracker;
-				std::unique_ptr<IComponent> m_pComposition;
-				std::unique_ptr<ICanvas> m_pCanvas;
+				IAppMouseTracker& m_appMouseTracker;
+				::std::unique_ptr<IComponent> m_pComposition;
+				::std::unique_ptr<ICanvas> m_pCanvas;
 				IComponent* m_pPinned;
 			};
 		}

@@ -4,7 +4,7 @@
 #include "Traits/IResizable.h"
 #include "Traits/IInteractive.h"
 
-using namespace Voicemeeter::DeskBand::UI::Traits;
+using namespace ::Voicemeeter::DeskBand::UI::Traits;
 
 namespace Voicemeeter {
 	namespace DeskBand {

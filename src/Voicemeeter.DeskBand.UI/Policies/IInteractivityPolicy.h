@@ -1,7 +1,9 @@
 #pragma once
 
-#include "estd/type_traits.h"
+#include <type_traits>
+
 #include "estd/linear_algebra.h"
+#include "estd/type_traits.h"
 
 #include "../IComponent.h"
 
@@ -11,7 +13,8 @@ namespace Voicemeeter {
 			namespace Policies {
 				template<typename TComponent>
 				class IInteractivityPolicy {
-					static_assert(estd::is_base_of<IComponent, TComponent>(),
+					static_assert(
+						::std::is_base_of_v<IComponent, TComponent>,
 						"TComponent must be derived from IComponent");
 
 				public:
@@ -23,11 +26,11 @@ namespace Voicemeeter {
 					IInteractivityPolicy& operator=(const IInteractivityPolicy&) = delete;
 					IInteractivityPolicy& operator=(IInteractivityPolicy&&) = delete;
 
-					virtual void MouseLDown(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
-					virtual void MouseRDown(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
-					virtual void MouseWheel(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point, int delta) const = 0;
-					virtual void MouseMove(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
-					virtual void MouseLUp(estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
+					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
+					virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
+					virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point, int delta) const = 0;
+					virtual void MouseMove(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
+					virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const = 0;
 
 				protected:
 					IInteractivityPolicy() = default;

@@ -3,7 +3,7 @@
 #include "../Traits/IVisible.h"
 #include "../Traits/IResizable.h"
 
-using namespace Voicemeeter::DeskBand::UI::Traits;
+using namespace ::Voicemeeter::DeskBand::UI::Traits;
 
 namespace Voicemeeter {
 	namespace DeskBand {
