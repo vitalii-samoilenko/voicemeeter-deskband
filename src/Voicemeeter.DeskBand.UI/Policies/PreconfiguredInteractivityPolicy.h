@@ -14,10 +14,10 @@ namespace Voicemeeter {
 				template<typename TComponent, typename PointerFunc, typename WheelFunc>
 				class PreconfiguredInteractivityPolicy final : public IInteractivityPolicy<TComponent> {
 					static_assert(
-						::estd::is_invocable_r<void, PointerFunc, ::estd::remove_cvref_t<TComponent>&, linear_algebra::vector>(),
+						::estd::is_invocable_r<void, PointerFunc, ::estd::remove_cvref_t<TComponent>&, ::linear_algebra::vector>(),
 						"PointerFunc must be invocable with TComponent and vector arguments and void return type");
 					static_assert(
-						::estd::is_invocable_r<void, WheelFunc, ::estd::remove_cvref_t<TComponent>&, linear_algebra::vector, int>(),
+						::estd::is_invocable_r<void, WheelFunc, ::estd::remove_cvref_t<TComponent>&, ::linear_algebra::vector, int>(),
 						"WheelFunc must be invocable with TComponent, vector and int arguments and void return type");
 
 				public:
@@ -43,19 +43,19 @@ namespace Voicemeeter {
 					PreconfiguredInteractivityPolicy& operator=(const PreconfiguredInteractivityPolicy&) = delete;
 					PreconfiguredInteractivityPolicy& operator=(PreconfiguredInteractivityPolicy&&) = delete;
 
-					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const override {
+					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, ::linear_algebra::vector point) const override {
 						m_onMouseLDown(component, point);
 					};
-					virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const override {
+					virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, ::linear_algebra::vector point) const override {
 						m_onMouseRDown(component, point);
 					};
-					virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point, int delta) const override {
+					virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, ::linear_algebra::vector point, int delta) const override {
 						m_onMouseWheel(component, point, delta);
 					};
-					virtual void MouseMove(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const override {
+					virtual void MouseMove(::estd::remove_cvref_t<TComponent>& component, ::linear_algebra::vector point) const override {
 						m_onMouseMove(component, point);
 					};
-					virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, linear_algebra::vector point) const override {
+					virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, ::linear_algebra::vector point) const override {
 						m_onMouseLUp(component, point);
 					};
 

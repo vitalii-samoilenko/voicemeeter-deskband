@@ -11,10 +11,18 @@ namespace Voicemeeter {
 				Control(const Control&) = delete;
 				Control(Control&&) = delete;
 
-				virtual ~Control() = 0;
-
 				Control& operator=(const Control&) = delete;
 				Control& operator=(Control&&) = delete;
+
+			protected:
+				Control(
+					::linear_algebra::vector baseMarginTopLeft,
+					::linear_algebra::vector baseMarginBottomRight
+				) : Component{ baseMarginTopLeft, baseMarginBottomRight } {
+
+				};
+
+				~Control() = default;
 			};
 		}
 	}

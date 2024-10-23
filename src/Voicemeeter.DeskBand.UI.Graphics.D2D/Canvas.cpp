@@ -35,10 +35,10 @@ Canvas::Canvas(
 	), "Render target creation failed");
 }
 
-void Canvas::Redraw(linear_algebra::vector point, linear_algebra::vector vertex) {
+void Canvas::Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) {
 
 }
-void Canvas::Resize(linear_algebra::vector vertex) {
+void Canvas::Resize(::linear_algebra::vector vertex) {
 	ThrowIfFailed(m_pD2dRenderTarget->Resize(
 		::D2D1::SizeU(vertex.x, vertex.y)
 	), "Render target resize failed");

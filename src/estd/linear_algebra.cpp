@@ -23,12 +23,12 @@ bool linear_algebra::is_inside(vector point, vector vertex) {
 }
 
 bool linear_algebra::is_overlapping(vector lhs_point, vector lhs_vertex, vector rhs_point, vector rhs_vertex) {
-	linear_algebra::vector abs_vertex{ lhs_point + lhs_vertex };
-	if (!linear_algebra::is_inside(rhs_point, abs_vertex)) {
+	vector abs_vertex{ lhs_point + lhs_vertex };
+	if (!is_inside(rhs_point, abs_vertex)) {
 		return false;
 	}
 	abs_vertex = rhs_point + rhs_vertex;
-	if (!linear_algebra::is_inside(lhs_point, abs_vertex)) {
+	if (!is_inside(lhs_point, abs_vertex)) {
 		return false;
 	}
 

@@ -14,7 +14,12 @@ namespace Voicemeeter {
 				Panel& operator=(Panel&&) = delete;
 
 			protected:
-				Panel() = default;
+				Panel(
+					::linear_algebra::vector baseMarginTopLeft,
+					::linear_algebra::vector baseMarginBottomRight
+				) : Component{ baseMarginTopLeft, baseMarginBottomRight } {
+
+				};
 
 				~Panel() = default;
 			};

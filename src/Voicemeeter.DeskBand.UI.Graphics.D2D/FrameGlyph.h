@@ -45,13 +45,13 @@ namespace Voicemeeter {
 							m_frame = frame;
 						}
 
-						virtual linear_algebra::vector get_Position() const override;
-						virtual linear_algebra::vector get_Size() const override;
-						virtual linear_algebra::vector get_BaseSize() const override;
+						virtual ::linear_algebra::vector get_Position() const override;
+						virtual ::linear_algebra::vector get_Size() const override;
+						virtual ::linear_algebra::vector get_BaseSize() const override;
 
-						virtual void Redraw(linear_algebra::vector point, linear_algebra::vector vertex) override;
-						virtual void Move(linear_algebra::vector point) override;
-						virtual void Rescale(linear_algebra::vector vertex) override;
+						virtual void Redraw(::linear_algebra::vector point, ::linear_algebra::vector vertex) override;
+						virtual void Move(::linear_algebra::vector point) override;
+						virtual void Rescale(::linear_algebra::vector vertex) override;
 
 					private:
 						int m_frame;
