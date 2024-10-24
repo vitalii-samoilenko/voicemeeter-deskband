@@ -1,6 +1,7 @@
 #include <utility>
 
-#include "Window.h"
+#include "window.h"
+#include "windowsx.h"
 
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 
@@ -102,6 +103,9 @@ LRESULT CALLBACK Window::WindowProcW(
 			);
 
 			EndPaint(hWnd, &ps);
+		} return OK;
+		case WM_LBUTTONDOWN: {
+			pWnd->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };

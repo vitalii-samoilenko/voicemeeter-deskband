@@ -63,7 +63,7 @@ bool Component::MouseLDown(const ::linear_algebra::vector& point) {
 
 	if (::linear_algebra::is_inside(
 			point - OnGet_Position(),
-			OnGet_BaseSize())) {
+			OnGet_Size())) {
 		OnMouseLDown(point);
 	}
 
@@ -78,7 +78,7 @@ bool Component::MouseRDown(const ::linear_algebra::vector& point) {
 
 	if (::linear_algebra::is_inside(
 			point - OnGet_Position(),
-			OnGet_BaseSize())) {
+			OnGet_Size())) {
 		OnMouseRDown(point);
 	}
 
@@ -93,7 +93,7 @@ bool Component::MouseWheel(const ::linear_algebra::vector& point, int delta) {
 
 	if (::linear_algebra::is_inside(
 			point - OnGet_Position(),
-			OnGet_BaseSize())) {
+			OnGet_Size())) {
 		OnMouseWheel(point, delta);
 	}
 

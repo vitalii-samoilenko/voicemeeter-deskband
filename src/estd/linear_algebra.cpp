@@ -27,8 +27,10 @@ const vector linear_algebra::Infinity{
 bool linear_algebra::is_inside(
 	const vector& point,
 	const vector& vertex) {
-	return point.x - vertex.x < 0
-		&& point.y - vertex.y < 0;
+	return !(point.x < 0)
+		&& !(point.y < 0)
+		&& point.x < vertex.x
+		&& point.y < vertex.y;
 }
 
 bool linear_algebra::is_overlapping(

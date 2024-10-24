@@ -28,14 +28,14 @@ namespace Voicemeeter {
 					template<typename TIterator,
 						::std::enable_if_t<
 							::std::is_same_v<
-								::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
+								::estd::iterator_value_type_t<TIterator>,
 								::std::unique_ptr<IComponent>>,
 							bool> = true>
 					StackPanel(
 						const ::linear_algebra::vector& baseMarginTopLeft,
 						const ::linear_algebra::vector& baseMarginBottomRight,
-						::estd::remove_cvref_t<TIterator> begin,
-						::estd::remove_cvref_t<TIterator> end
+						TIterator begin,
+						TIterator end
 					);
 
 					StackPanel() = delete;
@@ -46,6 +46,9 @@ namespace Voicemeeter {
 
 					StackPanel& operator=(const StackPanel&) = delete;
 					StackPanel& operator=(StackPanel&&) = delete;
+
+					virtual void MouseMove(const ::linear_algebra::vector& point) override { };
+					virtual void MouseLUp(const ::linear_algebra::vector& point) override { };
 
 				protected:
 					virtual const ::linear_algebra::vector& OnGet_Position() const override {
@@ -97,20 +100,20 @@ namespace Voicemeeter {
 				template<typename TIterator,
 					::std::enable_if_t<
 						::std::is_same_v<
-							::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
+							::estd::iterator_value_type_t<TIterator>,
 							::std::unique_ptr<IComponent>>,
 						bool>>
 				StackPanel<Direction::Right>::StackPanel(
 					const ::linear_algebra::vector& baseMarginTopLeft,
 					const ::linear_algebra::vector& baseMarginBottomRight,
-					::estd::remove_cvref_t<TIterator> begin,
-					::estd::remove_cvref_t<TIterator> end
+					TIterator begin,
+					TIterator end
 				) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
 				  , m_baseVertex{}
 				  , m_cpComponent{} {
 					::linear_algebra::vector virtual_vertex{};
 					for (; begin != end; ++begin) {
-						virtual_vertex.y = ::std::max(virtual_vertex.y, (*begin)->get_BaseSize().y);
+						virtual_vertex.y = ::std::max<int>(virtual_vertex.y, (*begin)->get_BaseSize().y);
 						m_cpComponent.emplace_back(::std::move(*begin));
 					}
 
@@ -122,20 +125,20 @@ namespace Voicemeeter {
 				template<typename TIterator,
 					::std::enable_if_t<
 						::std::is_same_v<
-							::estd::iterator_value_type_t<::estd::remove_cvref_t<TIterator>>,
+							::estd::iterator_value_type_t<TIterator>,
 							::std::unique_ptr<IComponent>>,
 						bool>>
 				StackPanel<Direction::Down>::StackPanel(
 					const ::linear_algebra::vector& baseMarginTopLeft,
 					const ::linear_algebra::vector& baseMarginBottomRight,
-					::estd::remove_cvref_t<TIterator> begin,
-					::estd::remove_cvref_t<TIterator> end
+					TIterator begin,
+					TIterator end
 				) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
 				  , m_baseVertex{}
 				  , m_cpComponent{} {
 					::linear_algebra::vector virtualVertex{};
 					for (; begin != end; ++begin) {
-						virtualVertex.x = ::std::max(virtualVertex.x, (*begin)->get_BaseSize().x);
+						virtualVertex.x = ::std::max<int>(virtualVertex.x, (*begin)->get_BaseSize().x);
 						m_cpComponent.emplace_back(::std::move(*begin));
 					}
 					m_cpComponent.front()->Move(baseMarginTopLeft);

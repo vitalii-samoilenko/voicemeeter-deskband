@@ -11,22 +11,36 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
-				template<typename TComponent, typename TPointerFunc, typename TWheelFunc>
+				template<typename TComponent,
+					typename TOnMouseLDown,
+					typename TOnMouseRDown,
+					typename TOnMouseWheel,
+					typename TOnMouseMove, 
+					typename TOnMouseLUp>
 				class PreconfiguredInteractivityPolicy final : public IInteractivityPolicy<TComponent> {
 					static_assert(
-						::estd::is_invocable_r<void, TPointerFunc, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
-						"TPointerFunc must be invocable with TComponent& and const vector& arguments and void return type");
+						::estd::is_invocable_r<void, TOnMouseLDown, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
+						"TOnMouseLDown must be invocable with TComponent& and const vector& arguments and void return type");
 					static_assert(
-						::estd::is_invocable_r<void, TWheelFunc, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&, int>(),
-						"TWheelFunc must be invocable with TComponent&, const vector& and int arguments and void return type");
+						::estd::is_invocable_r<void, TOnMouseRDown, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
+						"TOnMouseRDown must be invocable with TComponent& and const vector& arguments and void return type");
+					static_assert(
+						::estd::is_invocable_r<void, TOnMouseWheel, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&, int>(),
+						"TOnMouseWheel must be invocable with TComponent&, const vector& and int arguments and void return type");
+					static_assert(
+						::estd::is_invocable_r<void, TOnMouseMove, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
+						"TOnMouseMove must be invocable with TComponent& and const vector& arguments and void return type");
+					static_assert(
+						::estd::is_invocable_r<void, TOnMouseLUp, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
+						"TOnMouseLUp must be invocable with TComponent& and const vector& arguments and void return type");
 
 				public:
 					PreconfiguredInteractivityPolicy(
-						TPointerFunc onMouseLDown,
-						TPointerFunc onMouseRDown,
-						TWheelFunc onMouseWheel,
-						TPointerFunc onMouseMove,
-						TPointerFunc onMouseLUp
+						TOnMouseLDown onMouseLDown,
+						TOnMouseRDown onMouseRDown,
+						TOnMouseWheel onMouseWheel,
+						TOnMouseMove onMouseMove,
+						TOnMouseLUp onMouseLUp
 					) : m_onMouseLDown{ ::std::move(onMouseLDown) }
 					  , m_onMouseRDown{ ::std::move(onMouseRDown) }
 					  , m_onMouseWheel{ ::std::move(onMouseWheel) }
@@ -60,11 +74,11 @@ namespace Voicemeeter {
 					};
 
 				private:
-					TPointerFunc m_onMouseLDown;
-					TPointerFunc m_onMouseRDown;
-					TWheelFunc m_onMouseWheel;
-					TPointerFunc m_onMouseMove;
-					TPointerFunc m_onMouseLUp;
+					TOnMouseLDown m_onMouseLDown;
+					TOnMouseRDown m_onMouseRDown;
+					TOnMouseWheel m_onMouseWheel;
+					TOnMouseMove m_onMouseMove;
+					TOnMouseLUp m_onMouseLUp;
 				};
 			}
 		}
