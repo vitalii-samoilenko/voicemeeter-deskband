@@ -19,8 +19,8 @@ namespace Voicemeeter {
 			public:
 				Scene(
 					IAppMouseTracker& appMouseTracker,
-					::std::unique_ptr<IComponent> pComposition,
-					::std::unique_ptr<ICanvas> pCanvas
+					::std::unique_ptr<ICanvas> pCanvas,
+					::std::unique_ptr<IComponent> pComposition
 				);
 				Scene() = delete;
 				Scene(const Scene&) = delete;
@@ -30,6 +30,9 @@ namespace Voicemeeter {
 
 				Scene& operator=(const Scene&) = delete;
 				Scene& operator=(Scene&&) = delete;
+
+				virtual const ::linear_algebra::vector& get_Position() const override;
+				virtual const ::linear_algebra::vector& get_Size() const override;
 
 				virtual void Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override;
 				virtual void Resize(const ::linear_algebra::vector& vertex) override;
@@ -43,8 +46,8 @@ namespace Voicemeeter {
 
 			private:
 				IAppMouseTracker& m_appMouseTracker;
-				::std::unique_ptr<IComponent> m_pComposition;
 				::std::unique_ptr<ICanvas> m_pCanvas;
+				::std::unique_ptr<IComponent> m_pComposition;
 				IComponent* m_pPinned;
 			};
 		}

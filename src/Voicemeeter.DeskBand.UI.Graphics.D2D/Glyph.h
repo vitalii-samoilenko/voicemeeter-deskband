@@ -31,16 +31,19 @@ namespace Voicemeeter {
 						virtual void Rescale(const ::linear_algebra::vector& vertex) override final;
 
 					protected:
-						Canvas& m_canvas;
-
 						Glyph(
 							Canvas& pCanvas,
 							const ::linear_algebra::vector& baseVertex
 						);
 
+						inline const Canvas& get_Canvas() const {
+							return m_canvas;
+						};
+
 						virtual void OnDraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) = 0;
 
 					private:
+						Canvas& m_canvas;
 						::linear_algebra::vector m_point;
 						::linear_algebra::vector m_vertex;
 						::linear_algebra::vector m_baseVertex;

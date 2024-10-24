@@ -7,13 +7,20 @@ using namespace ::Voicemeeter::DeskBand::UI::Graphics;
 
 Scene::Scene(
 	IAppMouseTracker& appMouseTracker,
-	::std::unique_ptr<IComponent> pComposition,
-	::std::unique_ptr<ICanvas> pCanvas
+	::std::unique_ptr<ICanvas> pCanvas,
+	::std::unique_ptr<IComponent> pComposition
 ) : m_appMouseTracker{ appMouseTracker }
-  , m_pComposition{ ::std::move(pComposition) }
   , m_pCanvas{ ::std::move(pCanvas) }
+  , m_pComposition{ ::std::move(pComposition) }
   , m_pPinned{ nullptr } {
 
+}
+
+const ::linear_algebra::vector& Scene::get_Position() const {
+	return m_pCanvas->get_Position();
+}
+const ::linear_algebra::vector& Scene::get_Size() const {
+	return m_pCanvas->get_Size();
 }
 
 void Scene::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {

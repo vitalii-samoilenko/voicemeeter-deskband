@@ -14,19 +14,19 @@ namespace Voicemeeter {
 				template<typename TComponent, typename TPointerFunc, typename TWheelFunc>
 				class PreconfiguredInteractivityPolicy final : public IInteractivityPolicy<TComponent> {
 					static_assert(
-						::estd::is_invocable_r<void, ::estd::remove_cvref_t<TPointerFunc>, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
+						::estd::is_invocable_r<void, TPointerFunc, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
 						"TPointerFunc must be invocable with TComponent& and const vector& arguments and void return type");
 					static_assert(
-						::estd::is_invocable_r<void, ::estd::remove_cvref_t<TWheelFunc>, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&, int>(),
+						::estd::is_invocable_r<void, TWheelFunc, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&, int>(),
 						"TWheelFunc must be invocable with TComponent&, const vector& and int arguments and void return type");
 
 				public:
 					PreconfiguredInteractivityPolicy(
-						::estd::remove_cvref_t<TPointerFunc>& onMouseLDown,
-						::estd::remove_cvref_t<TPointerFunc>& onMouseRDown,
-						::estd::remove_cvref_t<TWheelFunc>& onMouseWheel,
-						::estd::remove_cvref_t<TPointerFunc>& onMouseMove,
-						::estd::remove_cvref_t<TPointerFunc>& onMouseLUp
+						TPointerFunc onMouseLDown,
+						TPointerFunc onMouseRDown,
+						TWheelFunc onMouseWheel,
+						TPointerFunc onMouseMove,
+						TPointerFunc onMouseLUp
 					) : m_onMouseLDown{ ::std::move(onMouseLDown) }
 					  , m_onMouseRDown{ ::std::move(onMouseRDown) }
 					  , m_onMouseWheel{ ::std::move(onMouseWheel) }
@@ -60,11 +60,11 @@ namespace Voicemeeter {
 					};
 
 				private:
-					::estd::remove_cvref_t<TPointerFunc> m_onMouseLDown;
-					::estd::remove_cvref_t<TPointerFunc> m_onMouseRDown;
-					::estd::remove_cvref_t<TWheelFunc> m_onMouseWheel;
-					::estd::remove_cvref_t<TPointerFunc> m_onMouseMove;
-					::estd::remove_cvref_t<TPointerFunc> m_onMouseLUp;
+					TPointerFunc m_onMouseLDown;
+					TPointerFunc m_onMouseRDown;
+					TWheelFunc m_onMouseWheel;
+					TPointerFunc m_onMouseMove;
+					TPointerFunc m_onMouseLUp;
 				};
 			}
 		}

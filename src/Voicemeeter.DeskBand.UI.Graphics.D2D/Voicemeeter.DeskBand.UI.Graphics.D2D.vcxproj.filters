@@ -27,9 +27,6 @@
     <ClInclude Include="Glyph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Builder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Canvas.cpp">

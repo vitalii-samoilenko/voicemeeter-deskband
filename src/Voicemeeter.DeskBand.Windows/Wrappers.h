@@ -238,6 +238,14 @@ namespace Voicemeeter {
 				}
 			}
 
+			inline void wReleaseCapture(
+			) {
+				if (ReleaseCapture(
+				) == FALSE) {
+					throw windows_error{ "Failed to release capture" };
+				}
+			}
+
 			inline HRSRC wFindResourceW(
 				_In_opt_ HMODULE hModule,
 				_In_ LPCWSTR lpName,

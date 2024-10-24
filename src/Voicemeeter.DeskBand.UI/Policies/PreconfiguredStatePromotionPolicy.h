@@ -13,12 +13,12 @@ namespace Voicemeeter {
 				template<typename TState, typename TFunc>
 				class PreconfiguredStatePromotionPolicy final : public IStatePromotionPolicy<TState> {
 					static_assert(
-						::estd::is_invocable_r<void, ::estd::remove_cvref_t<TFunc>, const ::estd::remove_cvref_t<TState>&>(),
+						::estd::is_invocable_r<void, TFunc, const ::estd::remove_cvref_t<TState>&>(),
 						"TFunc must be invocable with const TState& argument and void return type");
 
 				public:
 					explicit PreconfiguredStatePromotionPolicy(
-						::estd::remove_cvref_t<TFunc>& onPromote
+						TFunc onPromote
 					) : m_onPromote{ ::std::move(onPromote) } {
 
 					}
@@ -36,7 +36,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					::estd::remove_cvref_t<TFunc> m_onPromote;
+					TFunc m_onPromote;
 				};
 			}
 		}

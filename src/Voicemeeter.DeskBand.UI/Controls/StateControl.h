@@ -75,6 +75,7 @@ namespace Voicemeeter {
 
 						OnSet(promote);
 					}
+
 					virtual void MouseMove(const ::linear_algebra::vector& point) override {
 						m_pInteractivityPolicy->MouseMove(this, point);
 					};

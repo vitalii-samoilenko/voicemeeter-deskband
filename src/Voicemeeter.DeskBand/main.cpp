@@ -2,10 +2,11 @@
 
 #include <windows.h>
 
-#include "Windows/window.h"
-#include "Voicemeeter.DeskBand.Windows/error.h"
-#include "Voicemeeter.DeskBand.Windows/wrappers.h"
-#include "Windows/errormessagebox.h"
+#include "Voicemeeter.DeskBand.Windows/Error.h"
+#include "Voicemeeter.DeskBand.Windows/Wrappers.h"
+
+#include "Windows/ErrorMessageBox.h"
+#include "Windows/Window.h"
 
 using namespace ::Voicemeeter::DeskBand::Windows;
 

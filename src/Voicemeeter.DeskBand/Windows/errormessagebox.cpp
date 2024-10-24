@@ -1,6 +1,6 @@
 #include "estd/memory.h"
 
-#include "errormessagebox.h"
+#include "ErrorMessageBox.h"
 
 int ::Voicemeeter::DeskBand::Windows::ErrorMessageBox(
 	DWORD cptCode,

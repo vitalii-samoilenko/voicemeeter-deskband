@@ -1,7 +1,10 @@
-#include "window.h"
+#include <utility>
+
+#include "Window.h"
 
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
-#include "errormessagebox.h"
+
+#include "ErrorMessageBox.h"
 
 using namespace ::Voicemeeter::DeskBand::Windows;
 
@@ -11,9 +14,11 @@ static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
 
 static constexpr LRESULT OK{ 0 };
 
-Window::Window(HINSTANCE hInstance)
-	: m_hWnd{ NULL }
-	, m_dpi{ USER_DEFAULT_SCREEN_DPI } {
+Window::Window(
+	HINSTANCE hInstance
+) : m_hWnd{ NULL }
+  , m_dpi{ USER_DEFAULT_SCREEN_DPI }
+  , m_pScene{ nullptr } {
 	wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
@@ -47,6 +52,13 @@ void Window::Show(int nCmdShow) const {
 	);
 }
 
+void Window::EnableMouseTrack() {
+	SetCapture(m_hWnd);
+}
+void Window::DisableMouseTrack() {
+	wReleaseCapture();
+}
+
 LRESULT CALLBACK Window::WindowProcW(
 	HWND hWnd,
 	UINT uMsg,
@@ -71,12 +83,14 @@ LRESULT CALLBACK Window::WindowProcW(
 			if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
 				return FALSE;
 			}
+
+			pWnd->BuildScene();
 		} break;
 		case WM_DESTROY: {
 			PostQuitMessage(0);
 		} return OK;
 		case WM_SIZE: {
-			//pWnd->m_scene.Resize(LOWORD(lParam), HIWORD(lParam));
+			pWnd->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };
