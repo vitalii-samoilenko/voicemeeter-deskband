@@ -34,6 +34,7 @@ void Component::Redraw(const ::linear_algebra::vector& point, const ::linear_alg
 	OnRedraw(point, vertex);
 }
 void Component::Rescale(const ::linear_algebra::vector& vertex) {
+	::linear_algebra::vector point{ get_Position() };
 	::linear_algebra::vector baseVertex{ get_BaseSize() };
 
 	double scale{
@@ -47,6 +48,7 @@ void Component::Rescale(const ::linear_algebra::vector& vertex) {
 	m_marginBottomRight.x = m_baseMarginTopLeft.x * scale;
 	m_marginBottomRight.y = m_baseMarginTopLeft.y * scale;
 
+	Move(point);
 	OnRescale(vertex - m_marginTopLeft - m_marginBottomRight);
 }
 void Component::Move(const ::linear_algebra::vector& point) {

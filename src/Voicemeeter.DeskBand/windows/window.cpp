@@ -33,7 +33,7 @@ Window::Window(
 	wndClass.hCursor = wLoadCursorW(NULL, IDC_ARROW);
 	wRegisterClassW(&wndClass);
 	wCreateWindowExW(
-		EX_STYLE,
+		NULL,
 		LPSZ_CLASS_NAME,
 		NULL,
 		STYLE,
@@ -91,6 +91,17 @@ LRESULT CALLBACK Window::WindowProcW(
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
+		} return OK;
+		case WM_PAINT: {
+			PAINTSTRUCT ps;
+			wBeginPaint(hWnd, &ps);
+
+			pWnd->m_pScene->Redraw(
+				::linear_algebra::Origin,
+				::linear_algebra::Infinity
+			);
+
+			EndPaint(hWnd, &ps);
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };

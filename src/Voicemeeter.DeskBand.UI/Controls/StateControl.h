@@ -39,7 +39,7 @@ namespace Voicemeeter {
 					  , m_pStatePromotionPolicy{ ::std::move(pStatePromotionPolicy) }
 					  , m_pGlyphUpdatePolicy{ ::std::move(pGlyphUpdatePolicy) }
 					  , m_pInteractivityPolicy{ ::std::move(pInteractivityPolicy) } {
-
+						m_pGlyph->Move(baseMarginTopLeft);
 					};
 					StateControl() = delete;
 					StateControl(const StateControl&) = delete;
@@ -77,10 +77,10 @@ namespace Voicemeeter {
 					}
 
 					virtual void MouseMove(const ::linear_algebra::vector& point) override {
-						m_pInteractivityPolicy->MouseMove(this, point);
+						m_pInteractivityPolicy->MouseMove(*this, point);
 					};
 					virtual void MouseLUp(const ::linear_algebra::vector& point) override {
-						m_pInteractivityPolicy->MouseLUp(this, point);
+						m_pInteractivityPolicy->MouseLUp(*this, point);
 					};
 
 				protected:

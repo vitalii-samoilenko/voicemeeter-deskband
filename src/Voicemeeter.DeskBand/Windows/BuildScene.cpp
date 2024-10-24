@@ -1,4 +1,5 @@
 #include <memory>
+#include <utility>
 
 #include <wrl/client.h>
 
@@ -26,14 +27,14 @@ void Window::BuildScene() {
 	::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush{ nullptr };
 	ThrowIfFailed(pCanvas->get_pRenderTarget()
 		->CreateSolidColorBrush(
-			::D2D1::ColorF(255.F, 0.F, 0.F, 0.F),
+			::D2D1::ColorF(255.F, 0.F, 0.F, 255.F),
 			&pBrush
 	), "Brush creation failed");
 
 	auto out_a_1 = [pBrush](const D2D::Canvas& canvas, const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex)->void {
 		canvas.get_pRenderTarget()
 			->FillRoundedRectangle(
-				::D2D1::RoundedRect(::D2D1::RectF(0.F, 0.F, 36.F, 36.F), 6.F, 6.F),
+				::D2D1::RoundedRect(::D2D1::RectF(0.F, 0.F, 36.F, 36.F), 2.F, 2.F),
 				pBrush.Get());
 	};
 	using out_a_1_Glyph = D2D::BundleGlyph<decltype(out_a_1)>;
@@ -74,10 +75,16 @@ void Window::BuildScene() {
 	::std::unique_ptr<out_a_1_StateControl> out_a_1_pStateControl{
 		new out_a_1_StateControl{
 			{ 2, 2 }, { 2, 2 },
-			out_a_1_pGlyph,
+			::std::move(out_a_1_pGlyph),
 			pCheckboxStateChangePolicy,
-			out_a_1_pStatePromotionPolicy,
+			::std::move(out_a_1_pStatePromotionPolicy),
 			out_a_1_pGlyphUpdatePolicy,
 			out_a_1_pInteractivityPolicy
 		} };
+
+	m_pScene.reset(new Scene{
+		*this,
+		::std::move(pCanvas),
+		::std::move(out_a_1_pStateControl)
+	});
 }

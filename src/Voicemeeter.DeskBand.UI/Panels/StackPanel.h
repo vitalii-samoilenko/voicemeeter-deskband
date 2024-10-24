@@ -138,6 +138,7 @@ namespace Voicemeeter {
 						virtualVertex.x = ::std::max(virtualVertex.x, (*begin)->get_BaseSize().x);
 						m_cpComponent.emplace_back(::std::move(*begin));
 					}
+					m_cpComponent.front()->Move(baseMarginTopLeft);
 
 					OnRescale(virtualVertex);
 
