@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Windows\BuildScene.cpp" />
     <ClCompile Include="Windows\ErrorMessageBox.cpp" />
     <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>

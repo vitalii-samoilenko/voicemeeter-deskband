@@ -3,9 +3,7 @@
 #include <windows.h>
 #include <wrl/client.h>
 #include <d2d1_3.h>
-#pragma comment(lib, "d2d1")
 #include <dwrite_3.h>
-#pragma comment(lib, "dwrite")
 
 #include "estd/linear_algebra.h"
 

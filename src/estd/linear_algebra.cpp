@@ -2,7 +2,7 @@
 
 #include "linear_algebra.h"
 
-using namespace linear_algebra;
+using namespace ::linear_algebra;
 
 vector linear_algebra::operator+(const vector& lhs, const vector& rhs) {
 	return {
@@ -18,8 +18,8 @@ vector linear_algebra::operator-(const vector& lhs, const vector& rhs) {
 	};
 }
 
-vector Origin{};
-vector Infinity{
+const vector linear_algebra::Origin{};
+const vector linear_algebra::Infinity{
 	::std::numeric_limits<int>::max(),
 	::std::numeric_limits<int>::max()
 };

@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					IGlyph(const IGlyph&) = delete;
 					IGlyph(IGlyph&&) = delete;
 
-					virtual ~IGlyph() = 0;
+					virtual ~IGlyph() = default;
 
 					IGlyph& operator=(const IGlyph&) = delete;
 					IGlyph& operator=(IGlyph&&) = delete;

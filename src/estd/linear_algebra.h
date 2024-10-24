@@ -18,8 +18,8 @@ namespace linear_algebra {
 	vector operator+(const vector& lhs, const vector& rhs);
 	vector operator-(const vector& lhs, const vector& rhs);
 
-	extern vector Origin;
-	extern vector Infinity;
+	extern const vector Origin;
+	extern const vector Infinity;
 
 	bool is_inside(
 		const vector& point,

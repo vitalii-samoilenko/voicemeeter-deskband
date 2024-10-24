@@ -2,6 +2,9 @@
 
 #include "Canvas.h"
 
+#pragma comment(lib, "d2d1")
+#pragma comment(lib, "dwrite")
+
 using namespace ::Voicemeeter::DeskBand::Windows;
 using namespace ::Voicemeeter::DeskBand::UI::Graphics::D2D;
 

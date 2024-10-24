@@ -30,6 +30,9 @@
     <ClCompile Include="Windows\ErrorMessageBox.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Windows\BuildScene.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Messages.h">

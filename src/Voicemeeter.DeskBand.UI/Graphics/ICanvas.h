@@ -14,7 +14,7 @@ namespace Voicemeeter {
 					ICanvas(const ICanvas&) = delete;
 					ICanvas(ICanvas&&) = delete;
 
-					virtual ~ICanvas() = 0;
+					virtual ~ICanvas() = default;
 
 					ICanvas& operator=(const ICanvas&) = delete;
 					ICanvas& operator=(ICanvas&&) = delete;
