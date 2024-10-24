@@ -146,13 +146,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Windows\errormessagebox.cpp" />
-    <ClCompile Include="windows\window.cpp" />
+    <ClCompile Include="Windows\ErrorMessageBox.cpp" />
+    <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="messages.h" />
-    <ClInclude Include="Windows\errormessagebox.h" />
-    <ClInclude Include="windows\window.h" />
+    <ClInclude Include="Windows\ErrorMessageBox.h" />
+    <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="messages.mc">
