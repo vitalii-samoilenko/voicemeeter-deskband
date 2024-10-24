@@ -92,6 +92,9 @@ LRESULT CALLBACK Window::WindowProcW(
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
+
+			wUpdateWindow(hWnd);
+			wInvalidateRect(hWnd, NULL, TRUE);
 		} return OK;
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
@@ -106,6 +109,23 @@ LRESULT CALLBACK Window::WindowProcW(
 		} return OK;
 		case WM_LBUTTONDOWN: {
 			pWnd->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+		} return OK;
+		case WM_RBUTTONDOWN: {
+			pWnd->m_pScene->MouseRDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+		} return OK;
+		case WM_MOUSEWHEEL: {
+			POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			wScreenToClient(hWnd, &point);
+
+			pWnd->m_pScene->MouseWheel(
+				{ point.x, point.y },
+				GET_WHEEL_DELTA_WPARAM(wParam));
+		} return OK;
+		case WM_MOUSEMOVE: {
+			pWnd->m_pScene->MouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+		} return OK;
+		case WM_LBUTTONUP: {
+			pWnd->m_pScene->MouseLUp({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };

@@ -18,7 +18,7 @@ namespace Voicemeeter {
 					class BundleGlyph final : public Glyph {
 						static_assert(
 							::estd::is_invocable_r<void, TBundle, const Canvas&, const ::linear_algebra::vector&, const ::linear_algebra::vector&>(),
-							"TBundle must be invocable with const Canvas&, const vector&, and const vector& arguments and void return type");
+							"TBundle must be invocable with const Canvas&, const vector& and const vector& arguments and void return type");
 
 					public:
 						BundleGlyph(
@@ -37,6 +37,10 @@ namespace Voicemeeter {
 
 						BundleGlyph& operator=(const BundleGlyph&) = delete;
 						BundleGlyph& operator=(BundleGlyph&&) = delete;
+
+						const TBundle& get_Bundle() {
+							return m_bundle;
+						};
 
 					protected:
 						virtual void OnDraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override {

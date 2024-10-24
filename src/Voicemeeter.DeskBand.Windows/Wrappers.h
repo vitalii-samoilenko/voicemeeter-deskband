@@ -64,6 +64,30 @@ namespace Voicemeeter {
 				}
 			}
 
+			inline void wGetWindowRect(
+				_In_ HWND hWnd,
+				_Out_ LPRECT lpRect
+			) {
+				if (GetWindowRect(
+					hWnd,
+					lpRect
+				) == FALSE) {
+					throw windows_error{ "Unable to get window rectangle" };
+				}
+			}
+
+			inline void wScreenToClient(
+				_In_ HWND hWnd,
+				_Inout_ LPPOINT lpPoint
+			) {
+				if (ScreenToClient(
+					hWnd,
+					lpPoint
+				) == FALSE) {
+					throw windows_error{ "Unable to convert coordinates" };
+				}
+			}
+
 			inline void wMoveWindow(
 				_In_ HWND hWnd,
 				_In_ int X,

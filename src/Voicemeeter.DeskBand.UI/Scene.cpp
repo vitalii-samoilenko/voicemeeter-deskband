@@ -6,12 +6,10 @@ using namespace ::Voicemeeter::DeskBand::UI;
 using namespace ::Voicemeeter::DeskBand::UI::Graphics;
 
 Scene::Scene(
-	IAppMouseTracker& appMouseTracker,
-	::std::unique_ptr<ICanvas> pCanvas,
-	::std::unique_ptr<IComponent> pComposition
+	IAppMouseTracker& appMouseTracker
 ) : m_appMouseTracker{ appMouseTracker }
-  , m_pCanvas{ ::std::move(pCanvas) }
-  , m_pComposition{ ::std::move(pComposition) }
+  , m_pCanvas{ nullptr }
+  , m_pComposition{ nullptr }
   , m_pPinned{ nullptr } {
 
 }
@@ -21,6 +19,12 @@ const ::linear_algebra::vector& Scene::get_Position() const {
 }
 const ::linear_algebra::vector& Scene::get_Size() const {
 	return m_pCanvas->get_Size();
+}
+void Scene::set_Canvas(::std::unique_ptr<ICanvas> pCanvas) {
+	m_pCanvas.swap(pCanvas);
+}
+void Scene::set_Composition(::std::unique_ptr<IComponent> pComposition) {
+	m_pComposition.swap(pComposition);
 }
 
 void Scene::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
@@ -41,9 +45,17 @@ bool Scene::MouseWheel(const ::linear_algebra::vector& point, int delta) {
 	return m_pComposition->MouseWheel(point, delta);
 }
 void Scene::MouseMove(const ::linear_algebra::vector& point) {
+	if (!m_pPinned) {
+		return;
+	}
+
 	m_pPinned->MouseMove(point);
 }
 void Scene::MouseLUp(const ::linear_algebra::vector& point) {
+	if (!m_pPinned) {
+		return;
+	}
+
 	m_pPinned->MouseLUp(point);
 }
 void Scene::EnableMouseTrack(IComponent& pComponent) {

@@ -17,7 +17,8 @@ namespace Voicemeeter {
 					class Canvas final : public ICanvas {
 					public:
 						explicit Canvas(
-							HWND hWnd
+							HWND hWnd,
+							::D2D1::ColorF background
 						);
 						Canvas() = delete;
 						Canvas(const Canvas&) = delete;
@@ -37,11 +38,15 @@ namespace Voicemeeter {
 						inline ID2D1HwndRenderTarget* get_pRenderTarget() const {
 							return m_pD2dRenderTarget.Get();
 						};
+						inline ID2D1SolidColorBrush* get_pBackgroundBrush() const {
+							return m_pBackgroundBrush.Get();
+						};
 
 					private:
 						::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 						::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 						::Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pD2dRenderTarget;
+						::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBackgroundBrush;
 					};
 				}
 			}

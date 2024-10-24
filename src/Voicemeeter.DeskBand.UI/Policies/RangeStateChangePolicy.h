@@ -15,7 +15,7 @@ namespace Voicemeeter {
 				class RangeStateChangePolicy final : public IStateChangePolicy<TState> {
 					static_assert(
 						::std::is_arithmetic_v<::estd::remove_cvref_t<TState>>,
-						"TState must be of arithmetic type"));
+						"TState must be of arithmetic type");
 
 				public:
 					RangeStateChangePolicy() = default;

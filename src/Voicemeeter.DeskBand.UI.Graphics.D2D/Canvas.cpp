@@ -9,10 +9,12 @@ using namespace ::Voicemeeter::DeskBand::Windows;
 using namespace ::Voicemeeter::DeskBand::UI::Graphics::D2D;
 
 Canvas::Canvas(
-	HWND hWnd
+	HWND hWnd,
+	::D2D1::ColorF background
 ) : m_pDwFactory{ nullptr }
   , m_pD2dFactory{ nullptr }
-  , m_pD2dRenderTarget{ nullptr } {
+  , m_pD2dRenderTarget{ nullptr }
+  , m_pBackgroundBrush{ nullptr } {
 	ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");
@@ -36,6 +38,11 @@ Canvas::Canvas(
 		),
 		&m_pD2dRenderTarget
 	), "Render target creation failed");
+
+	ThrowIfFailed(m_pD2dRenderTarget->CreateSolidColorBrush(
+		background,
+		&m_pBackgroundBrush
+	), "Brush creation failed");
 }
 
 const ::linear_algebra::vector& Canvas::get_Position() const {
@@ -50,7 +57,10 @@ const ::linear_algebra::vector& Canvas::get_Size() const {
 }
 
 void Canvas::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
-
+	m_pD2dRenderTarget->BeginDraw();
+	m_pD2dRenderTarget->Clear(m_pBackgroundBrush->GetColor());
+	ThrowIfFailed(m_pD2dRenderTarget->EndDraw(
+	), "Render failed");
 }
 void Canvas::Resize(const ::linear_algebra::vector& vertex) {
 	ThrowIfFailed(m_pD2dRenderTarget->Resize(
