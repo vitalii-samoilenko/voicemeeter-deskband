@@ -45,8 +45,8 @@ void Component::Rescale(const ::linear_algebra::vector& vertex) {
 
 	m_marginTopLeft.x = m_baseMarginTopLeft.x * scale;
 	m_marginTopLeft.y = m_baseMarginTopLeft.y * scale;
-	m_marginBottomRight.x = m_baseMarginTopLeft.x * scale;
-	m_marginBottomRight.y = m_baseMarginTopLeft.y * scale;
+	m_marginBottomRight.x = m_baseMarginBottomRight.x * scale;
+	m_marginBottomRight.y = m_baseMarginBottomRight.y * scale;
 
 	Move(point);
 	OnRescale(vertex - m_marginTopLeft - m_marginBottomRight);

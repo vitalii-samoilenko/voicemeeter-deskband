@@ -267,17 +267,27 @@ void Window::BuildScene() {
 		} }
 	};
 
-	::std::unique_ptr<StackPanel<Direction::Down>> out_a_pPanel{
-		new StackPanel<Direction::Down>(
+	::std::unique_ptr<IComponent> cpComponent[]{
+		::std::unique_ptr<StackPanel<Direction::Down>>{
+			new StackPanel<Direction::Down>{
+				::linear_algebra::vector{ 0, 0 },
+				::linear_algebra::vector{ 0, 0 },
+				::std::begin(out_a_cpControl),
+				::std::end(out_a_cpControl)
+		} }
+	};
+
+	::std::unique_ptr<IComponent> pComposition{
+		new StackPanel<Direction::Right>(
 			::linear_algebra::vector{ 0, 0 },
 			::linear_algebra::vector{ 0, 0 },
-			::std::begin(out_a_cpControl),
-			::std::end(out_a_cpControl)
-	) };
+			::std::begin(cpComponent),
+			::std::end(cpComponent)
+		) };
 
 	m_pScene.reset(new Scene{
 		*this,
 		::std::move(pCanvas),
-		::std::move(out_a_pPanel)
+		::std::move(pComposition)
 	});
 }
