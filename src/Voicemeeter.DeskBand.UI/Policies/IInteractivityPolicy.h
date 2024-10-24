@@ -21,7 +21,7 @@ namespace Voicemeeter {
 					IInteractivityPolicy(const IInteractivityPolicy&) = delete;
 					IInteractivityPolicy(IInteractivityPolicy&&) = delete;
 
-					virtual ~IInteractivityPolicy() = 0;
+					virtual ~IInteractivityPolicy() = default;
 
 					IInteractivityPolicy& operator=(const IInteractivityPolicy&) = delete;
 					IInteractivityPolicy& operator=(IInteractivityPolicy&&) = delete;
