@@ -3,6 +3,7 @@
 
 #include <wrl/client.h>
 
+#include "Voicemeeter.DeskBand.UI/InputTracker.h"
 #include "Voicemeeter.DeskBand.UI/Scene.h"
 #include "Voicemeeter.DeskBand.UI/Controls/StateControl.h"
 #include "Voicemeeter.DeskBand.UI/Panels/StackPanel.h"
@@ -56,8 +57,8 @@ class GainerBundle final {
 public:
 	explicit GainerBundle(
 		::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>& pBrush
-	) :	m_pBrush{ pBrush }
-	  , m_level{ 0.F } {
+	) : m_pBrush{ pBrush }
+		, m_level{ 0.F } {
 
 	}
 	GainerBundle() = delete;
@@ -114,12 +115,7 @@ public:
 
 class GainerOnMouseLDown final {
 public:
-	explicit GainerOnMouseLDown(
-		IMouseTracker& mouseTracker
-	) : m_mouseTracker{ mouseTracker } {
-
-	};
-	GainerOnMouseLDown() = delete;
+	GainerOnMouseLDown() = default;
 	GainerOnMouseLDown(const GainerOnMouseLDown&) = delete;
 	GainerOnMouseLDown(GainerOnMouseLDown&&) = default;
 
@@ -129,11 +125,26 @@ public:
 	GainerOnMouseLDown& operator=(GainerOnMouseLDown&&) = default;
 
 	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
-		m_mouseTracker.EnableMouseTrack(control);
+		control.EnableInputTrack();
 	};
+};
 
-private:
-	IMouseTracker& m_mouseTracker;
+class GainerOnMouseLDouble final {
+public:
+	GainerOnMouseLDouble() = default;
+	GainerOnMouseLDouble(const GainerOnMouseLDouble&) = delete;
+	GainerOnMouseLDouble(GainerOnMouseLDouble&&) = default;
+
+	~GainerOnMouseLDouble() = default;
+
+	GainerOnMouseLDouble& operator=(const GainerOnMouseLDouble&) = delete;
+	GainerOnMouseLDouble& operator=(GainerOnMouseLDouble&&) = default;
+
+	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
+		int zero{ 0 };
+
+		control.Set(zero, true);
+	};
 };
 
 class GainerOnMouseWheel final {
@@ -166,8 +177,12 @@ public:
 	GainerOnMouseMove& operator=(GainerOnMouseMove&&) = default;
 
 	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
+		if (!control.IsTrackingInput()) {
+			return;
+		}
+
 		double scale{ static_cast<double>(control.get_Size().x) / control.get_BaseSize().x };
-		int level{ static_cast<int>((point.x - (28 * scale) - control.get_Position().x) * 10 / (1.5 * scale)) - 600  };
+		int level{ static_cast<int>((point.x - (28 * scale) - control.get_Position().x) * 10 / (1.5 * scale)) - 600 };
 
 		control.Set(level, true);
 	};
@@ -175,12 +190,7 @@ public:
 
 class GainerOnMouseLUp final {
 public:
-	explicit GainerOnMouseLUp(
-		IMouseTracker& mouseTracker
-	) : m_mouseTracker{ mouseTracker } {
-
-	};
-	GainerOnMouseLUp() = delete;
+	GainerOnMouseLUp() = default;
 	GainerOnMouseLUp(const GainerOnMouseLUp&) = delete;
 	GainerOnMouseLUp(GainerOnMouseLUp&&) = default;
 
@@ -190,11 +200,8 @@ public:
 	GainerOnMouseLUp& operator=(GainerOnMouseLUp&&) = default;
 
 	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
-		m_mouseTracker.DisableMouseTrack(control);
+		control.DisableInputTrack();
 	};
-
-private:
-	IMouseTracker& m_mouseTracker;
 };
 
 class OnMouseIgnore final {
@@ -233,11 +240,11 @@ using OutStateChangePolicy = CircularStateChangePolicy<int, 0, 1, 1>;
 using GainerStateChangePolicy = RangeStateChangePolicy<int, -600, 120, 1>;
 
 void DeskBand::BuildScene() {
-	::std::unique_ptr<Scene> pScene{ new Scene{ *this } };
-
 	const ::D2D1::ColorF background{ ::D2D1::ColorF(44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F) };
 	const ::D2D1::ColorF inactive{ ::D2D1::ColorF(95 / 255.F, 120 / 255.F, 137 / 255.F, 1.F) };
 	const ::D2D1::ColorF active{ ::D2D1::ColorF(112 / 255.F, 195 / 255.F, 153 / 255.F, 1.F) };
+
+	::std::unique_ptr<InputTracker> pInputTracker{ new InputTracker{ *this } };
 
 	::std::unique_ptr<D2D::Canvas> pCanvas{ new D2D::Canvas{ m_hWnd, background } };
 
@@ -354,7 +361,7 @@ void DeskBand::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].A1", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable A1" };
 		}
-	};
+		};
 	using out_a_1_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_a_1_onPromote)>;
 	::std::unique_ptr<out_a_1_StatePromotionPolicy> out_a_1_pStatePromotionPolicy{
 		new out_a_1_StatePromotionPolicy{ out_a_1_onPromote }
@@ -363,7 +370,7 @@ void DeskBand::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].A2", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable A2" };
 		}
-	};
+		};
 	using out_a_2_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_a_2_onPromote)>;
 	::std::unique_ptr<out_a_2_StatePromotionPolicy> out_a_2_pStatePromotionPolicy{
 		new out_a_2_StatePromotionPolicy{ out_a_2_onPromote }
@@ -372,7 +379,7 @@ void DeskBand::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].B1", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable B1" };
 		}
-	};
+		};
 	using out_b_1_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_b_1_onPromote)>;
 	::std::unique_ptr<out_b_1_StatePromotionPolicy> out_b_1_pStatePromotionPolicy{
 		new out_b_1_StatePromotionPolicy{ out_b_1_onPromote }
@@ -381,7 +388,7 @@ void DeskBand::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].B2", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable B2" };
 		}
-	};
+		};
 	using out_b_2_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_b_2_onPromote)>;
 	::std::unique_ptr<out_b_2_StatePromotionPolicy> out_b_2_pStatePromotionPolicy{
 		new out_b_2_StatePromotionPolicy{ out_b_2_onPromote }
@@ -390,14 +397,14 @@ void DeskBand::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].Gain", static_cast<float>(state) / 10.F)) {
 			throw windows_error{ "Cannot set system gainer level" };
 		}
-	};
+		};
 	using systemGainer_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(systemGainer_onPromote)>;
 	::std::unique_ptr<systemGainer_StatePromotionPolicy> systemGainer_pStatePromotionPolicy{
 		new systemGainer_StatePromotionPolicy{ systemGainer_onPromote }
 	};
 	auto onCarouseleGlyphUpdate = [](D2D::FrameGlyph& glyph, const int& state)->void {
 		glyph.set_Frame(state);
-	};
+		};
 	using CarouseleGlyphUpdatePolicy = PreconfiguredGlyphUpdatePolicy<D2D::FrameGlyph, int, decltype(onCarouseleGlyphUpdate)>;
 	::std::shared_ptr<CarouseleGlyphUpdatePolicy> pCarouseleGlyphUpdatePolicy{
 		new CarouseleGlyphUpdatePolicy{ onCarouseleGlyphUpdate }
@@ -405,12 +412,13 @@ void DeskBand::BuildScene() {
 	auto onGainerGlyphUpdate = [](D2D::BundleGlyph<GainerBundle>& glyph, const int& state)->void {
 		glyph.get_Bundle()
 			.set_Level((state + 600) / 10.F);
-	};
+		};
 	using GainerGlyphUpdatePolicy = PreconfiguredGlyphUpdatePolicy<D2D::BundleGlyph<GainerBundle>, int, decltype(onGainerGlyphUpdate)>;
 	::std::shared_ptr<GainerGlyphUpdatePolicy> pGainerGlyphUpdatePolicy{
 		new GainerGlyphUpdatePolicy{ onGainerGlyphUpdate }
 	};
 	using CarouselInteractivityPolicy = PreconfiguredInteractivityPolicy<Carousel,
+		CarouselOnMouseLDown,
 		CarouselOnMouseLDown,
 		OnMouseIgnore,
 		OnMouseWheelIgnore,
@@ -419,6 +427,7 @@ void DeskBand::BuildScene() {
 	::std::shared_ptr<CarouselInteractivityPolicy> pCarouselInteractivityPolicy{
 		new CarouselInteractivityPolicy{
 			CarouselOnMouseLDown{},
+			CarouselOnMouseLDown{},
 			OnMouseIgnore{},
 			OnMouseWheelIgnore{},
 			OnMouseIgnore{},
@@ -426,22 +435,25 @@ void DeskBand::BuildScene() {
 	} };
 	using GainerInteractivityPolicy = PreconfiguredInteractivityPolicy<Gainer,
 		GainerOnMouseLDown,
+		GainerOnMouseLDouble,
 		OnMouseIgnore,
 		GainerOnMouseWheel,
 		GainerOnMouseMove,
 		GainerOnMouseLUp>;
 	::std::shared_ptr<GainerInteractivityPolicy> pGainerInteractivityPolicy{
 		new GainerInteractivityPolicy{
-			GainerOnMouseLDown{ *pScene },
+			GainerOnMouseLDown{},
+			GainerOnMouseLDouble{},
 			OnMouseIgnore{},
 			GainerOnMouseWheel{},
 			GainerOnMouseMove{},
-			GainerOnMouseLUp{ *pScene }
+			GainerOnMouseLUp{}
 	} };
 
 	::std::unique_ptr<IComponent> out_a_cpControl[]{
 		::std::unique_ptr<Carousel>{
 			new Carousel{
+				*pInputTracker,
 				{ 0, 0 }, { 0, 0 },
 				::std::move(out_a_1_pGlyph),
 				pOutStateChangePolicy,
@@ -450,6 +462,7 @@ void DeskBand::BuildScene() {
 				pCarouselInteractivityPolicy
 		} }, ::std::unique_ptr<Carousel>{
 			new Carousel{
+				*pInputTracker,
 				{ 0, 2 }, { 0, 0 },
 				::std::move(out_a_2_pGlyph),
 				pOutStateChangePolicy,
@@ -461,6 +474,7 @@ void DeskBand::BuildScene() {
 	::std::unique_ptr<IComponent> out_b_cpControl[]{
 		::std::unique_ptr<Carousel>{
 			new Carousel{
+				*pInputTracker,
 				{ 0, 0 }, { 0, 0 },
 				::std::move(out_b_1_pGlyph),
 				pOutStateChangePolicy,
@@ -469,6 +483,7 @@ void DeskBand::BuildScene() {
 				pCarouselInteractivityPolicy
 		} }, ::std::unique_ptr<Carousel>{
 			new Carousel{
+				*pInputTracker,
 				{ 0, 2 }, { 0, 0 },
 				::std::move(out_b_2_pGlyph),
 				pOutStateChangePolicy,
@@ -481,6 +496,7 @@ void DeskBand::BuildScene() {
 	::std::unique_ptr<IComponent> cpComponent[]{
 		::std::unique_ptr<Gainer>{
 			new Gainer{
+				*pInputTracker,
 				{ 0, 0 }, { 0, 0 },
 				::std::move(systemGainer_pGlyph),
 				pGainerStateChangePolicy,
@@ -489,14 +505,14 @@ void DeskBand::BuildScene() {
 				pGainerInteractivityPolicy
 		} }, ::std::unique_ptr<StackPanel<Direction::Down>>{
 			new StackPanel<Direction::Down>{
-				{ 2, 0 },
-				{ 0, 0 },
+				*pInputTracker,
+				{ 2, 0 }, { 0, 0 },
 				::std::begin(out_a_cpControl),
 				::std::end(out_a_cpControl)
 		} }, ::std::unique_ptr<StackPanel<Direction::Down>>{
 			new StackPanel<Direction::Down>{
-				{ 2, 0 },
-				{ 0, 0 },
+				*pInputTracker,
+				{ 2, 0 }, { 0, 0 },
 				::std::begin(out_b_cpControl),
 				::std::end(out_b_cpControl)
 		} }
@@ -504,15 +520,15 @@ void DeskBand::BuildScene() {
 
 	::std::unique_ptr<IComponent> pComposition{
 		new StackPanel<Direction::Right>{
-			{ 0, 0 },
-			{ 0, 0 },
+			*pInputTracker,
+			{ 0, 0 }, { 0, 0 },
 			::std::begin(cpComponent),
 			::std::end(cpComponent)
 	} };
 
-	pScene->set_Canvas(::std::move(pCanvas));
-	pScene->set_Composition(::std::move(pComposition));
-
-	m_pScene.reset(pScene.get());
-	pScene.release();
+	m_pScene.reset(new Scene{
+		::std::move(pInputTracker),
+		::std::move(pCanvas),
+		::std::move(pComposition)
+		});
 }

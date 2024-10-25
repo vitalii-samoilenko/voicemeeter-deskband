@@ -31,7 +31,7 @@ Window::Window(
 	WNDCLASSW wndClass{};
 	wndClass.hInstance = hInstance;
 	wndClass.lpszClassName = LPSZ_CLASS_NAME;
-	wndClass.style = CS_DBLCLKS;
+	wndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 	wndClass.lpfnWndProc = WindowProcW;
 	wndClass.hCursor = wLoadCursorW(NULL, IDC_ARROW);
 
@@ -102,9 +102,6 @@ LRESULT CALLBACK Window::WindowProcW(
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
-
-			wUpdateWindow(hWnd);
-			wInvalidateRect(hWnd, NULL, TRUE);
 		} return OK;
 		case WM_PAINT: {
 			PAINTSTRUCT ps;

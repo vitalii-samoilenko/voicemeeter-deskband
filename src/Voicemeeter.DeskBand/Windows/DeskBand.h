@@ -5,7 +5,7 @@
 #include <shlobj.h> // for IDeskband2, IObjectWithSite, IPesistStream, and IInputObject
 #include <windows.h>
 
-#include "Voicemeeter.DeskBand.UI/IAppMouseTracker.h"
+#include "Voicemeeter.DeskBand.UI/IAppInputTracker.h"
 #include "Voicemeeter.DeskBand.UI/IScene.h"
 
 #include "../VoicemeeterRemote.h"
@@ -14,7 +14,7 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace Windows {
 			class DeskBand final
-				: public ::Voicemeeter::DeskBand::UI::IAppMouseTracker
+				: public ::Voicemeeter::DeskBand::UI::IAppInputTracker
 				, public IDeskBand2
 				, public IPersistStream
 				, public IObjectWithSite
@@ -27,8 +27,8 @@ namespace Voicemeeter {
 				DeskBand& operator=(const DeskBand&) = delete;
 				DeskBand& operator=(DeskBand&&) = delete;
 
-				virtual void EnableMouseTrack() override;
-				virtual void DisableMouseTrack() override;
+				virtual void EnableInputTrack() override;
+				virtual void DisableInputTrack() override;
 
 				// IUnknown
 				STDMETHODIMP QueryInterface(REFIID riid, void** ppv);

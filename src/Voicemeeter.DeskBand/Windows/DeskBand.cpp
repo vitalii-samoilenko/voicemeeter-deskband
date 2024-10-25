@@ -83,10 +83,10 @@ DeskBand::~DeskBand() {
 	InterlockedDecrement(&g_cDllRef);
 }
 
-void DeskBand::EnableMouseTrack() {
+void DeskBand::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
-void DeskBand::DisableMouseTrack() {
+void DeskBand::DisableInputTrack() {
 	wReleaseCapture();
 }
 
@@ -347,7 +347,7 @@ STDMETHODIMP DeskBand::SetSite(IUnknown* pUnkSite)
             if (SUCCEEDED(hr))
             {
                 WNDCLASSW wc = { 0 };
-                wc.style = CS_HREDRAW | CS_VREDRAW;
+                wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
                 wc.hCursor = LoadCursor(NULL, IDC_ARROW);
                 wc.hInstance = g_hInst;
                 wc.lpfnWndProc = WndProc;
@@ -542,6 +542,9 @@ LRESULT CALLBACK DeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     } return OK;
     case WM_LBUTTONDOWN: {
         pDeskBand->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+    } return OK;
+    case WM_LBUTTONDBLCLK: {
+        pDeskBand->m_pScene->MouseLDouble({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
     } return OK;
     case WM_RBUTTONDOWN: {
         pDeskBand->m_pScene->MouseRDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
