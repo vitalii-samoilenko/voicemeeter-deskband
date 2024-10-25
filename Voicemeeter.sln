@@ -18,6 +18,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.Window
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.UI.Graphics.D2D", "src\Voicemeeter.DeskBand.UI.Graphics.D2D\Voicemeeter.DeskBand.UI.Graphics.D2D.vcxproj", "{C55C74A6-D812-446D-94E1-75FE1AA95797}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.Test", "src\Voicemeeter.DeskBand.Test\Voicemeeter.DeskBand.Test.vcxproj", "{807A809C-6CCA-4EDA-BEDB-415911367CD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -66,6 +68,14 @@ Global
 		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x64.Build.0 = Release|x64
 		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x86.ActiveCfg = Release|Win32
 		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x86.Build.0 = Release|Win32
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Debug|x64.ActiveCfg = Debug|x64
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Debug|x64.Build.0 = Debug|x64
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Debug|x86.ActiveCfg = Debug|Win32
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Debug|x86.Build.0 = Debug|Win32
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Release|x64.ActiveCfg = Release|x64
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Release|x64.Build.0 = Release|x64
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Release|x86.ActiveCfg = Release|Win32
+		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

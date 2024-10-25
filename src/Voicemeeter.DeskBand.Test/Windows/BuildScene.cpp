@@ -56,8 +56,8 @@ class GainerBundle final {
 public:
 	explicit GainerBundle(
 		::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>& pBrush
-	) :	m_pBrush{ pBrush }
-	  , m_level{ 0.F } {
+	) : m_pBrush{ pBrush }
+		, m_level{ 0.F } {
 
 	}
 	GainerBundle() = delete;
@@ -167,7 +167,7 @@ public:
 
 	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
 		double scale{ static_cast<double>(control.get_Size().x) / control.get_BaseSize().x };
-		int level{ static_cast<int>((point.x - (28 * scale) - control.get_Position().x) * 10 / (1.5 * scale)) - 600  };
+		int level{ static_cast<int>((point.x - (28 * scale) - control.get_Position().x) * 10 / (1.5 * scale)) - 600 };
 
 		control.Set(level, true);
 	};
@@ -354,7 +354,7 @@ void Window::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].A1", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable A1" };
 		}
-	};
+		};
 	using out_a_1_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_a_1_onPromote)>;
 	::std::unique_ptr<out_a_1_StatePromotionPolicy> out_a_1_pStatePromotionPolicy{
 		new out_a_1_StatePromotionPolicy{ out_a_1_onPromote }
@@ -363,7 +363,7 @@ void Window::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].A2", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable A2" };
 		}
-	};
+		};
 	using out_a_2_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_a_2_onPromote)>;
 	::std::unique_ptr<out_a_2_StatePromotionPolicy> out_a_2_pStatePromotionPolicy{
 		new out_a_2_StatePromotionPolicy{ out_a_2_onPromote }
@@ -372,7 +372,7 @@ void Window::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].B1", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable B1" };
 		}
-	};
+		};
 	using out_b_1_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_b_1_onPromote)>;
 	::std::unique_ptr<out_b_1_StatePromotionPolicy> out_b_1_pStatePromotionPolicy{
 		new out_b_1_StatePromotionPolicy{ out_b_1_onPromote }
@@ -381,7 +381,7 @@ void Window::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].B2", static_cast<float>(state))) {
 			throw windows_error{ "Cannot enable B2" };
 		}
-	};
+		};
 	using out_b_2_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_b_2_onPromote)>;
 	::std::unique_ptr<out_b_2_StatePromotionPolicy> out_b_2_pStatePromotionPolicy{
 		new out_b_2_StatePromotionPolicy{ out_b_2_onPromote }
@@ -390,14 +390,14 @@ void Window::BuildScene() {
 		if (remote.VBVMR_SetParameterFloat((char*)"Strip[5].Gain", static_cast<float>(state) / 10.F)) {
 			throw windows_error{ "Cannot set system gainer level" };
 		}
-	};
+		};
 	using systemGainer_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(systemGainer_onPromote)>;
 	::std::unique_ptr<systemGainer_StatePromotionPolicy> systemGainer_pStatePromotionPolicy{
 		new systemGainer_StatePromotionPolicy{ systemGainer_onPromote }
 	};
 	auto onCarouseleGlyphUpdate = [](D2D::FrameGlyph& glyph, const int& state)->void {
 		glyph.set_Frame(state);
-	};
+		};
 	using CarouseleGlyphUpdatePolicy = PreconfiguredGlyphUpdatePolicy<D2D::FrameGlyph, int, decltype(onCarouseleGlyphUpdate)>;
 	::std::shared_ptr<CarouseleGlyphUpdatePolicy> pCarouseleGlyphUpdatePolicy{
 		new CarouseleGlyphUpdatePolicy{ onCarouseleGlyphUpdate }
@@ -405,7 +405,7 @@ void Window::BuildScene() {
 	auto onGainerGlyphUpdate = [](D2D::BundleGlyph<GainerBundle>& glyph, const int& state)->void {
 		glyph.get_Bundle()
 			.set_Level((state + 600) / 10.F);
-	};
+		};
 	using GainerGlyphUpdatePolicy = PreconfiguredGlyphUpdatePolicy<D2D::BundleGlyph<GainerBundle>, int, decltype(onGainerGlyphUpdate)>;
 	::std::shared_ptr<GainerGlyphUpdatePolicy> pGainerGlyphUpdatePolicy{
 		new GainerGlyphUpdatePolicy{ onGainerGlyphUpdate }

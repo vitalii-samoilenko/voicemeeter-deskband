@@ -18,9 +18,9 @@ static constexpr LRESULT OK{ 0 };
 Window::Window(
 	HINSTANCE hInstance
 ) : m_hWnd{ NULL }
-  , m_dpi{ USER_DEFAULT_SCREEN_DPI }
-  , m_pScene{ nullptr }
-  , remote{} {
+, m_dpi{ USER_DEFAULT_SCREEN_DPI }
+, m_pScene{ nullptr }
+, remote{} {
 	wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
@@ -79,8 +79,8 @@ LRESULT CALLBACK Window::WindowProcW(
 		PostQuitMessage(0);
 
 		return OK;
-	};
-	try{
+		};
+	try {
 		Window* pWnd{ wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
 
 		switch (uMsg) {
