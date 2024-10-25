@@ -4,7 +4,7 @@
 
 #include <windows.h>
 
-#include "Voicemeeter.DeskBand.UI/IAppMouseTracker.h"
+#include "Voicemeeter.DeskBand.UI/IAppInputTracker.h"
 #include "Voicemeeter.DeskBand.UI/IScene.h"
 
 #include "../VoicemeeterRemote.h"
@@ -12,7 +12,7 @@
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace Windows {
-			class Window final : public ::Voicemeeter::DeskBand::UI::IAppMouseTracker {
+			class Window final : public ::Voicemeeter::DeskBand::UI::IAppInputTracker {
 			public:
 				explicit Window(
 					HINSTANCE hInstance
@@ -28,8 +28,8 @@ namespace Voicemeeter {
 
 				void Show(int nCmdShow) const;
 
-				virtual void EnableMouseTrack() override;
-				virtual void DisableMouseTrack() override;
+				virtual void EnableInputTrack() override;
+				virtual void DisableInputTrack() override;
 
 			private:
 				HWND m_hWnd;

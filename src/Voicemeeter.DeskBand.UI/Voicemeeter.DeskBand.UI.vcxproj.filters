@@ -66,7 +66,7 @@
     <ClInclude Include="Control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IMouseTracker.h">
+    <ClInclude Include="IInputTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Policies\IInteractivityPolicy.h">
@@ -81,7 +81,7 @@
     <ClInclude Include="Policies\IStatePromotionPolicy.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="IAppMouseTracker.h">
+    <ClInclude Include="IAppInputTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
@@ -108,6 +108,9 @@
     <ClInclude Include="Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InputTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp">
@@ -120,6 +123,9 @@
       <Filter>Header Files\Controls</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

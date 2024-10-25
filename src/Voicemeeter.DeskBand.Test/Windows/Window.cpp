@@ -31,6 +31,7 @@ Window::Window(
 	WNDCLASSW wndClass{};
 	wndClass.hInstance = hInstance;
 	wndClass.lpszClassName = LPSZ_CLASS_NAME;
+	wndClass.style = CS_DBLCLKS;
 	wndClass.lpfnWndProc = WindowProcW;
 	wndClass.hCursor = wLoadCursorW(NULL, IDC_ARROW);
 
@@ -61,10 +62,10 @@ void Window::Show(int nCmdShow) const {
 	);
 }
 
-void Window::EnableMouseTrack() {
+void Window::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
-void Window::DisableMouseTrack() {
+void Window::DisableInputTrack() {
 	wReleaseCapture();
 }
 
@@ -118,6 +119,9 @@ LRESULT CALLBACK Window::WindowProcW(
 		} return OK;
 		case WM_LBUTTONDOWN: {
 			pWnd->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+		} return OK;
+		case WM_LBUTTONDBLCLK: {
+			pWnd->m_pScene->MouseLDouble({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		} return OK;
 		case WM_RBUTTONDOWN: {
 			pWnd->m_pScene->MouseRDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });

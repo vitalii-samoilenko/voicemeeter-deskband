@@ -13,6 +13,7 @@ namespace Voicemeeter {
 			namespace Policies {
 				template<typename TComponent,
 					typename TOnMouseLDown,
+					typename TOnMouseLDouble,
 					typename TOnMouseRDown,
 					typename TOnMouseWheel,
 					typename TOnMouseMove, 
@@ -21,6 +22,9 @@ namespace Voicemeeter {
 					static_assert(
 						::estd::is_invocable_r<void, TOnMouseLDown, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
 						"TOnMouseLDown must be invocable with TComponent& and const vector& arguments and void return type");
+					static_assert(
+						::estd::is_invocable_r<void, TOnMouseLDouble, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
+						"TOnMouseLDouble must be invocable with TComponent& and const vector& arguments and void return type");
 					static_assert(
 						::estd::is_invocable_r<void, TOnMouseRDown, ::estd::remove_cvref_t<TComponent>&, const ::linear_algebra::vector&>(),
 						"TOnMouseRDown must be invocable with TComponent& and const vector& arguments and void return type");
@@ -37,11 +41,13 @@ namespace Voicemeeter {
 				public:
 					PreconfiguredInteractivityPolicy(
 						TOnMouseLDown onMouseLDown,
+						TOnMouseLDouble onMouseLDouble,
 						TOnMouseRDown onMouseRDown,
 						TOnMouseWheel onMouseWheel,
 						TOnMouseMove onMouseMove,
 						TOnMouseLUp onMouseLUp
 					) : m_onMouseLDown{ ::std::move(onMouseLDown) }
+					  , m_onMouseLDouble{ ::std::move(onMouseLDouble) }
 					  , m_onMouseRDown{ ::std::move(onMouseRDown) }
 					  , m_onMouseWheel{ ::std::move(onMouseWheel) }
 					  , m_onMouseMove{ ::std::move(onMouseMove) }
@@ -60,6 +66,9 @@ namespace Voicemeeter {
 					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const override {
 						m_onMouseLDown(component, point);
 					};
+					virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const override {
+						m_onMouseLDouble(component, point);
+					};
 					virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const override {
 						m_onMouseRDown(component, point);
 					};
@@ -75,6 +84,7 @@ namespace Voicemeeter {
 
 				private:
 					TOnMouseLDown m_onMouseLDown;
+					TOnMouseLDouble m_onMouseLDouble;
 					TOnMouseRDown m_onMouseRDown;
 					TOnMouseWheel m_onMouseWheel;
 					TOnMouseMove m_onMouseMove;

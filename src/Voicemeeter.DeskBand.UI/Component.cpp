@@ -5,9 +5,11 @@
 using namespace ::Voicemeeter::DeskBand::UI;
 
 Component::Component(
+	IInputTracker& inputTracker,
 	const ::linear_algebra::vector& baseMarginTopLeft,
 	const ::linear_algebra::vector& baseMarginBottomRight
-) : m_marginTopLeft{ baseMarginTopLeft }
+) : m_inputTracker{ inputTracker }
+  , m_marginTopLeft{ baseMarginTopLeft }
   , m_marginBottomRight{ baseMarginBottomRight }
   , m_baseMarginTopLeft{ baseMarginTopLeft }
   , m_baseMarginBottomRight{ baseMarginBottomRight } {
@@ -55,6 +57,12 @@ void Component::Move(const ::linear_algebra::vector& point) {
 	OnMove(point + m_marginTopLeft);
 }
 bool Component::MouseLDown(const ::linear_algebra::vector& point) {
+	if (m_inputTracker.IsTracking(*this)) {
+		OnMouseLDown(point);
+
+		return true;
+	}
+
 	if (!::linear_algebra::is_inside(
 			point - get_Position(),
 			get_Size())) {
@@ -69,7 +77,34 @@ bool Component::MouseLDown(const ::linear_algebra::vector& point) {
 
 	return true;
 }
+bool Component::MouseLDouble(const ::linear_algebra::vector& point) {
+	if (m_inputTracker.IsTracking(*this)) {
+		OnMouseLDouble(point);
+
+		return true;
+	}
+
+	if (!::linear_algebra::is_inside(
+			point - get_Position(),
+			get_Size())) {
+		return false;
+	}
+
+	if (::linear_algebra::is_inside(
+			point - OnGet_Position(),
+			OnGet_Size())) {
+		OnMouseLDouble(point);
+	}
+
+	return true;
+}
 bool Component::MouseRDown(const ::linear_algebra::vector& point) {
+	if (m_inputTracker.IsTracking(*this)) {
+		OnMouseRDown(point);
+
+		return true;
+	}
+
 	if (!::linear_algebra::is_inside(
 			point - get_Position(),
 			get_Size())) {
@@ -85,6 +120,12 @@ bool Component::MouseRDown(const ::linear_algebra::vector& point) {
 	return true;
 }
 bool Component::MouseWheel(const ::linear_algebra::vector& point, int delta) {
+	if (m_inputTracker.IsTracking(*this)) {
+		OnMouseWheel(point, delta);
+
+		return true;
+	}
+
 	if (!::linear_algebra::is_inside(
 			point - get_Position(),
 			get_Size())) {
@@ -98,4 +139,56 @@ bool Component::MouseWheel(const ::linear_algebra::vector& point, int delta) {
 	}
 
 	return true;
+}
+bool Component::MouseMove(const ::linear_algebra::vector& point) {
+	if (m_inputTracker.IsTracking(*this)) {
+		OnMouseMove(point);
+
+		return true;
+	}
+
+	if (!::linear_algebra::is_inside(
+			point - get_Position(),
+			get_Size())) {
+		return false;
+	}
+
+	if (::linear_algebra::is_inside(
+			point - OnGet_Position(),
+			OnGet_Size())) {
+		OnMouseMove(point);
+	}
+
+	return true;
+}
+bool Component::MouseLUp(const ::linear_algebra::vector& point) {
+	if (m_inputTracker.IsTracking(*this)) {
+		OnMouseLUp(point);
+
+		return true;
+	}
+
+	if (!::linear_algebra::is_inside(
+			point - get_Position(),
+			get_Size())) {
+		return false;
+	}
+
+	if (::linear_algebra::is_inside(
+			point - OnGet_Position(),
+			OnGet_Size())) {
+		OnMouseLUp(point);
+	}
+
+	return true;
+}
+
+bool Component::IsTrackingInput() const {
+	return m_inputTracker.IsTracking(*this);
+}
+void Component::EnableInputTrack() {
+	m_inputTracker.EnableInputTrack(*this);
+}
+void Component::DisableInputTrack() {
+	m_inputTracker.DisableInputTrack(*this);
 }

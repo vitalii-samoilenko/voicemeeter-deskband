@@ -6,6 +6,7 @@
 #include "estd/linear_algebra.h"
 
 #include "../Control.h"
+#include "../IInputTracker.h"
 #include "../Policies/IStateChangePolicy.h"
 #include "../Policies/IStatePromotionPolicy.h"
 #include "../Policies/IGlyphUpdatePolicy.h"
@@ -25,6 +26,7 @@ namespace Voicemeeter {
 
 				public:
 					StateControl(
+						IInputTracker& inputTracker,
 						const ::linear_algebra::vector& baseMarginTopLeft,
 						const ::linear_algebra::vector& baseMarginBottomRight,
 						::std::unique_ptr<::estd::remove_cvref_t<TGlyph>> pGlyph,
@@ -32,7 +34,7 @@ namespace Voicemeeter {
 						::std::unique_ptr<IStatePromotionPolicy<::estd::remove_cvref_t<TState>>> pStatePromotionPolicy,
 						::std::shared_ptr<IGlyphUpdatePolicy<::estd::remove_cvref_t<TGlyph>, ::estd::remove_cvref_t<TState>>> pGlyphUpdatePolicy,
 						::std::shared_ptr<IInteractivityPolicy<StateControl>> pInteractivityPolicy
-					) : Control{ baseMarginTopLeft, baseMarginBottomRight }
+					) : Control{ inputTracker, baseMarginTopLeft, baseMarginBottomRight }
 					  , m_state{}
 					  , m_pGlyph{ ::std::move(pGlyph) }
 					  , m_pStateChangePolicy{ ::std::move(pStateChangePolicy) }
@@ -76,13 +78,6 @@ namespace Voicemeeter {
 						OnSet(promote);
 					}
 
-					virtual void MouseMove(const ::linear_algebra::vector& point) override {
-						m_pInteractivityPolicy->MouseMove(*this, point);
-					};
-					virtual void MouseLUp(const ::linear_algebra::vector& point) override {
-						m_pInteractivityPolicy->MouseLUp(*this, point);
-					};
-
 				protected:
 					virtual const ::linear_algebra::vector& OnGet_Position() const override {
 						return m_pGlyph->get_Position();
@@ -106,11 +101,20 @@ namespace Voicemeeter {
 					virtual void OnMouseLDown(const ::linear_algebra::vector& point) override {
 						m_pInteractivityPolicy->MouseLDown(*this, point);
 					};
+					virtual void OnMouseLDouble(const ::linear_algebra::vector& point) override {
+						m_pInteractivityPolicy->MouseLDouble(*this, point);
+					};
 					virtual void OnMouseRDown(const ::linear_algebra::vector& point) override {
 						m_pInteractivityPolicy->MouseRDown(*this, point);
 					};
 					virtual void OnMouseWheel(const ::linear_algebra::vector& point, int delta) override {
 						m_pInteractivityPolicy->MouseWheel(*this, point, delta);
+					};
+					virtual void OnMouseMove(const ::linear_algebra::vector& point) override {
+						m_pInteractivityPolicy->MouseMove(*this, point);
+					};
+					virtual void OnMouseLUp(const ::linear_algebra::vector& point) override {
+						m_pInteractivityPolicy->MouseLUp(*this, point);
 					};
 
 				private:

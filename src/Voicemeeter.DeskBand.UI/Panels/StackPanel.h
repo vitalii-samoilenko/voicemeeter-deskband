@@ -10,6 +10,7 @@
 
 #include "../Panel.h"
 #include "../IComponent.h"
+#include "../IInputTracker.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -30,11 +31,12 @@ namespace Voicemeeter {
 								::std::unique_ptr<IComponent>>,
 							bool> = true>
 					StackPanel(
+						IInputTracker& inputTracker,
 						const ::linear_algebra::vector& baseMarginTopLeft,
 						const ::linear_algebra::vector& baseMarginBottomRight,
 						TIterator begin,
 						TIterator end
-					) : Panel{ baseMarginTopLeft, baseMarginBottomRight }
+					) : Panel{ inputTracker, baseMarginTopLeft, baseMarginBottomRight }
 					  , m_baseVertex{}
 					  , m_cpComponent{}{
 						for (; begin != end; ++begin) {
@@ -53,9 +55,6 @@ namespace Voicemeeter {
 
 					StackPanel& operator=(const StackPanel&) = delete;
 					StackPanel& operator=(StackPanel&&) = delete;
-
-					virtual void MouseMove(const ::linear_algebra::vector& point) override { };
-					virtual void MouseLUp(const ::linear_algebra::vector& point) override { };
 
 				protected:
 					virtual const ::linear_algebra::vector& OnGet_Position() const override {
@@ -82,6 +81,13 @@ namespace Voicemeeter {
 							}
 						}
 					};
+					virtual void OnMouseLDouble(const ::linear_algebra::vector& point) override {
+						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+							if (pComponent->MouseLDouble(point)) {
+								break;
+							}
+						}
+					};
 					virtual void OnMouseRDown(const ::linear_algebra::vector& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseRDown(point)) {
@@ -92,6 +98,20 @@ namespace Voicemeeter {
 					virtual void OnMouseWheel(const ::linear_algebra::vector& point, int delta) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseWheel(point, delta)) {
+								break;
+							}
+						}
+					};
+					virtual void OnMouseMove(const ::linear_algebra::vector& point) override {
+						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+							if (pComponent->MouseMove(point)) {
+								break;
+							}
+						}
+					};
+					virtual void OnMouseLUp(const ::linear_algebra::vector& point) override {
+						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+							if (pComponent->MouseLUp(point)) {
 								break;
 							}
 						}

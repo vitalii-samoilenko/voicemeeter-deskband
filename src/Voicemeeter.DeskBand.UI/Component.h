@@ -2,6 +2,8 @@
 
 #include "estd/linear_algebra.h"
 
+#include "IInputTracker.h"
+
 #include "IComponent.h"
 
 namespace Voicemeeter {
@@ -24,11 +26,19 @@ namespace Voicemeeter {
 				virtual void Rescale(const ::linear_algebra::vector& vertex) override final;
 				virtual void Move(const ::linear_algebra::vector& point) override final;
 				virtual bool MouseLDown(const ::linear_algebra::vector& point) override final;
+				virtual bool MouseLDouble(const ::linear_algebra::vector& point) override final;
 				virtual bool MouseRDown(const ::linear_algebra::vector& point) override final;
 				virtual bool MouseWheel(const ::linear_algebra::vector& point, int delta) override final;
+				virtual bool MouseMove(const ::linear_algebra::vector& point) override final;
+				virtual bool MouseLUp(const ::linear_algebra::vector& point) override final;
+
+				bool IsTrackingInput() const;
+				void EnableInputTrack();
+				void DisableInputTrack();
 
 			protected:
 				Component(
+					IInputTracker& inputTracker,
 					const ::linear_algebra::vector& baseMarginTopLeft,
 					const ::linear_algebra::vector& baseMarginBottomRight
 				);
@@ -43,10 +53,14 @@ namespace Voicemeeter {
 				virtual void OnRescale(const ::linear_algebra::vector& vertex) = 0;
 				virtual void OnMove(const ::linear_algebra::vector& point) = 0;
 				virtual void OnMouseLDown(const ::linear_algebra::vector& point) = 0;
+				virtual void OnMouseLDouble(const ::linear_algebra::vector& point) = 0;
 				virtual void OnMouseRDown(const ::linear_algebra::vector& point) = 0;
 				virtual void OnMouseWheel(const ::linear_algebra::vector& point, int delta) = 0;
+				virtual void OnMouseMove(const ::linear_algebra::vector& point) = 0;
+				virtual void OnMouseLUp(const ::linear_algebra::vector& point) = 0;
 
 			private:
+				IInputTracker& m_inputTracker;
 				::linear_algebra::vector m_marginTopLeft;
 				::linear_algebra::vector m_marginBottomRight;
 				::linear_algebra::vector m_baseMarginTopLeft;

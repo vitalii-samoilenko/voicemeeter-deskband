@@ -138,10 +138,11 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />
-    <ClInclude Include="IAppMouseTracker.h" />
+    <ClInclude Include="IAppInputTracker.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="Control.h" />
-    <ClInclude Include="IMouseTracker.h" />
+    <ClInclude Include="IInputTracker.h" />
+    <ClInclude Include="InputTracker.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="Panels\StackPanel.h" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Controls\StateControl.h" />
+    <ClCompile Include="InputTracker.cpp" />
     <ClCompile Include="Panels\StackPanel.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "IInputTracker.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -16,9 +17,10 @@ namespace Voicemeeter {
 
 			protected:
 				Control(
+					IInputTracker& inputTracker,
 					const ::linear_algebra::vector& baseMarginTopLeft,
 					const ::linear_algebra::vector& baseMarginBottomRight
-				) : Component{ baseMarginTopLeft, baseMarginBottomRight } {
+				) : Component{ inputTracker, baseMarginTopLeft, baseMarginBottomRight } {
 
 				};
 
