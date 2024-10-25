@@ -449,8 +449,8 @@ void DeskBand::OnPaint(const HDC hdcIn)
     if (hdc)
     {
         m_pScene->Redraw(
-            ::linear_algebra::Origin,
-            ::linear_algebra::Infinity
+            ::linear_algebra::vectord::origin(),
+            ::linear_algebra::vectord::infinity()
         );
         /*RECT rc;
         GetClientRect(m_hWnd, &rc);
@@ -538,30 +538,49 @@ LRESULT CALLBACK DeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         break;
 
     case WM_SIZE: {
-        pDeskBand->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
+        pDeskBand->m_pScene->Resize({
+            static_cast<double>(LOWORD(lParam)),
+            static_cast<double>(HIWORD(lParam))
+        });
     } return OK;
     case WM_LBUTTONDOWN: {
-        pDeskBand->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+        pDeskBand->m_pScene->MouseLDown({
+            static_cast<double>(GET_X_LPARAM(lParam)),
+            static_cast<double>(GET_Y_LPARAM(lParam))
+        });
     } return OK;
     case WM_LBUTTONDBLCLK: {
-        pDeskBand->m_pScene->MouseLDouble({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+        pDeskBand->m_pScene->MouseLDouble({
+            static_cast<double>(GET_X_LPARAM(lParam)),
+            static_cast<double>(GET_Y_LPARAM(lParam))
+        });
     } return OK;
     case WM_RBUTTONDOWN: {
-        pDeskBand->m_pScene->MouseRDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+        pDeskBand->m_pScene->MouseRDown({
+            static_cast<double>(GET_X_LPARAM(lParam)),
+            static_cast<double>(GET_Y_LPARAM(lParam))
+        });
     } return OK;
     case WM_MOUSEWHEEL: {
         POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
         wScreenToClient(hwnd, &point);
 
-        pDeskBand->m_pScene->MouseWheel(
-            { point.x, point.y },
-            GET_WHEEL_DELTA_WPARAM(wParam));
+        pDeskBand->m_pScene->MouseWheel({
+            static_cast<double>(point.x),
+            static_cast<double>(point.y)
+        }, GET_WHEEL_DELTA_WPARAM(wParam));
     } return OK;
     case WM_MOUSEMOVE: {
-        pDeskBand->m_pScene->MouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+        pDeskBand->m_pScene->MouseMove({
+            static_cast<double>(GET_X_LPARAM(lParam)),
+            static_cast<double>(GET_Y_LPARAM(lParam))
+        });
     } return OK;
     case WM_LBUTTONUP: {
-        pDeskBand->m_pScene->MouseLUp({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+        pDeskBand->m_pScene->MouseLUp({
+            static_cast<double>(GET_X_LPARAM(lParam)),
+            static_cast<double>(GET_Y_LPARAM(lParam))
+        });
     } return OK;
 
     case WM_ERASEBKGND:
@@ -613,7 +632,10 @@ LRESULT CALLBACK DeskBand::WindowProcW(
 			PostQuitMessage(0);
 		} return OK;
 		case WM_SIZE: {
-			pWnd->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
+			pWnd->m_pScene->Resize({
+                static_cast<double>(LOWORD(lParam)),
+                static_cast<double>(HIWORD(lParam))
+            });
 
 			wUpdateWindow(hWnd);
 			wInvalidateRect(hWnd, NULL, TRUE);
@@ -623,31 +645,44 @@ LRESULT CALLBACK DeskBand::WindowProcW(
 			wBeginPaint(hWnd, &ps);
 
 			pWnd->m_pScene->Redraw(
-				::linear_algebra::Origin,
-				::linear_algebra::Infinity
+				::linear_algebra::vectord::origin(),
+				::linear_algebra::vectord::infinity()
 			);
 
 			EndPaint(hWnd, &ps);
 		} return OK;
 		case WM_LBUTTONDOWN: {
-			pWnd->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseLDown({
+                static_cast<double>(GET_X_LPARAM(lParam)),
+                static_cast<double>(GET_Y_LPARAM(lParam))
+            });
 		} return OK;
 		case WM_RBUTTONDOWN: {
-			pWnd->m_pScene->MouseRDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseRDown({
+                static_cast<double>(GET_X_LPARAM(lParam)),
+                static_cast<double>(GET_Y_LPARAM(lParam))
+            });
 		} return OK;
 		case WM_MOUSEWHEEL: {
 			POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 			wScreenToClient(hWnd, &point);
 
-			pWnd->m_pScene->MouseWheel(
-				{ point.x, point.y },
-				GET_WHEEL_DELTA_WPARAM(wParam));
+			pWnd->m_pScene->MouseWheel({
+                static_cast<double>(point.x),
+                static_cast<double>(point.y)
+            }, GET_WHEEL_DELTA_WPARAM(wParam));
 		} return OK;
 		case WM_MOUSEMOVE: {
-			pWnd->m_pScene->MouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseMove({
+                static_cast<double>(GET_X_LPARAM(lParam)),
+                static_cast<double>(GET_Y_LPARAM(lParam))
+            });
 		} return OK;
 		case WM_LBUTTONUP: {
-			pWnd->m_pScene->MouseLUp({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseLUp({
+                static_cast<double>(GET_X_LPARAM(lParam)),
+                static_cast<double>(GET_Y_LPARAM(lParam))
+            });
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };

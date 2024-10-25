@@ -1,15 +1,21 @@
 #pragma once
 
+#include <limits>
 #include <type_traits>
 
 #include "type_traits.h"
 
 namespace linear_algebra {
+	template<typename TScalar>
 	struct vector final {
-		int x;
-		int y;
+		static_assert(
+			::std::is_arithmetic_v<TScalar>,
+			"TScalar must be of arithmetic type");
 
-		vector() = default;
+		TScalar x;
+		TScalar y;
+
+		constexpr vector() = default;
 		vector(const vector&) = default;
 		vector(vector&&) = default;
 
@@ -17,28 +23,70 @@ namespace linear_algebra {
 
 		vector& operator=(const vector&) = default;
 		vector& operator=(vector&&) = default;
+
+		static constexpr vector origin() {
+			return {
+				::std::numeric_limits<TScalar>::denorm_min(),
+				::std::numeric_limits<TScalar>::denorm_min()
+			};
+		};
+
+		static constexpr vector infinity() {
+			return {
+				::std::numeric_limits<TScalar>::max(),
+				::std::numeric_limits<TScalar>::max()
+			};
+		}
 	};
 
-	vector operator+(const vector& lhs, const vector& rhs);
-	vector operator-(const vector& lhs, const vector& rhs);
-	template<typename TScalar,
-		::std::enable_if_t<
-			::std::is_arithmetic_v<TScalar>,
-			bool> = true>
-	vector operator*(const vector& lhs, TScalar rhs) {
+	template<typename TScalar>
+	vector<TScalar> operator+(const vector<TScalar>& lhs, const vector<TScalar>& rhs) {
 		return {
-			static_cast<int>(lhs.x * rhs),
-			static_cast<int>(lhs.y * rhs)
+			lhs.x + rhs.x,
+			lhs.y + rhs.y
 		};
+	};
+
+	template<typename TScalar>
+	vector<TScalar> operator-(const vector<TScalar>& lhs, const vector<TScalar>& rhs) {
+		return {
+			lhs.x - rhs.x,
+			lhs.y - rhs.y
+		};
+	};
+
+	template<typename TScalar>
+	vector<TScalar> operator*(const vector<TScalar>& lhs, TScalar rhs) {
+		return {
+			lhs.x * rhs,
+			lhs.y * rhs
+		};
+	};
+
+
+	template<typename TScalar>
+	bool is_inside(
+		const vector<TScalar>& point,
+		const vector<TScalar>& vertex) {
+		return !(point.x < ::std::numeric_limits<TScalar>::denorm_min())
+			&& !(point.y < ::std::numeric_limits<TScalar>::denorm_min())
+			&& point.x < vertex.x
+			&& point.y < vertex.y;
+	};
+	template<typename TScalar>
+	bool is_overlapping(
+		const vector<TScalar>& lhs_point, const vector<TScalar>& lhs_vertex,
+		const vector<TScalar>& rhs_point, const vector<TScalar>& rhs_vertex) {
+		vector<TScalar> abs_vertex{ lhs_point + lhs_vertex };
+		if (!is_inside(rhs_point, abs_vertex)) {
+			return false;
+		}
+		abs_vertex = rhs_point + rhs_vertex;
+		if (!is_inside(lhs_point, abs_vertex)) {
+			return false;
+		}
+		return true;
 	}
 
-	extern const vector Origin;
-	extern const vector Infinity;
-
-	bool is_inside(
-		const vector& point,
-		const vector& vertex);
-	bool is_overlapping(
-		const vector& lhs_point, const vector& lhs_vertex,
-		const vector& rhs_point, const vector& rhs_vertex);
+	using vectord = vector<double>;
 }

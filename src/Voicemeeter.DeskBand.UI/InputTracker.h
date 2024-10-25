@@ -26,12 +26,12 @@ namespace Voicemeeter {
 
 				virtual void EnableInputTrack(IComponent& component) override;
 				virtual void DisableInputTrack(IComponent& component) override;
-				virtual bool MouseLDown(const ::linear_algebra::vector& point) override;
-				virtual bool MouseLDouble(const ::linear_algebra::vector& point) override;
-				virtual bool MouseRDown(const ::linear_algebra::vector& point) override;
-				virtual bool MouseWheel(const ::linear_algebra::vector& point, int delta) override;
-				virtual bool MouseMove(const ::linear_algebra::vector& point) override;
-				virtual bool MouseLUp(const ::linear_algebra::vector& point) override;
+				virtual bool MouseLDown(const ::linear_algebra::vectord& point) override;
+				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override;
+				virtual bool MouseRDown(const ::linear_algebra::vectord& point) override;
+				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override;
+				virtual bool MouseMove(const ::linear_algebra::vectord& point) override;
+				virtual bool MouseLUp(const ::linear_algebra::vectord& point) override;
 
 			private:
 				IAppInputTracker& m_appInputTracler;

@@ -6,8 +6,8 @@ using namespace ::Voicemeeter::DeskBand::UI;
 
 Component::Component(
 	IInputTracker& inputTracker,
-	const ::linear_algebra::vector& baseMarginTopLeft,
-	const ::linear_algebra::vector& baseMarginBottomRight
+	const ::linear_algebra::vectord& baseMarginTopLeft,
+	const ::linear_algebra::vectord& baseMarginBottomRight
 ) : m_inputTracker{ inputTracker }
   , m_marginTopLeft{ baseMarginTopLeft }
   , m_marginBottomRight{ baseMarginBottomRight }
@@ -16,17 +16,17 @@ Component::Component(
 
 }
 
-const ::linear_algebra::vector& Component::get_Position() const {
+const ::linear_algebra::vectord& Component::get_Position() const {
 	return OnGet_Position() - m_marginTopLeft;
 }
-const ::linear_algebra::vector& Component::get_Size() const {
+const ::linear_algebra::vectord& Component::get_Size() const {
 	return OnGet_Size() + m_marginTopLeft + m_marginBottomRight;
 }
-const ::linear_algebra::vector& Component::get_BaseSize() const {
+const ::linear_algebra::vectord& Component::get_BaseSize() const {
 	return OnGet_BaseSize() + m_baseMarginTopLeft + m_baseMarginBottomRight;
 }
 
-void Component::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
+void Component::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	if (!::linear_algebra::is_overlapping(
 			point, vertex,
 			OnGet_Position(), OnGet_Size())) {
@@ -35,9 +35,9 @@ void Component::Redraw(const ::linear_algebra::vector& point, const ::linear_alg
 
 	OnRedraw(point, vertex);
 }
-void Component::Rescale(const ::linear_algebra::vector& vertex) {
-	::linear_algebra::vector point{ get_Position() };
-	::linear_algebra::vector baseVertex{ get_BaseSize() };
+void Component::Rescale(const ::linear_algebra::vectord& vertex) {
+	::linear_algebra::vectord point{ get_Position() };
+	::linear_algebra::vectord baseVertex{ get_BaseSize() };
 
 	double scale{
 		::std::min<double>(
@@ -53,10 +53,10 @@ void Component::Rescale(const ::linear_algebra::vector& vertex) {
 	Move(point);
 	OnRescale(vertex - m_marginTopLeft - m_marginBottomRight);
 }
-void Component::Move(const ::linear_algebra::vector& point) {
+void Component::Move(const ::linear_algebra::vectord& point) {
 	OnMove(point + m_marginTopLeft);
 }
-bool Component::MouseLDown(const ::linear_algebra::vector& point) {
+bool Component::MouseLDown(const ::linear_algebra::vectord& point) {
 	if (m_inputTracker.IsTracking(*this)) {
 		OnMouseLDown(point);
 
@@ -77,7 +77,7 @@ bool Component::MouseLDown(const ::linear_algebra::vector& point) {
 
 	return true;
 }
-bool Component::MouseLDouble(const ::linear_algebra::vector& point) {
+bool Component::MouseLDouble(const ::linear_algebra::vectord& point) {
 	if (m_inputTracker.IsTracking(*this)) {
 		OnMouseLDouble(point);
 
@@ -98,7 +98,7 @@ bool Component::MouseLDouble(const ::linear_algebra::vector& point) {
 
 	return true;
 }
-bool Component::MouseRDown(const ::linear_algebra::vector& point) {
+bool Component::MouseRDown(const ::linear_algebra::vectord& point) {
 	if (m_inputTracker.IsTracking(*this)) {
 		OnMouseRDown(point);
 
@@ -119,7 +119,7 @@ bool Component::MouseRDown(const ::linear_algebra::vector& point) {
 
 	return true;
 }
-bool Component::MouseWheel(const ::linear_algebra::vector& point, int delta) {
+bool Component::MouseWheel(const ::linear_algebra::vectord& point, int delta) {
 	if (m_inputTracker.IsTracking(*this)) {
 		OnMouseWheel(point, delta);
 
@@ -140,7 +140,7 @@ bool Component::MouseWheel(const ::linear_algebra::vector& point, int delta) {
 
 	return true;
 }
-bool Component::MouseMove(const ::linear_algebra::vector& point) {
+bool Component::MouseMove(const ::linear_algebra::vectord& point) {
 	if (m_inputTracker.IsTracking(*this)) {
 		OnMouseMove(point);
 
@@ -161,7 +161,7 @@ bool Component::MouseMove(const ::linear_algebra::vector& point) {
 
 	return true;
 }
-bool Component::MouseLUp(const ::linear_algebra::vector& point) {
+bool Component::MouseLUp(const ::linear_algebra::vectord& point) {
 	if (m_inputTracker.IsTracking(*this)) {
 		OnMouseLUp(point);
 

@@ -106,7 +106,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -144,9 +144,6 @@
     <ClCompile Include="Glyph.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\estd\estd.vcxproj">
-      <Project>{be6dd8b6-c8ae-4bb1-8cc1-612f5f262b60}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.DeskBand.UI\Voicemeeter.DeskBand.UI.vcxproj">
       <Project>{8ebf00e4-20be-4230-97ba-8dd20f2f35cb}</Project>
     </ProjectReference>

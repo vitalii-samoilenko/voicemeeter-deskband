@@ -17,8 +17,8 @@ namespace Voicemeeter {
 			protected:
 				Panel(
 					IInputTracker& inputTracker,
-					const ::linear_algebra::vector& baseMarginTopLeft,
-					const ::linear_algebra::vector& baseMarginBottomRight
+					const ::linear_algebra::vectord& baseMarginTopLeft,
+					const ::linear_algebra::vectord& baseMarginBottomRight
 				) : Component{ inputTracker, baseMarginTopLeft, baseMarginBottomRight } {
 
 				};

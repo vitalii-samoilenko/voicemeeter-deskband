@@ -14,7 +14,7 @@ namespace Voicemeeter {
 					IResizable& operator=(const IResizable&) = delete;
 					IResizable& operator=(IResizable&&) = delete;
 
-					virtual void Resize(const ::linear_algebra::vector& vertex) = 0;
+					virtual void Resize(const ::linear_algebra::vectord& vertex) = 0;
 
 				protected:
 					IResizable() = default;

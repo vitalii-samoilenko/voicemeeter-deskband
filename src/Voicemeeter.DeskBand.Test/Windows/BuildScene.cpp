@@ -42,7 +42,11 @@ public:
 	OutBundle& operator=(const OutBundle&) = delete;
 	OutBundle& operator=(OutBundle&&) = default;
 
-	void operator()(const D2D::Canvas& canvas, const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) const {
+	void operator()(const D2D::Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const {
+		canvas.get_pRenderTarget()
+			->FillRectangle(
+				::D2D1::RectF(0.F, 0.F, 41.F, 19.F),
+				canvas.get_pBackgroundBrush());
 		canvas.get_pRenderTarget()
 			->FillRoundedRectangle(
 				::D2D1::RoundedRect(::D2D1::RectF(0.F, 0.F, 41.F, 19.F), 7.F, 7.F),
@@ -70,7 +74,7 @@ public:
 	GainerBundle& operator=(const GainerBundle&) = delete;
 	GainerBundle& operator=(GainerBundle&&) = default;
 
-	void operator()(const D2D::Canvas& canvas, const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) const {
+	void operator()(const D2D::Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const {
 		canvas.get_pRenderTarget()
 			->FillRectangle(
 				::D2D1::RectF(0.F, 0.F, 165.F, 40.F),
@@ -108,7 +112,7 @@ public:
 	CarouselOnMouseLDown& operator=(const CarouselOnMouseLDown&) = delete;
 	CarouselOnMouseLDown& operator=(CarouselOnMouseLDown&&) = default;
 
-	void operator()(Carousel& control, const ::linear_algebra::vector& point) const {
+	void operator()(Carousel& control, const ::linear_algebra::vectord& point) const {
 		control.SetNext();
 	};
 };
@@ -124,7 +128,7 @@ public:
 	GainerOnMouseLDown& operator=(const GainerOnMouseLDown&) = delete;
 	GainerOnMouseLDown& operator=(GainerOnMouseLDown&&) = default;
 
-	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
+	void operator()(Gainer& control, const ::linear_algebra::vectord& point) const {
 		control.EnableInputTrack();
 	};
 };
@@ -140,7 +144,7 @@ public:
 	GainerOnMouseLDouble& operator=(const GainerOnMouseLDouble&) = delete;
 	GainerOnMouseLDouble& operator=(GainerOnMouseLDouble&&) = default;
 
-	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
+	void operator()(Gainer& control, const ::linear_algebra::vectord& point) const {
 		int zero{ 0 };
 
 		control.Set(zero, true);
@@ -158,7 +162,7 @@ public:
 	GainerOnMouseWheel& operator=(const GainerOnMouseWheel&) = delete;
 	GainerOnMouseWheel& operator=(GainerOnMouseWheel&&) = default;
 
-	void operator()(Gainer& control, const ::linear_algebra::vector& point, int delta) const {
+	void operator()(Gainer& control, const ::linear_algebra::vectord& point, int delta) const {
 		int level{ control.get_State() + delta / 4 };
 
 		control.Set(level, true);
@@ -176,12 +180,12 @@ public:
 	GainerOnMouseMove& operator=(const GainerOnMouseMove&) = delete;
 	GainerOnMouseMove& operator=(GainerOnMouseMove&&) = default;
 
-	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
+	void operator()(Gainer& control, const ::linear_algebra::vectord& point) const {
 		if (!control.IsTrackingInput()) {
 			return;
 		}
 
-		double scale{ static_cast<double>(control.get_Size().x) / control.get_BaseSize().x };
+		double scale{ control.get_Size().x / control.get_BaseSize().x };
 		int level{ static_cast<int>((point.x - (28 * scale) - control.get_Position().x) * 10 / (1.5 * scale)) - 600 };
 
 		control.Set(level, true);
@@ -199,7 +203,7 @@ public:
 	GainerOnMouseLUp& operator=(const GainerOnMouseLUp&) = delete;
 	GainerOnMouseLUp& operator=(GainerOnMouseLUp&&) = default;
 
-	void operator()(Gainer& control, const ::linear_algebra::vector& point) const {
+	void operator()(Gainer& control, const ::linear_algebra::vectord& point) const {
 		control.DisableInputTrack();
 	};
 };
@@ -215,7 +219,7 @@ public:
 	OnMouseIgnore& operator=(const OnMouseIgnore&) = delete;
 	OnMouseIgnore& operator=(OnMouseIgnore&&) = default;
 
-	void operator()(Control& control, const ::linear_algebra::vector& point) const {
+	void operator()(Control& control, const ::linear_algebra::vectord& point) const {
 
 	};
 };
@@ -231,7 +235,7 @@ public:
 	OnMouseWheelIgnore& operator=(const OnMouseWheelIgnore&) = delete;
 	OnMouseWheelIgnore& operator=(OnMouseWheelIgnore&&) = default;
 
-	void operator()(Carousel& control, const ::linear_algebra::vector& point, int delta) const {
+	void operator()(Carousel& control, const ::linear_algebra::vectord& point, int delta) const {
 
 	};
 };

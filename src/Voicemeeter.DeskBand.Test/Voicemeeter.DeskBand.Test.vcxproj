@@ -106,7 +106,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -138,9 +138,6 @@
     <ClInclude Include="Windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\estd\estd.vcxproj">
-      <Project>{be6dd8b6-c8ae-4bb1-8cc1-612f5f262b60}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.DeskBand.UI.Graphics.D2D\Voicemeeter.DeskBand.UI.Graphics.D2D.vcxproj">
       <Project>{c55c74a6-d812-446d-94e1-75fe1aa95797}</Project>
     </ProjectReference>

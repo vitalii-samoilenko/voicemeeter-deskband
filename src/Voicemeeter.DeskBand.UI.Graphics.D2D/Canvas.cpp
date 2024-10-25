@@ -45,24 +45,24 @@ Canvas::Canvas(
 	), "Brush creation failed");
 }
 
-const ::linear_algebra::vector& Canvas::get_Position() const {
-	return ::linear_algebra::Origin;
+const ::linear_algebra::vectord& Canvas::get_Position() const {
+	return ::linear_algebra::vectord::origin();
 }
-const ::linear_algebra::vector& Canvas::get_Size() const {
+const ::linear_algebra::vectord& Canvas::get_Size() const {
 	const D2D1_SIZE_F& size{ m_pD2dRenderTarget->GetSize() };
 	return {
-		static_cast<int>(size.width),
-		static_cast<int>(size.height)
+		size.width,
+		size.height
 	};
 }
 
-void Canvas::Redraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) {
+void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	m_pD2dRenderTarget->BeginDraw();
 	m_pD2dRenderTarget->Clear(m_pBackgroundBrush->GetColor());
 	ThrowIfFailed(m_pD2dRenderTarget->EndDraw(
 	), "Render failed");
 }
-void Canvas::Resize(const ::linear_algebra::vector& vertex) {
+void Canvas::Resize(const ::linear_algebra::vectord& vertex) {
 	ThrowIfFailed(m_pD2dRenderTarget->Resize(
 		::D2D1::SizeU(vertex.x, vertex.y)
 	), "Render target resize failed");

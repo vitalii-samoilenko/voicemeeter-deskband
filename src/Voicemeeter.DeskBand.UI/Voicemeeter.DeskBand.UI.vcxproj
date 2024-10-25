@@ -108,7 +108,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
     </ClCompile>
@@ -168,11 +168,6 @@
     <ClCompile Include="InputTracker.cpp" />
     <ClCompile Include="Panels\StackPanel.cpp" />
     <ClCompile Include="Scene.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\estd\estd.vcxproj">
-      <Project>{be6dd8b6-c8ae-4bb1-8cc1-612f5f262b60}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

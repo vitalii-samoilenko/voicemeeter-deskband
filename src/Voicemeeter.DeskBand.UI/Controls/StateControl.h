@@ -27,8 +27,8 @@ namespace Voicemeeter {
 				public:
 					StateControl(
 						IInputTracker& inputTracker,
-						const ::linear_algebra::vector& baseMarginTopLeft,
-						const ::linear_algebra::vector& baseMarginBottomRight,
+						const ::linear_algebra::vectord& baseMarginTopLeft,
+						const ::linear_algebra::vectord& baseMarginBottomRight,
 						::std::unique_ptr<::estd::remove_cvref_t<TGlyph>> pGlyph,
 						::std::shared_ptr<IStateChangePolicy<::estd::remove_cvref_t<TState>>> pStateChangePolicy,
 						::std::unique_ptr<IStatePromotionPolicy<::estd::remove_cvref_t<TState>>> pStatePromotionPolicy,
@@ -79,41 +79,41 @@ namespace Voicemeeter {
 					}
 
 				protected:
-					virtual const ::linear_algebra::vector& OnGet_Position() const override {
+					virtual const ::linear_algebra::vectord& OnGet_Position() const override {
 						return m_pGlyph->get_Position();
 					};
-					virtual const ::linear_algebra::vector& OnGet_Size() const override {
+					virtual const ::linear_algebra::vectord& OnGet_Size() const override {
 						return m_pGlyph->get_Size();
 					};
-					virtual const ::linear_algebra::vector& OnGet_BaseSize() const override {
+					virtual const ::linear_algebra::vectord& OnGet_BaseSize() const override {
 						return m_pGlyph->get_BaseSize();
 					};
 
-					virtual void OnRedraw(const ::linear_algebra::vector& point, const ::linear_algebra::vector& vertex) override {
+					virtual void OnRedraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
 						m_pGlyph->Redraw(point, vertex);
 					};
-					virtual void OnRescale(const ::linear_algebra::vector& vertex) override {
+					virtual void OnRescale(const ::linear_algebra::vectord& vertex) override {
 						m_pGlyph->Rescale(vertex);
 					};
-					virtual void OnMove(const ::linear_algebra::vector& point) override {
+					virtual void OnMove(const ::linear_algebra::vectord& point) override {
 						m_pGlyph->Move(point);
 					};
-					virtual void OnMouseLDown(const ::linear_algebra::vector& point) override {
+					virtual void OnMouseLDown(const ::linear_algebra::vectord& point) override {
 						m_pInteractivityPolicy->MouseLDown(*this, point);
 					};
-					virtual void OnMouseLDouble(const ::linear_algebra::vector& point) override {
+					virtual void OnMouseLDouble(const ::linear_algebra::vectord& point) override {
 						m_pInteractivityPolicy->MouseLDouble(*this, point);
 					};
-					virtual void OnMouseRDown(const ::linear_algebra::vector& point) override {
+					virtual void OnMouseRDown(const ::linear_algebra::vectord& point) override {
 						m_pInteractivityPolicy->MouseRDown(*this, point);
 					};
-					virtual void OnMouseWheel(const ::linear_algebra::vector& point, int delta) override {
+					virtual void OnMouseWheel(const ::linear_algebra::vectord& point, int delta) override {
 						m_pInteractivityPolicy->MouseWheel(*this, point, delta);
 					};
-					virtual void OnMouseMove(const ::linear_algebra::vector& point) override {
+					virtual void OnMouseMove(const ::linear_algebra::vectord& point) override {
 						m_pInteractivityPolicy->MouseMove(*this, point);
 					};
-					virtual void OnMouseLUp(const ::linear_algebra::vector& point) override {
+					virtual void OnMouseLUp(const ::linear_algebra::vectord& point) override {
 						m_pInteractivityPolicy->MouseLUp(*this, point);
 					};
 
@@ -130,7 +130,7 @@ namespace Voicemeeter {
 							m_pStatePromotionPolicy->Promote(m_state);
 						}
 						m_pGlyphUpdatePolicy->Update(*m_pGlyph, m_state);
-						m_pGlyph->Redraw(::linear_algebra::Origin, ::linear_algebra::Infinity);
+						m_pGlyph->Redraw(::linear_algebra::vectord::origin(), ::linear_algebra::vectord::infinity());
 					}
 				};
 			}

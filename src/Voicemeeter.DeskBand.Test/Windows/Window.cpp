@@ -101,41 +101,60 @@ LRESULT CALLBACK Window::WindowProcW(
 			PostQuitMessage(0);
 		} return OK;
 		case WM_SIZE: {
-			pWnd->m_pScene->Resize({ LOWORD(lParam), HIWORD(lParam) });
+			pWnd->m_pScene->Resize({
+				static_cast<double>(LOWORD(lParam)),
+				static_cast<double>(HIWORD(lParam))
+			});
 		} return OK;
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			wBeginPaint(hWnd, &ps);
 
 			pWnd->m_pScene->Redraw(
-				::linear_algebra::Origin,
-				::linear_algebra::Infinity
+				::linear_algebra::vectord::origin(),
+				::linear_algebra::vectord::infinity()
 			);
 
 			EndPaint(hWnd, &ps);
 		} return OK;
 		case WM_LBUTTONDOWN: {
-			pWnd->m_pScene->MouseLDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseLDown({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
 		} return OK;
 		case WM_LBUTTONDBLCLK: {
-			pWnd->m_pScene->MouseLDouble({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseLDouble({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
 		} return OK;
 		case WM_RBUTTONDOWN: {
-			pWnd->m_pScene->MouseRDown({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseRDown({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
 		} return OK;
 		case WM_MOUSEWHEEL: {
 			POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 			wScreenToClient(hWnd, &point);
 
-			pWnd->m_pScene->MouseWheel(
-				{ point.x, point.y },
-				GET_WHEEL_DELTA_WPARAM(wParam));
+			pWnd->m_pScene->MouseWheel({
+				static_cast<double>(point.x),
+				static_cast<double>(point.y)
+			}, GET_WHEEL_DELTA_WPARAM(wParam));
 		} return OK;
 		case WM_MOUSEMOVE: {
-			pWnd->m_pScene->MouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseMove({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
 		} return OK;
 		case WM_LBUTTONUP: {
-			pWnd->m_pScene->MouseLUp({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			pWnd->m_pScene->MouseLUp({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
 		} return OK;
 		case WM_GETDPISCALEDSIZE: {
 			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };

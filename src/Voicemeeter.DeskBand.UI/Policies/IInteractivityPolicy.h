@@ -26,12 +26,12 @@ namespace Voicemeeter {
 					IInteractivityPolicy& operator=(const IInteractivityPolicy&) = delete;
 					IInteractivityPolicy& operator=(IInteractivityPolicy&&) = delete;
 
-					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const = 0;
-					virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const = 0;
-					virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const = 0;
-					virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point, int delta) const = 0;
-					virtual void MouseMove(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const = 0;
-					virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vector& point) const = 0;
+					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+					virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+					virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+					virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point, int delta) const = 0;
+					virtual void MouseMove(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+					virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 
 				protected:
 					IInteractivityPolicy() = default;
