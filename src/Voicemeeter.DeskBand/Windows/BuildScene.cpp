@@ -16,7 +16,7 @@
 #include "Voicemeeter.DeskBand.UI.Graphics.D2D/FrameGlyph.h"
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 
-#include "Window.h"
+#include "DeskBand.h"
 
 using namespace ::Voicemeeter::DeskBand::Windows;
 using namespace ::Voicemeeter::DeskBand::UI;
@@ -232,7 +232,7 @@ public:
 using OutStateChangePolicy = CircularStateChangePolicy<int, 0, 1, 1>;
 using GainerStateChangePolicy = RangeStateChangePolicy<int, -600, 120, 1>;
 
-void Window::BuildScene() {
+void DeskBand::BuildScene() {
 	::std::unique_ptr<Scene> pScene{ new Scene{ *this } };
 
 	const ::D2D1::ColorF background{ ::D2D1::ColorF(44 / 255.F, 61 / 255.F, 77 / 255.F, 1.F) };

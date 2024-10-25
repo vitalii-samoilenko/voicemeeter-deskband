@@ -41,7 +41,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -111,13 +111,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>uxtheme.lib;strsafe.lib;gdi32.lib;advapi32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>Voicemeeter.DeskBand.def</ModuleDefinitionFile>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Manifest>
       <EnableDpiAwareness>false</EnableDpiAwareness>
@@ -145,15 +148,17 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Windows\BuildScene.cpp" />
+    <ClCompile Include="Windows\ClassFactory.cpp" />
     <ClCompile Include="Windows\Connect.cpp" />
     <ClCompile Include="Windows\ErrorMessageBox.cpp" />
-    <ClCompile Include="windows\Window.cpp" />
+    <ClCompile Include="windows\DeskBand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="messages.h" />
     <ClInclude Include="VoicemeeterRemote.h" />
+    <ClInclude Include="Windows\ClassFactory.h" />
     <ClInclude Include="Windows\ErrorMessageBox.h" />
-    <ClInclude Include="windows\Window.h" />
+    <ClInclude Include="windows\DeskBand.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="messages.mc">
@@ -181,6 +186,9 @@
     <ProjectReference Include="..\Voicemeeter.DeskBand.UI\Voicemeeter.DeskBand.UI.vcxproj">
       <Project>{8ebf00e4-20be-4230-97ba-8dd20f2f35cb}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Voicemeeter.DeskBand.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -24,7 +24,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="windows\Window.cpp">
+    <ClCompile Include="windows\DeskBand.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Windows\ErrorMessageBox.cpp">
@@ -36,12 +36,15 @@
     <ClCompile Include="Windows\Connect.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Windows\ClassFactory.cpp">
+      <Filter>Source Files\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Messages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="windows\Window.h">
+    <ClInclude Include="windows\DeskBand.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Windows\ErrorMessageBox.h">
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="VoicemeeterRemote.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\ClassFactory.h">
+      <Filter>Header Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -60,5 +66,10 @@
     <CustomBuild Include="messages.mc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Voicemeeter.DeskBand.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #include "Voicemeeter.DeskBand.Windows/Error.h"
 
-#include "Window.h"
+#include "DeskBand.h"
 
 /*******************************************************************************/
 /**                           GET VOICEMEETER DIRECTORY                       **/
@@ -133,7 +133,7 @@ long InitializeDLLInterfaces(T_VBVMR_INTERFACE& iVMR)
 
 using namespace Voicemeeter::DeskBand::Windows;
 
-void Window::Connect() {
+void DeskBand::Connect() {
 	if (InitializeDLLInterfaces(remote) != 0) {
 		throw windows_error{ "Cannot initialize interfaces" };
 	}
