@@ -205,8 +205,8 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi)
 
         if (pdbi->dwMask & DBIM_MINSIZE)
         {
-            pdbi->ptMinSize.x = 251;
-            pdbi->ptMinSize.y = 40;
+            pdbi->ptMinSize.x = 188;
+            pdbi->ptMinSize.y = 30;
         }
 
         if (pdbi->dwMask & DBIM_MAXSIZE)
@@ -221,8 +221,10 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi)
 
         if (pdbi->dwMask & DBIM_ACTUAL)
         {
-            pdbi->ptActual.x = 251;
-            pdbi->ptActual.y = 40;
+            auto vertex = m_pScene->get_Size();
+
+            pdbi->ptActual.x = vertex.x;
+            pdbi->ptActual.y = vertex.y;
         }
 
         if (pdbi->dwMask & DBIM_TITLE)
