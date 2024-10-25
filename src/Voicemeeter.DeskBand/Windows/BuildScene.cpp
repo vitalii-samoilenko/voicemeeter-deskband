@@ -350,36 +350,36 @@ void Window::BuildScene() {
 	::std::shared_ptr<GainerStateChangePolicy> pGainerStateChangePolicy{
 		new GainerStateChangePolicy{}
 	};
-	auto out_a_1_onPromote = [](const int& state)->void {
-
+	auto out_a_1_onPromote = [this](const int& state)->void {
+		remote.VBVMR_SetParameterFloat((char*)"Strip[5].A1", static_cast<float>(state));
 	};
 	using out_a_1_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_a_1_onPromote)>;
 	::std::unique_ptr<out_a_1_StatePromotionPolicy> out_a_1_pStatePromotionPolicy{
 		new out_a_1_StatePromotionPolicy{ out_a_1_onPromote }
 	};
-	auto out_a_2_onPromote = [](const int& state)->void {
-
+	auto out_a_2_onPromote = [this](const int& state)->void {
+		remote.VBVMR_SetParameterFloat((char*)"Strip[5].A2", static_cast<float>(state));
 	};
 	using out_a_2_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_a_2_onPromote)>;
 	::std::unique_ptr<out_a_2_StatePromotionPolicy> out_a_2_pStatePromotionPolicy{
 		new out_a_2_StatePromotionPolicy{ out_a_2_onPromote }
 	};
-	auto out_b_1_onPromote = [](const int& state)->void {
-
+	auto out_b_1_onPromote = [this](const int& state)->void {
+		remote.VBVMR_SetParameterFloat((char*)"Strip[5].B1", static_cast<float>(state));
 	};
 	using out_b_1_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_b_1_onPromote)>;
 	::std::unique_ptr<out_b_1_StatePromotionPolicy> out_b_1_pStatePromotionPolicy{
 		new out_b_1_StatePromotionPolicy{ out_b_1_onPromote }
 	};
-	auto out_b_2_onPromote = [](const int& state)->void {
-
+	auto out_b_2_onPromote = [this](const int& state)->void {
+		remote.VBVMR_SetParameterFloat((char*)"Strip[5].B2", static_cast<float>(state));
 	};
 	using out_b_2_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(out_b_2_onPromote)>;
 	::std::unique_ptr<out_b_2_StatePromotionPolicy> out_b_2_pStatePromotionPolicy{
 		new out_b_2_StatePromotionPolicy{ out_b_2_onPromote }
 	};
-	auto systemGainer_onPromote = [](const int& state)->void {
-
+	auto systemGainer_onPromote = [this](const int& state)->void {
+		remote.VBVMR_SetParameterFloat((char*)"Strip[5].Gain", static_cast<float>(state) / 10.F);
 	};
 	using systemGainer_StatePromotionPolicy = PreconfiguredStatePromotionPolicy<int, decltype(systemGainer_onPromote)>;
 	::std::unique_ptr<systemGainer_StatePromotionPolicy> systemGainer_pStatePromotionPolicy{

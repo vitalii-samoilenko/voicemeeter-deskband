@@ -19,7 +19,8 @@ Window::Window(
 	HINSTANCE hInstance
 ) : m_hWnd{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
-  , m_pScene{ nullptr } {
+  , m_pScene{ nullptr }
+  , remote{} {
 	wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
@@ -44,6 +45,12 @@ Window::Window(
 		hInstance,
 		this
 	);
+}
+
+Window::~Window() {
+	if (remote.VBVMR_Logout != NULL) {
+		remote.VBVMR_Logout();
+	}
 }
 
 void Window::Show(int nCmdShow) const {
@@ -81,11 +88,12 @@ LRESULT CALLBACK Window::WindowProcW(
 			pWnd->m_hWnd = hWnd;
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 
+			pWnd->BuildScene();
+			pWnd->Connect();
+
 			if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
 				return FALSE;
 			}
-
-			pWnd->BuildScene();
 		} break;
 		case WM_DESTROY: {
 			PostQuitMessage(0);

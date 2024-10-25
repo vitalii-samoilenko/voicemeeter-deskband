@@ -7,6 +7,8 @@
 #include "Voicemeeter.DeskBand.UI/IAppMouseTracker.h"
 #include "Voicemeeter.DeskBand.UI/IScene.h"
 
+#include "../VoicemeeterRemote.h"
+
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace Windows {
@@ -19,7 +21,7 @@ namespace Voicemeeter {
 				Window(const Window&) = delete;
 				Window(Window&&) = delete;
 
-				~Window() = default;
+				~Window();
 
 				Window& operator=(const Window&) = delete;
 				Window& operator=(Window&&) = delete;
@@ -33,8 +35,10 @@ namespace Voicemeeter {
 				HWND m_hWnd;
 				UINT m_dpi;
 				::std::unique_ptr<::Voicemeeter::DeskBand::UI::IScene> m_pScene;
+				T_VBVMR_INTERFACE remote;
 
 				void BuildScene();
+				void Connect();
 
 				static LRESULT WindowProcW(
 					HWND hWnd,
