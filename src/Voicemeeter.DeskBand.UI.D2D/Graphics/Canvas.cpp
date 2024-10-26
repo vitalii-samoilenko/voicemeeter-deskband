@@ -54,7 +54,7 @@ const ::linear_algebra::vectord& Canvas::get_Size() const {
 
 void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	m_pD2dRenderTarget->BeginDraw();
-	m_pD2dRenderTarget->Clear(m_pBackgroundBrush->GetColor());
+	m_pD2dRenderTarget->Clear(::D2D1::ColorF(RGB(44, 61, 77)));
 	ThrowIfFailed(m_pD2dRenderTarget->EndDraw(
 	), "Render failed");
 }

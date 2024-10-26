@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 
 #include "estd/linear_algebra.h"
 
@@ -22,7 +23,7 @@ namespace Voicemeeter {
 						const ::linear_algebra::vectord& baseMarginTopLeft,
 						const ::linear_algebra::vectord& baseMarginBottomRight,
 						Args... args
-					) : TComponent{ args... }
+					) : TComponent{ ::std::move(args)... }
 					  , m_position{ TComponent::get_Position() }
 					  , m_vertex{ TComponent::get_BaseSize() + baseMarginTopLeft + baseMarginBottomRight }
 					  , m_baseVertex{ m_vertex }

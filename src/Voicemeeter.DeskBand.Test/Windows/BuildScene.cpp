@@ -1,5 +1,4 @@
 #include <memory>
-#include <utility>
 
 #include "estd/type_traits.h"
 
@@ -31,20 +30,20 @@ using namespace ::Voicemeeter::DeskBand::Windows;
 
 using namespace ::Voicemeeter::DeskBand::UI;
 
-//template<typename TMapper>
+template<typename TMapper>
 class RemoteStatePromotion : public Policies::IStatePromotion<int> {
-	//static_assert(
-		//::estd::is_invocable_r<float, TMapper, const int&>(),
-		//"TMapper must be invocable with const int& and must return float");
+	static_assert(
+		::estd::is_invocable_r<float, TMapper, const int&>(),
+		"TMapper must be invocable with const int& and must return float");
 
 public:
 	RemoteStatePromotion(
 		const T_VBVMR_INTERFACE& remote,
-		const char* pLabel//,
-		//TMapper mapper
+		const char* pLabel,
+		TMapper mapper
 	) : m_remote{ remote }
-	  , m_pLabel{ pLabel } {
-	  //, m_mapper{ ::std::move(mapper) } {
+	  , m_pLabel{ pLabel }
+	  , m_mapper{ mapper } {
 
 	};
 	RemoteStatePromotion() = delete;
@@ -57,15 +56,15 @@ public:
 	RemoteStatePromotion& operator=(RemoteStatePromotion&&) = delete;
 
 	virtual void Promote(const int& state) const {
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), static_cast<float>(state))) {
-			throw windows_error{ m_pLabel };
-		}
+		//if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
+			//throw windows_error{ m_pLabel };
+		//}
 	};
 
 private:
 	const T_VBVMR_INTERFACE& m_remote;
 	const char* m_pLabel;
-	//TMapper m_mapper;
+	TMapper m_mapper;
 };
 
 void Window::BuildScene() {
@@ -142,22 +141,22 @@ void Window::BuildScene() {
 	auto gainerMap = [](const int& state)->float {
 		return state / 100.F - 28.F - 60.F;
 	};
-	using OutStatePromotion = RemoteStatePromotion;
-	using GainerStatePromotion = RemoteStatePromotion;
+	using OutStatePromotion = RemoteStatePromotion<decltype(outMap)>;
+	using GainerStatePromotion = RemoteStatePromotion<decltype(gainerMap)>;
 	::std::unique_ptr<OutStatePromotion> out_a_1_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].A1" }
+		new OutStatePromotion{ m_remote, "Strip[5].A1", outMap }
 	};
 	::std::unique_ptr<OutStatePromotion> out_a_2_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].A2" }
+		new OutStatePromotion{ m_remote, "Strip[5].A2", outMap }
 	};
 	::std::unique_ptr<OutStatePromotion> out_b_1_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].B1" }
+		new OutStatePromotion{ m_remote, "Strip[5].B1", outMap }
 	};
 	::std::unique_ptr<OutStatePromotion> out_b_2_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].B2" }
+		new OutStatePromotion{ m_remote, "Strip[5].B2", outMap }
 	};
 	::std::unique_ptr<GainerStatePromotion> systemGainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Strip[5].Gain" }
+		new GainerStatePromotion{ m_remote, "Strip[5].Gain", gainerMap }
 	};
 	::std::shared_ptr<Policies::CarouselGlyphUpdate> pCarouseleGlyphUpdatePolicy{
 		new Policies::CarouselGlyphUpdate{}
@@ -170,17 +169,6 @@ void Window::BuildScene() {
 	};
 	::std::shared_ptr<D2D::Policies::GainerInteractivity> pGainerInteractivityPolicy{
 		new D2D::Policies::GainerInteractivity{ *pInputTracker }
-	};
-
-	auto t = new  Decorators::Margin<
-		Controls::Carousel>{
-			::linear_algebra::vectord{ 0, 2 },
-			::linear_algebra::vectord{ 0, 0 },
-			::std::move(out_a_2_pGlyph),
-			pOutStateChangePolicy,
-			::std::move(out_a_2_pStatePromotionPolicy),
-			pCarouseleGlyphUpdatePolicy,
-			pCarouselInteractivityPolicy
 	};
 
 	::std::unique_ptr<IComponent> out_a_cpControl[]{

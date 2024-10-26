@@ -91,7 +91,7 @@ LRESULT CALLBACK Window::WindowProcW(
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 
 			pWnd->BuildScene();
-			pWnd->Connect();
+			//pWnd->Connect();
 
 			if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
 				return FALSE;
