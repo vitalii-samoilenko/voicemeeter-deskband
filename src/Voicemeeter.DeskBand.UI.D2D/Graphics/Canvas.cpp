@@ -25,7 +25,9 @@ Canvas::Canvas(
   , m_pD2dFactory{ nullptr }
   , m_pD2dRenderTarget{ nullptr }
   , m_pD2dGdiRenderTarget{ nullptr }
-  , m_cpBrush{} {
+  , m_cpBrush{}
+  , m_cpGeometry{}
+  , m_pTextFormat{ nullptr } {
 	ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");
@@ -57,6 +59,17 @@ Canvas::Canvas(
 	ThrowIfFailed(m_pD2dRenderTarget->QueryInterface(
 		IID_PPV_ARGS(&m_pD2dGdiRenderTarget)
 	), "GDI render target creation failed");
+
+	ThrowIfFailed(m_pDwFactory->CreateTextFormat(
+		L"Arial",
+		NULL,
+		DWRITE_FONT_WEIGHT_NORMAL,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		16,
+		L"", //locale
+		&m_pTextFormat
+	), "Text format creation failed");
 }
 
 const ::linear_algebra::vectord& Canvas::get_Position() const {
@@ -89,15 +102,41 @@ void Canvas::Resize(const ::linear_algebra::vectord& vertex) {
 	m_vertex = vertex;
 }
 
-ID2D1SolidColorBrush* Canvas::get_pBrush(DWORD color) const {
-	auto color_pBrush = m_cpBrush.find(color);
-	if (color_pBrush == m_cpBrush.end()) {
-		::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush{ nullptr };
-		ThrowIfFailed(m_pD2dRenderTarget->CreateSolidColorBrush(
-			::D2D1::ColorF(color),
-			&pBrush
-		), "Brush creation failed");
-		::std::tie(color_pBrush, ::std::ignore) = m_cpBrush.insert({ color, ::std::move(pBrush) });
+bool Canvas::get_pBrush(const ::std::string& key, ID2D1SolidColorBrush** ppBrush) const {
+	auto key_pBrush = m_cpBrush.find(key);
+	if (key_pBrush != m_cpBrush.end()) {
+		*ppBrush = key_pBrush->second.Get();
+
+		return true;
 	}
-	return color_pBrush->second.Get();
+
+	::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush{ nullptr };
+	ThrowIfFailed(m_pD2dRenderTarget->CreateSolidColorBrush(
+		::D2D1::ColorF(0.F, 0.F, 0.F, 1.F),
+		&pBrush
+	), "Brush creation failed");
+	::std::tie(key_pBrush, ::std::ignore) = m_cpBrush.insert({ key, ::std::move(pBrush) });
+
+	*ppBrush = key_pBrush->second.Get();
+
+	return false;
+}
+
+bool Canvas::get_pGeometry(const ::std::string& key, ID2D1PathGeometry** ppGeometry) const {
+	auto key_pGeometry = m_cpGeometry.find(key);
+	if (key_pGeometry != m_cpGeometry.end()) {
+		*ppGeometry = key_pGeometry->second.Get();
+
+		return true;
+	}
+
+	::Microsoft::WRL::ComPtr<ID2D1PathGeometry> pGeometry{ nullptr };
+	ThrowIfFailed(m_pD2dFactory->CreatePathGeometry(
+		&pGeometry
+	), "Geometry creation failed");
+	::std::tie(key_pGeometry, ::std::ignore) = m_cpGeometry.insert({ key, ::std::move(pGeometry) });
+
+	*ppGeometry = key_pGeometry->second.Get();
+
+	return false;
 }

@@ -77,8 +77,10 @@ void Window::BuildScene() {
 	};
 
 	::std::unique_ptr<IGlyph> out_a_1_cpFrame[]{
-		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
-		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(
+			*pCanvas, L"A1"),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(
+			*pCanvas, L"A1")
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_a_1_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -87,8 +89,10 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<IGlyph> out_a_2_cpFrame[]{
-		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
-		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(
+			*pCanvas, L"A2"),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(
+			*pCanvas, L"A2")
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_a_2_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -97,8 +101,10 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<IGlyph> out_b_1_cpFrame[]{
-		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
-		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(
+			*pCanvas, L"B1"),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(
+			*pCanvas, L"B1")
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_b_1_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -107,8 +113,10 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<IGlyph> out_b_2_cpFrame[]{
-		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
-		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(
+			*pCanvas, L"B2"),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(
+			*pCanvas, L"B2")
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_b_2_pGlyph{
 		new Graphics::Glyphs::Frame{

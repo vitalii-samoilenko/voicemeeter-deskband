@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <unordered_map>
 
 #include <windows.h>
@@ -41,7 +42,12 @@ namespace Voicemeeter {
 						inline ID2D1HwndRenderTarget* get_pRenderTarget() const {
 							return m_pD2dRenderTarget.Get();
 						};
-						ID2D1SolidColorBrush* get_pBrush(DWORD color) const;
+						bool get_pBrush(const ::std::string& key, ID2D1SolidColorBrush** ppBrush) const;
+						bool get_pGeometry(const ::std::string& key, ID2D1PathGeometry** ppGeometry) const;
+						inline IDWriteTextFormat* get_pTextFormat() const {
+							return m_pTextFormat.Get();
+						}
+
 
 					private:
 						HWND m_hWnd;
@@ -51,7 +57,9 @@ namespace Voicemeeter {
 						::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 						::Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pD2dRenderTarget;
 						::Microsoft::WRL::ComPtr<ID2D1GdiInteropRenderTarget> m_pD2dGdiRenderTarget;
-						mutable ::std::unordered_map<DWORD, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
+						mutable ::std::unordered_map<::std::string, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
+						mutable ::std::unordered_map<::std::string, ::Microsoft::WRL::ComPtr<ID2D1PathGeometry>> m_cpGeometry;
+						::Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
 					};
 				}
 			}

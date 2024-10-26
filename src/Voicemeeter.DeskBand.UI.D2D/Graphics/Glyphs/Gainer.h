@@ -33,6 +33,8 @@ namespace Voicemeeter {
 
 						private:
 							FLOAT m_level;
+
+							ID2D1SolidColorBrush* Brush() const;
 						};
 					}
 				}
