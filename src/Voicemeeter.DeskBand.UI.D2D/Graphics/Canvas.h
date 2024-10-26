@@ -50,7 +50,7 @@ namespace Voicemeeter {
 						::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 						::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 						::Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pD2dRenderTarget;
-						::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBackgroundBrush;
+						::Microsoft::WRL::ComPtr<ID2D1GdiInteropRenderTarget> m_pD2dGdiRenderTarget;
 						mutable ::std::unordered_map<DWORD, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
 					};
 				}

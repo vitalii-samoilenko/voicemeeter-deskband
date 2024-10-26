@@ -110,9 +110,12 @@ LRESULT CALLBACK Window::WindowProcW(
 			PAINTSTRUCT ps;
 			wBeginPaint(hWnd, &ps);
 
-			pWnd->m_pScene->Redraw(
-				{ static_cast<double>(ps.rcPaint.left), static_cast<double>(ps.rcPaint.top) },
-				{ static_cast<double>(ps.rcPaint.right - ps.rcPaint.left), static_cast<double>(ps.rcPaint.bottom - ps.rcPaint.top) }
+			pWnd->m_pScene->Redraw({
+					static_cast<double>(ps.rcPaint.left),
+					static_cast<double>(ps.rcPaint.top)
+				}, { static_cast<double>(ps.rcPaint.right - ps.rcPaint.left),
+					static_cast<double>(ps.rcPaint.bottom - ps.rcPaint.top)
+				}
 			);
 
 			EndPaint(hWnd, &ps);

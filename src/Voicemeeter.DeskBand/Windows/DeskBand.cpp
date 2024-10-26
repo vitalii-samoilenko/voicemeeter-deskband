@@ -448,9 +448,12 @@ void DeskBand::OnPaint(const HDC hdcIn)
 
     if (hdc)
     {
-        m_pScene->Redraw(
-            { static_cast<double>(ps.rcPaint.left), static_cast<double>(ps.rcPaint.top) },
-            { static_cast<double>(ps.rcPaint.right - ps.rcPaint.left), static_cast<double>(ps.rcPaint.bottom - ps.rcPaint.top) }
+        m_pScene->Redraw({
+                static_cast<double>(ps.rcPaint.left),
+                static_cast<double>(ps.rcPaint.top)
+            }, { static_cast<double>(ps.rcPaint.right - ps.rcPaint.left),
+                static_cast<double>(ps.rcPaint.bottom - ps.rcPaint.top)
+            }
         );
         /*RECT rc;
         GetClientRect(m_hWnd, &rc);

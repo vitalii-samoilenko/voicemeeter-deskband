@@ -1,7 +1,9 @@
+#include <cmath>
 #include <tuple>
 #include <utility>
 
 #include <windows.h>
+#include <uxtheme.h>
 
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 
@@ -21,7 +23,7 @@ Canvas::Canvas(
   , m_pDwFactory{ nullptr }
   , m_pD2dFactory{ nullptr }
   , m_pD2dRenderTarget{ nullptr }
-  , m_pBackgroundBrush{ nullptr }
+  , m_pD2dGdiRenderTarget{ nullptr }
   , m_cpBrush{} {
 	ThrowIfFailed(CoInitialize(
 		NULL
@@ -50,6 +52,10 @@ Canvas::Canvas(
 			D2D1_PRESENT_OPTIONS_RETAIN_CONTENTS),
 		&m_pD2dRenderTarget
 	), "Render target creation failed");
+
+	ThrowIfFailed(m_pD2dRenderTarget->QueryInterface(
+		IID_PPV_ARGS(&m_pD2dGdiRenderTarget)
+	), "GDI render target creation failed");
 }
 
 const ::linear_algebra::vectord& Canvas::get_Position() const {
@@ -61,21 +67,19 @@ const ::linear_algebra::vectord& Canvas::get_Size() const {
 
 void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	m_pD2dRenderTarget->BeginDraw();
-	::Microsoft::WRL::ComPtr<ID2D1GdiInteropRenderTarget> pD2dGdiRenderTarget{ nullptr };
-	ThrowIfFailed(m_pD2dRenderTarget->QueryInterface(
-		IID_PPV_ARGS(&pD2dGdiRenderTarget)
-	), "Cannot get GDI compatible render target");
 	HDC hDc{};
-	ThrowIfFailed(pD2dGdiRenderTarget->GetDC(
+	ThrowIfFailed(m_pD2dGdiRenderTarget->GetDC(
 		D2D1_DC_INITIALIZE_MODE_COPY, &hDc
 	), "Cannot get device context");
 	RECT rc{
-		static_cast<LONG>(point.x), static_cast<LONG>(point.y),
-		static_cast<LONG>(point.x + vertex.x), static_cast<LONG>(point.y + vertex.y)
+		static_cast<LONG>(::std::ceil(point.x)),
+		static_cast<LONG>(::std::ceil(point.y)),
+		static_cast<LONG>(::std::ceil(point.x + vertex.x)),
+		static_cast<LONG>(::std::ceil(point.y + vertex.y))
 	};
-	//FillRect(hDc, &rc, CreateSolidBrush(RGB(255, 0, 0)));
-	wDrawThemeParentBackground(m_hWnd, hDc, &rc);
-	pD2dGdiRenderTarget->ReleaseDC(NULL);
+	FillRect(hDc, &rc, CreateSolidBrush(RGB(255, 0, 0)));
+	//wDrawThemeParentBackground(m_hWnd, hDc, &rc);
+	m_pD2dGdiRenderTarget->ReleaseDC(NULL);
 	ThrowIfFailed(m_pD2dRenderTarget->EndDraw(
 	), "Render failed");
 }
