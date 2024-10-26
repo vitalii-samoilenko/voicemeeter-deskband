@@ -24,12 +24,16 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 
 ID2D1SolidColorBrush* Gainer::Brush() const {
 	const ::std::string& key{
-		"active"
+		118.F < m_level
+			? "danger"
+			: "active"
 	};
 	ID2D1SolidColorBrush* pBrush{ nullptr };
 	if (!m_canvas.get_pBrush(key, &pBrush)) {
 		DWORD color{
-			RGB(153, 195, 112)
+			118.F < m_level
+				? RGB(77, 99, 248)
+				: RGB(153, 195, 112)
 		};
 		pBrush->SetColor(::D2D1::ColorF(color));
 	}

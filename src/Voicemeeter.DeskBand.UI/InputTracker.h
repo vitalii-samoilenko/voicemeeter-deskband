@@ -22,9 +22,11 @@ namespace Voicemeeter {
 				InputTracker& operator=(const InputTracker&) = delete;
 				InputTracker& operator=(InputTracker&&) = delete;
 
+				virtual const ::linear_algebra::vectord& get_PinPosition() const override;
+
 				virtual bool IsTracking(const IComponent& component) const override;
 
-				virtual void EnableInputTrack(IComponent& component) override;
+				virtual void EnableInputTrack(IComponent& component, const ::linear_algebra::vectord& point) override;
 				virtual void DisableInputTrack(IComponent& component) override;
 				virtual bool MouseLDown(const ::linear_algebra::vectord& point) override;
 				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override;
@@ -36,6 +38,7 @@ namespace Voicemeeter {
 			private:
 				IAppInputTracker& m_appInputTracler;
 				IComponent* m_pPinned;
+				::linear_algebra::vectord m_point;
 			};
 		}
 	}

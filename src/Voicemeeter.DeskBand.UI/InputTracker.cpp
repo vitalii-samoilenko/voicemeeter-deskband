@@ -6,23 +6,31 @@ using namespace Voicemeeter::DeskBand::UI;
 
 InputTracker::InputTracker(
 	IAppInputTracker& appInputTracler
-) : m_appInputTracler{ appInputTracler } {
+) : m_appInputTracler{ appInputTracler }
+  , m_point{ ::linear_algebra::vectord::origin() } {
 
 }
+
+const ::linear_algebra::vectord& InputTracker::get_PinPosition() const {
+	return m_point;
+};
 
 bool InputTracker::IsTracking(const IComponent& component) const {
 	return &component == m_pPinned;
 }
 
-void InputTracker::EnableInputTrack(IComponent& component) {
-	m_pPinned = &component;
+void InputTracker::EnableInputTrack(IComponent& component, const ::linear_algebra::vectord& point) {
+	if (!m_pPinned) {
+		m_appInputTracler.EnableInputTrack();
+	}
 
-	m_appInputTracler.EnableInputTrack();
+	m_point = point;
+	m_pPinned = &component;
 }
 void InputTracker::DisableInputTrack(IComponent& component) {
-	m_pPinned = nullptr;
-
 	m_appInputTracler.DisableInputTrack();
+
+	m_pPinned = nullptr;
 }
 bool InputTracker::MouseLDown(const ::linear_algebra::vectord& point) {
 	return m_pPinned

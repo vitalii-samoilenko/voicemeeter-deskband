@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include "estd/linear_algebra.h"
 
 #include "../IInputTracker.h"
@@ -28,7 +30,7 @@ namespace Voicemeeter {
 					SliderInteractivity& operator=(SliderInteractivity&&) = delete;
 
 					virtual void MouseLDown(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
-						m_inputTracker.EnableInputTrack(component);
+						m_inputTracker.EnableInputTrack(component, point);
 					};
 					virtual void MouseLDouble(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 						component.SetDefault();
@@ -47,9 +49,11 @@ namespace Voicemeeter {
 						}
 
 						double scale{ component.get_Size().x / component.get_BaseSize().x };
-						int level{ static_cast<int>((point.x - component.get_Position().x) / scale) * 100 };
+						int level{ component.get_State() + static_cast<int>((point.x - m_inputTracker.get_PinPosition().x) * 100. / scale) };
 
 						component.Set(level, true);
+
+						m_inputTracker.EnableInputTrack(component, point);
 					};
 					virtual void MouseLUp(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 						m_inputTracker.DisableInputTrack(component);
