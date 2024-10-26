@@ -139,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controls\Gainer.h" />
-    <ClInclude Include="Decorators\InstantRendering.h" />
     <ClInclude Include="Decorators\WindowsGlyphUpdate.h" />
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
@@ -149,12 +148,14 @@
     <ClInclude Include="Policies\GainerInteractivity.h" />
     <ClInclude Include="Policies\GainerStateChange.h" />
     <ClInclude Include="Policies\OutStateChange.h" />
+    <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp" />
     <ClCompile Include="Graphics\Glyph.cpp" />
     <ClCompile Include="Graphics\Glyphs\Gainer.cpp" />
     <ClCompile Include="Policies\GainerGlyphUpdate.cpp" />
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

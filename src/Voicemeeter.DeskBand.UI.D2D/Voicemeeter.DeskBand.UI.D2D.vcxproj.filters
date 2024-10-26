@@ -39,9 +39,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Decorators\InstantRendering.h">
-      <Filter>Header Files\Decorators</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Canvas.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -72,6 +69,9 @@
     <ClInclude Include="Decorators\WindowsGlyphUpdate.h">
       <Filter>Header Files\Decorators</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -85,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="Policies\GainerGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

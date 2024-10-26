@@ -66,7 +66,6 @@ const ::linear_algebra::vectord& Canvas::get_Size() const {
 }
 
 void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
-	m_pD2dRenderTarget->BeginDraw();
 	HDC hDc{};
 	ThrowIfFailed(m_pD2dGdiRenderTarget->GetDC(
 		D2D1_DC_INITIALIZE_MODE_COPY, &hDc
@@ -77,11 +76,9 @@ void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 		static_cast<LONG>(::std::ceil(point.x + vertex.x)),
 		static_cast<LONG>(::std::ceil(point.y + vertex.y))
 	};
-	FillRect(hDc, &rc, CreateSolidBrush(RGB(255, 0, 0)));
-	//wDrawThemeParentBackground(m_hWnd, hDc, &rc);
-	m_pD2dGdiRenderTarget->ReleaseDC(NULL);
-	ThrowIfFailed(m_pD2dRenderTarget->EndDraw(
-	), "Render failed");
+	//FillRect(hDc, &rc, CreateSolidBrush(RGB(255, 0, 0)));
+	wDrawThemeParentBackground(m_hWnd, hDc, &rc);
+	m_pD2dGdiRenderTarget->ReleaseDC(&rc);
 }
 void Canvas::Resize(const ::linear_algebra::vectord& vertex) {
 	ThrowIfFailed(m_pD2dRenderTarget->Resize(

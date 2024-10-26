@@ -140,9 +140,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Panels\Stack.cpp">
       <Filter>Source Files\Panels</Filter>
     </ClCompile>

@@ -12,9 +12,7 @@
 #include "Voicemeeter.DeskBand.UI/Policies/IStatePromotion.h"
 #include "Voicemeeter.DeskBand.UI/Policies/SliderInteractivity.h"
 #include "Voicemeeter.DeskBand.UI/InputTracker.h"
-#include "Voicemeeter.DeskBand.UI/Scene.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Controls/Gainer.h"
-#include "Voicemeeter.DeskBand.UI.D2D/Decorators/InstantRendering.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Decorators/WindowsGlyphUpdate.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Gainer.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Out.h"
@@ -23,6 +21,7 @@
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerInteractivity.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerStateChange.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/OutStateChange.h"
+#include "Voicemeeter.DeskBand.UI.D2D/Scene.h"
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 
 #include "Window.h"
@@ -78,10 +77,8 @@ void Window::BuildScene() {
 	};
 
 	::std::unique_ptr<IGlyph> out_a_1_cpFrame[]{
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<false>>>(*pCanvas),
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<true>>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_a_1_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -90,10 +87,8 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<IGlyph> out_a_2_cpFrame[]{
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<false>>>(*pCanvas),
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<true>>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_a_2_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -102,10 +97,8 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<IGlyph> out_b_1_cpFrame[]{
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<false>>>(*pCanvas),
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<true>>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_b_1_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -114,10 +107,8 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<IGlyph> out_b_2_cpFrame[]{
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<false>>>(*pCanvas),
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Out<true>>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Out<false>>(*pCanvas),
+		::std::make_unique<D2D::Graphics::Glyphs::Out<true>>(*pCanvas)
 	};
 	::std::unique_ptr<Graphics::Glyphs::Frame> out_b_2_pGlyph{
 		new Graphics::Glyphs::Frame{
@@ -126,8 +117,7 @@ void Window::BuildScene() {
 	} };
 
 	::std::unique_ptr<D2D::Graphics::Glyphs::Gainer> systemGainer_pGlyph{
-		::std::make_unique<D2D::Decorators::InstantRendering<
-			D2D::Graphics::Glyphs::Gainer>>(*pCanvas)
+		::std::make_unique<D2D::Graphics::Glyphs::Gainer>(*pCanvas)
 	};
 
 	::std::shared_ptr<D2D::Policies::OutStateChange> pOutStateChangePolicy{
@@ -251,7 +241,7 @@ void Window::BuildScene() {
 			::std::end(cpComponent)
 	} };
 
-	m_pScene.reset(new Scene{
+	m_pScene.reset(new D2D::Scene{
 		::std::move(pInputTracker),
 		::std::move(pCanvas),
 		::std::move(pComposition)

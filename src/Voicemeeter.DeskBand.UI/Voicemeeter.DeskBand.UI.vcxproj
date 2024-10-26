@@ -173,7 +173,6 @@
     <ClCompile Include="Panels\Stack.cpp" />
     <ClCompile Include="Policies\CarouselGlyphUpdate.cpp" />
     <ClCompile Include="Policies\CarouselInteractivity.cpp" />
-    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
