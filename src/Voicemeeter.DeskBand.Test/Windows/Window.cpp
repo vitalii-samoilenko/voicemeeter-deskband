@@ -91,7 +91,7 @@ LRESULT CALLBACK Window::WindowProcW(
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 
 			pWnd->BuildScene();
-			pWnd->Connect();
+			//pWnd->Connect();
 
 			if (wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
 				return FALSE;
@@ -111,8 +111,8 @@ LRESULT CALLBACK Window::WindowProcW(
 			wBeginPaint(hWnd, &ps);
 
 			pWnd->m_pScene->Redraw(
-				::linear_algebra::vectord::origin(),
-				::linear_algebra::vectord::infinity()
+				{ static_cast<double>(ps.rcPaint.left), static_cast<double>(ps.rcPaint.top) },
+				{ static_cast<double>(ps.rcPaint.right - ps.rcPaint.left), static_cast<double>(ps.rcPaint.bottom - ps.rcPaint.top) }
 			);
 
 			EndPaint(hWnd, &ps);

@@ -140,7 +140,6 @@ namespace Voicemeeter {
 							m_pStatePromotionPolicy->Promote(m_state);
 						}
 						m_pGlyphUpdatePolicy->Update(*m_pGlyph, m_state);
-						m_pGlyph->Redraw(::linear_algebra::vectord::origin(), ::linear_algebra::vectord::infinity());
 					}
 				};
 			}

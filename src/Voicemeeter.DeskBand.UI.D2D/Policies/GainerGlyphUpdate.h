@@ -11,7 +11,7 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace D2D {
 				namespace Policies {
-					class GainerGlyphUpdate final : public IGlyphUpdate<Graphics::Glyphs::Gainer, int> {
+					class GainerGlyphUpdate : public IGlyphUpdate<Graphics::Glyphs::Gainer, int> {
 					public:
 						GainerGlyphUpdate() = default;
 						GainerGlyphUpdate(const GainerGlyphUpdate&) = delete;

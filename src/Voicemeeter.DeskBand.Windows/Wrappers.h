@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <uxtheme.h>
 
 #include "error.h"
 
@@ -161,6 +162,21 @@ namespace Voicemeeter {
 					bErase
 				) == FALSE) {
 					throw windows_error{ "Rectangle invalidation failed" };
+				}
+			}
+
+			inline void wDrawThemeParentBackground(
+				_In_ HWND hWnd,
+				_In_ HDC hDc,
+				_In_opt_ const RECT* pRc
+			) {
+				HRESULT result{ DrawThemeParentBackground(
+					hWnd,
+					hDc,
+					pRc
+				) };
+				if (result != S_OK) {
+					throw windows_error{ static_cast<DWORD>(result), "Parent background drawing failed" };
 				}
 			}
 

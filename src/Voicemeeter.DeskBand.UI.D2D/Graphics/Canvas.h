@@ -41,12 +41,10 @@ namespace Voicemeeter {
 						inline ID2D1HwndRenderTarget* get_pRenderTarget() const {
 							return m_pD2dRenderTarget.Get();
 						};
-						inline ID2D1SolidColorBrush* get_pBackgroundBrush() const {
-							return get_pBrush(RGB(77, 61, 44));
-						};
 						ID2D1SolidColorBrush* get_pBrush(DWORD color) const;
 
 					private:
+						HWND m_hWnd;
 						::linear_algebra::vectord m_position;
 						::linear_algebra::vectord m_vertex;
 						::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;

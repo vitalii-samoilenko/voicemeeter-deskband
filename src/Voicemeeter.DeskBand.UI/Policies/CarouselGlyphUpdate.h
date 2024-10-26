@@ -9,7 +9,7 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
-				class CarouselGlyphUpdate final : public IGlyphUpdate<Glyphs::Frame, int> {
+				class CarouselGlyphUpdate : public IGlyphUpdate<Glyphs::Frame, int> {
 				public:
 					CarouselGlyphUpdate() = default;
 					CarouselGlyphUpdate(const CarouselGlyphUpdate&) = delete;

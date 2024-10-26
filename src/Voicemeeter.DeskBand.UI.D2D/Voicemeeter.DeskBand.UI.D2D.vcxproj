@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Controls\Gainer.h" />
     <ClInclude Include="Decorators\InstantRendering.h" />
+    <ClInclude Include="Decorators\WindowsGlyphUpdate.h" />
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
     <ClInclude Include="Graphics\Glyphs\Gainer.h" />

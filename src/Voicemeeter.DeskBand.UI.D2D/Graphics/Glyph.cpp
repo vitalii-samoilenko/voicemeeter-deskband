@@ -35,11 +35,6 @@ void Glyph::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebr
 		->SetTransform(
 			::D2D1::Matrix3x2F::Scale(m_vertex.x / m_baseVertex.x, m_vertex.y / m_baseVertex.y)
 			* ::D2D1::Matrix3x2F::Translation(m_point.x, m_point.y));
-
-	m_canvas.get_pRenderTarget()
-		->FillRectangle(
-			::D2D1::RectF(0.F, 0.F, m_baseVertex.x, m_baseVertex.y),
-			m_canvas.get_pBackgroundBrush());
 }
 void Glyph::Move(const ::linear_algebra::vectord& point) {
 	m_point = point;

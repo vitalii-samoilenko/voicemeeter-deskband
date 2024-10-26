@@ -15,6 +15,7 @@
 #include "Voicemeeter.DeskBand.UI/Scene.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Controls/Gainer.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Decorators/InstantRendering.h"
+#include "Voicemeeter.DeskBand.UI.D2D/Decorators/WindowsGlyphUpdate.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Gainer.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Out.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Canvas.h"
@@ -56,9 +57,9 @@ public:
 	RemoteStatePromotion& operator=(RemoteStatePromotion&&) = delete;
 
 	virtual void Promote(const int& state) const {
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
-			throw windows_error{ m_pLabel };
-		}
+		//if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
+		//	throw windows_error{ m_pLabel };
+		//}
 	};
 
 private:
@@ -158,11 +159,11 @@ void Window::BuildScene() {
 	::std::unique_ptr<GainerStatePromotion> systemGainer_pStatePromotionPolicy{
 		new GainerStatePromotion{ m_remote, "Strip[5].Gain", gainerMap }
 	};
-	::std::shared_ptr<Policies::CarouselGlyphUpdate> pCarouseleGlyphUpdatePolicy{
-		new Policies::CarouselGlyphUpdate{}
+	::std::shared_ptr<D2D::Decorators::WindowsGlyphUpdate<Glyphs::Frame, int, Policies::CarouselGlyphUpdate>> pCarouseleGlyphUpdatePolicy{
+		new D2D::Decorators::WindowsGlyphUpdate<Glyphs::Frame, int, Policies::CarouselGlyphUpdate>{ m_hWnd }
 	};
-	::std::shared_ptr<D2D::Policies::GainerGlyphUpdate> pGainerGlyphUpdatePolicy{
-		new D2D::Policies::GainerGlyphUpdate{}
+	::std::shared_ptr<D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Gainer, int, D2D::Policies::GainerGlyphUpdate>> pGainerGlyphUpdatePolicy{
+		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Gainer, int, D2D::Policies::GainerGlyphUpdate>{ m_hWnd }
 	};
 	::std::shared_ptr<CarouselInteractivity> pCarouselInteractivityPolicy{
 		new Policies::CarouselInteractivity{}
