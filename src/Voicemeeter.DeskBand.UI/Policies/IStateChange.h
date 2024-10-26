@@ -17,6 +17,7 @@ namespace Voicemeeter {
 					IStateChange& operator=(const IStateChange&) = delete;
 					IStateChange& operator=(IStateChange&&) = delete;
 
+					virtual bool SetDefault(::estd::remove_cvref_t<TState>& state) const = 0;
 					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const = 0;
 					virtual bool SetPrevious(::estd::remove_cvref_t<TState>& state) const = 0;
 					virtual bool Set(::estd::remove_cvref_t<TState>& dst, ::estd::remove_cvref_t<TState>& src) const = 0;

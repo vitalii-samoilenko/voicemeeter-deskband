@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Controls\Carousel.h" />
+    <ClInclude Include="Controls\Slider.h" />
     <ClInclude Include="Decorators\Margin.h" />
     <ClInclude Include="Decorators\RegionCheck.h" />
     <ClInclude Include="Graphics\Glyphs\Frame.h" />
@@ -148,7 +149,8 @@
     <ClInclude Include="InputTracker.h" />
     <ClInclude Include="IPanel.h" />
     <ClInclude Include="IScene.h" />
-    <ClInclude Include="Panels\StackPanel.h" />
+    <ClInclude Include="Panels\Stack.h" />
+    <ClInclude Include="Policies\CarouselGlyphUpdate.h" />
     <ClInclude Include="Policies\CarouselInteractivity.h" />
     <ClInclude Include="Policies\CircularStateChange.h" />
     <ClInclude Include="Policies\IGlyphUpdate.h" />
@@ -156,6 +158,7 @@
     <ClInclude Include="Policies\IStateChange.h" />
     <ClInclude Include="Policies\IStatePromotion.h" />
     <ClInclude Include="Policies\RangeStateChange.h" />
+    <ClInclude Include="Policies\SliderInteractivity.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Traits\IInteractive.h" />
     <ClInclude Include="Traits\IMovable.h" />
@@ -165,11 +168,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
-    <ClCompile Include="Decorators\Margin.cpp" />
-    <ClCompile Include="Decorators\RegionCheck.cpp" />
     <ClCompile Include="Graphics\Glyphs\Frame.cpp" />
     <ClCompile Include="InputTracker.cpp" />
-    <ClCompile Include="Panels\StackPanel.cpp" />
+    <ClCompile Include="Panels\Stack.cpp" />
+    <ClCompile Include="Policies\CarouselGlyphUpdate.cpp" />
     <ClCompile Include="Policies\CarouselInteractivity.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>

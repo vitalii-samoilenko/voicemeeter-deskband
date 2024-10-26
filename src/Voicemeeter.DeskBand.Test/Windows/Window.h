@@ -35,7 +35,7 @@ namespace Voicemeeter {
 				HWND m_hWnd;
 				UINT m_dpi;
 				::std::unique_ptr<::Voicemeeter::DeskBand::UI::IScene> m_pScene;
-				T_VBVMR_INTERFACE remote;
+				T_VBVMR_INTERFACE m_remote;
 
 				void BuildScene();
 				void Connect();

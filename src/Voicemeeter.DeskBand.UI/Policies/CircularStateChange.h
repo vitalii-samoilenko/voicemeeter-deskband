@@ -10,7 +10,11 @@ namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
-				template<typename TState, TState Min, TState Max, TState Delta>
+				template<typename TState,
+					::estd::remove_cvref_t<TState> Default,
+					::estd::remove_cvref_t<TState> Min,
+					::estd::remove_cvref_t<TState> Max,
+					::estd::remove_cvref_t<TState> Delta>
 				class CircularStateChange final : public IStateChange<TState> {
 					static_assert(
 						::std::is_arithmetic_v<::estd::remove_cvref_t<TState>>,
@@ -26,6 +30,13 @@ namespace Voicemeeter {
 					CircularStateChange& operator=(const CircularStateChange&) = delete;
 					CircularStateChange& operator=(CircularStateChange&&) = delete;
 
+					virtual bool SetDefault(::estd::remove_cvref_t<TState>& state) const override {
+						if (state == Default) {
+							return false;
+						}
+						state = Default;
+						return true;
+					}
 					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const override {
 						if (Max - Delta < state) {
 							state = Min;

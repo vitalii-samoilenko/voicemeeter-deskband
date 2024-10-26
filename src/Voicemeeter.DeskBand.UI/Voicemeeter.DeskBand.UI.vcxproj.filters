@@ -34,9 +34,6 @@
     <Filter Include="Header Files\Decorators">
       <UniqueIdentifier>{f6263b99-fc37-4061-986f-ac84587d12d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Decorators">
-      <UniqueIdentifier>{7d2907c3-7830-4cc8-93ed-7a60e3f21cbf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Graphics\Glyphs">
       <UniqueIdentifier>{725b2197-0613-443d-8449-e79fb6ff29d4}</UniqueIdentifier>
     </Filter>
@@ -111,7 +108,7 @@
     <ClInclude Include="Policies\RangeStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Panels\StackPanel.h">
+    <ClInclude Include="Panels\Stack.h">
       <Filter>Header Files\Panels</Filter>
     </ClInclude>
     <ClInclude Include="InputTracker.h">
@@ -132,12 +129,21 @@
     <ClInclude Include="Policies\CarouselInteractivity.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
+    <ClInclude Include="Controls\Slider.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\SliderInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\CarouselGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Panels\StackPanel.cpp">
+    <ClCompile Include="Panels\Stack.cpp">
       <Filter>Source Files\Panels</Filter>
     </ClCompile>
     <ClCompile Include="Controls\State.h">
@@ -146,16 +152,13 @@
     <ClCompile Include="InputTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Decorators\Margin.cpp">
-      <Filter>Source Files\Decorators</Filter>
-    </ClCompile>
-    <ClCompile Include="Decorators\RegionCheck.cpp">
-      <Filter>Source Files\Decorators</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Frame.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
     <ClCompile Include="Policies\CarouselInteractivity.cpp">
+      <Filter>Source Files\Policies</Filter>
+    </ClCompile>
+    <ClCompile Include="Policies\CarouselGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
     </ClCompile>
   </ItemGroup>

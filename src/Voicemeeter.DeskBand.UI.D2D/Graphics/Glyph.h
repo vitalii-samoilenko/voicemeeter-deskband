@@ -6,11 +6,13 @@
 
 #include "Canvas.h"
 
+using namespace ::Voicemeeter::DeskBand::UI::Graphics;
+
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
-			namespace Graphics {
-				namespace D2D {
+			namespace D2D {
+				namespace Graphics {
 					class Glyph : public IGlyph {
 					public:
 						Glyph() = delete;
@@ -26,20 +28,19 @@ namespace Voicemeeter {
 						virtual const ::linear_algebra::vectord& get_Size() const override final;
 						virtual const ::linear_algebra::vectord& get_BaseSize() const override final;
 
-						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override final;
+						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
 						virtual void Move(const ::linear_algebra::vectord& point) override final;
 						virtual void Rescale(const ::linear_algebra::vectord& vertex) override final;
 
 					protected:
+						Canvas& m_canvas;
+
 						Glyph(
 							Canvas& canvas,
 							const ::linear_algebra::vectord& baseVertex
 						);
 
-						virtual void OnDraw(const Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const = 0;
-
 					private:
-						Canvas& m_canvas;
 						::linear_algebra::vectord m_point;
 						::linear_algebra::vectord m_vertex;
 						::linear_algebra::vectord m_baseVertex;

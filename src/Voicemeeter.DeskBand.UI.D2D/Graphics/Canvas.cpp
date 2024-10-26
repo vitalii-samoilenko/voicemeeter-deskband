@@ -9,7 +9,7 @@
 #pragma comment(lib, "dwrite")
 
 using namespace ::Voicemeeter::DeskBand::Windows;
-using namespace ::Voicemeeter::DeskBand::UI::Graphics::D2D;
+using namespace ::Voicemeeter::DeskBand::UI::D2D::Graphics;
 
 Canvas::Canvas(
 	HWND hWnd

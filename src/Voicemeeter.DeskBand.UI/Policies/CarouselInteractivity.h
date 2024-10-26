@@ -3,13 +3,14 @@
 #include "estd/linear_algebra.h"
 
 #include "../Controls/Carousel.h"
+
 #include "IInteractivity.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
-				class CarouselInteractivity final : IInteractivity<Controls::Carousel> {
+				class CarouselInteractivity final : public IInteractivity<Controls::Carousel> {
 				public:
 					CarouselInteractivity() = default;
 					CarouselInteractivity(const CarouselInteractivity&) = delete;

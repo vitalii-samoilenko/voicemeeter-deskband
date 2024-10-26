@@ -11,6 +11,7 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace Policies {
 				template<typename TState,
+					::estd::remove_cvref_t<TState> Default,
 					::estd::remove_cvref_t<TState> Min,
 					::estd::remove_cvref_t<TState> Max,
 					::estd::remove_cvref_t<TState> Delta>
@@ -29,6 +30,13 @@ namespace Voicemeeter {
 					RangeStateChange& operator=(const RangeStateChange&) = delete;
 					RangeStateChange& operator=(RangeStateChange&&) = delete;
 
+					virtual bool SetDefault(::estd::remove_cvref_t<TState>& state) const override {
+						if (state == Default) {
+							return false;
+						}
+						state = Default;
+						return true;
+					}
 					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const override {
 						if (Max == state) {
 							return false;

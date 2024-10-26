@@ -21,7 +21,7 @@ namespace Voicemeeter {
 				};
 
 				template<Direction>
-				class StackPanel final : public IPanel {
+				class Stack : public IPanel {
 				public:
 					template<typename TIterator,
 						::std::enable_if_t<
@@ -29,7 +29,7 @@ namespace Voicemeeter {
 								::estd::iterator_value_type_t<TIterator>,
 								::std::unique_ptr<IComponent>>,
 							bool> = true>
-					StackPanel(
+					Stack(
 						TIterator begin,
 						TIterator end
 					) : m_baseVertex{}
@@ -39,15 +39,14 @@ namespace Voicemeeter {
 						}
 						Arrange();
 					};
+					Stack() = delete;
+					Stack(const Stack&) = delete;
+					Stack(Stack&&) = delete;
 
-					StackPanel() = delete;
-					StackPanel(const StackPanel&) = delete;
-					StackPanel(StackPanel&&) = delete;
+					~Stack() = default;
 
-					~StackPanel() = default;
-
-					StackPanel& operator=(const StackPanel&) = delete;
-					StackPanel& operator=(StackPanel&&) = delete;
+					Stack& operator=(const Stack&) = delete;
+					Stack& operator=(Stack&&) = delete;
 
 					virtual const ::linear_algebra::vectord& get_Position() const override {
 						return m_cpComponent.front()->get_Position();
@@ -120,18 +119,18 @@ namespace Voicemeeter {
 				};
 
 				template<>
-				void StackPanel<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex);
+				void Stack<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex);
 				template<>
-				void StackPanel<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex);
+				void Stack<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex);
 				template<>
-				void StackPanel<Direction::Right>::Move(const ::linear_algebra::vectord& point);
+				void Stack<Direction::Right>::Move(const ::linear_algebra::vectord& point);
 				template<>
-				void StackPanel<Direction::Down>::Move(const ::linear_algebra::vectord& point);
+				void Stack<Direction::Down>::Move(const ::linear_algebra::vectord& point);
 
 				template<>
-				void StackPanel<Direction::Right>::Arrange();
+				void Stack<Direction::Right>::Arrange();
 				template<>
-				void StackPanel<Direction::Down>::Arrange();
+				void Stack<Direction::Down>::Arrange();
 			};
 		}
 	}

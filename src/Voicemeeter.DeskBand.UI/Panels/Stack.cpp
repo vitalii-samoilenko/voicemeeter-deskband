@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <limits>
 
-#include "StackPanel.h"
+#include "Stack.h"
 
 using namespace ::Voicemeeter::DeskBand::UI::Panels;
 
 template<>
-void StackPanel<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex) {
+void Stack<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex) {
 	double scale{
 		::std::min<double>(
 			vertex.x / m_baseVertex.x,
@@ -32,7 +32,7 @@ void StackPanel<Direction::Right>::Rescale(const ::linear_algebra::vectord& vert
 	m_vertex = actualVertex;
 }
 template<>
-void StackPanel<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex) {
+void Stack<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex) {
 	double scale{
 		::std::min<double>(
 			vertex.x / m_baseVertex.x,
@@ -58,7 +58,7 @@ void StackPanel<Direction::Down>::Rescale(const ::linear_algebra::vectord& verte
 	m_vertex = actualVertex;
 }
 template<>
-void StackPanel<Direction::Right>::Move(const ::linear_algebra::vectord& point) {
+void Stack<Direction::Right>::Move(const ::linear_algebra::vectord& point) {
 	::linear_algebra::vectord componentPoint{ point };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
@@ -70,7 +70,7 @@ void StackPanel<Direction::Right>::Move(const ::linear_algebra::vectord& point) 
 	}
 }
 template<>
-void StackPanel<Direction::Down>::Move(const ::linear_algebra::vectord& point) {
+void Stack<Direction::Down>::Move(const ::linear_algebra::vectord& point) {
 	::linear_algebra::vectord componentPoint{ point };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
@@ -83,7 +83,7 @@ void StackPanel<Direction::Down>::Move(const ::linear_algebra::vectord& point) {
 }
 
 template<>
-void StackPanel<Direction::Right>::Arrange() {
+void Stack<Direction::Right>::Arrange() {
 	::linear_algebra::vectord virtualVertex{
 		::std::numeric_limits<double>::max(),
 		0
@@ -112,7 +112,7 @@ void StackPanel<Direction::Right>::Arrange() {
 	m_vertex = actualVertex;
 }
 template<>
-void StackPanel<Direction::Down>::Arrange() {
+void Stack<Direction::Down>::Arrange() {
 	::linear_algebra::vectord virtualVertex{
 		0,
 		::std::numeric_limits<double>::max()

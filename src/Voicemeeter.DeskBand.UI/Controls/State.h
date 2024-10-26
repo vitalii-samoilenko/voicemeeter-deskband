@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "estd/linear_algebra.h"
+#include "estd/type_traits.h"
 
 #include "../IControl.h"
 #include "../Policies/IStateChange.h"
@@ -16,17 +17,13 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace Controls {
 				template<typename TState, typename TGlyph>
-				class State final : public IControl {
-					static_assert(
-						::std::is_base_of_v<IGlyph, ::estd::remove_cvref_t<TGlyph>>,
-						"TGlyph must be derived from IGlyph");
-
+				class State : public IControl {
 				public:
 					State(
-						::std::unique_ptr<::estd::remove_cvref_t<TGlyph>> pGlyph,
-						::std::shared_ptr<Policies::IStateChange<::estd::remove_cvref_t<TState>>> pStateChangePolicy,
-						::std::unique_ptr<Policies::IStatePromotion<::estd::remove_cvref_t<TState>>> pStatePromotionPolicy,
-						::std::shared_ptr<Policies::IGlyphUpdate<::estd::remove_cvref_t<TGlyph>, ::estd::remove_cvref_t<TState>>> pGlyphUpdatePolicy,
+						::std::unique_ptr<TGlyph> pGlyph,
+						::std::shared_ptr<Policies::IStateChange<TState>> pStateChangePolicy,
+						::std::unique_ptr<Policies::IStatePromotion<TState>> pStatePromotionPolicy,
+						::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>> pGlyphUpdatePolicy,
 						::std::shared_ptr<Policies::IInteractivity<State>> pInteractivityPolicy
 					) : m_state{}
 					  , m_pGlyph{ ::std::move(pGlyph) }
@@ -49,6 +46,13 @@ namespace Voicemeeter {
 						return m_state;
 					};
 
+					void SetDefault() {
+						if (!m_pStateChangePolicy->SetDefault(m_state)) {
+							return;
+						}
+
+						OnSet(true);
+					}
 					void SetNext() {
 						if (!m_pStateChangePolicy->SetNext(m_state)) {
 							return;

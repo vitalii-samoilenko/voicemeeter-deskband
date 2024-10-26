@@ -11,11 +11,13 @@
 
 #include "Voicemeeter.DeskBand.UI/Graphics/ICanvas.h"
 
+using namespace ::Voicemeeter::DeskBand::UI::Graphics;
+
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
-			namespace Graphics {
-				namespace D2D {
+			namespace D2D {
+				namespace Graphics {
 					class Canvas final : public ICanvas {
 					public:
 						explicit Canvas(

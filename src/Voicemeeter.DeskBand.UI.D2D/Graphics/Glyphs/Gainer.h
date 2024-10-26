@@ -1,17 +1,20 @@
 #pragma once
 
+#include "estd/linear_algebra.h"
+
+#include "../Canvas.h"
 #include "../Glyph.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
-			namespace Graphics {
-				namespace D2D {
+			namespace D2D {
+				namespace Graphics {
 					namespace Glyphs {
-						class Gainer final : public Glyph {
+						class Gainer : public Glyph {
 						public:
-							explicit Gainer(
-								Canvas& canvas
+							Gainer(
+								Graphics::Canvas& canvas
 							);
 							Gainer() = delete;
 							Gainer(const Gainer&) = delete;
@@ -22,7 +25,7 @@ namespace Voicemeeter {
 							Gainer& operator=(const Gainer&) = delete;
 							Gainer& operator=(Gainer&&) = delete;
 
-							virtual void OnDraw(const D2D::Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const override;
+							virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
 
 							inline void set_Level(FLOAT level) {
 								m_level = level;

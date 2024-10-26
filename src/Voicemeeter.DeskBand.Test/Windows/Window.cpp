@@ -20,7 +20,7 @@ Window::Window(
 ) : m_hWnd{ NULL }
 , m_dpi{ USER_DEFAULT_SCREEN_DPI }
 , m_pScene{ nullptr }
-, remote{} {
+, m_remote{} {
 	wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
@@ -50,8 +50,8 @@ Window::Window(
 }
 
 Window::~Window() {
-	if (remote.VBVMR_Logout != NULL) {
-		remote.VBVMR_Logout();
+	if (m_remote.VBVMR_Logout != NULL) {
+		m_remote.VBVMR_Logout();
 	}
 }
 

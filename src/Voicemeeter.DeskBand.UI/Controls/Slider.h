@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../Graphics/Glyphs/Frame.h"
-
 #include "State.h"
+#include "../Graphics/Glyphs/Frame.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Controls {
-				using Carousel = State<int, Glyphs::Frame>;
+				template<typename TGlyph>
+				using Slider = State<int, TGlyph>;
 			}
 		}
 	}
