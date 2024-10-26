@@ -4,6 +4,8 @@
 
 #include "estd/type_traits.h"
 
+#include "IStateChange.h"
+
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
@@ -12,20 +14,20 @@ namespace Voicemeeter {
 					::estd::remove_cvref_t<TState> Min,
 					::estd::remove_cvref_t<TState> Max,
 					::estd::remove_cvref_t<TState> Delta>
-				class RangeStateChangePolicy final : public IStateChangePolicy<TState> {
+				class RangeStateChange final : public IStateChange<TState> {
 					static_assert(
 						::std::is_arithmetic_v<::estd::remove_cvref_t<TState>>,
 						"TState must be of arithmetic type");
 
 				public:
-					RangeStateChangePolicy() = default;
-					RangeStateChangePolicy(const RangeStateChangePolicy&) = delete;
-					RangeStateChangePolicy(RangeStateChangePolicy&&) = delete;
+					RangeStateChange() = default;
+					RangeStateChange(const RangeStateChange&) = delete;
+					RangeStateChange(RangeStateChange&&) = delete;
 
-					~RangeStateChangePolicy() = default;
+					~RangeStateChange() = default;
 
-					RangeStateChangePolicy& operator=(const RangeStateChangePolicy&) = delete;
-					RangeStateChangePolicy& operator=(RangeStateChangePolicy&&) = delete;
+					RangeStateChange& operator=(const RangeStateChange&) = delete;
+					RangeStateChange& operator=(RangeStateChange&&) = delete;
 
 					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const override {
 						if (Max == state) {

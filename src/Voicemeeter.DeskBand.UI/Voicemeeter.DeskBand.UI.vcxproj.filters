@@ -31,6 +31,24 @@
     <Filter Include="Header Files\Controls">
       <UniqueIdentifier>{5e1d7b2d-4630-4463-9d94-f0785319389e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Decorators">
+      <UniqueIdentifier>{f6263b99-fc37-4061-986f-ac84587d12d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Decorators">
+      <UniqueIdentifier>{7d2907c3-7830-4cc8-93ed-7a60e3f21cbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Glyphs">
+      <UniqueIdentifier>{725b2197-0613-443d-8449-e79fb6ff29d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{eac40226-372a-434a-8e28-8500fc925da9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\Glyphs">
+      <UniqueIdentifier>{7496f427-5209-45af-b51a-1e043c9a53d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Policies">
+      <UniqueIdentifier>{41edb6c8-e8db-4494-ad09-539d3260eda7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\ICanvas.h">
@@ -60,25 +78,25 @@
     <ClInclude Include="IComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Panel.h">
+    <ClInclude Include="IPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Control.h">
+    <ClInclude Include="IControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IInputTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IInteractivityPolicy.h">
+    <ClInclude Include="Policies\IInteractivity.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IGlyphUpdatePolicy.h">
+    <ClInclude Include="Policies\IGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IStateChangePolicy.h">
+    <ClInclude Include="Policies\IStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IStatePromotionPolicy.h">
+    <ClInclude Include="Policies\IStatePromotion.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="IAppInputTracker.h">
@@ -87,29 +105,32 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\PreconfiguredGlyphUpdatePolicy.h">
+    <ClInclude Include="Policies\CircularStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\PreconfiguredStatePromotionPolicy.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\PreconfiguredInteractivityPolicy.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\CircularStateChangePolicy.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\RangeStateChangePolicy.h">
+    <ClInclude Include="Policies\RangeStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Panels\StackPanel.h">
       <Filter>Header Files\Panels</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InputTracker.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Margin.h">
+      <Filter>Header Files\Decorators</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\RegionCheck.h">
+      <Filter>Header Files\Decorators</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Glyphs\Frame.h">
+      <Filter>Header Files\Graphics\Glyphs</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Carousel.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\CarouselInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -119,14 +140,23 @@
     <ClCompile Include="Panels\StackPanel.cpp">
       <Filter>Source Files\Panels</Filter>
     </ClCompile>
-    <ClCompile Include="Controls\StateControl.h">
+    <ClCompile Include="Controls\State.h">
       <Filter>Header Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InputTracker.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Decorators\Margin.cpp">
+      <Filter>Source Files\Decorators</Filter>
+    </ClCompile>
+    <ClCompile Include="Decorators\RegionCheck.cpp">
+      <Filter>Source Files\Decorators</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Glyphs\Frame.cpp">
+      <Filter>Source Files\Graphics\Glyphs</Filter>
+    </ClCompile>
+    <ClCompile Include="Policies\CarouselInteractivity.cpp">
+      <Filter>Source Files\Policies</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -8,9 +8,8 @@
 #include "estd/type_traits.h"
 #include "estd/linear_algebra.h"
 
-#include "../Panel.h"
+#include "../IPanel.h"
 #include "../IComponent.h"
-#include "../IInputTracker.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -22,7 +21,7 @@ namespace Voicemeeter {
 				};
 
 				template<Direction>
-				class StackPanel final : public Panel {
+				class StackPanel final : public IPanel {
 				public:
 					template<typename TIterator,
 						::std::enable_if_t<
@@ -31,19 +30,13 @@ namespace Voicemeeter {
 								::std::unique_ptr<IComponent>>,
 							bool> = true>
 					StackPanel(
-						IInputTracker& inputTracker,
-						const ::linear_algebra::vectord& baseMarginTopLeft,
-						const ::linear_algebra::vectord& baseMarginBottomRight,
 						TIterator begin,
 						TIterator end
-					) : Panel{ inputTracker, baseMarginTopLeft, baseMarginBottomRight }
-					  , m_baseVertex{}
+					) : m_baseVertex{}
 					  , m_cpComponent{}{
 						for (; begin != end; ++begin) {
 							m_cpComponent.emplace_back(::std::move(*begin));
 						}
-
-						m_cpComponent.front()->Move(baseMarginTopLeft);
 						Arrange();
 					};
 
@@ -56,60 +49,61 @@ namespace Voicemeeter {
 					StackPanel& operator=(const StackPanel&) = delete;
 					StackPanel& operator=(StackPanel&&) = delete;
 
-				protected:
-					virtual const ::linear_algebra::vectord& OnGet_Position() const override {
+					virtual const ::linear_algebra::vectord& get_Position() const override {
 						return m_cpComponent.front()->get_Position();
 					};
-					virtual const ::linear_algebra::vectord& OnGet_Size() const override {
+					virtual const ::linear_algebra::vectord& get_Size() const override {
 						return m_vertex;
 					};
-					virtual const ::linear_algebra::vectord& OnGet_BaseSize() const override {
+					virtual const ::linear_algebra::vectord& get_BaseSize() const override {
 						return m_baseVertex;
 					};
 
-					virtual void OnRedraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
+					virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							pComponent->Redraw(point, vertex);
 						}
 					};
-					virtual void OnRescale(const ::linear_algebra::vectord& vertex) override;
-					virtual void OnMove(const ::linear_algebra::vectord& point) override;
-					virtual void OnMouseLDown(const ::linear_algebra::vectord& point) override {
+					virtual void Rescale(const ::linear_algebra::vectord& vertex) override;
+					virtual void Move(const ::linear_algebra::vectord& point) override;
+					virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseLDown(point)) {
-								break;
+								return true;
 							}
 						}
+						return false;
 					};
-					virtual void OnMouseLDouble(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseLDouble(point)) {
-								break;
+								return true;
 							}
 						}
+						return false;
 					};
-					virtual void OnMouseRDown(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseRDown(point)) {
 								break;
 							}
 						}
 					};
-					virtual void OnMouseWheel(const ::linear_algebra::vectord& point, int delta) override {
+					virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseWheel(point, delta)) {
 								break;
 							}
 						}
 					};
-					virtual void OnMouseMove(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseMove(const ::linear_algebra::vectord& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseMove(point)) {
 								break;
 							}
 						}
 					};
-					virtual void OnMouseLUp(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseLUp(const ::linear_algebra::vectord& point) override {
 						for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 							if (pComponent->MouseLUp(point)) {
 								break;
@@ -126,13 +120,13 @@ namespace Voicemeeter {
 				};
 
 				template<>
-				void StackPanel<Direction::Right>::OnRescale(const ::linear_algebra::vectord& vertex);
+				void StackPanel<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex);
 				template<>
-				void StackPanel<Direction::Down>::OnRescale(const ::linear_algebra::vectord& vertex);
+				void StackPanel<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex);
 				template<>
-				void StackPanel<Direction::Right>::OnMove(const ::linear_algebra::vectord& point);
+				void StackPanel<Direction::Right>::Move(const ::linear_algebra::vectord& point);
 				template<>
-				void StackPanel<Direction::Down>::OnMove(const ::linear_algebra::vectord& point);
+				void StackPanel<Direction::Down>::Move(const ::linear_algebra::vectord& point);
 
 				template<>
 				void StackPanel<Direction::Right>::Arrange();

@@ -26,96 +26,7 @@ using namespace ::Voicemeeter::DeskBand::UI::Graphics;
 using namespace ::Voicemeeter::DeskBand::UI::Panels;
 using namespace ::Voicemeeter::DeskBand::UI::Policies;
 
-class OutBundle final {
-public:
-	explicit OutBundle(
-		::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>& pBrush
-	) : m_pBrush{ pBrush } {
-
-	}
-	OutBundle() = delete;
-	OutBundle(const OutBundle&) = delete;
-	OutBundle(OutBundle&&) = default;
-
-	~OutBundle() = default;
-
-	OutBundle& operator=(const OutBundle&) = delete;
-	OutBundle& operator=(OutBundle&&) = default;
-
-	void operator()(const D2D::Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const {
-		canvas.get_pRenderTarget()
-			->FillRectangle(
-				::D2D1::RectF(0.F, 0.F, 41.F, 19.F),
-				canvas.get_pBackgroundBrush());
-		canvas.get_pRenderTarget()
-			->FillRoundedRectangle(
-				::D2D1::RoundedRect(::D2D1::RectF(0.F, 0.F, 41.F, 19.F), 7.F, 7.F),
-				m_pBrush.Get());
-	};
-
-private:
-	::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
-};
-
-class GainerBundle final {
-public:
-	explicit GainerBundle(
-		::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>& pBrush
-	) : m_pBrush{ pBrush }
-		, m_level{ 0.F } {
-
-	}
-	GainerBundle() = delete;
-	GainerBundle(const GainerBundle&) = delete;
-	GainerBundle(GainerBundle&&) = default;
-
-	~GainerBundle() = default;
-
-	GainerBundle& operator=(const GainerBundle&) = delete;
-	GainerBundle& operator=(GainerBundle&&) = default;
-
-	void operator()(const D2D::Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const {
-		canvas.get_pRenderTarget()
-			->FillRectangle(
-				::D2D1::RectF(0.F, 0.F, 165.F, 40.F),
-				canvas.get_pBackgroundBrush());
-		canvas.get_pRenderTarget()
-			->FillRoundedRectangle(
-				::D2D1::RoundedRect(::D2D1::RectF(0.F, 11.F, 165.F, 29.F), 8.F, 8.F),
-				m_pBrush.Get());
-		canvas.get_pRenderTarget()
-			->FillEllipse(
-				::D2D1::Ellipse(::D2D1::Point2F(28.F + m_level * 1.5F, 20.F), 20.F, 20.F),
-				+m_pBrush.Get());
-	};
-
-	void set_Level(FLOAT level) const {
-		m_level = level;
-	};
-
-private:
-	::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
-	mutable FLOAT m_level;
-};
-
-using Carousel = StateControl<int, D2D::FrameGlyph>;
 using Gainer = StateControl<int, D2D::BundleGlyph<GainerBundle>>;
-
-class CarouselOnMouseLDown final {
-public:
-	CarouselOnMouseLDown() = default;
-	CarouselOnMouseLDown(const CarouselOnMouseLDown&) = delete;
-	CarouselOnMouseLDown(CarouselOnMouseLDown&&) = default;
-
-	~CarouselOnMouseLDown() = default;
-
-	CarouselOnMouseLDown& operator=(const CarouselOnMouseLDown&) = delete;
-	CarouselOnMouseLDown& operator=(CarouselOnMouseLDown&&) = default;
-
-	void operator()(Carousel& control, const ::linear_algebra::vectord& point) const {
-		control.SetNext();
-	};
-};
 
 class GainerOnMouseLDown final {
 public:
@@ -205,38 +116,6 @@ public:
 
 	void operator()(Gainer& control, const ::linear_algebra::vectord& point) const {
 		control.DisableInputTrack();
-	};
-};
-
-class OnMouseIgnore final {
-public:
-	OnMouseIgnore() = default;
-	OnMouseIgnore(const OnMouseIgnore&) = delete;
-	OnMouseIgnore(OnMouseIgnore&&) = default;
-
-	~OnMouseIgnore() = default;
-
-	OnMouseIgnore& operator=(const OnMouseIgnore&) = delete;
-	OnMouseIgnore& operator=(OnMouseIgnore&&) = default;
-
-	void operator()(Control& control, const ::linear_algebra::vectord& point) const {
-
-	};
-};
-
-class OnMouseWheelIgnore final {
-public:
-	OnMouseWheelIgnore() = default;
-	OnMouseWheelIgnore(const OnMouseWheelIgnore&) = delete;
-	OnMouseWheelIgnore(OnMouseWheelIgnore&&) = default;
-
-	~OnMouseWheelIgnore() = default;
-
-	OnMouseWheelIgnore& operator=(const OnMouseWheelIgnore&) = delete;
-	OnMouseWheelIgnore& operator=(OnMouseWheelIgnore&&) = default;
-
-	void operator()(Carousel& control, const ::linear_algebra::vectord& point, int delta) const {
-
 	};
 };
 

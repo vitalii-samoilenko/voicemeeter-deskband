@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include <windows.h>
 #include <wrl/client.h>
 #include <d2d1_3.h>
@@ -17,8 +19,7 @@ namespace Voicemeeter {
 					class Canvas final : public ICanvas {
 					public:
 						explicit Canvas(
-							HWND hWnd,
-							::D2D1::ColorF background
+							HWND hWnd
 						);
 						Canvas() = delete;
 						Canvas(const Canvas&) = delete;
@@ -39,14 +40,18 @@ namespace Voicemeeter {
 							return m_pD2dRenderTarget.Get();
 						};
 						inline ID2D1SolidColorBrush* get_pBackgroundBrush() const {
-							return m_pBackgroundBrush.Get();
+							return get_pBrush(RGB(44, 61, 77));
 						};
+						ID2D1SolidColorBrush* get_pBrush(DWORD color) const;
 
 					private:
+						::linear_algebra::vectord m_position;
+						::linear_algebra::vectord m_vertex;
 						::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 						::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 						::Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pD2dRenderTarget;
 						::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBackgroundBrush;
+						mutable ::std::unordered_map<DWORD, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
 					};
 				}
 			}

@@ -1,26 +1,31 @@
 #pragma once
 
+#include <memory>
+
 #include "estd/linear_algebra.h"
 
 #include "Voicemeeter.DeskBand.UI/Graphics/IGlyph.h"
 
-#include "Canvas.h"
+#include "../Canvas.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Graphics {
 				namespace D2D {
-					class Glyph : public IGlyph {
+					class InstantRendering final : public IGlyph {
 					public:
-						Glyph() = delete;
-						Glyph(const Glyph&) = delete;
-						Glyph(Glyph&&) = delete;
+						InstantRendering(
+							Canvas& pCanvas,
+							::std::unique_ptr<IGlyph> pGlyph
+						);
+						InstantRendering(const InstantRendering&) = delete;
+						InstantRendering(InstantRendering&&) = delete;
 
-						~Glyph() = default;
+						~InstantRendering() = default;
 
-						Glyph& operator=(const Glyph&) = delete;
-						Glyph& operator=(Glyph&&) = delete;
+						InstantRendering& operator=(const InstantRendering&) = delete;
+						InstantRendering& operator=(InstantRendering&&) = delete;
 
 						virtual const ::linear_algebra::vectord& get_Position() const override final;
 						virtual const ::linear_algebra::vectord& get_Size() const override final;
@@ -30,19 +35,9 @@ namespace Voicemeeter {
 						virtual void Move(const ::linear_algebra::vectord& point) override final;
 						virtual void Rescale(const ::linear_algebra::vectord& vertex) override final;
 
-					protected:
-						Glyph(
-							Canvas& canvas,
-							const ::linear_algebra::vectord& baseVertex
-						);
-
-						virtual void OnDraw(const Canvas& canvas, const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) const = 0;
-
 					private:
 						Canvas& m_canvas;
-						::linear_algebra::vectord m_point;
-						::linear_algebra::vectord m_vertex;
-						::linear_algebra::vectord m_baseVertex;
+						::std::unique_ptr<IGlyph> m_pGlyph;
 					};
 				}
 			}

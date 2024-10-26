@@ -31,25 +31,16 @@ const ::linear_algebra::vectord& Glyph::get_BaseSize() const {
 }
 
 void Glyph::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
-	ID2D1HwndRenderTarget* pRenderTarget{ m_canvas.get_pRenderTarget() };
+	m_canvas.get_pRenderTarget()
+		->SetTransform(
+			::D2D1::Matrix3x2F::Scale(m_vertex.x / m_baseVertex.x, m_vertex.y / m_baseVertex.y)
+			* ::D2D1::Matrix3x2F::Translation(m_point.x, m_point.y));
 
-	pRenderTarget->BeginDraw();
-
-	pRenderTarget->SetTransform(
-		::D2D1::Matrix3x2F::Scale(m_vertex.x / m_baseVertex.x, m_vertex.y / m_baseVertex.y)
-		* ::D2D1::Matrix3x2F::Translation(m_point.x, m_point.y));
-	OnDraw(point - m_point, vertex);
-	pRenderTarget->SetTransform(
-		::D2D1::Matrix3x2F::Identity());
-
-	ThrowIfFailed(pRenderTarget->EndDraw(
-	), "Render failed");
-};
-
+	OnDraw(m_canvas, point - m_point, vertex);
+}
 void Glyph::Move(const ::linear_algebra::vectord& point) {
 	m_point = point;
 }
-
 void Glyph::Rescale(const ::linear_algebra::vectord& vertex) {
 	double scale{
 		::std::min<double>(
@@ -57,6 +48,5 @@ void Glyph::Rescale(const ::linear_algebra::vectord& vertex) {
 			vertex.y / m_baseVertex.y)
 	};
 
-	m_vertex.x = m_baseVertex.x * scale;
-	m_vertex.y = m_baseVertex.y * scale;
-};
+	m_vertex = m_baseVertex * scale;
+}

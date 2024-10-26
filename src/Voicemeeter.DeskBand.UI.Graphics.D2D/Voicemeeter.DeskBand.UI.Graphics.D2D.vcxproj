@@ -134,14 +134,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h" />
-    <ClInclude Include="FrameGlyph.h" />
+    <ClInclude Include="Decorators\InstantRendering.h" />
     <ClInclude Include="Glyph.h" />
-    <ClInclude Include="BundleGlyph.h" />
+    <ClInclude Include="Glyphs\Gainer.h" />
+    <ClInclude Include="Glyphs\Out.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Canvas.cpp" />
-    <ClCompile Include="FrameGlyph.cpp" />
+    <ClCompile Include="Decorators\InstantRendering.cpp" />
     <ClCompile Include="Glyph.cpp" />
+    <ClCompile Include="Glyphs\Gainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Voicemeeter.DeskBand.UI\Voicemeeter.DeskBand.UI.vcxproj">

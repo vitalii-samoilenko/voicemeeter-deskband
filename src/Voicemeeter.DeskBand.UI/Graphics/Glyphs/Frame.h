@@ -8,14 +8,14 @@
 #include "estd/type_traits.h"
 #include "estd/linear_algebra.h"
 
-#include "Voicemeeter.DeskBand.UI/Graphics/IGlyph.h"
+#include "../IGlyph.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Graphics {
-				namespace D2D {
-					class FrameGlyph final : public IGlyph {
+				namespace Glyphs {
+					class Frame final : public IGlyph {
 					public:
 						template<typename TIterator,
 							::std::enable_if_t<
@@ -23,7 +23,7 @@ namespace Voicemeeter {
 									::estd::iterator_value_type_t<TIterator>,
 									::std::unique_ptr<IGlyph>>,
 								bool> = true>
-						FrameGlyph(
+						Frame(
 							TIterator begin,
 							TIterator end
 						) : m_frame{}
@@ -32,14 +32,14 @@ namespace Voicemeeter {
 								m_cpGlyph.emplace_back(::std::move(*begin));
 							}
 						};
-						FrameGlyph() = delete;
-						FrameGlyph(const FrameGlyph&) = delete;
-						FrameGlyph(FrameGlyph&&) = delete;
+						Frame() = delete;
+						Frame(const Frame&) = delete;
+						Frame(Frame&&) = delete;
 
-						~FrameGlyph() = default;
+						~Frame() = default;
 
-						FrameGlyph& operator=(const FrameGlyph&) = delete;
-						FrameGlyph& operator=(FrameGlyph&&) = delete;
+						Frame& operator=(const Frame&) = delete;
+						Frame& operator=(Frame&&) = delete;
 
 						inline void set_Frame(int frame) {
 							m_frame = frame;

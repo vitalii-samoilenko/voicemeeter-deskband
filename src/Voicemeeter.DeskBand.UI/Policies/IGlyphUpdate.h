@@ -13,24 +13,24 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace Policies {
 				template<typename TGlyph, typename TState>
-				class IGlyphUpdatePolicy {
+				class IGlyphUpdate {
 					static_assert(
 						::std::is_base_of_v<IGlyph, ::estd::remove_cvref_t<TGlyph>>,
 						"TGlyph must be derived from IGlyph");
 
 				public:
-					IGlyphUpdatePolicy(const IGlyphUpdatePolicy&) = delete;
-					IGlyphUpdatePolicy(IGlyphUpdatePolicy&&) = delete;
+					IGlyphUpdate(const IGlyphUpdate&) = delete;
+					IGlyphUpdate(IGlyphUpdate&&) = delete;
 
-					virtual ~IGlyphUpdatePolicy() = default;
+					virtual ~IGlyphUpdate() = default;
 
-					IGlyphUpdatePolicy& operator=(const IGlyphUpdatePolicy&) = delete;
-					IGlyphUpdatePolicy& operator=(IGlyphUpdatePolicy&&) = delete;
+					IGlyphUpdate& operator=(const IGlyphUpdate&) = delete;
+					IGlyphUpdate& operator=(IGlyphUpdate&&) = delete;
 
 					virtual void Update(::estd::remove_cvref_t<TGlyph>& glyph, const ::estd::remove_cvref_t<TState>& state) const = 0;
 
 				protected:
-					IGlyphUpdatePolicy() = default;
+					IGlyphUpdate() = default;
 				};
 			}
 		}

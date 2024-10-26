@@ -15,7 +15,7 @@ namespace linear_algebra {
 		TScalar x;
 		TScalar y;
 
-		constexpr vector() = default;
+		vector() = default;
 		vector(const vector&) = default;
 		vector(vector&&) = default;
 
@@ -25,10 +25,7 @@ namespace linear_algebra {
 		vector& operator=(vector&&) = default;
 
 		static constexpr vector origin() {
-			return {
-				::std::numeric_limits<TScalar>::denorm_min(),
-				::std::numeric_limits<TScalar>::denorm_min()
-			};
+			return {};
 		};
 
 		static constexpr vector infinity() {
@@ -68,8 +65,8 @@ namespace linear_algebra {
 	bool is_inside(
 		const vector<TScalar>& point,
 		const vector<TScalar>& vertex) {
-		return !(point.x < ::std::numeric_limits<TScalar>::denorm_min())
-			&& !(point.y < ::std::numeric_limits<TScalar>::denorm_min())
+		return !(point.x < 0)
+			&& !(point.y < 0)
 			&& point.x < vertex.x
 			&& point.y < vertex.y;
 	};

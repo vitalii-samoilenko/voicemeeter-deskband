@@ -6,7 +6,7 @@
 using namespace ::Voicemeeter::DeskBand::UI::Panels;
 
 template<>
-void StackPanel<Direction::Right>::OnRescale(const ::linear_algebra::vectord& vertex) {
+void StackPanel<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex) {
 	double scale{
 		::std::min<double>(
 			vertex.x / m_baseVertex.x,
@@ -14,7 +14,7 @@ void StackPanel<Direction::Right>::OnRescale(const ::linear_algebra::vectord& ve
 	};
 
 	::linear_algebra::vectord actualVertex{
-		0.,
+		0,
 		m_baseVertex.y * scale
 	};
 	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
@@ -32,7 +32,7 @@ void StackPanel<Direction::Right>::OnRescale(const ::linear_algebra::vectord& ve
 	m_vertex = actualVertex;
 }
 template<>
-void StackPanel<Direction::Down>::OnRescale(const ::linear_algebra::vectord& vertex) {
+void StackPanel<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex) {
 	double scale{
 		::std::min<double>(
 			vertex.x / m_baseVertex.x,
@@ -41,7 +41,7 @@ void StackPanel<Direction::Down>::OnRescale(const ::linear_algebra::vectord& ver
 
 	::linear_algebra::vectord actualVertex{
 		m_baseVertex.x * scale,
-		0.
+		0
 	};
 	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
 
@@ -58,7 +58,7 @@ void StackPanel<Direction::Down>::OnRescale(const ::linear_algebra::vectord& ver
 	m_vertex = actualVertex;
 }
 template<>
-void StackPanel<Direction::Right>::OnMove(const ::linear_algebra::vectord& point) {
+void StackPanel<Direction::Right>::Move(const ::linear_algebra::vectord& point) {
 	::linear_algebra::vectord componentPoint{ point };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
@@ -70,7 +70,7 @@ void StackPanel<Direction::Right>::OnMove(const ::linear_algebra::vectord& point
 	}
 }
 template<>
-void StackPanel<Direction::Down>::OnMove(const ::linear_algebra::vectord& point) {
+void StackPanel<Direction::Down>::Move(const ::linear_algebra::vectord& point) {
 	::linear_algebra::vectord componentPoint{ point };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
@@ -86,14 +86,14 @@ template<>
 void StackPanel<Direction::Right>::Arrange() {
 	::linear_algebra::vectord virtualVertex{
 		::std::numeric_limits<double>::max(),
-		0.
+		0
 	};
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		virtualVertex.y = ::std::max<double>(virtualVertex.y, pComponent->get_BaseSize().y);
 	}
 
 	::linear_algebra::vectord actualVertex{
-		0.,
+		0,
 		virtualVertex.y
 	};
 	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
@@ -114,7 +114,7 @@ void StackPanel<Direction::Right>::Arrange() {
 template<>
 void StackPanel<Direction::Down>::Arrange() {
 	::linear_algebra::vectord virtualVertex{
-		0.,
+		0,
 		::std::numeric_limits<double>::max()
 	};
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
@@ -123,7 +123,7 @@ void StackPanel<Direction::Down>::Arrange() {
 
 	::linear_algebra::vectord actualVertex{
 		virtualVertex.x,
-		0.
+		0
 	};
 	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
 

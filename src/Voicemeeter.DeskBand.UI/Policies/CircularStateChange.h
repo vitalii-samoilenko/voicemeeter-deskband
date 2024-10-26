@@ -4,27 +4,27 @@
 
 #include "estd/type_traits.h"
 
-#include "IStateChangePolicy.h"
+#include "IStateChange.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
 		namespace UI {
 			namespace Policies {
 				template<typename TState, TState Min, TState Max, TState Delta>
-				class CircularStateChangePolicy final : public IStateChangePolicy<TState> {
+				class CircularStateChange final : public IStateChange<TState> {
 					static_assert(
 						::std::is_arithmetic_v<::estd::remove_cvref_t<TState>>,
 						"TState must be of arithmetic type");
 
 				public:
-					CircularStateChangePolicy() = default;
-					CircularStateChangePolicy(const CircularStateChangePolicy&) = delete;
-					CircularStateChangePolicy(CircularStateChangePolicy&&) = delete;
+					CircularStateChange() = default;
+					CircularStateChange(const CircularStateChange&) = delete;
+					CircularStateChange(CircularStateChange&&) = delete;
 
-					~CircularStateChangePolicy() = default;
+					~CircularStateChange() = default;
 
-					CircularStateChangePolicy& operator=(const CircularStateChangePolicy&) = delete;
-					CircularStateChangePolicy& operator=(CircularStateChangePolicy&&) = delete;
+					CircularStateChange& operator=(const CircularStateChange&) = delete;
+					CircularStateChange& operator=(CircularStateChange&&) = delete;
 
 					virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const override {
 						if (Max - Delta < state) {

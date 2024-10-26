@@ -12,19 +12,19 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace Policies {
 				template<typename TComponent>
-				class IInteractivityPolicy {
+				class IInteractivity {
 					static_assert(
 						::std::is_base_of_v<IComponent, ::estd::remove_cvref_t<TComponent>>,
 						"TComponent must be derived from IComponent");
 
 				public:
-					IInteractivityPolicy(const IInteractivityPolicy&) = delete;
-					IInteractivityPolicy(IInteractivityPolicy&&) = delete;
+					IInteractivity(const IInteractivity&) = delete;
+					IInteractivity(IInteractivity&&) = delete;
 
-					virtual ~IInteractivityPolicy() = default;
+					virtual ~IInteractivity() = default;
 
-					IInteractivityPolicy& operator=(const IInteractivityPolicy&) = delete;
-					IInteractivityPolicy& operator=(IInteractivityPolicy&&) = delete;
+					IInteractivity& operator=(const IInteractivity&) = delete;
+					IInteractivity& operator=(IInteractivity&&) = delete;
 
 					virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 					virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
@@ -34,7 +34,7 @@ namespace Voicemeeter {
 					virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 
 				protected:
-					IInteractivityPolicy() = default;
+					IInteractivity() = default;
 				};
 			}
 		}
