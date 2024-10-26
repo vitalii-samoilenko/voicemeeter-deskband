@@ -22,8 +22,8 @@ namespace Voicemeeter {
 					Margin(
 						const ::linear_algebra::vectord& baseMarginTopLeft,
 						const ::linear_algebra::vectord& baseMarginBottomRight,
-						Args... args
-					) : TComponent{ ::std::move(args)... }
+						Args&&... args
+					) : TComponent{ ::std::forward<Args>(args)... }
 					  , m_position{ TComponent::get_Position() }
 					  , m_vertex{ TComponent::get_BaseSize() + baseMarginTopLeft + baseMarginBottomRight }
 					  , m_baseVertex{ m_vertex }

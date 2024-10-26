@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 
 #include "estd/linear_algebra.h"
 
@@ -26,8 +27,8 @@ namespace Voicemeeter {
 						template<typename... Args>
 						InstantRendering(
 							Graphics::Canvas& canvas,
-							Args... args
-						) : TGlyph{ canvas, args... } {
+							Args&&... args
+						) : TGlyph{ canvas, ::std::forward<Args>(args)... } {
 
 						};
 						InstantRendering() = delete;

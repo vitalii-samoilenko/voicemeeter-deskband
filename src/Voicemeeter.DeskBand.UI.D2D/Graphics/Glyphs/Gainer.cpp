@@ -15,9 +15,9 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 	m_canvas.get_pRenderTarget()
 		->FillRoundedRectangle(
 			::D2D1::RoundedRect(::D2D1::RectF(0.F, 11.F, 165.F, 29.F), 8.F, 8.F),
-			m_canvas.get_pBrush(RGB(112, 195, 153)));
+			m_canvas.get_pBrush(RGB(153, 195, 112)));
 	m_canvas.get_pRenderTarget()
 		->FillEllipse(
 			::D2D1::Ellipse(::D2D1::Point2F(m_level, 20.F), 20.F, 20.F),
-			m_canvas.get_pBrush(RGB(112, 195, 153)));
+			m_canvas.get_pBrush(RGB(153, 195, 112)));
 };

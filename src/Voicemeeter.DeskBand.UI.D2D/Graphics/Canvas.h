@@ -42,7 +42,7 @@ namespace Voicemeeter {
 							return m_pD2dRenderTarget.Get();
 						};
 						inline ID2D1SolidColorBrush* get_pBackgroundBrush() const {
-							return get_pBrush(RGB(44, 61, 77));
+							return get_pBrush(RGB(77, 61, 44));
 						};
 						ID2D1SolidColorBrush* get_pBrush(DWORD color) const;
 

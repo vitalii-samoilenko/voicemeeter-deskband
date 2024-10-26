@@ -31,7 +31,9 @@ namespace Voicemeeter {
 					  , m_pStatePromotionPolicy{ ::std::move(pStatePromotionPolicy) }
 					  , m_pGlyphUpdatePolicy{ ::std::move(pGlyphUpdatePolicy) }
 					  , m_pInteractivityPolicy{ ::std::move(pInteractivityPolicy) } {
-
+						if (m_pStateChangePolicy->SetDefault(m_state)) {
+							m_pGlyphUpdatePolicy->Update(*m_pGlyph, m_state);
+						}
 					};
 					State() = delete;
 					State(const State&) = delete;

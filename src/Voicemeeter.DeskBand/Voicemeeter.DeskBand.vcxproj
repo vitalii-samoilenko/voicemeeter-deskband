@@ -177,7 +177,7 @@
     <ResourceCompile Include="messages.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Voicemeeter.DeskBand.UI.Graphics.D2D\Voicemeeter.DeskBand.UI.Graphics.D2D.vcxproj">
+    <ProjectReference Include="..\Voicemeeter.DeskBand.UI.D2D\Voicemeeter.DeskBand.UI.D2D.vcxproj">
       <Project>{c55c74a6-d812-446d-94e1-75fe1aa95797}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.DeskBand.UI\Voicemeeter.DeskBand.UI.vcxproj">

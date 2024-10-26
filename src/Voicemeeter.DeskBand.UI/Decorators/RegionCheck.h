@@ -1,10 +1,12 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 
 #include "estd/linear_algebra.h"
 
 #include "../IComponent.h"
+#include "../IInputTracker.h"
 
 namespace Voicemeeter {
 	namespace DeskBand {
@@ -17,7 +19,14 @@ namespace Voicemeeter {
 						"TComponent must be derived from IComponent");
 
 				public:
-					using TComponent::TComponent;
+					template<typename... Args>
+					RegionCheck(
+						IInputTracker& inputTracker,
+						Args&&... args
+					) : TComponent{ ::std::forward<Args>(args)... }
+					  , m_inputTracker{ inputTracker } {
+
+					}
 
 					RegionCheck() = delete;
 					RegionCheck(const RegionCheck&) = delete;
@@ -38,31 +47,33 @@ namespace Voicemeeter {
 						TComponent::Redraw(point, vertex);
 					};
 					virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
-						return is_inside(point)
+						return (is_inside(point) || m_inputTracker.IsTracking(*this))
 							&& TComponent::MouseLDown(point);
 					};
 					virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
-						return is_inside(point)
+						return (is_inside(point) || m_inputTracker.IsTracking(*this))
 							&& TComponent::MouseLDouble(point);
 					};
 					virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
-						return is_inside(point)
+						return (is_inside(point) || m_inputTracker.IsTracking(*this))
 							&& TComponent::MouseRDown(point);
 					};
 					virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
-						return is_inside(point)
+						return (is_inside(point) || m_inputTracker.IsTracking(*this))
 							&& TComponent::MouseWheel(point, delta);
 					};
 					virtual bool MouseMove(const ::linear_algebra::vectord& point) override {
-						return is_inside(point)
+						return (is_inside(point) || m_inputTracker.IsTracking(*this))
 							&& TComponent::MouseMove(point);
 					};
 					virtual bool MouseLUp(const ::linear_algebra::vectord& point) override {
-						return is_inside(point)
+						return (is_inside(point) || m_inputTracker.IsTracking(*this))
 							&& TComponent::MouseLUp(point);
 					};
 
 				private:
+					IInputTracker& m_inputTracker;
+
 					inline bool is_inside(const ::linear_algebra::vectord& point) {
 						return ::linear_algebra::is_inside(
 							point - TComponent::get_Position(),

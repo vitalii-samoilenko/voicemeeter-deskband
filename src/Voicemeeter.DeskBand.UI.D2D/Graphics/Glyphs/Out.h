@@ -29,12 +29,14 @@ namespace Voicemeeter {
 							Out& operator=(Out&&) = delete;
 
 							virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
+								Glyph::Redraw(point, vertex);
+
 								m_canvas.get_pRenderTarget()
 									->FillRoundedRectangle(
 										::D2D1::RoundedRect(::D2D1::RectF(0.F, 0.F, 41.F, 19.F), 7.F, 7.F),
 										Active
-											? m_canvas.get_pBrush(RGB(112, 195, 153))
-											: m_canvas.get_pBrush(RGB(95, 120, 137)));
+											? m_canvas.get_pBrush(RGB(153, 195, 112))
+											: m_canvas.get_pBrush(RGB(137, 120, 95)));
 							};
 						};
 					}

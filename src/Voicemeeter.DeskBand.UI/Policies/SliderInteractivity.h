@@ -37,7 +37,7 @@ namespace Voicemeeter {
 
 					};
 					virtual void MouseWheel(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point, int delta) const override {
-						int level{ static_cast<int>((component.get_State() + delta / 4.) * 100) };
+						int level{ component.get_State() + delta * 5 };
 
 						component.Set(level, true);
 					};

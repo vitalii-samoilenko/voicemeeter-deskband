@@ -56,9 +56,9 @@ public:
 	RemoteStatePromotion& operator=(RemoteStatePromotion&&) = delete;
 
 	virtual void Promote(const int& state) const {
-		//if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
-			//throw windows_error{ m_pLabel };
-		//}
+		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
+			throw windows_error{ m_pLabel };
+		}
 	};
 
 private:
@@ -139,7 +139,7 @@ void Window::BuildScene() {
 		return static_cast<float>(state);
 	};
 	auto gainerMap = [](const int& state)->float {
-		return state / 100.F - 28.F - 60.F;
+		return state / 100.F - 118.F;
 	};
 	using OutStatePromotion = RemoteStatePromotion<decltype(outMap)>;
 	using GainerStatePromotion = RemoteStatePromotion<decltype(gainerMap)>;
@@ -174,70 +174,73 @@ void Window::BuildScene() {
 	::std::unique_ptr<IComponent> out_a_cpControl[]{
 		::std::make_unique<Decorators::RegionCheck<
 			Controls::Carousel>>(
+				*pInputTracker,
 				::std::move(out_a_1_pGlyph),
 				pOutStateChangePolicy,
 				::std::move(out_a_1_pStatePromotionPolicy),
 				pCarouseleGlyphUpdatePolicy,
 				pCarouselInteractivityPolicy
-		), ::std::make_unique<Decorators::RegionCheck<
-			Decorators::Margin<
-				Decorators::RegionCheck<
-					Controls::Carousel>>>>(
-						::linear_algebra::vectord{ 0, 2 },
-						::linear_algebra::vectord{ 0, 0 },
-						::std::move(out_a_2_pGlyph),
-						pOutStateChangePolicy,
-						::std::move(out_a_2_pStatePromotionPolicy),
-						pCarouseleGlyphUpdatePolicy,
-						pCarouselInteractivityPolicy
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Controls::Carousel>>>(
+					::linear_algebra::vectord{ 0, 2 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::move(out_a_2_pGlyph),
+					pOutStateChangePolicy,
+					::std::move(out_a_2_pStatePromotionPolicy),
+					pCarouseleGlyphUpdatePolicy,
+					pCarouselInteractivityPolicy
 		)
 	};
 	::std::unique_ptr<IComponent> out_b_cpControl[]{
 		::std::make_unique<Decorators::RegionCheck<
 			Controls::Carousel>>(
+				*pInputTracker,
 				::std::move(out_b_1_pGlyph),
 				pOutStateChangePolicy,
 				::std::move(out_b_1_pStatePromotionPolicy),
 				pCarouseleGlyphUpdatePolicy,
 				pCarouselInteractivityPolicy
-		), ::std::make_unique<Decorators::RegionCheck<
-			Decorators::Margin<
-				Decorators::RegionCheck<
-					Controls::Carousel>>>>(
-						::linear_algebra::vectord{ 0, 2 },
-						::linear_algebra::vectord{ 0, 0 },
-						::std::move(out_b_2_pGlyph),
-						pOutStateChangePolicy,
-						::std::move(out_b_2_pStatePromotionPolicy),
-						pCarouseleGlyphUpdatePolicy,
-						pCarouselInteractivityPolicy
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Controls::Carousel>>>(
+					::linear_algebra::vectord{ 0, 2 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::move(out_b_2_pGlyph),
+					pOutStateChangePolicy,
+					::std::move(out_b_2_pStatePromotionPolicy),
+					pCarouseleGlyphUpdatePolicy,
+					pCarouselInteractivityPolicy
 		)
 	};
 
 	::std::unique_ptr<IComponent> cpComponent[]{
 		::std::make_unique<Decorators::RegionCheck<
 			D2D::Controls::Gainer>>(
+				*pInputTracker,
 				::std::move(systemGainer_pGlyph),
 				pGainerStateChangePolicy,
 				::std::move(systemGainer_pStatePromotionPolicy),
 				pGainerGlyphUpdatePolicy,
 				pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::RegionCheck<
-			Decorators::Margin<
-				Decorators::RegionCheck<
-					Panels::Stack<Panels::Direction::Down>>>>>(
-						::linear_algebra::vectord{ 2, 0 },
-						::linear_algebra::vectord{ 0, 0 },
-						::std::begin(out_a_cpControl),
-						::std::end(out_a_cpControl)
-		), ::std::make_unique<Decorators::RegionCheck<
-			Decorators::Margin<
-				Decorators::RegionCheck<
-					Panels::Stack<Panels::Direction::Down>>>>>(
-						::linear_algebra::vectord{ 2, 0 },
-						::linear_algebra::vectord{ 0, 0 },
-						::std::begin(out_b_cpControl),
-						::std::end(out_b_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Panels::Stack<Panels::Direction::Down>>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::begin(out_a_cpControl),
+					::std::end(out_a_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Panels::Stack<Panels::Direction::Down>>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::begin(out_b_cpControl),
+					::std::end(out_b_cpControl)
 		)
 	};
 

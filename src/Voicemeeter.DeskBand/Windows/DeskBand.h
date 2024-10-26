@@ -82,7 +82,7 @@ namespace Voicemeeter {
 				HWND                m_hWndParent;           // parent window of deskband
 				UINT m_dpi;
 				::std::unique_ptr<::Voicemeeter::DeskBand::UI::IScene> m_pScene;
-				T_VBVMR_INTERFACE remote;
+				T_VBVMR_INTERFACE m_remote;
 
 				~DeskBand();
 
