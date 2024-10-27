@@ -1,4 +1,4 @@
-#include "Voicemeeter.DeskBand.Windows/Error.h"
+#include "Windows/Error.h"
 
 #include "DeskBand.h"
 
@@ -131,13 +131,13 @@ long InitializeDLLInterfaces(T_VBVMR_INTERFACE& iVMR)
 	return 0;
 }
 
-using namespace Voicemeeter::DeskBand::Windows;
+using namespace Voicemeeter::Windows;
 
 void DeskBand::Connect() {
 	if (InitializeDLLInterfaces(m_remote) != 0) {
-		throw windows_error{ "Cannot initialize interfaces" };
+		throw ::Windows::Error{ "Cannot initialize interfaces" };
 	}
 	if (m_remote.VBVMR_Login()) {
-		throw windows_error{ "Cannot connect to Voicemeeter" };
+		throw ::Windows::Error{ "Cannot connect to Voicemeeter" };
 	}
 }

@@ -14,43 +14,26 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Header Files\Windows">
-      <UniqueIdentifier>{c52e226a-4d65-4c8b-8b63-73822ef8122a}</UniqueIdentifier>
+      <UniqueIdentifier>{dd24a80e-969f-46cf-8ac3-424da00d43b8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Windows">
-      <UniqueIdentifier>{4d9ff1b8-f300-4f2d-bef1-4af0965b4b57}</UniqueIdentifier>
+      <UniqueIdentifier>{2ea2e647-2c69-46f2-a842-8d889705c478}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\DeskBand.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
+    <ClInclude Include="Windows\Window.h">
+      <Filter>Header Files\Windows</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Windows\BuildScene.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\Connect.cpp">
+    <ClCompile Include="Windows\Window.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\ClassFactory.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="windows\DeskBand.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="VoicemeeterRemote.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Windows\ClassFactory.h">
-      <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Voicemeeter.DeskBand.def">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
 </Project>

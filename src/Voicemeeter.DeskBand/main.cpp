@@ -5,7 +5,7 @@
 
 #include "Windows/ClassFactory.h" // for the class factory
 
-using namespace Voicemeeter::DeskBand::Windows;
+using namespace Voicemeeter::Windows;
 
 // {46B3D3EF-071A-4b7e-8AA2-E560810DAB35}
 CLSID CLSID_DeskBand = { 0x46b3d3ef, 0x71a, 0x4b7e, {0x8a, 0xa2, 0xe5, 0x60, 0x81, 0xd, 0xab, 0x35} };
@@ -31,7 +31,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
     {
         hr = E_OUTOFMEMORY;
 
-        CClassFactory* pClassFactory = new CClassFactory();
+        ClassFactory* pClassFactory = new ClassFactory();
         if (pClassFactory)
         {
             hr = pClassFactory->QueryInterface(riid, ppv);

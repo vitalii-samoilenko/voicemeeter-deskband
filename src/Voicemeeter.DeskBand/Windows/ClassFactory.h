@@ -4,27 +4,25 @@
 #include <windows.h>
 
 namespace Voicemeeter {
-    namespace DeskBand {
-        namespace Windows {
-            class CClassFactory : public IClassFactory {
-            public:
-                // IUnknown
-                STDMETHODIMP QueryInterface(REFIID riid, void** ppv);
-                STDMETHODIMP_(ULONG) AddRef();
-                STDMETHODIMP_(ULONG) Release();
+    namespace Windows {
+        class ClassFactory : public IClassFactory {
+        public:
+            // IUnknown
+            STDMETHODIMP QueryInterface(REFIID riid, void** ppv);
+            STDMETHODIMP_(ULONG) AddRef();
+            STDMETHODIMP_(ULONG) Release();
 
-                // IClassFactory
-                STDMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-                STDMETHODIMP LockServer(BOOL fLock);
+            // IClassFactory
+            STDMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+            STDMETHODIMP LockServer(BOOL fLock);
 
-                CClassFactory();
+            ClassFactory();
 
-            protected:
-                ~CClassFactory();
+        protected:
+            ~ClassFactory();
 
-            private:
-                LONG m_cRef;
-            };
-        }
+        private:
+            LONG m_cRef;
+        };
     }
 }

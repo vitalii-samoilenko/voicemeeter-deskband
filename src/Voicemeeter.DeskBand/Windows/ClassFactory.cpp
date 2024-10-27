@@ -1,17 +1,18 @@
-#include "ClassFactory.h"
 #include "Deskband.h"
 
-using namespace Voicemeeter::DeskBand::Windows;
+#include "ClassFactory.h"
+
+using namespace Voicemeeter::Windows;
 
 extern long g_cDllRef;
 
-CClassFactory::CClassFactory()
+ClassFactory::ClassFactory()
 {
     m_cRef = 1;
     InterlockedIncrement(&g_cDllRef);
 }
 
-CClassFactory::~CClassFactory()
+ClassFactory::~ClassFactory()
 {
     InterlockedDecrement(&g_cDllRef);
 }
@@ -19,7 +20,7 @@ CClassFactory::~CClassFactory()
 //
 // IUnknown
 //
-STDMETHODIMP CClassFactory::QueryInterface(REFIID riid, void** ppv)
+STDMETHODIMP ClassFactory::QueryInterface(REFIID riid, void** ppv)
 {
     HRESULT hr = S_OK;
 
@@ -37,12 +38,12 @@ STDMETHODIMP CClassFactory::QueryInterface(REFIID riid, void** ppv)
     return hr;
 }
 
-STDMETHODIMP_(ULONG) CClassFactory::AddRef()
+STDMETHODIMP_(ULONG) ClassFactory::AddRef()
 {
     return InterlockedIncrement(&m_cRef);
 }
 
-STDMETHODIMP_(ULONG) CClassFactory::Release()
+STDMETHODIMP_(ULONG) ClassFactory::Release()
 {
     ULONG cRef = InterlockedDecrement(&m_cRef);
     if (0 == cRef)
@@ -55,7 +56,7 @@ STDMETHODIMP_(ULONG) CClassFactory::Release()
 //
 // IClassFactory
 //
-STDMETHODIMP CClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv)
+STDMETHODIMP ClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv)
 {
     HRESULT hr = CLASS_E_NOAGGREGATION;
 
@@ -74,7 +75,7 @@ STDMETHODIMP CClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, voi
     return hr;
 }
 
-STDMETHODIMP CClassFactory::LockServer(BOOL fLock)
+STDMETHODIMP ClassFactory::LockServer(BOOL fLock)
 {
     if (fLock)
     {

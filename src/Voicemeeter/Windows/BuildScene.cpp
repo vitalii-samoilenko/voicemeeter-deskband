@@ -2,6 +2,8 @@
 
 #include "estd/type_traits.h"
 
+#include "Windows/Wrappers.h"
+
 #include "Voicemeeter.UI/Controls/Carousel.h"
 #include "Voicemeeter.UI/Decorators/Margin.h"
 #include "Voicemeeter.UI/Decorators/RegionCheck.h"
@@ -26,50 +28,29 @@
 #include "Voicemeeter.UI.D2D/Policies/CheckboxStateChange.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
 
-#include "DeskBand.h"
+#include "Window.h"
 
 using namespace ::Voicemeeter::UI;
 
-using namespace ::Voicemeeter::Windows;
-
-template<typename TMapper>
-class RemoteStatePromotion : public Policies::IStatePromotion<int> {
-	static_assert(
-		::estd::is_invocable_r<float, TMapper, const int&>(),
-		"TMapper must be invocable with const int& and must return float");
-
+class EmptyStatePromotion : public Policies::IStatePromotion<int> {
 public:
-	RemoteStatePromotion(
-		const T_VBVMR_INTERFACE& remote,
-		const char* pLabel,
-		TMapper mapper
-	) : m_remote{ remote }
-	  , m_pLabel{ pLabel }
-	  , m_mapper{ mapper } {
+	EmptyStatePromotion() = default;
+	EmptyStatePromotion(const EmptyStatePromotion&) = delete;
+	EmptyStatePromotion(EmptyStatePromotion&&) = delete;
 
-	};
-	RemoteStatePromotion() = delete;
-	RemoteStatePromotion(const RemoteStatePromotion&) = delete;
-	RemoteStatePromotion(RemoteStatePromotion&&) = delete;
+	~EmptyStatePromotion() = default;
 
-	~RemoteStatePromotion() = default;
-
-	RemoteStatePromotion& operator=(const RemoteStatePromotion&) = delete;
-	RemoteStatePromotion& operator=(RemoteStatePromotion&&) = delete;
+	EmptyStatePromotion& operator=(const EmptyStatePromotion&) = delete;
+	EmptyStatePromotion& operator=(EmptyStatePromotion&&) = delete;
 
 	virtual void Promote(const int& state) const {
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
-			throw ::Windows::Error{ m_pLabel };
-		}
-	};
 
-private:
-	const T_VBVMR_INTERFACE& m_remote;
-	const char* m_pLabel;
-	TMapper m_mapper;
+	};
 };
 
-void DeskBand::BuildScene() {
+using namespace ::Voicemeeter::Windows;
+
+void Window::BuildScene() {
 	::std::unique_ptr<InputTracker> pInputTracker{
 		new InputTracker{ *this }
 	};
@@ -161,34 +142,26 @@ void DeskBand::BuildScene() {
 	::std::shared_ptr<D2D::Policies::GainerStateChange> pGainerStateChangePolicy{
 		new D2D::Policies::GainerStateChange{}
 	};
-	auto checkboxMap = [](const int& state)->float {
-		return static_cast<float>(state);
-		};
-	auto gainerMap = [](const int& state)->float {
-		return state / 100.F - 118.F;
-		};
-	using CheckboxStatePromotion = RemoteStatePromotion<decltype(checkboxMap)>;
-	using GainerStatePromotion = RemoteStatePromotion<decltype(gainerMap)>;
-	::std::unique_ptr<CheckboxStatePromotion> out_a_1_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].A1", checkboxMap }
+	::std::unique_ptr<EmptyStatePromotion> out_a_1_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
-	::std::unique_ptr<CheckboxStatePromotion> out_a_2_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].A2", checkboxMap }
+	::std::unique_ptr<EmptyStatePromotion> out_a_2_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
-	::std::unique_ptr<CheckboxStatePromotion> out_b_1_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].B1", checkboxMap }
+	::std::unique_ptr<EmptyStatePromotion> out_b_1_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
-	::std::unique_ptr<CheckboxStatePromotion> out_b_2_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].B2", checkboxMap }
+	::std::unique_ptr<EmptyStatePromotion> out_b_2_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
-	::std::unique_ptr<CheckboxStatePromotion> systemMute_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].Mute", checkboxMap }
+	::std::unique_ptr<EmptyStatePromotion> systemMute_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
-	::std::unique_ptr<CheckboxStatePromotion> vban_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "vban.Enable", checkboxMap }
+	::std::unique_ptr<EmptyStatePromotion> vban_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
-	::std::unique_ptr<GainerStatePromotion> systemGainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Strip[5].Gain", gainerMap }
+	::std::unique_ptr<EmptyStatePromotion> systemGainer_pStatePromotionPolicy{
+		new EmptyStatePromotion{}
 	};
 	::std::shared_ptr<D2D::Decorators::WindowsGlyphUpdate<Glyphs::Frame, int, Policies::CarouselGlyphUpdate>> pCarouseleGlyphUpdatePolicy{
 		new D2D::Decorators::WindowsGlyphUpdate<Glyphs::Frame, int, Policies::CarouselGlyphUpdate>{ m_hWnd }

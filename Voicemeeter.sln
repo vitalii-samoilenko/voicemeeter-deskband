@@ -10,15 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.UI", "src\Voicemeeter.DeskBand.UI\Voicemeeter.DeskBand.UI.vcxproj", "{8EBF00E4-20BE-4230-97BA-8DD20F2F35CB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI", "src\Voicemeeter.UI\Voicemeeter.UI.vcxproj", "{8EBF00E4-20BE-4230-97BA-8DD20F2F35CB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "estd", "src\estd\estd.vcxproj", "{BE6DD8B6-C8AE-4BB1-8CC1-612F5F262B60}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.Windows", "src\Voicemeeter.DeskBand.Windows\Voicemeeter.DeskBand.Windows.vcxproj", "{8D41DAA9-B6B7-4F80-832A-F5AE62E1502D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows", "src\Windows\Windows.vcxproj", "{8D41DAA9-B6B7-4F80-832A-F5AE62E1502D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.Test", "src\Voicemeeter.DeskBand.Test\Voicemeeter.DeskBand.Test.vcxproj", "{807A809C-6CCA-4EDA-BEDB-415911367CD8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter", "src\Voicemeeter\Voicemeeter.vcxproj", "{807A809C-6CCA-4EDA-BEDB-415911367CD8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBand.UI.D2D", "src\Voicemeeter.DeskBand.UI.D2D\Voicemeeter.DeskBand.UI.D2D.vcxproj", "{C55C74A6-D812-446D-94E1-75FE1AA95797}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.D2D", "src\Voicemeeter.UI.D2D\Voicemeeter.UI.D2D.vcxproj", "{C55C74A6-D812-446D-94E1-75FE1AA95797}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
