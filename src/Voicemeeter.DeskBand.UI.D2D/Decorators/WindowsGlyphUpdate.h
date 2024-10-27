@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 
 #include "estd/linear_algebra.h"
@@ -47,8 +48,8 @@ namespace Voicemeeter {
 							::linear_algebra::vectord topLeft{ glyph.get_Position() };
 							::linear_algebra::vectord bottomRight{ topLeft + glyph.get_Size() };
 							RECT rc{
-								static_cast<LONG>(topLeft.x), static_cast<LONG>(topLeft.y),
-								static_cast<LONG>(bottomRight.x), static_cast<LONG>(bottomRight.y),
+								static_cast<LONG>(::std::ceil(topLeft.x)), static_cast<LONG>(::std::ceil(topLeft.y)),
+								static_cast<LONG>(::std::ceil(bottomRight.x)), static_cast<LONG>(::std::ceil(bottomRight.y)),
 							};
 
 							wInvalidateRect(m_hWnd, &rc, TRUE);
