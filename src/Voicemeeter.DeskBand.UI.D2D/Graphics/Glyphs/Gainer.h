@@ -35,6 +35,10 @@ namespace Voicemeeter {
 							FLOAT m_level;
 
 							ID2D1SolidColorBrush* Brush() const;
+							ID2D1SolidColorBrush* Light() const;
+							ID2D1SolidColorBrush* Dark() const;
+							ID2D1SolidColorBrush* White() const;
+							ID2D1PathGeometry* HalfCircle() const;
 						};
 					}
 				}
