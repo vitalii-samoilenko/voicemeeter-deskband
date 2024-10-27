@@ -16,9 +16,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "estd", "src\estd\estd.vcxpr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows", "src\Windows\Windows.vcxproj", "{8D41DAA9-B6B7-4F80-832A-F5AE62E1502D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter", "src\Voicemeeter\Voicemeeter.vcxproj", "{807A809C-6CCA-4EDA-BEDB-415911367CD8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Window", "src\Voicemeeter.Window\Voicemeeter.Window.vcxproj", "{807A809C-6CCA-4EDA-BEDB-415911367CD8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.D2D", "src\Voicemeeter.UI.D2D\Voicemeeter.UI.D2D.vcxproj", "{C55C74A6-D812-446D-94E1-75FE1AA95797}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter", "src\Voicemeeter\Voicemeeter.vcxproj", "{20F519BE-036E-4A91-81D9-51C5AD1661DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +78,14 @@ Global
 		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x64.Build.0 = Release|x64
 		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x86.ActiveCfg = Release|Win32
 		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x86.Build.0 = Release|Win32
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x64.ActiveCfg = Debug|x64
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x64.Build.0 = Debug|x64
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x86.Build.0 = Debug|Win32
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Release|x64.ActiveCfg = Release|x64
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Release|x64.Build.0 = Release|x64
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Release|x86.ActiveCfg = Release|Win32
+		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

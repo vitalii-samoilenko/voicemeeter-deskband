@@ -78,8 +78,8 @@ void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 		D2D1_DC_INITIALIZE_MODE_COPY, &hDc
 	), "Cannot get device context");
 	RECT rc{
-		static_cast<LONG>(::std::ceil(point.x)),
-		static_cast<LONG>(::std::ceil(point.y)),
+		static_cast<LONG>(::std::floor(point.x)),
+		static_cast<LONG>(::std::floor(point.y)),
 		static_cast<LONG>(::std::ceil(point.x + vertex.x)),
 		static_cast<LONG>(::std::ceil(point.y + vertex.y))
 	};
