@@ -25,7 +25,7 @@ namespace Voicemeeter {
 						public:
 							Vban(
 								Graphics::Canvas& canvas
-							) : Glyph{ canvas, { 65, 22 } } {
+							) : Glyph{ canvas, { 39, 22 } } { //{65, 22}
 
 							}
 							Vban() = delete;
@@ -46,11 +46,11 @@ namespace Voicemeeter {
 										Brush());
 								m_canvas.get_pRenderTarget()
 									->FillRectangle(
-										::D2D1::RectF(57.5F, 0.F, 65.F, 22.F),
+										::D2D1::RectF(31.5F, 0.F, 39.F, 22.F), //57.5
 										Brush());
 								m_canvas.get_pRenderTarget()
 									->DrawRectangle(
-										::D2D1::RectF(7.5F, 0.5F, 57.5F, 21.5F),
+										::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),  //57.5
 										Brush());
 								D2D1_MATRIX_3X2_F base{};
 								m_canvas.get_pRenderTarget()
@@ -61,7 +61,7 @@ namespace Voicemeeter {
 								m_canvas.get_pRenderTarget()
 									->DrawText(
 										L"VBAN",
-										4,
+										1, // 4
 										m_canvas.get_pTextFormat(),
 										D2D1::RectF(19.F, 5.0F, 300.F, 200.F),
 										Brush());

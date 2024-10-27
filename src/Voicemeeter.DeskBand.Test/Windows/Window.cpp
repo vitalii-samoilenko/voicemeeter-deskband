@@ -25,7 +25,7 @@ Window::Window(
 
 	RECT rc{};
 	rc.bottom = 40;
-	rc.right = 294 + 119;
+	rc.right = 365;
 	wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, m_dpi);
 
 	WNDCLASSW wndClass{};
