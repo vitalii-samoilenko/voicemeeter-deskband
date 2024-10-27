@@ -48,7 +48,7 @@
     <ClInclude Include="Controls\Gainer.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\OutStateChange.h">
+    <ClInclude Include="Policies\CheckboxStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\GainerStateChange.h">
@@ -71,6 +71,12 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Glyphs\Mute.h">
+      <Filter>Header Files\Graphics\Glyphs</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Glyphs\Vban.h">
+      <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

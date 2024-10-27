@@ -205,7 +205,7 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi)
 
         if (pdbi->dwMask & DBIM_MINSIZE)
         {
-            pdbi->ptMinSize.x = 188;
+            pdbi->ptMinSize.x = 310;
             pdbi->ptMinSize.y = 30;
         }
 

@@ -9,7 +9,7 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace D2D {
 				namespace Policies {
-					using OutStateChange = CircularStateChange<int, 0, 0, 1, 1>;
+					using CheckboxStateChange = CircularStateChange<int, 0, 0, 1, 1>;
 				}
 			}
 		}

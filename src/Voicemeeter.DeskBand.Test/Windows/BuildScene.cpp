@@ -15,12 +15,14 @@
 #include "Voicemeeter.DeskBand.UI.D2D/Controls/Gainer.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Decorators/WindowsGlyphUpdate.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Gainer.h"
+#include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Mute.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Out.h"
+#include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Vban.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Canvas.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerGlyphUpdate.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerInteractivity.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerStateChange.h"
-#include "Voicemeeter.DeskBand.UI.D2D/Policies/OutStateChange.h"
+#include "Voicemeeter.DeskBand.UI.D2D/Policies/CheckboxStateChange.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Scene.h"
 #include "Voicemeeter.DeskBand.Windows/Wrappers.h"
 
@@ -124,35 +126,65 @@ void Window::BuildScene() {
 			::std::end(out_b_2_cpFrame)
 	} };
 
+	::std::unique_ptr<IGlyph> systemMute_cpFrame[]{
+		::std::make_unique<D2D::Graphics::Glyphs::Mute<false>>(
+			*pCanvas),
+		::std::make_unique<D2D::Graphics::Glyphs::Mute<true>>(
+			*pCanvas)
+	};
+	::std::unique_ptr<Graphics::Glyphs::Frame> systemMute_pGlyph{
+		new Graphics::Glyphs::Frame{
+			::std::begin(systemMute_cpFrame),
+			::std::end(systemMute_cpFrame)
+	} };
+
+	::std::unique_ptr<IGlyph> vban_cpFrame[]{
+		::std::make_unique<D2D::Graphics::Glyphs::Vban<false>>(
+			*pCanvas),
+		::std::make_unique<D2D::Graphics::Glyphs::Vban<true>>(
+			*pCanvas)
+	};
+	::std::unique_ptr<Graphics::Glyphs::Frame> vban_pGlyph{
+		new Graphics::Glyphs::Frame{
+			::std::begin(vban_cpFrame),
+			::std::end(vban_cpFrame)
+	} };
+
 	::std::unique_ptr<D2D::Graphics::Glyphs::Gainer> systemGainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Gainer>(*pCanvas)
 	};
 
-	::std::shared_ptr<D2D::Policies::OutStateChange> pOutStateChangePolicy{
-		new D2D::Policies::OutStateChange{}
+	::std::shared_ptr<D2D::Policies::CheckboxStateChange> pCheckboxStateChangePolicy{
+		new D2D::Policies::CheckboxStateChange{}
 	};
 	::std::shared_ptr<D2D::Policies::GainerStateChange> pGainerStateChangePolicy{
 		new D2D::Policies::GainerStateChange{}
 	};
-	auto outMap = [](const int& state)->float {
+	auto checkboxMap = [](const int& state)->float {
 		return static_cast<float>(state);
 	};
 	auto gainerMap = [](const int& state)->float {
 		return state / 100.F - 118.F;
 	};
-	using OutStatePromotion = RemoteStatePromotion<decltype(outMap)>;
+	using CheckboxStatePromotion = RemoteStatePromotion<decltype(checkboxMap)>;
 	using GainerStatePromotion = RemoteStatePromotion<decltype(gainerMap)>;
-	::std::unique_ptr<OutStatePromotion> out_a_1_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].A1", outMap }
+	::std::unique_ptr<CheckboxStatePromotion> out_a_1_pStatePromotionPolicy{
+		new CheckboxStatePromotion{ m_remote, "Strip[5].A1", checkboxMap }
 	};
-	::std::unique_ptr<OutStatePromotion> out_a_2_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].A2", outMap }
+	::std::unique_ptr<CheckboxStatePromotion> out_a_2_pStatePromotionPolicy{
+		new CheckboxStatePromotion{ m_remote, "Strip[5].A2", checkboxMap }
 	};
-	::std::unique_ptr<OutStatePromotion> out_b_1_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].B1", outMap }
+	::std::unique_ptr<CheckboxStatePromotion> out_b_1_pStatePromotionPolicy{
+		new CheckboxStatePromotion{ m_remote, "Strip[5].B1", checkboxMap }
 	};
-	::std::unique_ptr<OutStatePromotion> out_b_2_pStatePromotionPolicy{
-		new OutStatePromotion{ m_remote, "Strip[5].B2", outMap }
+	::std::unique_ptr<CheckboxStatePromotion> out_b_2_pStatePromotionPolicy{
+		new CheckboxStatePromotion{ m_remote, "Strip[5].B2", checkboxMap }
+	};
+	::std::unique_ptr<CheckboxStatePromotion> systemMute_pStatePromotionPolicy{
+		new CheckboxStatePromotion{ m_remote, "Strip[5].Mute", checkboxMap }
+	};
+	::std::unique_ptr<CheckboxStatePromotion> vban_pStatePromotionPolicy{
+		new CheckboxStatePromotion{ m_remote, "vban.Enable", checkboxMap }
 	};
 	::std::unique_ptr<GainerStatePromotion> systemGainer_pStatePromotionPolicy{
 		new GainerStatePromotion{ m_remote, "Strip[5].Gain", gainerMap }
@@ -175,7 +207,7 @@ void Window::BuildScene() {
 			Controls::Carousel>>(
 				*pInputTracker,
 				::std::move(out_a_1_pGlyph),
-				pOutStateChangePolicy,
+				pCheckboxStateChangePolicy,
 				::std::move(out_a_1_pStatePromotionPolicy),
 				pCarouseleGlyphUpdatePolicy,
 				pCarouselInteractivityPolicy
@@ -186,7 +218,7 @@ void Window::BuildScene() {
 					::linear_algebra::vectord{ 0, 0 },
 					*pInputTracker,
 					::std::move(out_a_2_pGlyph),
-					pOutStateChangePolicy,
+					pCheckboxStateChangePolicy,
 					::std::move(out_a_2_pStatePromotionPolicy),
 					pCarouseleGlyphUpdatePolicy,
 					pCarouselInteractivityPolicy
@@ -197,7 +229,7 @@ void Window::BuildScene() {
 			Controls::Carousel>>(
 				*pInputTracker,
 				::std::move(out_b_1_pGlyph),
-				pOutStateChangePolicy,
+				pCheckboxStateChangePolicy,
 				::std::move(out_b_1_pStatePromotionPolicy),
 				pCarouseleGlyphUpdatePolicy,
 				pCarouselInteractivityPolicy
@@ -208,7 +240,7 @@ void Window::BuildScene() {
 					::linear_algebra::vectord{ 0, 0 },
 					*pInputTracker,
 					::std::move(out_b_2_pGlyph),
-					pOutStateChangePolicy,
+					pCheckboxStateChangePolicy,
 					::std::move(out_b_2_pStatePromotionPolicy),
 					pCarouseleGlyphUpdatePolicy,
 					pCarouselInteractivityPolicy
@@ -217,13 +249,24 @@ void Window::BuildScene() {
 
 	::std::unique_ptr<IComponent> cpComponent[]{
 		::std::make_unique<Decorators::RegionCheck<
-			D2D::Controls::Gainer>>(
+			Controls::Carousel>>(
 				*pInputTracker,
-				::std::move(systemGainer_pGlyph),
-				pGainerStateChangePolicy,
-				::std::move(systemGainer_pStatePromotionPolicy),
-				pGainerGlyphUpdatePolicy,
-				pGainerInteractivityPolicy
+				::std::move(vban_pGlyph),
+				pCheckboxStateChangePolicy,
+				::std::move(vban_pStatePromotionPolicy),
+				pCarouseleGlyphUpdatePolicy,
+				pCarouselInteractivityPolicy
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				D2D::Controls::Gainer>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::move(systemGainer_pGlyph),
+					pGainerStateChangePolicy,
+					::std::move(systemGainer_pStatePromotionPolicy),
+					pGainerGlyphUpdatePolicy,
+					pGainerInteractivityPolicy
 		), ::std::make_unique<Decorators::Margin<
 			Decorators::RegionCheck<
 				Panels::Stack<Panels::Direction::Down>>>>(
@@ -240,6 +283,17 @@ void Window::BuildScene() {
 					*pInputTracker,
 					::std::begin(out_b_cpControl),
 					::std::end(out_b_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Controls::Carousel>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::move(systemMute_pGlyph),
+					pCheckboxStateChangePolicy,
+					::std::move(systemMute_pStatePromotionPolicy),
+					pCarouseleGlyphUpdatePolicy,
+					pCarouselInteractivityPolicy
 		)
 	};
 

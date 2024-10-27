@@ -90,8 +90,11 @@ void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 		static_cast<LONG>(::std::ceil(point.x + vertex.x)),
 		static_cast<LONG>(::std::ceil(point.y + vertex.y))
 	};
+#ifdef NDEBUG
+	wDrawThemeParentBackground(m_hWnd, hDc, &rc);
+#else
 	FillRect(hDc, &rc, CreateSolidBrush(RGB(44, 61, 77)));
-	//wDrawThemeParentBackground(m_hWnd, hDc, &rc);
+#endif
 	m_pD2dGdiRenderTarget->ReleaseDC(&rc);
 }
 void Canvas::Resize(const ::linear_algebra::vectord& vertex) {

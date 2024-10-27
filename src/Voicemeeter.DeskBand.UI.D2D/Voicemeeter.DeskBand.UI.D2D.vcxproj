@@ -148,11 +148,13 @@
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
     <ClInclude Include="Graphics\Glyphs\Gainer.h" />
+    <ClInclude Include="Graphics\Glyphs\Mute.h" />
     <ClInclude Include="Graphics\Glyphs\Out.h" />
+    <ClInclude Include="Graphics\Glyphs\Vban.h" />
     <ClInclude Include="Policies\GainerGlyphUpdate.h" />
     <ClInclude Include="Policies\GainerInteractivity.h" />
     <ClInclude Include="Policies\GainerStateChange.h" />
-    <ClInclude Include="Policies\OutStateChange.h" />
+    <ClInclude Include="Policies\CheckboxStateChange.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>

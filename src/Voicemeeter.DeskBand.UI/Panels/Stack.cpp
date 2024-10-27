@@ -20,8 +20,10 @@ void Stack<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex) {
 	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+		const ::linear_algebra::vectord& componentBaseVertex{ pComponent->get_BaseSize() };
+
 		pComponent->Move(componentPoint);
-		pComponent->Rescale(pComponent->get_BaseSize() * scale);
+		pComponent->Rescale(componentBaseVertex * (scale * m_baseVertex.y / componentBaseVertex.y));
 
 		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
 
@@ -46,8 +48,10 @@ void Stack<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex) {
 	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+		const ::linear_algebra::vectord& componentBaseVertex{ pComponent->get_BaseSize() };
+
 		pComponent->Move(componentPoint);
-		pComponent->Rescale(pComponent->get_BaseSize() * scale);
+		pComponent->Rescale(componentBaseVertex * (scale * m_baseVertex.x / componentBaseVertex.x));
 
 		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
 
