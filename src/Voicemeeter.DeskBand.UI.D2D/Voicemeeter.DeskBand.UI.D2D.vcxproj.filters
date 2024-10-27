@@ -78,6 +78,9 @@
     <ClInclude Include="Graphics\Glyphs\Vban.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\Theme.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Palette.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

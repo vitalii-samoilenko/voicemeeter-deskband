@@ -20,6 +20,8 @@ namespace Voicemeeter {
 			namespace D2D {
 				namespace Graphics {
 					namespace Glyphs {
+						struct Triangle {};
+
 						template<bool Active>
 						class Out : public Glyph {
 						public:
@@ -42,51 +44,17 @@ namespace Voicemeeter {
 							virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
 								Glyph::Redraw(point, vertex);
 
-								m_canvas.get_pRenderTarget()
-									->DrawRoundedRectangle(
-										::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 18.25F), 6.25F, 6.25F),
-										Brush(),
-										1.5F);
-								m_canvas.get_pRenderTarget()
-									->FillGeometry(
-										Triangle(),
-										Brush());
-								m_canvas.get_pRenderTarget()
-									->DrawText(
-										m_label.c_str(),
-										m_label.size(),
-										m_canvas.get_pTextFormat(),
-										D2D1::RectF(16.F, 0.5F, 300.F, 200.F),
-										Brush());
-							};
-
-						private:
-							::std::wstring m_label;
-
-							ID2D1SolidColorBrush* Brush() const {
-								const ::std::string& key{
-									Active
-										? "active"
-										: "inactive"
+								const Palette& palette{ m_canvas.get_Palette() };
+								ID2D1SolidColorBrush* pBrush{
+									(Active
+										? palette.get_pBrush(palette.get_Theme()
+											.PrimaryActive)
+										: palette.get_pBrush(palette.get_Theme()
+											.Inactive))
 								};
-								ID2D1SolidColorBrush* pBrush{ nullptr };
-								if (!m_canvas.get_pBrush(key, &pBrush)) {
-									DWORD color{
-										Active
-											? RGB(153, 195, 112)
-											: RGB(137, 120, 95)
-									};
-									pBrush->SetColor(::D2D1::ColorF(color));
-								}
-								return pBrush;
-							};
-
-							ID2D1PathGeometry* Triangle() {
-								const ::std::string& key{
-									"out_triangle"
-								};
-								ID2D1PathGeometry* pTriangle{ nullptr };
-								if (!m_canvas.get_pGeometry(key, &pTriangle)) {
+								bool fresh{ false };
+								ID2D1PathGeometry* pTriangle{ palette.get_pGeometry(typeid(Triangle), fresh) };
+								if (fresh) {
 									::Microsoft::WRL::ComPtr<ID2D1GeometrySink> pSink{ nullptr };
 									ThrowIfFailed(pTriangle->Open(
 										&pSink
@@ -109,8 +77,28 @@ namespace Voicemeeter {
 									ThrowIfFailed(pSink->Close(
 									), "Geometry finalization failed");
 								}
-								return pTriangle;
+
+								m_canvas.get_pRenderTarget()
+									->DrawRoundedRectangle(
+										::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 18.25F), 6.25F, 6.25F),
+										pBrush,
+										1.5F);
+								m_canvas.get_pRenderTarget()
+									->FillGeometry(
+										pTriangle,
+										pBrush);
+								m_canvas.get_pRenderTarget()
+									->DrawText(
+										m_label.c_str(),
+										static_cast<UINT32>(m_label.size()),
+										palette.get_pTextFormat(palette.get_Theme()
+											.FontFamily),
+										D2D1::RectF(16.F, 0.5F, 300.F, 200.F),
+										pBrush);
 							};
+
+						private:
+							::std::wstring m_label;
 						};
 					}
 				}

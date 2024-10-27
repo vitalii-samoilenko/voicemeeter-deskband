@@ -1,3 +1,4 @@
+#include <cmath>
 #include <utility>
 
 #include "window.h"
@@ -164,15 +165,15 @@ LRESULT CALLBACK Window::WindowProcW(
 
 			RECT rc{};
 			wGetClientRect(hWnd, &rc);
-			rc.right *= scale;
-			rc.bottom *= scale;
-			wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, wParam);
+			rc.right = static_cast<LONG>(::std::ceil(rc.right * scale));
+			rc.bottom = static_cast<LONG>(::std::ceil(rc.bottom * scale));
+			wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, static_cast<UINT>(wParam));
 
 			LPSIZE pSize{ reinterpret_cast<LPSIZE>(lParam) };
 			pSize->cx = rc.right - rc.left;
 			pSize->cy = rc.bottom - rc.top;
 
-			pWnd->m_dpi = wParam;
+			pWnd->m_dpi = static_cast<UINT>(wParam);
 		} return TRUE;
 		case WM_DPICHANGED: {
 			const LPRECT pRc{ reinterpret_cast<LPRECT>(lParam) };

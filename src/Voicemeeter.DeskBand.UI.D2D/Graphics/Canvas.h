@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
+#include <typeinfo>
 #include <unordered_map>
 
 #include <windows.h>
@@ -12,6 +14,8 @@
 
 #include "Voicemeeter.DeskBand.UI/Graphics/ICanvas.h"
 
+#include "Theme.h"
+
 using namespace ::Voicemeeter::DeskBand::UI::Graphics;
 
 namespace Voicemeeter {
@@ -19,10 +23,13 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace D2D {
 				namespace Graphics {
+					class Palette;
+
 					class Canvas final : public ICanvas {
 					public:
-						explicit Canvas(
-							HWND hWnd
+						Canvas(
+							HWND hWnd,
+							const Theme& theme
 						);
 						Canvas() = delete;
 						Canvas(const Canvas&) = delete;
@@ -39,15 +46,18 @@ namespace Voicemeeter {
 						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
 						virtual void Resize(const ::linear_algebra::vectord& vertex) override;
 
+						inline IDWriteFactory7* get_pDwFactory() const {
+							return m_pDwFactory.Get();
+						};
+						inline ID2D1Factory7* get_pD2dFactory() const {
+							return m_pD2dFactory.Get();
+						}
 						inline ID2D1HwndRenderTarget* get_pRenderTarget() const {
 							return m_pD2dRenderTarget.Get();
 						};
-						bool get_pBrush(const ::std::string& key, ID2D1SolidColorBrush** ppBrush) const;
-						bool get_pGeometry(const ::std::string& key, ID2D1PathGeometry** ppGeometry) const;
-						inline IDWriteTextFormat* get_pTextFormat() const {
-							return m_pTextFormat.Get();
+						inline const Palette& get_Palette() const {
+							return *m_pPalette;
 						}
-
 
 					private:
 						HWND m_hWnd;
@@ -57,9 +67,37 @@ namespace Voicemeeter {
 						::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 						::Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pD2dRenderTarget;
 						::Microsoft::WRL::ComPtr<ID2D1GdiInteropRenderTarget> m_pD2dGdiRenderTarget;
-						mutable ::std::unordered_map<::std::string, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
-						mutable ::std::unordered_map<::std::string, ::Microsoft::WRL::ComPtr<ID2D1PathGeometry>> m_cpGeometry;
-						::Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
+						::std::unique_ptr<Palette> m_pPalette;
+					};
+
+					class Palette final {
+					public:
+						Palette(
+							const Theme& theme,
+							const Canvas& canvas
+						);
+						Palette() = delete;
+						Palette(const Palette&) = delete;
+						Palette(Palette&&) = delete;
+
+						~Palette() = default;
+
+						Palette& operator=(const Palette&) = delete;
+						Palette& operator=(Palette&&) = delete;
+
+						inline const Theme& get_Theme() const {
+							return m_theme;
+						};
+						IDWriteTextFormat* get_pTextFormat(const ::std::wstring& fontFamily) const;
+						ID2D1SolidColorBrush* get_pBrush(const ::D2D1::ColorF& color) const;
+						ID2D1PathGeometry* get_pGeometry(const ::std::type_info& type, bool& fresh) const;
+
+					private:
+						Theme m_theme;
+						const Canvas& m_canvas;
+						mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;
+						mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
+						mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1PathGeometry>> m_cpGeometry;
 					};
 				}
 			}

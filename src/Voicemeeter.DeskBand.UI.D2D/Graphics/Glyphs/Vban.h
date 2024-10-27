@@ -23,7 +23,7 @@ namespace Voicemeeter {
 						template<bool Active>
 						class Vban : public Glyph {
 						public:
-							Vban(
+							explicit Vban(
 								Graphics::Canvas& canvas
 							) : Glyph{ canvas, { 39, 22 } } { //{65, 22}
 
@@ -40,18 +40,27 @@ namespace Voicemeeter {
 							virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
 								Glyph::Redraw(point, vertex);
 
+								const Palette& palette{ m_canvas.get_Palette() };
+								ID2D1SolidColorBrush* pBrush{
+									(Active
+										? palette.get_pBrush(palette.get_Theme()
+											.SecondaryActive)
+										: palette.get_pBrush(palette.get_Theme()
+											.Inactive))
+								};
+
 								m_canvas.get_pRenderTarget()
 									->FillRectangle(
 										::D2D1::RectF(0.F, 0.F, 7.5F, 22.F),
-										Brush());
+										pBrush);
 								m_canvas.get_pRenderTarget()
 									->FillRectangle(
 										::D2D1::RectF(31.5F, 0.F, 39.F, 22.F), //57.5
-										Brush());
+										pBrush);
 								m_canvas.get_pRenderTarget()
 									->DrawRectangle(
 										::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),  //57.5
-										Brush());
+										pBrush);
 								D2D1_MATRIX_3X2_F base{};
 								m_canvas.get_pRenderTarget()
 									->GetTransform(&base);
@@ -62,33 +71,16 @@ namespace Voicemeeter {
 									->DrawText(
 										L"VBAN",
 										1, // 4
-										m_canvas.get_pTextFormat(),
+										palette.get_pTextFormat(palette.get_Theme()
+											.FontFamily),
 										D2D1::RectF(19.F, 5.0F, 300.F, 200.F),
-										Brush());
+										pBrush);
 								m_canvas.get_pRenderTarget()
 									->SetTransform(base);
 							};
 
 						private:
 							::std::wstring m_label;
-
-							ID2D1SolidColorBrush* Brush() const {
-								const ::std::string& key{
-									Active
-										? "vban_active"
-										: "inactive"
-								};
-								ID2D1SolidColorBrush* pBrush{ nullptr };
-								if (!m_canvas.get_pBrush(key, &pBrush)) {
-									DWORD color{
-										Active
-											? RGB(250, 230, 104)
-											: RGB(137, 120, 95)
-									};
-									pBrush->SetColor(::D2D1::ColorF(color));
-								}
-								return pBrush;
-							};
 						};
 					}
 				}

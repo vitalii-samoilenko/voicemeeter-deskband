@@ -19,6 +19,7 @@
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Out.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Glyphs/Vban.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Graphics/Canvas.h"
+#include "Voicemeeter.DeskBand.UI.D2D/Graphics/Theme.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerGlyphUpdate.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerInteractivity.h"
 #include "Voicemeeter.DeskBand.UI.D2D/Policies/GainerStateChange.h"
@@ -74,8 +75,9 @@ void DeskBand::BuildScene() {
 		new InputTracker{ *this }
 	};
 
+	const D2D::Graphics::Theme theme{ D2D::Graphics::Theme::Default() };
 	::std::unique_ptr<D2D::Graphics::Canvas> pCanvas{
-		new D2D::Graphics::Canvas{ m_hWnd }
+		new D2D::Graphics::Canvas{ m_hWnd, theme }
 	};
 
 	::std::unique_ptr<IGlyph> out_a_1_cpFrame[]{

@@ -1,5 +1,7 @@
 #include "windows.h"
 
+#include <cmath>
+
 #include <utility>
 
 #include "windowsx.h"
@@ -223,8 +225,8 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi)
         {
             auto vertex = m_pScene->get_Size();
 
-            pdbi->ptActual.x = vertex.x;
-            pdbi->ptActual.y = vertex.y;
+            pdbi->ptActual.x = static_cast<LONG>(::std::ceil(vertex.x));
+            pdbi->ptActual.y = static_cast<LONG>(::std::ceil(vertex.y));
         }
 
         if (pdbi->dwMask & DBIM_TITLE)
@@ -692,15 +694,15 @@ LRESULT CALLBACK DeskBand::WindowProcW(
 
 			RECT rc{};
 			wGetClientRect(hWnd, &rc);
-			rc.right *= scale;
-			rc.bottom *= scale;
-			wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, wParam);
+            rc.right = static_cast<LONG>(::std::ceil(rc.right * scale));
+            rc.bottom = static_cast<LONG>(::std::ceil(rc.bottom * scale));
+            wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, EX_STYLE, static_cast<UINT>(wParam));
 
 			LPSIZE pSize{ reinterpret_cast<LPSIZE>(lParam) };
 			pSize->cx = rc.right - rc.left;
 			pSize->cy = rc.bottom - rc.top;
 
-			pWnd->m_dpi = wParam;
+            pWnd->m_dpi = static_cast<UINT>(wParam);
 		} return TRUE;
 		case WM_DPICHANGED: {
 			const LPRECT pRc{ reinterpret_cast<LPRECT>(lParam) };

@@ -39,6 +39,7 @@ namespace Voicemeeter {
 
 				void BuildScene();
 				void Connect();
+				void Update();
 
 				static LRESULT WindowProcW(
 					HWND hWnd,

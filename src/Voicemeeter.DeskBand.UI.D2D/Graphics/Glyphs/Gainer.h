@@ -13,7 +13,7 @@ namespace Voicemeeter {
 					namespace Glyphs {
 						class Gainer : public Glyph {
 						public:
-							Gainer(
+							explicit Gainer(
 								Graphics::Canvas& canvas
 							);
 							Gainer() = delete;
@@ -33,12 +33,6 @@ namespace Voicemeeter {
 
 						private:
 							FLOAT m_level;
-
-							ID2D1SolidColorBrush* Brush() const;
-							ID2D1SolidColorBrush* Light() const;
-							ID2D1SolidColorBrush* Dark() const;
-							ID2D1SolidColorBrush* White() const;
-							ID2D1PathGeometry* HalfCircle() const;
 						};
 					}
 				}

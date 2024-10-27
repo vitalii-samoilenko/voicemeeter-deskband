@@ -151,6 +151,7 @@
     <ClInclude Include="Graphics\Glyphs\Mute.h" />
     <ClInclude Include="Graphics\Glyphs\Out.h" />
     <ClInclude Include="Graphics\Glyphs\Vban.h" />
+    <ClInclude Include="Graphics\Theme.h" />
     <ClInclude Include="Policies\GainerGlyphUpdate.h" />
     <ClInclude Include="Policies\GainerInteractivity.h" />
     <ClInclude Include="Policies\GainerStateChange.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Graphics\Canvas.cpp" />
     <ClCompile Include="Graphics\Glyph.cpp" />
     <ClCompile Include="Graphics\Glyphs\Gainer.cpp" />
+    <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Policies\GainerGlyphUpdate.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>

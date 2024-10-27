@@ -33,8 +33,12 @@ const ::linear_algebra::vectord& Glyph::get_BaseSize() const {
 void Glyph::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	m_canvas.get_pRenderTarget()
 		->SetTransform(
-			::D2D1::Matrix3x2F::Scale(m_vertex.x / m_baseVertex.x, m_vertex.y / m_baseVertex.y)
-			* ::D2D1::Matrix3x2F::Translation(m_point.x, m_point.y));
+			::D2D1::Matrix3x2F::Scale(
+				static_cast<FLOAT>(m_vertex.x / m_baseVertex.x),
+				static_cast<FLOAT>(m_vertex.y / m_baseVertex.y))
+			* ::D2D1::Matrix3x2F::Translation(
+				static_cast<FLOAT>(m_point.x),
+				static_cast<FLOAT>(m_point.y)));
 }
 void Glyph::Move(const ::linear_algebra::vectord& point) {
 	m_point = point;
