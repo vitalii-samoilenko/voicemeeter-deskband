@@ -1,6 +1,6 @@
 # VoiceMeeter DeskBand
 
-![Visual concept](visual_concept.png)
+![Prototype](prototype.png)
 
 ## Motivation
 
