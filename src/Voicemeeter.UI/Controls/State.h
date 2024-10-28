@@ -110,6 +110,11 @@ namespace Voicemeeter {
 
 					return true;
 				};
+				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
+					m_pInteractivityPolicy->MouseRDouble(*this, point);
+
+					return true;
+				};
 				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
 					m_pInteractivityPolicy->MouseWheel(*this, point, delta);
 

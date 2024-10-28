@@ -11,6 +11,9 @@ void CarouselInteractivity::MouseLDouble(Controls::Carousel& component, const ::
 void CarouselInteractivity::MouseRDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
 
 }
+void CarouselInteractivity::MouseRDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
+	
+}
 void CarouselInteractivity::MouseWheel(Controls::Carousel& component, const ::linear_algebra::vectord& point, int delta) const {
 
 }

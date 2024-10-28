@@ -4,7 +4,7 @@
 
 #include "estd/linear_algebra.h"
 
-#include <d2d1_3.h>
+#include "Windows/Wrappers.h"
 
 #include "../Canvas.h"
 #include "../Glyph.h"
@@ -19,7 +19,8 @@ namespace Voicemeeter {
 					public:
 						explicit Vban(
 							Graphics::Canvas& canvas
-						) : Glyph{ canvas, { 39, 22 } } { //{65, 22}
+						) : Glyph{ canvas, { 39, 22 } }
+						  , m_label{ L"V" } {
 
 						}
 						Vban() = delete;
@@ -42,6 +43,17 @@ namespace Voicemeeter {
 									: palette.get_pBrush(palette.get_Theme()
 										.Inactive))
 							};
+							IDWriteTextLayout* pLayout{
+								palette.get_pTextLayout(
+									m_label,
+									palette.get_Theme()
+										.FontFamily
+								)
+							};
+							DWRITE_TEXT_METRICS metrics{};
+							::Windows::ThrowIfFailed(pLayout->GetMetrics(
+								&metrics
+							), "Text measurement failed");
 
 							m_canvas.get_pRenderTarget()
 								->FillRectangle(
@@ -49,28 +61,17 @@ namespace Voicemeeter {
 									pBrush);
 							m_canvas.get_pRenderTarget()
 								->FillRectangle(
-									::D2D1::RectF(31.5F, 0.F, 39.F, 22.F), //57.5
+									::D2D1::RectF(31.5F, 0.F, 39.F, 22.F),
 									pBrush);
 							m_canvas.get_pRenderTarget()
 								->DrawRectangle(
-									::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),  //57.5
-									pBrush);
-							D2D1_MATRIX_3X2_F base{};
-							m_canvas.get_pRenderTarget()
-								->GetTransform(&base);
-							m_canvas.get_pRenderTarget()
-								->SetTransform(::D2D1::Matrix3x2F::Scale(0.8F, 0.8F)
-									* base);
-							m_canvas.get_pRenderTarget()
-								->DrawTextW(
-									L"VBAN",
-									1, // 4
-									palette.get_pTextFormat(palette.get_Theme()
-										.FontFamily),
-									D2D1::RectF(19.F, 5.0F, 300.F, 200.F),
+									::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),
 									pBrush);
 							m_canvas.get_pRenderTarget()
-								->SetTransform(base);
+								->DrawTextLayout(
+									::D2D1::Point2F((39.F - metrics.width) / 2, (22.F - metrics.height) / 2),
+									pLayout,
+									pBrush);
 						};
 
 					private:

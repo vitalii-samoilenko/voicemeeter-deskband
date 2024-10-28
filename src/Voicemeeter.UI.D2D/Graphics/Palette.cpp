@@ -1,3 +1,5 @@
+#include <limits>
+
 #include "Windows/Wrappers.h"
 
 #include "Canvas.h"
@@ -13,6 +15,7 @@ Palette::Palette(
 ) : m_theme{ theme }
   , m_canvas{ canvas }
   , m_cpTextFormat{}
+  , m_cpTextLayout{}
   , m_cpBrush{}
   , m_cpGeometry{} {
 
@@ -38,6 +41,25 @@ IDWriteTextFormat* Palette::get_pTextFormat(const ::std::wstring& fontFamily) co
 		), "Text format creation failed");
 	}
 	return pTextFormat.Get();
+}
+IDWriteTextLayout* Palette::get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const {
+	::Microsoft::WRL::ComPtr<IDWriteTextLayout>& pTextLayout{
+		m_cpTextLayout[
+			reinterpret_cast<void*>(&
+				const_cast<::std::wstring&>(text))]
+	};
+	if (!pTextLayout) {
+		::Windows::ThrowIfFailed(m_canvas.get_pDwFactory()
+			->CreateTextLayout(
+				text.c_str(),
+				static_cast<UINT32>(text.length()),
+				get_pTextFormat(fontFamily),
+				::std::numeric_limits<FLOAT>::max(),
+				::std::numeric_limits<FLOAT>::max(),
+				&pTextLayout
+			), "Text layout creation failed");
+	}
+	return pTextLayout.Get();
 }
 ID2D1SolidColorBrush* Palette::get_pBrush(const ::D2D1::ColorF& color) const {
 	::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>& pBrush{

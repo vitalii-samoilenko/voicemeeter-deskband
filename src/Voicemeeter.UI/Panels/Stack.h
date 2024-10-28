@@ -88,6 +88,14 @@ namespace Voicemeeter {
 					}
 					return false;
 				};
+				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
+					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+						if (pComponent->MouseRDouble(point)) {
+							return true;
+						}
+					}
+					return false;
+				};
 				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
 					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 						if (pComponent->MouseWheel(point, delta)) {

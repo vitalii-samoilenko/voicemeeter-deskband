@@ -12,7 +12,7 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
 			template<typename TGlyph>
-			class SliderInteractivity final : public IInteractivity<Controls::Slider<TGlyph>> {
+			class SliderInteractivity : public IInteractivity<Controls::Slider<TGlyph>> {
 			public:
 				explicit SliderInteractivity(
 					IInputTracker& inputTracker
@@ -35,6 +35,9 @@ namespace Voicemeeter {
 					component.SetDefault();
 				};
 				virtual void MouseRDown(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+
+				};
+				virtual void MouseRDouble(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 
 				};
 				virtual void MouseWheel(Controls::Slider<TGlyph>& component, const ::linear_algebra::vectord& point, int delta) const override {

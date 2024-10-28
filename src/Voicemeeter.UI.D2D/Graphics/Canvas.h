@@ -87,6 +87,7 @@ namespace Voicemeeter {
 						return m_theme;
 					};
 					IDWriteTextFormat* get_pTextFormat(const ::std::wstring& fontFamily) const;
+					IDWriteTextLayout* get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const;
 					ID2D1SolidColorBrush* get_pBrush(const ::D2D1::ColorF& color) const;
 					ID2D1PathGeometry* get_pGeometry(const ::std::type_info& type, bool& fresh) const;
 
@@ -94,6 +95,7 @@ namespace Voicemeeter {
 					Theme m_theme;
 					const Canvas& m_canvas;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;
+					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1PathGeometry>> m_cpGeometry;
 				};

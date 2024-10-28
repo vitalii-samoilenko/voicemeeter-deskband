@@ -57,6 +57,10 @@ namespace Voicemeeter {
 					return (is_inside(point) || m_inputTracker.IsTracking(*this))
 						&& TComponent::MouseRDown(point);
 				};
+				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
+					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+						&& TComponent::MouseRDouble(point);
+				};
 				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
 					return (is_inside(point) || m_inputTracker.IsTracking(*this))
 						&& TComponent::MouseWheel(point, delta);

@@ -21,8 +21,8 @@ Window::Window(
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
-	rc.bottom = 40;
-	rc.right = 365;
+	rc.bottom = 48;
+	rc.right = 592;
 	::Windows::wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, NULL, m_dpi);
 
 	WNDCLASSW wndClass{};
@@ -124,6 +124,12 @@ LRESULT CALLBACK Window::WndProcW(
 		} return OK;
 		case WM_RBUTTONDOWN: {
 			pWnd->m_pScene->MouseRDown({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
+		} return OK;
+		case WM_RBUTTONDBLCLK: {
+			pWnd->m_pScene->MouseRDouble({
 				static_cast<double>(GET_X_LPARAM(lParam)),
 				static_cast<double>(GET_Y_LPARAM(lParam))
 			});

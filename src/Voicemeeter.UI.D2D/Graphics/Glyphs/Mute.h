@@ -52,7 +52,8 @@ namespace Voicemeeter {
 							m_canvas.get_pRenderTarget()
 								->GetTransform(&base);
 							m_canvas.get_pRenderTarget()
-								->SetTransform(::D2D1::Matrix3x2F::Scale(1.5F, 1.5F)
+								->SetTransform(
+									::D2D1::Matrix3x2F::Scale(1.5F, 1.5F)
 									* base);
 							m_canvas.get_pRenderTarget()
 								->DrawTextW(

@@ -11,6 +11,7 @@ namespace Voicemeeter {
 				struct Theme {
 					::std::wstring FontFamily;
 
+					::D2D1::ColorF Warning;
 					::D2D1::ColorF Danger;
 					::D2D1::ColorF DarkGlass;
 					::D2D1::ColorF LightGlass;
@@ -22,6 +23,7 @@ namespace Voicemeeter {
 					static Theme Default() {
 						return {
 							L"Arial",
+							::D2D1::ColorF{ 231 / 255.F, 255 / 255.F, 17 / 255.F },
 							::D2D1::ColorF{ 248 / 255.F, 99 / 255.F, 77 / 255.F },
 							::D2D1::ColorF{ 0.75F, 0.75F, 0.75F, 0.4F },
 							::D2D1::ColorF{ 1.F, 1.F, 1.F, 0.4F },

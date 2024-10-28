@@ -26,7 +26,7 @@ namespace Voicemeeter {
 							Graphics::Canvas& canvas,
 							const ::std::wstring& label
 						) : Glyph{ canvas, { 41, 19 } }
-							, m_label{ label } {
+						  , m_label{ label } {
 
 						}
 						Out() = delete;
@@ -74,6 +74,17 @@ namespace Voicemeeter {
 								::Windows::ThrowIfFailed(pSink->Close(
 								), "Geometry finalization failed");
 							}
+							IDWriteTextLayout* pLayout{
+								palette.get_pTextLayout(
+									m_label,
+									palette.get_Theme()
+										.FontFamily
+								)
+							};
+							DWRITE_TEXT_METRICS metrics{};
+							::Windows::ThrowIfFailed(pLayout->GetMetrics(
+								&metrics
+							), "Text measurement failed");
 
 							m_canvas.get_pRenderTarget()
 								->DrawRoundedRectangle(
@@ -85,12 +96,9 @@ namespace Voicemeeter {
 									pTriangle,
 									pBrush);
 							m_canvas.get_pRenderTarget()
-								->DrawTextW(
-									m_label.c_str(),
-									static_cast<UINT32>(m_label.size()),
-									palette.get_pTextFormat(palette.get_Theme()
-										.FontFamily),
-									D2D1::RectF(16.F, 0.5F, 300.F, 200.F),
+								->DrawTextLayout(
+									::D2D1::Point2F(34.F - metrics.width, (19.F - metrics.height) / 2),
+									pLayout,
 									pBrush);
 						};
 

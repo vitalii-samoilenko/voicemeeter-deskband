@@ -73,7 +73,8 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 	m_canvas.get_pRenderTarget()
 		->GetTransform(&base);
 	m_canvas.get_pRenderTarget()
-		->SetTransform(::D2D1::Matrix3x2F::Rotation(-45.F, ::D2D1::Point2F(0.F, 20.F))
+		->SetTransform(
+			::D2D1::Matrix3x2F::Rotation(-45.F, ::D2D1::Point2F(0.F, 20.F))
 			* base
 			* ::D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(m_level * scale), 0.F));
 	m_canvas.get_pRenderTarget()
@@ -82,7 +83,8 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 			palette.get_pBrush(palette.get_Theme()
 				.LightGlass));
 	m_canvas.get_pRenderTarget()
-		->SetTransform(::D2D1::Matrix3x2F::Rotation(135.F, ::D2D1::Point2F(0.F, 20.F))
+		->SetTransform(
+			::D2D1::Matrix3x2F::Rotation(135.F, ::D2D1::Point2F(0.F, 20.F))
 			* base
 			* ::D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(m_level * scale), 0.F));
 	m_canvas.get_pRenderTarget()

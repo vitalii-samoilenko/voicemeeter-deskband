@@ -153,7 +153,7 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi) {
     m_dwBandID = dwBandID;
 
     if (pdbi->dwMask & DBIM_MINSIZE) {
-        pdbi->ptMinSize.x = 274;
+        pdbi->ptMinSize.x = 370;
         pdbi->ptMinSize.y = 30;
     }
 
@@ -347,7 +347,7 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     auto shutdown = [](long long errCode)->LRESULT {
         ::Windows::ErrorMessageBox(errCode);
 
-        PostQuitMessage(0);
+        //PostQuitMessage(0);
 
         return OK;
     };
@@ -417,12 +417,18 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
                 static_cast<double>(GET_Y_LPARAM(lParam))
             });
         } return OK;
-        case WM_RBUTTONDOWN: {
+        case WM_MBUTTONDOWN: {
             pWnd->m_pScene->MouseRDown({
                 static_cast<double>(GET_X_LPARAM(lParam)),
                 static_cast<double>(GET_Y_LPARAM(lParam))
             });
         } return OK;
+		case WM_MBUTTONDBLCLK: {
+			pWnd->m_pScene->MouseRDouble({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
+		} return OK;
         case WM_MOUSEWHEEL: {
             POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
             ::Windows::wScreenToClient(hWnd, &point);

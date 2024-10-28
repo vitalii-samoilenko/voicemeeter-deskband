@@ -46,6 +46,9 @@
     <Filter Include="Source Files\Policies">
       <UniqueIdentifier>{41edb6c8-e8db-4494-ad09-539d3260eda7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{6c7a9c28-1944-4024-9109-f7846a15d4c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\ICanvas.h">
@@ -136,6 +139,24 @@
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\CarouselGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\CheckboxStateChange.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\SliderGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Knob.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Knob.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\KnobInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\KnobStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
   </ItemGroup>

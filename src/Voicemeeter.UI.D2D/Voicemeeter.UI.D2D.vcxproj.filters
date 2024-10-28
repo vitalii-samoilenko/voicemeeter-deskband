@@ -48,9 +48,6 @@
     <ClInclude Include="Controls\Gainer.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\CheckboxStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\GainerStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
@@ -81,6 +78,21 @@
     <ClInclude Include="Graphics\Theme.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\Glyphs\Knob.h">
+      <Filter>Header Files\Graphics\Glyphs</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\KnobInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\KnobStateChange.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\KnobGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Knob.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -100,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="Graphics\Palette.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Glyphs\Knob.cpp">
+      <Filter>Source Files\Graphics\Glyphs</Filter>
+    </ClCompile>
+    <ClCompile Include="Policies\KnobGlyphUpdate.cpp">
+      <Filter>Source Files\Policies</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

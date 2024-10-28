@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Voicemeeter.UI/Policies/IGlyphUpdate.h"
+#include "Voicemeeter.UI/Policies/SliderGlyphUpdate.h"
 
 #include "../Graphics/Glyphs/Gainer.h"
 
@@ -10,7 +10,7 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Policies {
-				class GainerGlyphUpdate : public IGlyphUpdate<Graphics::Glyphs::Gainer, int> {
+				class GainerGlyphUpdate : public SliderGlyphUpdate<Graphics::Glyphs::Gainer> {
 				public:
 					GainerGlyphUpdate() = default;
 					GainerGlyphUpdate(const GainerGlyphUpdate&) = delete;

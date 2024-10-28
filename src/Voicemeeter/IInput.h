@@ -3,17 +3,17 @@
 #include "IChannel.h"
 
 namespace Voicemeeter {
-	class Input : public IChannel {
+	class IInput : public IChannel {
 	public:
-		Input(const Input&) = delete;
-		Input(Input&&) = delete;
+		IInput(const IInput&) = delete;
+		IInput(IInput&&) = delete;
 
-		Input& operator=(const Input&) = delete;
-		Input& operator=(Input&&) = delete;
+		IInput& operator=(const IInput&) = delete;
+		IInput& operator=(IInput&&) = delete;
 
 	private:
-		Input() = default;
+		IInput() = default;
 
-		~Input() = default;
+		~IInput() = default;
 	};
 }

@@ -16,6 +16,8 @@ namespace Voicemeeter {
 
 		virtual bool get_Vban() const = 0;
 		virtual void set_Vban(bool value) = 0;
+		virtual bool get_Plug(const IInput& input, const IOutput& output);
+		virtual void set_Plug(const IInput& input, const IOutput& output);
 
 	private:
 		IMixer() = default;

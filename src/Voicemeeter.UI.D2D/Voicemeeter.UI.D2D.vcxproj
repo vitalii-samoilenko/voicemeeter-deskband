@@ -147,10 +147,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controls\Gainer.h" />
+    <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Decorators\WindowsGlyphUpdate.h" />
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
     <ClInclude Include="Graphics\Glyphs\Gainer.h" />
+    <ClInclude Include="Graphics\Glyphs\Knob.h" />
     <ClInclude Include="Graphics\Glyphs\Mute.h" />
     <ClInclude Include="Graphics\Glyphs\Out.h" />
     <ClInclude Include="Graphics\Glyphs\Vban.h" />
@@ -158,15 +160,19 @@
     <ClInclude Include="Policies\GainerGlyphUpdate.h" />
     <ClInclude Include="Policies\GainerInteractivity.h" />
     <ClInclude Include="Policies\GainerStateChange.h" />
-    <ClInclude Include="Policies\CheckboxStateChange.h" />
+    <ClInclude Include="Policies\KnobGlyphUpdate.h" />
+    <ClInclude Include="Policies\KnobInteractivity.h" />
+    <ClInclude Include="Policies\KnobStateChange.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp" />
     <ClCompile Include="Graphics\Glyph.cpp" />
     <ClCompile Include="Graphics\Glyphs\Gainer.cpp" />
+    <ClCompile Include="Graphics\Glyphs\Knob.cpp" />
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Policies\GainerGlyphUpdate.cpp" />
+    <ClCompile Include="Policies\KnobGlyphUpdate.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
