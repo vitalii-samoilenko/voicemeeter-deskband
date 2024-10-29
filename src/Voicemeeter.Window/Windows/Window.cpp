@@ -16,8 +16,9 @@ static constexpr LRESULT OK{ 0 };
 Window::Window(
 	HINSTANCE hInstance
 ) : m_hWnd{ NULL }
-, m_dpi{ USER_DEFAULT_SCREEN_DPI }
-, m_pScene{ nullptr } {
+  , m_dpi{ USER_DEFAULT_SCREEN_DPI }
+  , m_pScene{ nullptr }
+  , m_pTimer{ nullptr } {
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
@@ -79,6 +80,7 @@ LRESULT CALLBACK Window::WndProcW(
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
+			pWnd->m_pTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->BuildScene();
 
@@ -88,6 +90,9 @@ LRESULT CALLBACK Window::WndProcW(
 		} break;
 		case WM_DESTROY: {
 			PostQuitMessage(0);
+		} return OK;
+		case WM_TIMER: {
+			pWnd->m_pTimer->Elapse();
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({

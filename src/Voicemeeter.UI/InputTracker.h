@@ -2,16 +2,17 @@
 
 #include "estd/linear_algebra.h"
 
+#include "Environment/IInputTracker.h"
+
 #include "IComponent.h"
 #include "IInputTracker.h"
-#include "ISystemInputTracker.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		class InputTracker final : public IInputTracker {
 		public:
 			explicit InputTracker(
-				ISystemInputTracker& systemInputTracler
+				::Environment::IInputTracker& envInputTracler
 			);
 			InputTracker(const InputTracker&) = delete;
 			InputTracker(InputTracker&&) = delete;
@@ -36,7 +37,7 @@ namespace Voicemeeter {
 			virtual bool MouseLUp(const ::linear_algebra::vectord& point) override;
 
 		private:
-			ISystemInputTracker& m_systemInputTracler;
+			::Environment::IInputTracker& m_envInputTracler;
 			IComponent* m_pPinned;
 			::linear_algebra::vectord m_point;
 		};

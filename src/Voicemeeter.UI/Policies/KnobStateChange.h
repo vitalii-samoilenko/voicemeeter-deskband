@@ -27,52 +27,67 @@ namespace Voicemeeter {
 				KnobStateChange& operator=(KnobStateChange&&) = delete;
 
 				virtual bool SetDefault(States::Knob& state) const override {
-					if (state.level == Default) {
+					if (state.gain == Default) {
 						return false;
 					}
-					state.level = Default;
+					state.gain = Default;
+					//state.pinned = true;
 					return true;
 				}
 				virtual bool SetNext(States::Knob& state) const override {
-					if (Max == state.level) {
+					if (Max == state.gain) {
 						return false;
-					} else if (Max - Delta < state.level) {
-						state.level = Max;
+					} else if (Max - Delta < state.gain) {
+						state.gain = Max;
 					} else {
-						state.level += Delta;
+						state.gain += Delta;
 					}
+					state.pinned = true;
 					return true;
 				};
 				virtual bool SetPrevious(States::Knob& state) const override {
-					if (state.level == Min) {
+					if (state.gain == Min) {
 						return false;
-					} else if (state.level < Min + Delta) {
-						state.level = Min;
+					} else if (state.gain < Min + Delta) {
+						state.gain = Min;
 					} else {
-						state.level -= Delta;
+						state.gain -= Delta;
 					}
+					state.pinned = true;
 					return true;
 				};
 				virtual bool Set(States::Knob& dst, States::Knob& src) const override {
-					if (dst == src) {
-						return false;
-					}
+					bool result{ false };
 					if (dst.pinned != src.pinned) {
-						dst = src;
-					} else if (Max < src.level) {
-						if (Max == dst.level) {
-							return false;
-						}
-						dst.level = Max;
-					} else if (src.level < Min) {
-						if (dst.level == Min) {
-							return false;
-						}
-						dst.level = Min;
-					} else {
-						dst.level = src.level;
+						dst.pinned = src.pinned;
+						result = true;
 					}
-					return true;
+					if (dst.enabled != src.enabled) {
+						dst.enabled = src.enabled;
+						result = true;
+					}
+					if (dst.level != src.level) {
+						dst.level = src.level;
+						result = true;
+					}
+					if (dst.gain != src.gain) {
+						if (Max < src.gain) {
+							if (Max != dst.gain) {
+								dst.gain = Max;
+								result = true;
+							}
+						} else if (src.gain < Min) {
+							if (dst.gain != Min) {
+								dst.gain = Min;
+								result = true;
+							}
+						} else {
+							dst.gain = src.gain;
+							result = true;
+						}
+					}
+
+					return result;
 				};
 			};
 		}

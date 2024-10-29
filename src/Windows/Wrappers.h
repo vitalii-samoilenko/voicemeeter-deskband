@@ -326,4 +326,34 @@ namespace Windows {
 		}
 		return pData;
 	}
+
+	inline UINT_PTR wSetTimer(
+		_In_opt_ HWND hWnd,
+		_In_ UINT_PTR nIDEvent,
+		_In_ UINT uElapse,
+		_In_opt_ TIMERPROC lpTimerFunc
+	) {
+		UINT_PTR id{ SetTimer(
+			hWnd,
+			nIDEvent,
+			uElapse,
+			lpTimerFunc
+		) };
+		if (id == 0) {
+			throw Error{ "Failed to set timer" };
+		}
+		return id;
+	}
+
+	inline void wKillTimer(
+		_In_opt_ HWND hWnd,
+		_In_ UINT_PTR uIDEvent
+	) {
+		if (KillTimer(
+			hWnd,
+			uIDEvent
+		) == 0) {
+			throw Error{ "Failed to kill timer" };
+		}
+	}
 }

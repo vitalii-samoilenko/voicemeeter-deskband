@@ -192,11 +192,11 @@ void Window::BuildScene() {
 	//};
 	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> systemGainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Knob>(
-			*pCanvas, L"C2")
+			*pCanvas, L"V")
 	};
 	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> microGainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Knob>(
-			*pCanvas, L"C1")
+			*pCanvas, L"P")
 	};
 	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> a1Gainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Knob>(
@@ -285,13 +285,13 @@ void Window::BuildScene() {
 		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Knob, States::Knob, D2D::Policies::KnobGlyphUpdate>{ m_hWnd }
 	};
 	::std::shared_ptr<CarouselInteractivity> pCarouselInteractivityPolicy{
-		new Policies::CarouselInteractivity{}
+		new Policies::CarouselInteractivity{ *m_pTimer }
 	};
 	//::std::shared_ptr<D2D::Policies::GainerInteractivity> pGainerInteractivityPolicy{
 	//	new D2D::Policies::GainerInteractivity{ *pInputTracker }
 	//};
 	::std::shared_ptr<D2D::Policies::KnobInteractivity> pGainerInteractivityPolicy{
-		new D2D::Policies::KnobInteractivity{ *pInputTracker }
+		new D2D::Policies::KnobInteractivity{ *pInputTracker, *m_pTimer }
 	};
 
 	::std::unique_ptr<IComponent> system_out_a_cpControl[]{
@@ -398,33 +398,6 @@ void Window::BuildScene() {
 				D2D::Controls::Knob>>>(
 					::linear_algebra::vectord{ 2, 0 },
 					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(systemGainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(systemGainer_pStatePromotionPolicy),
-					pGainerGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(system_out_a_cpControl),
-					::std::end(system_out_a_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(system_out_b_cpControl),
-					::std::end(system_out_b_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
 					* pInputTracker,
 					::std::move(microGainer_pGlyph),
 					pGainerStateChangePolicy,
@@ -447,6 +420,33 @@ void Window::BuildScene() {
 					* pInputTracker,
 					::std::begin(micro_out_b_cpControl),
 					::std::end(micro_out_b_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				D2D::Controls::Knob>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					* pInputTracker,
+					::std::move(systemGainer_pGlyph),
+					pGainerStateChangePolicy,
+					::std::move(systemGainer_pStatePromotionPolicy),
+					pGainerGlyphUpdatePolicy,
+					pGainerInteractivityPolicy
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Panels::Stack<Panels::Direction::Down>>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					* pInputTracker,
+					::std::begin(system_out_a_cpControl),
+					::std::end(system_out_a_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Panels::Stack<Panels::Direction::Down>>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					* pInputTracker,
+					::std::begin(system_out_b_cpControl),
+					::std::end(system_out_b_cpControl)
 		), ::std::make_unique<Decorators::Margin<
 			Decorators::RegionCheck<
 				D2D::Controls::Knob>>>(

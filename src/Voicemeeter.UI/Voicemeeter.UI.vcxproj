@@ -148,7 +148,6 @@
     <ClInclude Include="Graphics\Glyphs\Frame.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />
-    <ClInclude Include="ISystemInputTracker.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="IControl.h" />
     <ClInclude Include="IInputTracker.h" />

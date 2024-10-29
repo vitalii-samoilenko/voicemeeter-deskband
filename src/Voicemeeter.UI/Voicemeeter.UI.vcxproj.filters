@@ -99,9 +99,6 @@
     <ClInclude Include="Policies\IStatePromotion.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="ISystemInputTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>

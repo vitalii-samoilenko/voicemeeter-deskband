@@ -1,4 +1,9 @@
+#include <cmath>
+#include <string>
+
 #include "Windows/Wrappers.h"
+
+#include <wrl/client.h>
 
 #include "Knob.h"
 
@@ -11,7 +16,9 @@ Knob::Knob(
 	Graphics::Canvas& canvas,
 	const ::std::wstring& label
 ) : Glyph{ canvas, { 48, 48 } }
+  , m_gain{}
   , m_level{}
+  , m_enabled{}
   , m_pinned{}
   , m_label{ label } {
 
@@ -22,26 +29,61 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 
 	const Palette& palette{ m_canvas.get_Palette() };
 	ID2D1SolidColorBrush* pBrush{
-		(m_pinned
+		(m_enabled
 			? palette.get_pBrush(palette.get_Theme()
 				.Warning)
-			: 90.F < m_level
-				? palette.get_pBrush(palette.get_Theme()
-					.Danger)
+			: m_pinned
+				? 90.F < m_gain
+					? palette.get_pBrush(palette.get_Theme()
+						.Danger)
+					: palette.get_pBrush(palette.get_Theme()
+						.PrimaryActive)
 				: palette.get_pBrush(palette.get_Theme()
-					.PrimaryActive))
+					.SecondaryActive))
 	};
-	IDWriteTextLayout* pLayout{
-		palette.get_pTextLayout(
-			m_label,
-			palette.get_Theme()
-				.FontFamily
-		)
-	};
-	DWRITE_TEXT_METRICS metrics{};
-	::Windows::ThrowIfFailed(pLayout->GetMetrics(
-		&metrics
-	), "Text measurement failed");
+
+	if (m_pinned) {
+		::std::wstring label{ ::std::to_wstring(static_cast<int>(::std::abs((m_gain - 90) / 3.75))) };
+
+		::Microsoft::WRL::ComPtr<IDWriteTextLayout> pLayout{ nullptr };
+		::Windows::ThrowIfFailed(m_canvas.get_pDwFactory()
+			->CreateTextLayout(
+				label.c_str(),
+				static_cast<UINT32>(label.length()),
+				palette.get_pTextFormat(palette.get_Theme()
+					.FontFamily),
+				::std::numeric_limits<FLOAT>::max(),
+				::std::numeric_limits<FLOAT>::max(),
+				&pLayout
+		), "Text layout creation failed");
+		DWRITE_TEXT_METRICS metrics{};
+		::Windows::ThrowIfFailed(pLayout->GetMetrics(
+			&metrics
+		), "Text measurement failed");
+
+		m_canvas.get_pRenderTarget()
+			->DrawTextLayout(
+				::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
+				pLayout.Get(),
+				pBrush);
+	} else {
+		IDWriteTextLayout* pLayout{
+			palette.get_pTextLayout(
+				m_label,
+				palette.get_Theme()
+					.FontFamily)
+		};
+		DWRITE_TEXT_METRICS metrics{};
+		::Windows::ThrowIfFailed(pLayout->GetMetrics(
+			&metrics
+		), "Text measurement failed");
+
+		m_canvas.get_pRenderTarget()
+			->DrawTextLayout(
+				::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
+				pLayout,
+				pBrush);
+	}
 
 	m_canvas.get_pRenderTarget()
 		->DrawEllipse(
@@ -55,7 +97,7 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 	m_canvas.get_pRenderTarget()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Translation(24.F, 9.F)
-			* ::D2D1::Matrix3x2F::Rotation(m_level, ::D2D1::Point2F(24.F, 24.F))
+			* ::D2D1::Matrix3x2F::Rotation(m_gain, ::D2D1::Point2F(24.F, 24.F))
 			* base);
 	m_canvas.get_pRenderTarget()
 		->FillEllipse(
@@ -64,9 +106,4 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 				.Indicator));
 	m_canvas.get_pRenderTarget()
 		->SetTransform(base);
-	m_canvas.get_pRenderTarget()
-		->DrawTextLayout(
-			::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
-			pLayout,
-			pBrush);
 };

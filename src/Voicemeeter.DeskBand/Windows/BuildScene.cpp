@@ -75,11 +75,11 @@ private:
 	TMapper m_mapper;
 };
 
-template<typename TLevelMapper, typename TPinnedMapper>
+template<typename TGainMapper, typename TPinnedMapper>
 class RemoteKnobStatePromotion : public Policies::IStatePromotion<States::Knob> {
 	static_assert(
-		::estd::is_invocable_r<float, TLevelMapper, const int&>(),
-		"TLevelMapper must be invocable with const int& and must return float");
+		::estd::is_invocable_r<float, TGainMapper, const int&>(),
+		"TGainMapper must be invocable with const int& and must return float");
 	static_assert(
 		::estd::is_invocable_r<float, TPinnedMapper, const bool&>(),
 		"TPinnedMapper must be invocable with const bool& and must return float");
@@ -87,14 +87,14 @@ class RemoteKnobStatePromotion : public Policies::IStatePromotion<States::Knob> 
 public:
 	RemoteKnobStatePromotion(
 		const T_VBVMR_INTERFACE& remote,
-		const char* pLevelLabel,
+		const char* pGainLabel,
 		const char* pPinnedLabel,
-		TLevelMapper levelMapper,
+		TGainMapper gainMapper,
 		TPinnedMapper pinnedMapper
 	) : m_remote{ remote }
-	  , m_pLevelLabel{ pLevelLabel }
+	  , m_pGainLabel{ pGainLabel }
 	  , m_pPinnedLabel{ pPinnedLabel }
-	  , m_levelMapper{ levelMapper } 
+	  , m_gainMapper{ gainMapper } 
 	  , m_pinnedMapper{ pinnedMapper } {
 
 	};
@@ -108,19 +108,19 @@ public:
 	RemoteKnobStatePromotion& operator=(RemoteKnobStatePromotion&&) = delete;
 
 	virtual void Promote(const States::Knob& state) const {
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLevelLabel), m_levelMapper(state.level))) {
-			throw ::Windows::Error{ m_pLevelLabel };
+		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pGainLabel), m_gainMapper(state.gain))) {
+			throw ::Windows::Error{ m_pGainLabel };
 		}
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pPinnedLabel), m_pinnedMapper(state.pinned))) {
+		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pPinnedLabel), m_pinnedMapper(state.enabled))) {
 			throw ::Windows::Error{ m_pPinnedLabel };
 		}
 	};
 
 private:
 	const T_VBVMR_INTERFACE& m_remote;
-	const char* m_pLevelLabel;
+	const char* m_pGainLabel;
 	const char* m_pPinnedLabel;
-	TLevelMapper m_levelMapper;
+	TGainMapper m_gainMapper;
 	TPinnedMapper m_pinnedMapper;
 };
 
@@ -129,7 +129,7 @@ void DeskBand::BuildScene() {
 		return static_cast<float>(state);
 	};
 	auto gainerMap = [](const int& state)->float {
-		return (state / 100.F - 90.F) / 3.75;
+		return static_cast<float>((state / 100.F - 90.F) / 3.75);
 	};
 	using CheckboxStatePromotion = RemoteCheckboxStatePromotion<decltype(checkboxMap)>;
 	using GainerStatePromotion = RemoteKnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>;
@@ -322,11 +322,11 @@ void DeskBand::BuildScene() {
 	//};
 	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> systemGainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Knob>(
-			*pCanvas, L"C2")
+			*pCanvas, L"V")
 	};
 	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> microGainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Knob>(
-			*pCanvas, L"C1")
+			*pCanvas, L"P")
 	};
 	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> a1Gainer_pGlyph{
 		::std::make_unique<D2D::Graphics::Glyphs::Knob>(
@@ -364,13 +364,13 @@ void DeskBand::BuildScene() {
 		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Knob, States::Knob, D2D::Policies::KnobGlyphUpdate>{ m_hWnd }
 	};
 	::std::shared_ptr<CarouselInteractivity> pCarouselInteractivityPolicy{
-		new Policies::CarouselInteractivity{}
+		new Policies::CarouselInteractivity{ *m_pTimer }
 	};
 	//::std::shared_ptr<D2D::Policies::GainerInteractivity> pGainerInteractivityPolicy{
 	//	new D2D::Policies::GainerInteractivity{ *pInputTracker }
 	//};
 	::std::shared_ptr<D2D::Policies::KnobInteractivity> pGainerInteractivityPolicy{
-		new D2D::Policies::KnobInteractivity{ *pInputTracker }
+		new D2D::Policies::KnobInteractivity{ *pInputTracker, *m_pTimer }
 	};
 
 	::std::unique_ptr<IComponent> system_out_a_cpControl[]{
@@ -478,33 +478,6 @@ void DeskBand::BuildScene() {
 					::linear_algebra::vectord{ 2, 0 },
 					::linear_algebra::vectord{ 0, 0 },
 					*pInputTracker,
-					::std::move(systemGainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(systemGainer_pStatePromotionPolicy),
-					pGainerGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(system_out_a_cpControl),
-					::std::end(system_out_a_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(system_out_b_cpControl),
-					::std::end(system_out_b_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
 					::std::move(microGainer_pGlyph),
 					pGainerStateChangePolicy,
 					::std::move(microGainer_pStatePromotionPolicy),
@@ -526,6 +499,33 @@ void DeskBand::BuildScene() {
 					*pInputTracker,
 					::std::begin(micro_out_b_cpControl),
 					::std::end(micro_out_b_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				D2D::Controls::Knob>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::move(systemGainer_pGlyph),
+					pGainerStateChangePolicy,
+					::std::move(systemGainer_pStatePromotionPolicy),
+					pGainerGlyphUpdatePolicy,
+					pGainerInteractivityPolicy
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Panels::Stack<Panels::Direction::Down>>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::begin(system_out_a_cpControl),
+					::std::end(system_out_a_cpControl)
+		), ::std::make_unique<Decorators::Margin<
+			Decorators::RegionCheck<
+				Panels::Stack<Panels::Direction::Down>>>>(
+					::linear_algebra::vectord{ 2, 0 },
+					::linear_algebra::vectord{ 0, 0 },
+					*pInputTracker,
+					::std::begin(system_out_b_cpControl),
+					::std::end(system_out_b_cpControl)
 		), ::std::make_unique<Decorators::Margin<
 			Decorators::RegionCheck<
 				D2D::Controls::Knob>>>(
@@ -583,6 +583,7 @@ void DeskBand::BuildScene() {
 					pCarouselInteractivityPolicy
 		)*/
 	};
+
 
 	::std::unique_ptr<IComponent> pComposition{
 		new Panels::Stack<Panels::Direction::Right>{

@@ -4,12 +4,13 @@
 
 #include <windows.h>
 
+#include "Environment/IInputTracker.h"
 #include "Voicemeeter.UI/IScene.h"
-#include "Voicemeeter.UI/ISystemInputTracker.h"
+#include "Windows/Timer.h"
 
 namespace Voicemeeter {
 	namespace Windows {
-		class Window final : public ::Voicemeeter::UI::ISystemInputTracker {
+		class Window final : public ::Environment::IInputTracker {
 		public:
 			explicit Window(
 				HINSTANCE hInstance
@@ -32,6 +33,7 @@ namespace Voicemeeter {
 			HWND m_hWnd;
 			UINT m_dpi;
 			::std::unique_ptr<::Voicemeeter::UI::IScene> m_pScene;
+			::std::unique_ptr<::Windows::Timer> m_pTimer;
 
 			void BuildScene();
 			void Connect();

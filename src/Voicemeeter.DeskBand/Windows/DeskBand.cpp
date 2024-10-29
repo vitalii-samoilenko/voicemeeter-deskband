@@ -358,6 +358,7 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
         case WM_CREATE: {
             pWnd = reinterpret_cast<DeskBand*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
             pWnd->m_hWnd = hWnd;
+            pWnd->m_pTimer.reset(new ::Windows::Timer{ hWnd });
             pWnd->m_dpi = GetDpiForWindow(hWnd);
 
             pWnd->BuildScene();
@@ -392,6 +393,9 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
             } );
 
             EndPaint(hWnd, &ps);
+        } return OK;
+        case WM_TIMER: {
+            pWnd->m_pTimer->Elapse();
         } return OK;
         case WM_PRINTCLIENT: {
             pWnd->m_pScene->Redraw(

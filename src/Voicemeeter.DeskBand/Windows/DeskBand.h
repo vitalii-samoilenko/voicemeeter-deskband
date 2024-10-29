@@ -5,15 +5,16 @@
 #include <shlobj.h> // for IDeskband2, IObjectWithSite, IPesistStream, and IInputObject
 #include <windows.h>
 
+#include "Environment/IInputTracker.h"
 #include "Voicemeeter.UI/IScene.h"
-#include "Voicemeeter.UI/ISystemInputTracker.h"
+#include "Windows/Timer.h"
 
 #include "../VoicemeeterRemote.h"
 
 namespace Voicemeeter {
 	namespace Windows {
 		class DeskBand final
-			: public ::Voicemeeter::UI::ISystemInputTracker
+			: public ::Environment::IInputTracker
 			, public IDeskBand2
 			, public IPersistStream
 			, public IObjectWithSite
@@ -26,8 +27,8 @@ namespace Voicemeeter {
 			DeskBand& operator=(const DeskBand&) = delete;
 			DeskBand& operator=(DeskBand&&) = delete;
 
-			virtual void EnableInputTrack() override;
-			virtual void DisableInputTrack() override;
+			virtual void EnableInputTrack();
+			virtual void DisableInputTrack();
 
 			// IUnknown
 			STDMETHODIMP QueryInterface(REFIID riid, void** ppv);
@@ -81,6 +82,7 @@ namespace Voicemeeter {
 			HWND                m_hWndParent;           // parent window of deskband
 			UINT m_dpi;
 			::std::unique_ptr<::Voicemeeter::UI::IScene> m_pScene;
+			::std::unique_ptr<::Windows::Timer> m_pTimer;
 			T_VBVMR_INTERFACE m_remote;
 
 			~DeskBand();

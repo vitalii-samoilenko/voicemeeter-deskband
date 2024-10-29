@@ -5,8 +5,9 @@
 using namespace Voicemeeter::UI;
 
 InputTracker::InputTracker(
-	ISystemInputTracker& systemInputTracler
-) : m_systemInputTracler{ systemInputTracler }
+	::Environment::IInputTracker& envInputTracler
+) : m_envInputTracler{ envInputTracler }
+  , m_pPinned{ nullptr }
   , m_point{ ::linear_algebra::vectord::origin() } {
 
 }
@@ -21,14 +22,14 @@ bool InputTracker::IsTracking(const IComponent& component) const {
 
 void InputTracker::EnableInputTrack(IComponent& component, const ::linear_algebra::vectord& point) {
 	if (!m_pPinned) {
-		m_systemInputTracler.EnableInputTrack();
+		m_envInputTracler.EnableInputTrack();
 	}
 
 	m_point = point;
 	m_pPinned = &component;
 }
 void InputTracker::DisableInputTrack(IComponent& component) {
-	m_systemInputTracler.DisableInputTrack();
+	m_envInputTracler.DisableInputTrack();
 
 	m_pPinned = nullptr;
 }

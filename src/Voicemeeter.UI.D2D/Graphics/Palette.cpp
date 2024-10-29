@@ -57,7 +57,7 @@ IDWriteTextLayout* Palette::get_pTextLayout(const ::std::wstring& text, const ::
 				::std::numeric_limits<FLOAT>::max(),
 				::std::numeric_limits<FLOAT>::max(),
 				&pTextLayout
-			), "Text layout creation failed");
+		), "Text layout creation failed");
 	}
 	return pTextLayout.Get();
 }
