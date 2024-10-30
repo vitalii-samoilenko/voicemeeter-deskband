@@ -25,6 +25,8 @@ namespace Voicemeeter {
 				IInteractivity& operator=(const IInteractivity&) = delete;
 				IInteractivity& operator=(IInteractivity&&) = delete;
 
+				virtual void set_Focus(::estd::remove_cvref_t<TComponent>& component, bool value) const = 0;
+
 				virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 				virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 				virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;

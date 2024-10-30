@@ -47,6 +47,9 @@ namespace Voicemeeter {
 				Stack& operator=(const Stack&) = delete;
 				Stack& operator=(Stack&&) = delete;
 
+				virtual void set_Focus(bool value) override {
+
+				};
 				virtual const ::linear_algebra::vectord& get_Position() const override {
 					return m_cpComponent.front()->get_Position();
 				};

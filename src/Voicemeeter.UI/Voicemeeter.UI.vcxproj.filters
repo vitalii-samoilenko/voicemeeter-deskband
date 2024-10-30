@@ -156,6 +156,12 @@
     <ClInclude Include="Policies\KnobStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
+    <ClInclude Include="IFocusTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FocusTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Panels\Stack.cpp">
@@ -175,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="Policies\CarouselGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
+    </ClCompile>
+    <ClCompile Include="FocusTracker.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

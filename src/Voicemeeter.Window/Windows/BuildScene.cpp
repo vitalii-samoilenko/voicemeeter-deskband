@@ -15,6 +15,7 @@
 #include "Voicemeeter.UI/Policies/IStatePromotion.h"
 #include "Voicemeeter.UI/Policies/SliderInteractivity.h"
 #include "Voicemeeter.UI/States/Knob.h"
+#include "Voicemeeter.UI/FocusTracker.h"
 #include "Voicemeeter.UI/InputTracker.h"
 #include "Voicemeeter.UI.D2D/Controls/Gainer.h"
 #include "Voicemeeter.UI.D2D/Controls/Knob.h"
@@ -58,6 +59,9 @@ public:
 using namespace ::Voicemeeter::Windows;
 
 void Window::BuildScene() {
+	::std::unique_ptr<FocusTracker> pFocusTracker{
+		new FocusTracker{}
+	};
 	::std::unique_ptr<InputTracker> pInputTracker{
 		new InputTracker{ *this }
 	};
@@ -285,13 +289,13 @@ void Window::BuildScene() {
 		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Knob, States::Knob, D2D::Policies::KnobGlyphUpdate>{ m_hWnd }
 	};
 	::std::shared_ptr<CarouselInteractivity> pCarouselInteractivityPolicy{
-		new Policies::CarouselInteractivity{ *m_pTimer }
+		new Policies::CarouselInteractivity{ *pFocusTracker }
 	};
 	//::std::shared_ptr<D2D::Policies::GainerInteractivity> pGainerInteractivityPolicy{
 	//	new D2D::Policies::GainerInteractivity{ *pInputTracker }
 	//};
 	::std::shared_ptr<D2D::Policies::KnobInteractivity> pGainerInteractivityPolicy{
-		new D2D::Policies::KnobInteractivity{ *pInputTracker, *m_pTimer }
+		new D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , *m_pTimer }
 	};
 
 	::std::unique_ptr<IComponent> system_out_a_cpControl[]{
@@ -513,6 +517,7 @@ void Window::BuildScene() {
 
 	m_pScene.reset(new D2D::Scene{
 		::std::move(pInputTracker),
+		::std::move(pFocusTracker),
 		::std::move(pCanvas),
 		::std::move(pComposition)
 	});

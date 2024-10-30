@@ -9,6 +9,7 @@
 #include "Graphics/ICanvas.h"
 
 #include "IComponent.h"
+#include "IFocusTracker.h"
 #include "IInputTracker.h"
 #include "IScene.h"
 
@@ -23,9 +24,11 @@ namespace Voicemeeter {
 		public:
 			Scene(
 				::std::unique_ptr<IInputTracker> inputTracker,
+				::std::unique_ptr<IFocusTracker> focusTracker,
 				::std::unique_ptr<TCanvas> pCanvas,
 				::std::unique_ptr<IComponent> pComposition
 			) : m_inputTracker{ ::std::move(inputTracker) }
+			  , m_focusTracker{ ::std::move(focusTracker) }
 			  , m_pCanvas{ ::std::move(pCanvas) }
 			  , m_pComposition{ ::std::move(pComposition) } {
 
@@ -39,6 +42,10 @@ namespace Voicemeeter {
 			Scene& operator=(const Scene&) = delete;
 			Scene& operator=(Scene&&) = delete;
 
+			virtual void set_Focus(bool value) override {
+				m_inputTracker->set_Focus(value);
+				m_focusTracker->set_Focus(value);
+			}
 			virtual const ::linear_algebra::vectord& get_Position() const override {
 				return m_pCanvas->get_Position();
 			};
@@ -56,30 +63,37 @@ namespace Voicemeeter {
 			};
 			virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseLDown(point)
+					|| m_focusTracker->MouseLDown(point)
 					|| m_pComposition->MouseLDown(point);
 			};
 			virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseLDouble(point)
+					|| m_focusTracker->MouseLDouble(point)
 					|| m_pComposition->MouseLDouble(point);
 			};
 			virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseRDown(point)
+					|| m_focusTracker->MouseRDown(point)
 					|| m_pComposition->MouseRDown(point);
 			};
 			virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseRDouble(point)
+					|| m_focusTracker->MouseRDouble(point)
 					|| m_pComposition->MouseRDouble(point);
 			};
 			virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
 				return m_inputTracker->MouseWheel(point, delta)
+					|| m_focusTracker->MouseWheel(point, delta)
 					|| m_pComposition->MouseWheel(point, delta);
 			};
 			virtual bool MouseMove(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseMove(point)
+					|| m_focusTracker->MouseMove(point)
 					|| m_pComposition->MouseMove(point);
 			};
 			virtual bool MouseLUp(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseLUp(point)
+					|| m_focusTracker->MouseLUp(point)
 					|| m_pComposition->MouseLUp(point);
 			};
 
@@ -88,6 +102,7 @@ namespace Voicemeeter {
 
 		private:
 			::std::unique_ptr<IInputTracker> m_inputTracker;
+			::std::unique_ptr<IFocusTracker> m_focusTracker;
 			::std::unique_ptr<IComponent> m_pComposition;
 		};
 	}

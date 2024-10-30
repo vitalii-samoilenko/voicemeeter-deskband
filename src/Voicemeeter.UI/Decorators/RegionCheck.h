@@ -46,31 +46,31 @@ namespace Voicemeeter {
 					TComponent::Redraw(point, vertex);
 				};
 				virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseLDown(point);
 				};
 				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseLDouble(point);
 				};
 				virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseRDown(point);
 				};
 				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseRDouble(point);
 				};
 				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseWheel(point, delta);
 				};
 				virtual bool MouseMove(const ::linear_algebra::vectord& point) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseMove(point);
 				};
 				virtual bool MouseLUp(const ::linear_algebra::vectord& point) override {
-					return (is_inside(point) || m_inputTracker.IsTracking(*this))
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseLUp(point);
 				};
 

@@ -145,11 +145,13 @@
     <ClInclude Include="Controls\Slider.h" />
     <ClInclude Include="Decorators\Margin.h" />
     <ClInclude Include="Decorators\RegionCheck.h" />
+    <ClInclude Include="FocusTracker.h" />
     <ClInclude Include="Graphics\Glyphs\Frame.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="IControl.h" />
+    <ClInclude Include="IFocusTracker.h" />
     <ClInclude Include="IInputTracker.h" />
     <ClInclude Include="InputTracker.h" />
     <ClInclude Include="IPanel.h" />
@@ -178,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
+    <ClCompile Include="FocusTracker.cpp" />
     <ClCompile Include="Graphics\Glyphs\Frame.cpp" />
     <ClCompile Include="InputTracker.cpp" />
     <ClCompile Include="Panels\Stack.cpp" />

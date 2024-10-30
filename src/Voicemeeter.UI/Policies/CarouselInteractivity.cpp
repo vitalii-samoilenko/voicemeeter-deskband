@@ -3,17 +3,21 @@
 using namespace ::Voicemeeter::UI::Policies;
 
 CarouselInteractivity::CarouselInteractivity(
-	::Environment::ITimer& timer
-) : m_timer{ timer } {
+	IFocusTracker& focusTracker
+) : m_focusTracker{ focusTracker } {
 
 }
 
+void CarouselInteractivity::set_Focus(Controls::Carousel& component, bool value) const {
+
+};
+
 void CarouselInteractivity::MouseLDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
-	m_timer.Elapse();
+	m_focusTracker.set_Track(component, true);
+
 	component.SetNext();
 }
 void CarouselInteractivity::MouseLDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
-	m_timer.Elapse();
 	component.SetNext();
 }
 void CarouselInteractivity::MouseRDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {

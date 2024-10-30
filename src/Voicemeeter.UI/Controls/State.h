@@ -76,6 +76,9 @@ namespace Voicemeeter {
 					OnSet(promote);
 				}
 
+				virtual void set_Focus(bool value) override {
+					m_pInteractivityPolicy->set_Focus(*this, value);
+				};
 				virtual const ::linear_algebra::vectord& get_Position() const override {
 					return m_pGlyph->get_Position();
 				};

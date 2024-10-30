@@ -13,6 +13,8 @@ namespace Voicemeeter {
 				IInteractive& operator=(const IInteractive&) = delete;
 				IInteractive& operator=(IInteractive&&) = delete;
 
+				virtual void set_Focus(bool value) = 0;
+
 				virtual bool MouseLDown(const ::linear_algebra::vectord& point) = 0;
 				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) = 0;
 				virtual bool MouseRDown(const ::linear_algebra::vectord& point) = 0;
