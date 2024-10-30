@@ -6,7 +6,7 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Controls {
 			template<typename TGlyph>
-			using Slider = State<int, TGlyph>;
+			using Checkbox = State<int, TGlyph>;
 		}
 	}
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cmath>
-
 #include "estd/linear_algebra.h"
 
 #include "Environment/ITimer.h"
@@ -112,7 +110,7 @@ namespace Voicemeeter {
 							state.pinned = false;
 							component.Set(state, true);
 						});
-				}
+				};
 			};
 		}
 	}

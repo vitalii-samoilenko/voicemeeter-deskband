@@ -141,9 +141,6 @@
     <ClInclude Include="Policies\CheckboxStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\SliderGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Controls\Knob.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
@@ -161,6 +158,12 @@
     </ClInclude>
     <ClInclude Include="FocusTracker.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Checkbox.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\CheckboxInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

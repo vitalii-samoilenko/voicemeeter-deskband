@@ -6,11 +6,11 @@
 #include "estd/linear_algebra.h"
 #include "estd/type_traits.h"
 
-#include "../IControl.h"
 #include "../Policies/IStateChange.h"
 #include "../Policies/IStatePromotion.h"
 #include "../Policies/IGlyphUpdate.h"
 #include "../Policies/IInteractivity.h"
+#include "../IControl.h"
 
 namespace Voicemeeter {
 	namespace UI {

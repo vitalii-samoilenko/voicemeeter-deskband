@@ -27,7 +27,6 @@ namespace Voicemeeter {
 						Knob& operator=(const Knob&) = delete;
 						Knob& operator=(Knob&&) = delete;
 
-						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
 
 						inline void set_Gain(FLOAT value) {
 							m_gain = value;
@@ -37,10 +36,12 @@ namespace Voicemeeter {
 						};
 						inline void set_Enabled(bool value) {
 							m_enabled = value;
-						}
+						};
 						inline void set_Pinned(bool value) {
 							m_pinned = value;
-						}
+						};
+
+						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
 
 					private:
 						::std::wstring m_label;

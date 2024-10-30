@@ -60,9 +60,6 @@
     <ClInclude Include="Policies\GainerGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\GainerInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Decorators\WindowsGlyphUpdate.h">
       <Filter>Header Files\Decorators</Filter>
     </ClInclude>
@@ -81,9 +78,6 @@
     <ClInclude Include="Graphics\Glyphs\Knob.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\KnobInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\KnobStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
@@ -92,6 +86,27 @@
     </ClInclude>
     <ClInclude Include="Controls\Knob.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\OutGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\VbanGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Out.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Vban.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\OutInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\VbanInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\KnobInteractivity.h">
+      <Filter>Header Files\Policies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +132,18 @@
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
     <ClCompile Include="Policies\KnobGlyphUpdate.cpp">
+      <Filter>Source Files\Policies</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Glyphs\Out.cpp">
+      <Filter>Source Files\Graphics\Glyphs</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Glyphs\Vban.cpp">
+      <Filter>Source Files\Graphics\Glyphs</Filter>
+    </ClCompile>
+    <ClCompile Include="Policies\OutGlyphUpdate.cpp">
+      <Filter>Source Files\Policies</Filter>
+    </ClCompile>
+    <ClCompile Include="Policies\VbanGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
     </ClCompile>
   </ItemGroup>
