@@ -13,28 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Decorators">
-      <UniqueIdentifier>{51c6e0d0-7b29-45eb-b5c4-9e7213ad725d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IMixer.h">
+    <ClInclude Include="Api.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IChannel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="INetwork.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IRange.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IBus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Decorators\IAmplifier.h">
-      <Filter>Header Files\Decorators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,12 +1,14 @@
 #pragma once
 
-#include <vector>
-
-#include "IInput.h"
-#include "IOutput.h"
+#include "IBus.h"
+#include "INetwork.h"
+#include "IRange.h"
 
 namespace Voicemeeter {
-	class IMixer {
+	template<
+		typename TInput, typename TInputIterator,
+		typename TOutput, typename TOutputIterator>
+	class IMixer : public IRange<TInput, TInputIterator>, public IRange<TOutput, TOutputIterator> {
 	public:
 		IMixer(const IMixer&) = delete;
 		IMixer(IMixer&&) = delete;
@@ -14,10 +16,10 @@ namespace Voicemeeter {
 		IMixer& operator=(const IMixer&) = delete;
 		IMixer& operator=(IMixer&&) = delete;
 
-		virtual bool get_Vban() const = 0;
-		virtual void set_Vban(bool value) = 0;
-		virtual bool get_Plug(const IInput& input, const IOutput& output);
-		virtual void set_Plug(const IInput& input, const IOutput& output);
+		virtual const INetwork& get_Network() const = 0;
+		virtual const IRange<TOutput, TOutputIterator> get_Plugs(const TInput& input) const = 0;
+		virtual const IRange<TInput, TInputIterator> get_Plugs(const TOutput& input) const = 0;
+		virtual void set_Plug(const TInput& input, const TOutput& output, bool value) = 0;
 
 	private:
 		IMixer() = default;
