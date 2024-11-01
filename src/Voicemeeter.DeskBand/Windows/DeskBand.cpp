@@ -378,6 +378,9 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
                 pWnd->m_pInputObjectSite->OnFocusChangeIS(static_cast<IOleWindow*>(pWnd), pWnd->m_fHasFocus);
             }
         } break;
+        case WM_CONTEXTMENU: {
+
+        } return OK;
         case WM_PAINT: {
             PAINTSTRUCT ps;
             ::Windows::wBeginPaint(hWnd, &ps);
@@ -425,13 +428,13 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
                 static_cast<double>(GET_Y_LPARAM(lParam))
             });
         } return OK;
-        case WM_MBUTTONDOWN: {
+        case WM_RBUTTONDOWN: {
             pWnd->m_pScene->MouseRDown({
                 static_cast<double>(GET_X_LPARAM(lParam)),
                 static_cast<double>(GET_Y_LPARAM(lParam))
             });
-        } return OK;
-		case WM_MBUTTONDBLCLK: {
+        } break;
+		case WM_RBUTTONDBLCLK: {
 			pWnd->m_pScene->MouseRDouble({
 				static_cast<double>(GET_X_LPARAM(lParam)),
 				static_cast<double>(GET_Y_LPARAM(lParam))
