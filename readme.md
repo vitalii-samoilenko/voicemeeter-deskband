@@ -62,9 +62,3 @@ Explorer.exe &
 
 - Resizable (lock/unlock taskbar to adjust)
 - Interactive (left click/right click/wheel/left hold and move)
-
-# Support
-
-If you like it you can support me with crypto:
-
-<img src="qr.png" alt="QR" width="200"/>
