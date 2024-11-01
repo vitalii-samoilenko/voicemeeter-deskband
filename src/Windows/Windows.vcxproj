@@ -39,7 +39,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Messages.rc" />
+    <None Include="Messages.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ErrorMessageBox.cpp" />

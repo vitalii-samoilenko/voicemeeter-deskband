@@ -174,5 +174,8 @@
   <ItemGroup>
     <None Include="Voicemeeter.DeskBand.def" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Windows\Messages.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
