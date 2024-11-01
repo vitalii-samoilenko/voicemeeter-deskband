@@ -32,7 +32,7 @@ namespace Voicemeeter {
 		private:
 			Mixer& m_mixer;
 			bool m_vban;
-			::std::function<void(bool)> m_callback;
+			::std::vector<::std::function<void(bool)>> m_cCallback;
 		};
 	}
 }

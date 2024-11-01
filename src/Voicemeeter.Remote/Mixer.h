@@ -8,13 +8,10 @@
 #include "Environment/ITimer.h"
 #include "Voicemeeter/IMixer.h"
 
-#include "Decorators/Amplifier.h"
 #include "Api.h"
-#include "Bus.h"
 #include "Input.h"
 #include "Network.h"
 #include "Output.h"
-#include "Range.h"
 
 template<>
 struct ::std::iterator_traits<::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Input>> {

@@ -8,7 +8,7 @@ Network::Network(
 	Mixer& mixer
 ) : m_mixer{ mixer }
   , m_vban{}
-  , m_callback{} {
+  , m_cCallback{} {
 
 }
 
@@ -22,7 +22,7 @@ void Network::set_Vban(bool value) {
 		.VBVMR_SetParameterFloat(const_cast<char*>("vban.Enable"), m_vban);
 }
 void Network::on_Vban(const ::std::function<void(bool)>& callback) {
-	m_callback = callback;
+	m_cCallback.push_back(callback);
 }
 
 void Network::Update(bool dirty) {
@@ -35,8 +35,8 @@ void Network::Update(bool dirty) {
 		.VBVMR_GetParameterFloat(const_cast<char*>("vban.Enable"), &value);
 	if (!(::std::abs(m_vban - value) < 0.01)) {
 		m_vban = !(value < 0.01);
-		if (m_callback) {
-			m_callback(m_vban);
+		for (const ::std::function<void(bool)>& callback : m_cCallback) {
+			callback(m_vban);
 		}
 	}
 }
