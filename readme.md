@@ -1,10 +1,10 @@
 # Disclaimer
 
-Voicemeeter is Audio Mixer Application endowed with Virtual Audio Device used as Virtual I/O to mix and manage any audio sources from or to any audio devices or applications.
+Voicemeeter is Audio Mixer Application endowed with Virtual Audio Device used as Virtual I/O to mix and manage any audio sources from or to any audio devices or applications
 
 Official website: https://voicemeeter.com/
 
-Voicemeeter is a donationware, all participations are welcome.
+Voicemeeter is a donationware, all participations are welcome
 
 # Voicemeeter DeskBand
 
@@ -40,6 +40,8 @@ regsvr32 Voicemeeter.DeskBand.dll
 Right click on taskbar empty space and check Toolbars->Voicemeeter.DeskBand
 
 ![Taskbar](taskbar.png)
+
+Unlock taskbar, adjust deskband size and lock it back
 
 ### Uninstall
 
