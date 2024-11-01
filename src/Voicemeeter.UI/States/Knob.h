@@ -5,13 +5,15 @@ namespace Voicemeeter {
 		namespace States {
 			struct Knob {
 				int gain;
-				int level;
+				int leftLevel;
+				int rightLevel;
 				bool enabled;
 				bool pinned;
 
 				bool operator==(const Knob& rhs) const {
 					return gain == rhs.gain
-						&& level == rhs.level
+						&& leftLevel == rhs.leftLevel
+						&& rightLevel == rhs.rightLevel
 						&& enabled == rhs.enabled
 						&& pinned == rhs.pinned;
 				}

@@ -6,7 +6,7 @@
 
 #include "Environment/IInputTracker.h"
 #include "Voicemeeter.Remote/Mixer.h"
-#include "Voicemeeter.UI/IScene.h"
+#include "Voicemeeter.UI.D2D/Scene.h"
 #include "Windows/Timer.h"
 
 namespace Voicemeeter {
@@ -36,9 +36,7 @@ namespace Voicemeeter {
 			::std::unique_ptr<::Windows::Timer> m_pUiTimer;
 			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
 			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;
-			::std::unique_ptr<::Voicemeeter::UI::IScene> m_pScene;
-
-			void BuildScene();
+			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pScene;
 
 			static LRESULT CALLBACK WndProcW(
 				HWND hWnd,

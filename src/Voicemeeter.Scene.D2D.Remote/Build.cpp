@@ -6,8 +6,6 @@
 
 #include "estd/type_traits.h"
 
-#include "Windows/Wrappers.h"
-
 #include "Voicemeeter.UI/Decorators/Margin.h"
 #include "Voicemeeter.UI/Decorators/RegionCheck.h"
 #include "Voicemeeter.UI/Panels/Stack.h"
@@ -33,12 +31,10 @@
 #include "Voicemeeter.UI.D2D/Policies/PlugInteractivity.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanInteractivity.h"
-#include "Voicemeeter.UI.D2D/Scene.h"
 
-#include "DeskBand.h"
+#include "Build.h"
 
 using namespace ::Voicemeeter;
-using namespace ::Voicemeeter::Windows;
 
 template<
 	typename TInput, typename TInputIterator,
@@ -56,9 +52,9 @@ public:
 		const TOutput& output,
 		const TMapper& mapper
 	) : m_mixer{ mixer }
-	  , m_input{ input }
-	  , m_output{ output }
-	  , m_mapper{ mapper } {
+		, m_input{ input }
+		, m_output{ output }
+		, m_mapper{ mapper } {
 
 	};
 	PlugStatePromotion() = delete;
@@ -92,7 +88,7 @@ public:
 		INetwork& network,
 		const TMapper& mapper
 	) : m_network{ network }
-	  , m_mapper{ mapper } {
+		, m_mapper{ mapper } {
 
 	};
 	VbanStatePromotion() = delete;
@@ -124,12 +120,12 @@ class KnobStatePromotion : public UI::Policies::IStatePromotion<UI::States::Knob
 
 public:
 	KnobStatePromotion(
-		IAmplifier& amplifier,
+		Decorators::IAmplifier& amplifier,
 		const TGainMapper& gainMapper,
 		const TMutedMapper& mutedMapper
 	) : m_amplifier{ amplifier }
-	  , m_gainMapper{ gainMapper }
-	  , m_mutedMapper{ mutedMapper } {
+		, m_gainMapper{ gainMapper }
+		, m_mutedMapper{ mutedMapper } {
 
 	};
 	KnobStatePromotion() = delete;
@@ -147,33 +143,38 @@ public:
 	};
 
 private:
-	IAmplifier& m_amplifier;
+	Decorators::IAmplifier& m_amplifier;
 	TGainMapper m_gainMapper;
 	TMutedMapper m_mutedMapper;
 };
 
-void DeskBand::BuildScene() {
+UI::D2D::Scene* Scene::D2D::Remote::Build(
+	HWND hWnd,
+	::Environment::IInputTracker& inputTracker,
+	::Environment::ITimer& timer,
+	::Voicemeeter::Remote::Mixer& mixer
+) {
 	::std::unique_ptr<UI::FocusTracker> pFocusTracker{
 		new UI::FocusTracker{}
 	};
 	::std::unique_ptr<UI::InputTracker> pInputTracker{
-		new UI::InputTracker{ *this }
+		new UI::InputTracker{ inputTracker }
 	};
 
 	const UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
 	::std::unique_ptr<UI::D2D::Graphics::Canvas> pCanvas{
-		new UI::D2D::Graphics::Canvas{ m_hWnd, theme }
+		new UI::D2D::Graphics::Canvas{ hWnd, theme }
 	};
 
 	auto checkboxMap = [](const int& state)->bool {
 		return static_cast<bool>(state);
-	};
+		};
 	auto gainerMap = [](const int& state)->double {
 		return (state / 100. - 90.) / 3.75;
-	};
+		};
 
 	::std::unique_ptr<VbanStatePromotion<decltype(checkboxMap)>> vban_pStatePromotionPolicy{
-		new VbanStatePromotion<decltype(checkboxMap)>{ m_pMixer->get_Network(), checkboxMap }
+		new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
 	};
 	::std::unique_ptr<UI::D2D::Graphics::Glyphs::Vban> vban_pGlyph{
 		new UI::D2D::Graphics::Glyphs::Vban{
@@ -183,7 +184,7 @@ void DeskBand::BuildScene() {
 		new UI::Policies::CheckboxStateChange{}
 	};
 	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ m_hWnd }
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ hWnd }
 	};
 	::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
 		new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
@@ -203,11 +204,11 @@ void DeskBand::BuildScene() {
 	} };
 
 	UI::D2D::Controls::Vban& checkbox{ *pVban };
-	m_pMixer->get_Network()
+	mixer.get_Network()
 		.on_Vban([&checkbox](bool vban)->void {
-			int value{ vban };
-			checkbox.Set(value, false);
-		});
+		int value{ vban };
+		checkbox.Set(value, false);
+			});
 
 	cpComponent.push_back(::std::move(pVban));
 
@@ -215,20 +216,20 @@ void DeskBand::BuildScene() {
 		new UI::D2D::Policies::KnobStateChange{}
 	};
 	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ m_hWnd }
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ hWnd }
 	};
 	::std::shared_ptr<UI::D2D::Policies::KnobInteractivity> pKnobInteractivityPolicy{
-		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , *m_pUiTimer }
+		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , timer }
 	};
 
 	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ m_hWnd }
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ hWnd }
 	};
 	::std::shared_ptr<UI::D2D::Policies::PlugInteractivity> pPlugInteractivityPolicy{
 		new UI::D2D::Policies::PlugInteractivity{ *pFocusTracker }
 	};
 
-	for (Remote::Input& input : m_pMixer->get_Inputs()) {
+	for (::Voicemeeter::Remote::Input& input : mixer.get_Inputs()) {
 		::std::unique_ptr<UI::D2D::Graphics::Glyphs::Knob> pKnobGlyph{
 			new UI::D2D::Graphics::Glyphs::Knob{
 				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
@@ -244,7 +245,7 @@ void DeskBand::BuildScene() {
 					UI::D2D::Controls::Knob>>{
 						::linear_algebra::vectord{ 2, 0 },
 						::linear_algebra::vectord{ 0, 0 },
-						*pInputTracker,
+						* pInputTracker,
 						::std::move(pKnobGlyph),
 						pKnobStateChangePolicy,
 						::std::move(pKnobStatePromotionPolicy),
@@ -257,25 +258,31 @@ void DeskBand::BuildScene() {
 			UI::States::Knob state{ knob.get_State() };
 			state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
 			knob.Set(state, false);
-		});
+			});
 		input.on_Mute([&knob](bool mute)->void {
 			UI::States::Knob state{ knob.get_State() };
 			state.enabled = mute;
 			knob.Set(state, false);
-		});
+			});
 
 		cpComponent.push_back(::std::move(pKnob));
 
 		::std::vector<::std::unique_ptr<UI::IComponent>> cpPlug{};
 
-		for (Remote::Output& output : m_pMixer->get_Outputs()) {
+		for (::Voicemeeter::Remote::Output& output : mixer.get_Outputs()) {
 			::std::unique_ptr<UI::D2D::Graphics::Glyphs::Plug> pPlugGlyph{
 				new UI::D2D::Graphics::Glyphs::Plug{
 					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
 			} };
 
-			::std::unique_ptr<PlugStatePromotion<Remote::Input, Remote::RangeIterator<Remote::Input>, Remote::Output, Remote::RangeIterator<Remote::Output>, decltype(checkboxMap)>> pPlugStatePromotionPolicy{
-				new PlugStatePromotion<Remote::Input, Remote::RangeIterator<Remote::Input>, Remote::Output, Remote::RangeIterator<Remote::Output>, decltype(checkboxMap)>{ *m_pMixer, input, output, checkboxMap }
+			::std::unique_ptr<PlugStatePromotion<
+				::Voicemeeter::Remote::Input, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Input>,
+				::Voicemeeter::Remote::Output, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Output>,
+				decltype(checkboxMap)>> pPlugStatePromotionPolicy{
+				new PlugStatePromotion<
+					::Voicemeeter::Remote::Input, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Input>,
+					::Voicemeeter::Remote::Output, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Output>,
+					decltype(checkboxMap)>{ mixer, input, output, checkboxMap }
 			};
 
 			::std::unique_ptr<UI::D2D::Controls::Plug> pPlug{
@@ -303,31 +310,31 @@ void DeskBand::BuildScene() {
 			};
 
 			UI::D2D::Controls::Plug& checkbox{ *pPlug };
-			m_pMixer->on_Plug(input, output, [&checkbox](bool plug)->void {
+			mixer.on_Plug(input, output, [&checkbox](bool plug)->void {
 				int value{ plug };
 				checkbox.Set(value, false);
-			});
+				});
 
 			cpPlug.push_back(::std::move(pPlug));
 
 			if (cpPlug.size() == 2) {
 				cpComponent.push_back(
 					::std::make_unique<UI::Decorators::Margin<
-						UI::Decorators::RegionCheck<
-							UI::Panels::Stack<UI::Panels::Direction::Down>>>>(
-								::linear_algebra::vectord{ 2, 0 },
-								::linear_algebra::vectord{ 0, 0 },
-								*pInputTracker,
-								cpPlug.begin(),
-								cpPlug.end()
-					)
+					UI::Decorators::RegionCheck<
+					UI::Panels::Stack<UI::Panels::Direction::Down>>>>(
+						::linear_algebra::vectord{ 2, 0 },
+						::linear_algebra::vectord{ 0, 0 },
+						*pInputTracker,
+						cpPlug.begin(),
+						cpPlug.end()
+						)
 				);
 				cpPlug.clear();
 			}
 		}
 	}
 
-	for (Remote::Output& output : m_pMixer->get_Outputs()) {
+	for (::Voicemeeter::Remote::Output& output : mixer.get_Outputs()) {
 		::std::unique_ptr<UI::D2D::Graphics::Glyphs::Knob> pKnobGlyph{
 			new UI::D2D::Graphics::Glyphs::Knob{
 				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
@@ -343,7 +350,7 @@ void DeskBand::BuildScene() {
 					UI::D2D::Controls::Knob>>{
 						::linear_algebra::vectord{ 2, 0 },
 						::linear_algebra::vectord{ 0, 0 },
-						*pInputTracker,
+						* pInputTracker,
 						::std::move(pKnobGlyph),
 						pKnobStateChangePolicy,
 						::std::move(pKnobStatePromotionPolicy),
@@ -356,12 +363,12 @@ void DeskBand::BuildScene() {
 			UI::States::Knob state{ knob.get_State() };
 			state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
 			knob.Set(state, false);
-		});
+			});
 		output.on_Mute([&knob](bool mute)->void {
 			UI::States::Knob state{ knob.get_State() };
 			state.enabled = mute;
 			knob.Set(state, false);
-		});
+			});
 
 		cpComponent.push_back(::std::move(pKnob));
 	}
@@ -372,10 +379,10 @@ void DeskBand::BuildScene() {
 			cpComponent.end()
 	} };
 
-	m_pScene.reset(new UI::D2D::Scene{
+	return new UI::D2D::Scene{
 		::std::move(pInputTracker),
 		::std::move(pFocusTracker),
 		::std::move(pCanvas),
 		::std::move(pComposition)
-	});
+	};
 }

@@ -66,8 +66,12 @@ namespace Voicemeeter {
 						dst.enabled = src.enabled;
 						result = true;
 					}
-					if (dst.level != src.level) {
-						dst.level = src.level;
+					if (dst.leftLevel != src.leftLevel) {
+						dst.leftLevel = src.leftLevel;
+						result = true;
+					}
+					if (dst.rightLevel != src.rightLevel) {
+						dst.rightLevel = src.rightLevel;
 						result = true;
 					}
 					if (dst.gain != src.gain) {

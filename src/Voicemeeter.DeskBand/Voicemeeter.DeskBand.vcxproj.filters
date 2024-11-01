@@ -27,9 +27,6 @@
     <ClCompile Include="windows\DeskBand.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\BuildScene.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Windows\ClassFactory.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>

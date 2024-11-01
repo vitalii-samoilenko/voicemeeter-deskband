@@ -3,6 +3,7 @@
 
 #include "estd/linear_algebra.h"
 
+#include "Voicemeeter.Scene.D2D.Remote/Build.h"
 #include "Windows/Wrappers.h"
 #include "Windows/ErrorMessageBox.h"
 
@@ -360,7 +361,7 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
             pWnd->m_pUiTimer.reset(new ::Windows::Timer{ hWnd });
             pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
             pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
-            pWnd->BuildScene();
+            pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(hWnd, *pWnd, *pWnd->m_pUiTimer, *pWnd->m_pMixer));
 
             if (::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
                 return FALSE;
