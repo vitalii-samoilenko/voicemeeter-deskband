@@ -168,10 +168,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 
 	auto checkboxMap = [](const int& state)->bool {
 		return static_cast<bool>(state);
-		};
+	};
 	auto gainerMap = [](const int& state)->double {
 		return (state / 100. - 90.) / 3.75;
-		};
+	};
 
 	::std::unique_ptr<VbanStatePromotion<decltype(checkboxMap)>> vban_pStatePromotionPolicy{
 		new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
@@ -208,7 +208,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		.on_Vban([&checkbox](bool vban)->void {
 		int value{ vban };
 		checkbox.Set(value, false);
-			});
+	});
 
 	cpComponent.push_back(::std::move(pVban));
 
@@ -258,12 +258,25 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			UI::States::Knob state{ knob.get_State() };
 			state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
 			knob.Set(state, false);
-			});
+		});
 		input.on_Mute([&knob](bool mute)->void {
 			UI::States::Knob state{ knob.get_State() };
 			state.enabled = mute;
 			knob.Set(state, false);
+		});
+		int i{ 0 };
+		for (::Voicemeeter::Remote::Channel& channel : input.get_Channels()) {
+			channel.on_Level([&knob, i](double level)->void {
+				UI::States::Knob state{ knob.get_State() };
+				if (i) {
+					state.rightLevel = static_cast<int>((level) * 1000.);
+				} else {
+					state.leftLevel = static_cast<int>((level) * 1000.);
+				}
+				knob.Set(state, false);
 			});
+			++i;
+		}
 
 		cpComponent.push_back(::std::move(pKnob));
 
@@ -313,7 +326,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			mixer.on_Plug(input, output, [&checkbox](bool plug)->void {
 				int value{ plug };
 				checkbox.Set(value, false);
-				});
+			});
 
 			cpPlug.push_back(::std::move(pPlug));
 
@@ -369,6 +382,20 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			state.enabled = mute;
 			knob.Set(state, false);
 			});
+		int i{ 0 };
+		for (::Voicemeeter::Remote::Channel& channel : output.get_Channels()) {
+			channel.on_Level([&knob, i](double level)->void {
+				UI::States::Knob state{ knob.get_State() };
+				if (i) {
+					state.rightLevel = static_cast<int>(level * 1000.);
+				}
+				else {
+					state.leftLevel = static_cast<int>(level * 1000.);
+				}
+				knob.Set(state, false);
+			});
+			++i;
+		}
 
 		cpComponent.push_back(::std::move(pKnob));
 	}

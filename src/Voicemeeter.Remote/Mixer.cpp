@@ -26,14 +26,14 @@ Mixer::Mixer(
 	}
 	m_cInput.emplace(
 		*this, ::std::string{ "Strip[0]" },
-		*this, 3L, 0L,
-		*this, 3L, 1L,
+		*this, 1L, 0L,
+		*this, 1L, 1L,
 		::std::string{ "P" }
 	);
 	m_cInput.emplace(
 		*this, ::std::string{ "Strip[5]" },
-		*this, 3L, 10L,
-		*this, 3L, 11L,
+		*this, 1L, 10L,
+		*this, 1L, 11L,
 		::std::string{ "V" }
 	);
 	m_cOutput.emplace(

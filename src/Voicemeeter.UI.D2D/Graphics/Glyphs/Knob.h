@@ -31,8 +31,11 @@ namespace Voicemeeter {
 						inline void set_Gain(FLOAT value) {
 							m_gain = value;
 						};
-						inline void set_Level(FLOAT value) {
-							m_level = value;
+						inline void set_LeftLevel(FLOAT value) {
+							m_leftLevel = value;
+						};
+						inline void set_RightLevel(FLOAT value) {
+							m_rightLevel = value;
 						};
 						inline void set_Enabled(bool value) {
 							m_enabled = value;
@@ -46,7 +49,8 @@ namespace Voicemeeter {
 					private:
 						::std::wstring m_label;
 						FLOAT m_gain;
-						FLOAT m_level;
+						FLOAT m_leftLevel;
+						FLOAT m_rightLevel;
 						bool m_enabled;
 						bool m_pinned;
 					};
