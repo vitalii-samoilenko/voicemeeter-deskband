@@ -66,4 +66,4 @@ Explorer.exe &
 
 If you like it you can support me with crypto:
 
-<img src="qr.jpg" alt="QR" width="200"/>
+<img src="qr.png" alt="QR" width="200"/>
