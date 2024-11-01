@@ -6,10 +6,9 @@
 #include <windows.h>
 
 #include "Environment/IInputTracker.h"
+#include "Voicemeeter.Remote/Mixer.h"
 #include "Voicemeeter.UI/IScene.h"
 #include "Windows/Timer.h"
-
-#include "../VoicemeeterRemote.h"
 
 namespace Voicemeeter {
 	namespace Windows {
@@ -81,14 +80,14 @@ namespace Voicemeeter {
 			HWND                m_hWnd;                 // main window of deskband
 			HWND                m_hWndParent;           // parent window of deskband
 			UINT m_dpi;
+			::std::unique_ptr<::Windows::Timer> m_pUiTimer;
+			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
+			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;
 			::std::unique_ptr<::Voicemeeter::UI::IScene> m_pScene;
-			::std::unique_ptr<::Windows::Timer> m_pTimer;
-			T_VBVMR_INTERFACE m_remote;
 
 			~DeskBand();
 
 			void BuildScene();
-			void Connect();
 
 			static LRESULT CALLBACK WndProcW(
 				HWND hWnd,

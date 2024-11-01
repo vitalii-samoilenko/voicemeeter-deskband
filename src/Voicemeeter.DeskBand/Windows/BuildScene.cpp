@@ -1,6 +1,12 @@
+#include <codecvt>
+#include <locale>
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include "estd/type_traits.h"
+
+#include "Windows/Wrappers.h"
 
 #include "Voicemeeter.UI/Decorators/Margin.h"
 #include "Voicemeeter.UI/Decorators/RegionCheck.h"
@@ -31,465 +37,345 @@
 
 #include "DeskBand.h"
 
-using namespace ::Voicemeeter::UI;
-
+using namespace ::Voicemeeter;
 using namespace ::Voicemeeter::Windows;
 
-template<typename TMapper>
-class RemoteCheckboxStatePromotion : public Policies::IStatePromotion<int> {
+template<
+	typename TInput, typename TInputIterator,
+	typename TOutput, typename TOutputIterator,
+	typename TMapper>
+class PlugStatePromotion : public UI::Policies::IStatePromotion<int> {
 	static_assert(
-		::estd::is_invocable_r<float, TMapper, const int&>(),
-		"TMapper must be invocable with const int& and must return float");
+		::estd::is_invocable_r<bool, TMapper, const int&>(),
+		"TMapper must be invocable with const int& and must return bool");
 
 public:
-	RemoteCheckboxStatePromotion(
-		const T_VBVMR_INTERFACE& remote,
-		const char* pLabel,
-		TMapper mapper
-	) : m_remote{ remote }
-	  , m_pLabel{ pLabel }
+	PlugStatePromotion(
+		IMixer<TInput, TInputIterator, TOutput, TOutputIterator>& mixer,
+		const TInput& input,
+		const TOutput& output,
+		const TMapper& mapper
+	) : m_mixer{ mixer }
+	  , m_input{ input }
+	  , m_output{ output }
 	  , m_mapper{ mapper } {
 
 	};
-	RemoteCheckboxStatePromotion() = delete;
-	RemoteCheckboxStatePromotion(const RemoteCheckboxStatePromotion&) = delete;
-	RemoteCheckboxStatePromotion(RemoteCheckboxStatePromotion&&) = delete;
+	PlugStatePromotion() = delete;
+	PlugStatePromotion(const PlugStatePromotion&) = delete;
+	PlugStatePromotion(PlugStatePromotion&&) = delete;
 
-	~RemoteCheckboxStatePromotion() = default;
+	~PlugStatePromotion() = default;
 
-	RemoteCheckboxStatePromotion& operator=(const RemoteCheckboxStatePromotion&) = delete;
-	RemoteCheckboxStatePromotion& operator=(RemoteCheckboxStatePromotion&&) = delete;
+	PlugStatePromotion& operator=(const PlugStatePromotion&) = delete;
+	PlugStatePromotion& operator=(PlugStatePromotion&&) = delete;
 
 	virtual void Promote(const int& state) const {
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pLabel), m_mapper(state))) {
-			throw ::Windows::Error{ m_pLabel };
-		}
+		m_mixer.set_Plug(m_input, m_output, m_mapper(state));
 	};
 
 private:
-	const T_VBVMR_INTERFACE& m_remote;
-	const char* m_pLabel;
+	IMixer<TInput, TInputIterator, TOutput, TOutputIterator>& m_mixer;
+	const TInput& m_input;
+	const TOutput& m_output;
 	TMapper m_mapper;
 };
 
-template<typename TGainMapper, typename TPinnedMapper>
-class RemoteKnobStatePromotion : public Policies::IStatePromotion<States::Knob> {
+template<typename TMapper>
+class VbanStatePromotion : public UI::Policies::IStatePromotion<int> {
 	static_assert(
-		::estd::is_invocable_r<float, TGainMapper, const int&>(),
-		"TGainMapper must be invocable with const int& and must return float");
-	static_assert(
-		::estd::is_invocable_r<float, TPinnedMapper, const bool&>(),
-		"TPinnedMapper must be invocable with const bool& and must return float");
+		::estd::is_invocable_r<bool, TMapper, const int&>(),
+		"TMapper must be invocable with const int& and must return bool");
 
 public:
-	RemoteKnobStatePromotion(
-		const T_VBVMR_INTERFACE& remote,
-		const char* pGainLabel,
-		const char* pPinnedLabel,
-		TGainMapper gainMapper,
-		TPinnedMapper pinnedMapper
-	) : m_remote{ remote }
-	  , m_pGainLabel{ pGainLabel }
-	  , m_pPinnedLabel{ pPinnedLabel }
-	  , m_gainMapper{ gainMapper } 
-	  , m_pinnedMapper{ pinnedMapper } {
+	VbanStatePromotion(
+		INetwork& network,
+		const TMapper& mapper
+	) : m_network{ network }
+	  , m_mapper{ mapper } {
 
 	};
-	RemoteKnobStatePromotion() = delete;
-	RemoteKnobStatePromotion(const RemoteKnobStatePromotion&) = delete;
-	RemoteKnobStatePromotion(RemoteKnobStatePromotion&&) = delete;
+	VbanStatePromotion() = delete;
+	VbanStatePromotion(const VbanStatePromotion&) = delete;
+	VbanStatePromotion(VbanStatePromotion&&) = delete;
 
-	~RemoteKnobStatePromotion() = default;
+	~VbanStatePromotion() = default;
 
-	RemoteKnobStatePromotion& operator=(const RemoteKnobStatePromotion&) = delete;
-	RemoteKnobStatePromotion& operator=(RemoteKnobStatePromotion&&) = delete;
+	VbanStatePromotion& operator=(const VbanStatePromotion&) = delete;
+	VbanStatePromotion& operator=(VbanStatePromotion&&) = delete;
 
-	virtual void Promote(const States::Knob& state) const {
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pGainLabel), m_gainMapper(state.gain))) {
-			throw ::Windows::Error{ m_pGainLabel };
-		}
-		if (m_remote.VBVMR_SetParameterFloat(const_cast<char*>(m_pPinnedLabel), m_pinnedMapper(state.enabled))) {
-			throw ::Windows::Error{ m_pPinnedLabel };
-		}
+	virtual void Promote(const int& state) const {
+		m_network.set_Vban(m_mapper(state));
 	};
 
 private:
-	const T_VBVMR_INTERFACE& m_remote;
-	const char* m_pGainLabel;
-	const char* m_pPinnedLabel;
+	INetwork& m_network;
+	TMapper m_mapper;
+};
+
+template<typename TGainMapper, typename TMutedMapper>
+class KnobStatePromotion : public UI::Policies::IStatePromotion<UI::States::Knob> {
+	static_assert(
+		::estd::is_invocable_r<double, TGainMapper, const int&>(),
+		"TGainMapper must be invocable with const int& and must return double");
+	static_assert(
+		::estd::is_invocable_r<bool, TMutedMapper, const bool&>(),
+		"TMutedMapper must be invocable with const bool& and must return bool");
+
+public:
+	KnobStatePromotion(
+		IAmplifier& amplifier,
+		const TGainMapper& gainMapper,
+		const TMutedMapper& mutedMapper
+	) : m_amplifier{ amplifier }
+	  , m_gainMapper{ gainMapper }
+	  , m_mutedMapper{ mutedMapper } {
+
+	};
+	KnobStatePromotion() = delete;
+	KnobStatePromotion(const KnobStatePromotion&) = delete;
+	KnobStatePromotion(KnobStatePromotion&&) = delete;
+
+	~KnobStatePromotion() = default;
+
+	KnobStatePromotion& operator=(const KnobStatePromotion&) = delete;
+	KnobStatePromotion& operator=(KnobStatePromotion&&) = delete;
+
+	virtual void Promote(const UI::States::Knob& state) const {
+		m_amplifier.set_Gain(m_gainMapper(state.gain));
+		m_amplifier.set_Mute(m_mutedMapper(state.enabled));
+	};
+
+private:
+	IAmplifier& m_amplifier;
 	TGainMapper m_gainMapper;
-	TPinnedMapper m_pinnedMapper;
+	TMutedMapper m_mutedMapper;
 };
 
 void DeskBand::BuildScene() {
-	auto checkboxMap = [](const int& state)->float {
-		return static_cast<float>(state);
+	::std::unique_ptr<UI::FocusTracker> pFocusTracker{
+		new UI::FocusTracker{}
 	};
-	auto gainerMap = [](const int& state)->float {
-		return static_cast<float>((state / 100.F - 90.F) / 3.75);
-	};
-	using CheckboxStatePromotion = RemoteCheckboxStatePromotion<decltype(checkboxMap)>;
-	using GainerStatePromotion = RemoteKnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>;
-	::std::unique_ptr<CheckboxStatePromotion> system_out_a_1_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].A1", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> system_out_a_2_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].A2", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> system_out_b_1_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].B1", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> system_out_b_2_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[5].B2", checkboxMap }
-	};
-	::std::unique_ptr<GainerStatePromotion> systemGainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Strip[5].Gain", "Strip[5].Mute", gainerMap, checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> micro_out_a_1_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[0].A1", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> micro_out_a_2_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[0].A2", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> micro_out_b_1_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[0].B1", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> micro_out_b_2_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[0].B2", checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> micro_systemMute_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "Strip[0].Mute", checkboxMap }
-	};
-	::std::unique_ptr<GainerStatePromotion> microGainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Strip[0].Gain", "Strip[0].Mute", gainerMap, checkboxMap }
-	};
-	::std::unique_ptr<GainerStatePromotion> a1Gainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Bus[0].Gain", "Bus[0].Mute", gainerMap, checkboxMap }
-	};
-	::std::unique_ptr<GainerStatePromotion> a2Gainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Bus[1].Gain", "Bus[1].Mute", gainerMap, checkboxMap }
-	};
-	::std::unique_ptr<GainerStatePromotion> b1Gainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Bus[5].Gain", "Bus[5].Mute", gainerMap, checkboxMap }
-	};
-	::std::unique_ptr<GainerStatePromotion> b2Gainer_pStatePromotionPolicy{
-		new GainerStatePromotion{ m_remote, "Bus[6].Gain", "Bus[6].Mute", gainerMap, checkboxMap }
-	};
-	::std::unique_ptr<CheckboxStatePromotion> vban_pStatePromotionPolicy{
-		new CheckboxStatePromotion{ m_remote, "vban.Enable", checkboxMap }
+	::std::unique_ptr<UI::InputTracker> pInputTracker{
+		new UI::InputTracker{ *this }
 	};
 
-	::std::unique_ptr<FocusTracker> pFocusTracker{
-		new FocusTracker{}
-	};
-	::std::unique_ptr<InputTracker> pInputTracker{
-		new InputTracker{ *this }
+	const UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
+	::std::unique_ptr<UI::D2D::Graphics::Canvas> pCanvas{
+		new UI::D2D::Graphics::Canvas{ m_hWnd, theme }
 	};
 
-	const D2D::Graphics::Theme theme{ D2D::Graphics::Theme::Default() };
-	::std::unique_ptr<D2D::Graphics::Canvas> pCanvas{
-		new D2D::Graphics::Canvas{ m_hWnd, theme }
+	auto checkboxMap = [](const int& state)->bool {
+		return static_cast<bool>(state);
+	};
+	auto gainerMap = [](const int& state)->double {
+		return (state / 100. - 90.) / 3.75;
 	};
 
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> system_out_a_1_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"A1"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> system_out_a_2_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"A2"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> system_out_b_1_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"B1"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> system_out_b_2_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"B2"
-	} };
-
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> micro_out_a_1_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"A1"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> micro_out_a_2_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"A2"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> micro_out_b_1_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"B1"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Out> micro_out_b_2_pGlyph{
-		new D2D::Graphics::Glyphs::Out{
-			*pCanvas, L"B2"
-	} };
-
-	::std::unique_ptr<D2D::Graphics::Glyphs::Vban> vban_pGlyph{
-		new D2D::Graphics::Glyphs::Vban{
+	::std::unique_ptr<VbanStatePromotion<decltype(checkboxMap)>> vban_pStatePromotionPolicy{
+		new VbanStatePromotion<decltype(checkboxMap)>{ m_pMixer->get_Network(), checkboxMap }
+	};
+	::std::unique_ptr<UI::D2D::Graphics::Glyphs::Vban> vban_pGlyph{
+		new UI::D2D::Graphics::Glyphs::Vban{
 			*pCanvas
 	} };
-
-	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> systemGainer_pGlyph{
-		new D2D::Graphics::Glyphs::Knob{
-			*pCanvas, L"V"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> microGainer_pGlyph{
-		new D2D::Graphics::Glyphs::Knob{
-			*pCanvas, L"P"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> a1Gainer_pGlyph{
-		new D2D::Graphics::Glyphs::Knob{
-			*pCanvas, L"A1"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> a2Gainer_pGlyph{
-		new D2D::Graphics::Glyphs::Knob{
-			*pCanvas, L"A2"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> b1Gainer_pGlyph{
-		new D2D::Graphics::Glyphs::Knob{
-			*pCanvas, L"B1"
-	} };
-	::std::unique_ptr<D2D::Graphics::Glyphs::Knob> b2Gainer_pGlyph{
-		new D2D::Graphics::Glyphs::Knob{
-			*pCanvas, L"B2"
-	} };
-
-	::std::shared_ptr<Policies::CheckboxStateChange> pCheckboxStateChangePolicy{
-		new Policies::CheckboxStateChange{}
+	::std::shared_ptr<UI::Policies::CheckboxStateChange> pCheckboxStateChangePolicy{
+		new UI::Policies::CheckboxStateChange{}
 	};
-	::std::shared_ptr<D2D::Policies::KnobStateChange> pGainerStateChangePolicy{
-		new D2D::Policies::KnobStateChange{}
+	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ m_hWnd }
 	};
-	::std::shared_ptr<D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Out, int, D2D::Policies::OutGlyphUpdate>> pOutGlyphUpdatePolicy{
-		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Out, int, D2D::Policies::OutGlyphUpdate>{ m_hWnd }
-	};
-	::std::shared_ptr<D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Vban, int, D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
-		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Vban, int, D2D::Policies::VbanGlyphUpdate>{ m_hWnd }
-	};
-	::std::shared_ptr<D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Knob, States::Knob, D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
-		new D2D::Decorators::WindowsGlyphUpdate<D2D::Graphics::Glyphs::Knob, States::Knob, D2D::Policies::KnobGlyphUpdate>{ m_hWnd }
-	};
-	::std::shared_ptr<D2D::Policies::OutInteractivity> pOutInteractivityPolicy{
-		new D2D::Policies::OutInteractivity{ *pFocusTracker }
-	};
-	::std::shared_ptr<D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
-		new D2D::Policies::VbanInteractivity{ *pFocusTracker }
-	};
-	::std::shared_ptr<D2D::Policies::KnobInteractivity> pGainerInteractivityPolicy{
-		new D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , *m_pTimer }
+	::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
+		new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
 	};
 
-	::std::unique_ptr<IComponent> system_out_a_cpControl[]{
-		::std::make_unique<Decorators::RegionCheck<
-			D2D::Controls::Out>>(
-				*pInputTracker,
-				::std::move(system_out_a_1_pGlyph),
-				pCheckboxStateChangePolicy,
-				::std::move(system_out_a_1_pStatePromotionPolicy),
-				pOutGlyphUpdatePolicy,
-				pOutInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Out>>>(
-					::linear_algebra::vectord{ 0, 2 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(system_out_a_2_pGlyph),
-					pCheckboxStateChangePolicy,
-					::std::move(system_out_a_2_pStatePromotionPolicy),
-					pOutGlyphUpdatePolicy,
-					pOutInteractivityPolicy
-		)
-	};
-	::std::unique_ptr<IComponent> system_out_b_cpControl[]{
-		::std::make_unique<Decorators::RegionCheck<
-			D2D::Controls::Out>>(
-				*pInputTracker,
-				::std::move(system_out_b_1_pGlyph),
-				pCheckboxStateChangePolicy,
-				::std::move(system_out_b_1_pStatePromotionPolicy),
-				pOutGlyphUpdatePolicy,
-				pOutInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Out>>>(
-					::linear_algebra::vectord{ 0, 2 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(system_out_b_2_pGlyph),
-					pCheckboxStateChangePolicy,
-					::std::move(system_out_b_2_pStatePromotionPolicy),
-					pOutGlyphUpdatePolicy,
-					pOutInteractivityPolicy
-		)
-	};
+	::std::vector<::std::unique_ptr<UI::IComponent>> cpComponent{};
 
-	::std::unique_ptr<IComponent> micro_out_a_cpControl[]{
-		::std::make_unique<Decorators::RegionCheck<
-			D2D::Controls::Out>>(
-				*pInputTracker,
-				::std::move(micro_out_a_1_pGlyph),
-				pCheckboxStateChangePolicy,
-				::std::move(micro_out_a_1_pStatePromotionPolicy),
-				pOutGlyphUpdatePolicy,
-				pOutInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Out>>>(
-					::linear_algebra::vectord{ 0, 2 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(micro_out_a_2_pGlyph),
-					pCheckboxStateChangePolicy,
-					::std::move(micro_out_a_2_pStatePromotionPolicy),
-					pOutGlyphUpdatePolicy,
-					pOutInteractivityPolicy
-		)
-	};
-	::std::unique_ptr<IComponent> micro_out_b_cpControl[]{
-		::std::make_unique<Decorators::RegionCheck<
-			D2D::Controls::Out>>(
-				*pInputTracker,
-				::std::move(micro_out_b_1_pGlyph),
-				pCheckboxStateChangePolicy,
-				::std::move(micro_out_b_1_pStatePromotionPolicy),
-				pOutGlyphUpdatePolicy,
-				pOutInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Out>>>(
-					::linear_algebra::vectord{ 0, 2 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(micro_out_b_2_pGlyph),
-					pCheckboxStateChangePolicy,
-					::std::move(micro_out_b_2_pStatePromotionPolicy),
-					pOutGlyphUpdatePolicy,
-					pOutInteractivityPolicy
-		)
-	};
-
-	::std::unique_ptr<IComponent> cpComponent[]{
-		::std::make_unique<Decorators::RegionCheck<
-			D2D::Controls::Vban>>(
+	::std::unique_ptr<UI::D2D::Controls::Vban> pVban{
+		new UI::Decorators::RegionCheck<
+			UI::D2D::Controls::Vban>{
 				*pInputTracker,
 				::std::move(vban_pGlyph),
 				pCheckboxStateChangePolicy,
 				::std::move(vban_pStatePromotionPolicy),
 				pVbanGlyphUpdatePolicy,
 				pVbanInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(microGainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(microGainer_pStatePromotionPolicy),
-					pKnobGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(micro_out_a_cpControl),
-					::std::end(micro_out_a_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(micro_out_b_cpControl),
-					::std::end(micro_out_b_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(systemGainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(systemGainer_pStatePromotionPolicy),
-					pKnobGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(system_out_a_cpControl),
-					::std::end(system_out_a_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				Panels::Stack<Panels::Direction::Down>>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::begin(system_out_b_cpControl),
-					::std::end(system_out_b_cpControl)
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(a1Gainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(a1Gainer_pStatePromotionPolicy),
-					pKnobGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(a2Gainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(a2Gainer_pStatePromotionPolicy),
-					pKnobGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(b1Gainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(b1Gainer_pStatePromotionPolicy),
-					pKnobGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		), ::std::make_unique<Decorators::Margin<
-			Decorators::RegionCheck<
-				D2D::Controls::Knob>>>(
-					::linear_algebra::vectord{ 2, 0 },
-					::linear_algebra::vectord{ 0, 0 },
-					*pInputTracker,
-					::std::move(b2Gainer_pGlyph),
-					pGainerStateChangePolicy,
-					::std::move(b2Gainer_pStatePromotionPolicy),
-					pKnobGlyphUpdatePolicy,
-					pGainerInteractivityPolicy
-		)
-	};
-
-	::std::unique_ptr<IComponent> pComposition{
-		new Panels::Stack<Panels::Direction::Right>{
-			::std::begin(cpComponent),
-			::std::end(cpComponent)
 	} };
 
-	m_pScene.reset(new D2D::Scene{
+	UI::D2D::Controls::Vban& checkbox{ *pVban };
+	m_pMixer->get_Network()
+		.on_Vban([&checkbox](bool vban)->void {
+			int value{ vban };
+			checkbox.Set(value, false);
+		});
+
+	cpComponent.push_back(::std::move(pVban));
+
+	::std::shared_ptr<UI::D2D::Policies::KnobStateChange> pKnobStateChangePolicy{
+		new UI::D2D::Policies::KnobStateChange{}
+	};
+	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ m_hWnd }
+	};
+	::std::shared_ptr<UI::D2D::Policies::KnobInteractivity> pKnobInteractivityPolicy{
+		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , *m_pUiTimer }
+	};
+
+	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Out, int, UI::D2D::Policies::OutGlyphUpdate>> pPlugGlyphUpdatePolicy{
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Out, int, UI::D2D::Policies::OutGlyphUpdate>{ m_hWnd }
+	};
+	::std::shared_ptr<UI::D2D::Policies::OutInteractivity> pPlugInteractivityPolicy{
+		new UI::D2D::Policies::OutInteractivity{ *pFocusTracker }
+	};
+
+	for (Remote::Input& input : m_pMixer->get_Inputs()) {
+		::std::unique_ptr<UI::D2D::Graphics::Glyphs::Knob> pKnobGlyph{
+			new UI::D2D::Graphics::Glyphs::Knob{
+				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
+		} };
+
+		::std::unique_ptr<KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>> pKnobStatePromotionPolicy{
+			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ input, gainerMap, checkboxMap }
+		};
+
+		::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{
+			new UI::Decorators::Margin<
+				UI::Decorators::RegionCheck<
+					UI::D2D::Controls::Knob>>{
+						::linear_algebra::vectord{ 2, 0 },
+						::linear_algebra::vectord{ 0, 0 },
+						*pInputTracker,
+						::std::move(pKnobGlyph),
+						pKnobStateChangePolicy,
+						::std::move(pKnobStatePromotionPolicy),
+						pKnobGlyphUpdatePolicy,
+						pKnobInteractivityPolicy
+		} };
+
+		UI::D2D::Controls::Knob& knob{ *pKnob };
+		input.on_Gain([&knob](double gain)->void {
+			UI::States::Knob state{ knob.get_State() };
+			state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
+			knob.Set(state, false);
+		});
+		input.on_Mute([&knob](bool mute)->void {
+			UI::States::Knob state{ knob.get_State() };
+			state.enabled = mute;
+			knob.Set(state, false);
+		});
+
+		cpComponent.push_back(::std::move(pKnob));
+
+		::std::vector<::std::unique_ptr<UI::IComponent>> cpPlug{};
+
+		for (Remote::Output& output : m_pMixer->get_Outputs()) {
+			::std::unique_ptr<UI::D2D::Graphics::Glyphs::Out> pPlugGlyph{
+				new UI::D2D::Graphics::Glyphs::Out{
+					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
+			} };
+
+			::std::unique_ptr<PlugStatePromotion<Remote::Input, Remote::RangeIterator<Remote::Input>, Remote::Output, Remote::RangeIterator<Remote::Output>, decltype(checkboxMap)>> pPlugStatePromotionPolicy{
+				new PlugStatePromotion<Remote::Input, Remote::RangeIterator<Remote::Input>, Remote::Output, Remote::RangeIterator<Remote::Output>, decltype(checkboxMap)>{ *m_pMixer, input, output, checkboxMap }
+			};
+
+			::std::unique_ptr<UI::D2D::Controls::Out> pPlug{
+				(cpPlug.size()
+					? ::std::make_unique<UI::Decorators::Margin<
+						UI::Decorators::RegionCheck<
+							UI::D2D::Controls::Out>>>(
+								::linear_algebra::vectord{ 0, 2 },
+								::linear_algebra::vectord{ 0, 0 },
+								*pInputTracker,
+								::std::move(pPlugGlyph),
+								pCheckboxStateChangePolicy,
+								::std::move(pPlugStatePromotionPolicy),
+								pPlugGlyphUpdatePolicy,
+								pPlugInteractivityPolicy
+					) : ::std::make_unique<UI::Decorators::RegionCheck<
+						UI::D2D::Controls::Out>>(
+							*pInputTracker,
+							::std::move(pPlugGlyph),
+							pCheckboxStateChangePolicy,
+							::std::move(pPlugStatePromotionPolicy),
+							pPlugGlyphUpdatePolicy,
+							pPlugInteractivityPolicy
+				))
+			};
+
+			UI::D2D::Controls::Out& checkbox{ *pPlug };
+			m_pMixer->on_Plug(input, output, [&checkbox](bool plug)->void {
+				int value{ plug };
+				checkbox.Set(value, false);
+			});
+
+			cpPlug.push_back(::std::move(pPlug));
+
+			if (cpPlug.size() == 2) {
+				cpComponent.push_back(
+					::std::make_unique<UI::Decorators::Margin<
+						UI::Decorators::RegionCheck<
+							UI::Panels::Stack<UI::Panels::Direction::Down>>>>(
+								::linear_algebra::vectord{ 2, 0 },
+								::linear_algebra::vectord{ 0, 0 },
+								*pInputTracker,
+								cpPlug.begin(),
+								cpPlug.end()
+					)
+				);
+				cpPlug.clear();
+			}
+		}
+	}
+
+	for (Remote::Output& output : m_pMixer->get_Outputs()) {
+		::std::unique_ptr<UI::D2D::Graphics::Glyphs::Knob> pKnobGlyph{
+			new UI::D2D::Graphics::Glyphs::Knob{
+				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
+		} };
+
+		::std::unique_ptr<KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>> pKnobStatePromotionPolicy{
+			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ output, gainerMap, checkboxMap }
+		};
+
+		::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{
+			new UI::Decorators::Margin<
+				UI::Decorators::RegionCheck<
+					UI::D2D::Controls::Knob>>{
+						::linear_algebra::vectord{ 2, 0 },
+						::linear_algebra::vectord{ 0, 0 },
+						*pInputTracker,
+						::std::move(pKnobGlyph),
+						pKnobStateChangePolicy,
+						::std::move(pKnobStatePromotionPolicy),
+						pKnobGlyphUpdatePolicy,
+						pKnobInteractivityPolicy
+		} };
+
+		UI::D2D::Controls::Knob& knob{ *pKnob };
+		output.on_Gain([&knob](double gain)->void {
+			UI::States::Knob state{ knob.get_State() };
+			state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
+			knob.Set(state, false);
+		});
+		output.on_Mute([&knob](bool mute)->void {
+			UI::States::Knob state{ knob.get_State() };
+			state.enabled = mute;
+			knob.Set(state, false);
+		});
+
+		cpComponent.push_back(::std::move(pKnob));
+	}
+
+	::std::unique_ptr<UI::IComponent> pComposition{
+		new UI::Panels::Stack<UI::Panels::Direction::Right>{
+			cpComponent.begin(),
+			cpComponent.end()
+	} };
+
+	m_pScene.reset(new UI::D2D::Scene{
 		::std::move(pInputTracker),
 		::std::move(pFocusTracker),
 		::std::move(pCanvas),
 		::std::move(pComposition)
-		});
+	});
 }

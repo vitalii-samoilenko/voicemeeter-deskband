@@ -34,16 +34,14 @@ DeskBand::DeskBand(
   ,	m_hWnd{ NULL }
   , m_hWndParent{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
-  , m_pScene{ nullptr }
-  , m_remote{} {
+  , m_pUiTimer{ nullptr }
+  , m_pMixerTimer{ nullptr }
+  , m_pMixer{ nullptr }
+  , m_pScene{ nullptr } {
 	InterlockedIncrement(&g_cDllRef);
 }
 
 DeskBand::~DeskBand() {
-	if (m_remote.VBVMR_Logout != NULL) {
-        m_remote.VBVMR_Logout();
-	}
-
 	if (m_pSite) {
 		m_pSite->Release();
 	}
@@ -358,11 +356,11 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
         case WM_CREATE: {
             pWnd = reinterpret_cast<DeskBand*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
             pWnd->m_hWnd = hWnd;
-            pWnd->m_pTimer.reset(new ::Windows::Timer{ hWnd });
             pWnd->m_dpi = GetDpiForWindow(hWnd);
-
+            pWnd->m_pUiTimer.reset(new ::Windows::Timer{ hWnd });
+            pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
+            pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
             pWnd->BuildScene();
-            pWnd->Connect();
 
             if (::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
                 return FALSE;
@@ -395,7 +393,13 @@ LRESULT CALLBACK DeskBand::WndProcW(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
             EndPaint(hWnd, &ps);
         } return OK;
         case WM_TIMER: {
-            pWnd->m_pTimer->Elapse();
+            UINT_PTR id{ static_cast<UINT_PTR>(wParam) };
+            if (id == pWnd->m_pUiTimer->get_Id()) {
+                pWnd->m_pUiTimer->Elapse();
+            }
+            else if (id == pWnd->m_pMixerTimer->get_Id()) {
+                pWnd->m_pMixerTimer->Elapse();
+            }
         } return OK;
         case WM_PRINTCLIENT: {
             pWnd->m_pScene->Redraw(

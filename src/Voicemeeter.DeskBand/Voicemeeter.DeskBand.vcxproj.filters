@@ -30,9 +30,6 @@
     <ClCompile Include="Windows\BuildScene.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Windows\Connect.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Windows\ClassFactory.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
@@ -40,9 +37,6 @@
   <ItemGroup>
     <ClInclude Include="windows\DeskBand.h">
       <Filter>Header Files\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="VoicemeeterRemote.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Windows\ClassFactory.h">
       <Filter>Header Files\Windows</Filter>

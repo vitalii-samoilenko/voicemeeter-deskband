@@ -149,15 +149,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Windows\BuildScene.cpp" />
     <ClCompile Include="Windows\ClassFactory.cpp" />
-    <ClCompile Include="Windows\Connect.cpp" />
     <ClCompile Include="Windows\DeskBand.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VoicemeeterRemote.h" />
     <ClInclude Include="Windows\ClassFactory.h" />
     <ClInclude Include="Windows\DeskBand.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Voicemeeter.Remote\Voicemeeter.Remote.vcxproj">
+      <Project>{a8201ccc-d675-42d9-947a-b6a27450275a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.UI.D2D\Voicemeeter.UI.D2D.vcxproj">
       <Project>{c55c74a6-d812-446d-94e1-75fe1aa95797}</Project>
     </ProjectReference>
