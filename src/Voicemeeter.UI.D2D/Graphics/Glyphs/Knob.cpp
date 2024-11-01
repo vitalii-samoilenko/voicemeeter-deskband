@@ -41,14 +41,17 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 						.Danger)
 					: palette.get_pBrush(palette.get_Theme()
 						.PrimaryActive)
-				: level < 0.7F
+				: level < 0.05F
 					? palette.get_pBrush(palette.get_Theme()
-						.EqualizerLow)
-					: level < 10.F
+						.Inactive)
+					: level < 7.F
 						? palette.get_pBrush(palette.get_Theme()
-							.EqualizerMedium)
-						: palette.get_pBrush(palette.get_Theme()
-							.EqualizerHigh))
+							.EqualizerLow)
+						: level < 100.F
+							? palette.get_pBrush(palette.get_Theme()
+								.EqualizerMedium)
+							: palette.get_pBrush(palette.get_Theme()
+								.EqualizerHigh))
 	};
 
 	if (m_pinned) {

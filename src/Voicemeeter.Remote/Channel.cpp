@@ -29,7 +29,7 @@ void Channel::Update() {
 	m_mixer.get_Remote()
 		.VBVMR_GetLevel(m_type, m_channel, &level);
 
-	if (::std::abs(m_level - level) < 0.001) {
+	if (::std::abs(m_level - level) < 0.0001) {
 		return;
 	}
 	m_level = level;

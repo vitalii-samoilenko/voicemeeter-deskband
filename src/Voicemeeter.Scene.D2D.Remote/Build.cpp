@@ -269,9 +269,9 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			channel.on_Level([&knob, i](double level)->void {
 				UI::States::Knob state{ knob.get_State() };
 				if (i) {
-					state.rightLevel = static_cast<int>((level) * 1000.);
+					state.rightLevel = static_cast<int>(level * 10000.);
 				} else {
-					state.leftLevel = static_cast<int>((level) * 1000.);
+					state.leftLevel = static_cast<int>(level * 10000.);
 				}
 				knob.Set(state, false);
 			});
@@ -333,14 +333,14 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			if (cpPlug.size() == 2) {
 				cpComponent.push_back(
 					::std::make_unique<UI::Decorators::Margin<
-					UI::Decorators::RegionCheck<
-					UI::Panels::Stack<UI::Panels::Direction::Down>>>>(
-						::linear_algebra::vectord{ 2, 0 },
-						::linear_algebra::vectord{ 0, 0 },
-						*pInputTracker,
-						cpPlug.begin(),
-						cpPlug.end()
-						)
+						UI::Decorators::RegionCheck<
+							UI::Panels::Stack<UI::Panels::Direction::Down>>>>(
+								::linear_algebra::vectord{ 2, 0 },
+								::linear_algebra::vectord{ 0, 0 },
+								*pInputTracker,
+								cpPlug.begin(),
+								cpPlug.end()
+							)
 				);
 				cpPlug.clear();
 			}
@@ -387,10 +387,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			channel.on_Level([&knob, i](double level)->void {
 				UI::States::Knob state{ knob.get_State() };
 				if (i) {
-					state.rightLevel = static_cast<int>(level * 1000.);
+					state.rightLevel = static_cast<int>(level * 10000.);
 				}
 				else {
-					state.leftLevel = static_cast<int>(level * 1000.);
+					state.leftLevel = static_cast<int>(level * 10000.);
 				}
 				knob.Set(state, false);
 			});
