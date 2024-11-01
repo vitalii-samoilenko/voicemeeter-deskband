@@ -90,7 +90,7 @@ Mixer::Mixer(
 			for (Input& input : m_cInput) {
 				Range<Output>& inputPlugs{ m_cInputPlugs[reinterpret_cast<unsigned long long>(&input)] };
 				for (Output& output : m_cOutput) {
-					Range<Input>& outputPlugs{ m_cOutputPlugs[reinterpret_cast<unsigned long long>(&input)] };
+					Range<Input>& outputPlugs{ m_cOutputPlugs[reinterpret_cast<unsigned long long>(&output)] };
 					bool plug{ inputPlugs.find(output) != inputPlugs.end() };
 
 					float value{};
@@ -140,6 +140,7 @@ const Range<Input>& Mixer::get_Plugs(const Output& output) const {
 		->second;
 }
 void Mixer::set_Plug(const Input& input, const Output& output, bool value) {
+	set_Dirty();
 	if (value) {
 		m_cInputPlugs.find(reinterpret_cast<unsigned long long>(&input))
 			->second
