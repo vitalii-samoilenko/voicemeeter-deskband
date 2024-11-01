@@ -1,21 +1,6 @@
-# VoiceMeeter DeskBand
+# Overview
 
-![Prototype](prototype.png)
-
-## Motivation
-
-More convenient simple sound management:
-
-![System setup](system_setup.svg)
-
-- Volume adjustment
-- Active output switch (speakers/headphones/remote device/communication channel)
-- Remote device support
-
-Plenty of space always available in the taskbar
-
-## Overview
-Should provide deskband functionality for the following VoiceMeeter concept:
+Should provide deskband functionality for the following Voicemeeter concept:
 
 ![Functional concept](functional_concept.png)
 
@@ -25,4 +10,9 @@ Should provide deskband functionality for the following VoiceMeeter concept:
 - Configure hardware/virtual input routing
 - Configure VBAN
 - Enable/disable VBAN
-- Restart audio engine
+
+[UI basic principles](ui/base.md)
+
+[UI concept](ui/concept.md)
+
+[UI structure](ui/structure.md)
