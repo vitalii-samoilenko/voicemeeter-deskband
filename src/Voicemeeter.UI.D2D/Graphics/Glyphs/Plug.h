@@ -14,20 +14,20 @@ namespace Voicemeeter {
 				namespace Glyphs {
 					struct Triangle {};
 
-					class Out : public Glyph {
+					class Plug : public Glyph {
 					public:
-						Out(
+						Plug(
 							Graphics::Canvas& canvas,
 							const ::std::wstring& label
 						);
-						Out() = delete;
-						Out(const Out&) = delete;
-						Out(Out&&) = delete;
+						Plug() = delete;
+						Plug(const Plug&) = delete;
+						Plug(Plug&&) = delete;
 
-						~Out() = default;
+						~Plug() = default;
 
-						Out& operator=(const Out&) = delete;
-						Out& operator=(Out&&) = delete;
+						Plug& operator=(const Plug&) = delete;
+						Plug& operator=(Plug&&) = delete;
 
 						inline void set_Active(bool value) {
 							m_active = value;

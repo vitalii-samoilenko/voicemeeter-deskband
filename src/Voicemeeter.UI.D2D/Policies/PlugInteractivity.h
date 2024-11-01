@@ -2,7 +2,7 @@
 
 #include "Voicemeeter.UI/Policies/CheckboxInteractivity.h"
 
-#include "../Graphics/Glyphs/Out.h"
+#include "../Graphics/Glyphs/Plug.h"
 
 using namespace Voicemeeter::UI::Policies;
 
@@ -10,7 +10,7 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Policies {
-				using OutInteractivity = CheckboxInteractivity<Graphics::Glyphs::Out>;
+				using PlugInteractivity = CheckboxInteractivity<Graphics::Glyphs::Plug>;
 			}
 		}
 	}

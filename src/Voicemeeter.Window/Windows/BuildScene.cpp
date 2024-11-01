@@ -18,19 +18,19 @@
 #include "Voicemeeter.UI/FocusTracker.h"
 #include "Voicemeeter.UI/InputTracker.h"
 #include "Voicemeeter.UI.D2D/Controls/Knob.h"
-#include "Voicemeeter.UI.D2D/Controls/Out.h"
+#include "Voicemeeter.UI.D2D/Controls/Plug.h"
 #include "Voicemeeter.UI.D2D/Controls/Vban.h"
 #include "Voicemeeter.UI.D2D/Decorators/WindowsGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Knob.h"
-#include "Voicemeeter.UI.D2D/Graphics/Glyphs/Out.h"
+#include "Voicemeeter.UI.D2D/Graphics/Glyphs/Plug.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Vban.h"
 #include "Voicemeeter.UI.D2D/Graphics/Canvas.h"
 #include "Voicemeeter.UI.D2D/Graphics/Theme.h"
 #include "Voicemeeter.UI.D2D/Policies/KnobGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Policies/KnobInteractivity.h"
 #include "Voicemeeter.UI.D2D/Policies/KnobStateChange.h"
-#include "Voicemeeter.UI.D2D/Policies/OutGlyphUpdate.h"
-#include "Voicemeeter.UI.D2D/Policies/OutInteractivity.h"
+#include "Voicemeeter.UI.D2D/Policies/PlugGlyphUpdate.h"
+#include "Voicemeeter.UI.D2D/Policies/PlugInteractivity.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanInteractivity.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
@@ -221,11 +221,11 @@ void Window::BuildScene() {
 		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , *m_pUiTimer }
 	};
 
-	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Out, int, UI::D2D::Policies::OutGlyphUpdate>> pPlugGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Out, int, UI::D2D::Policies::OutGlyphUpdate>{ m_hWnd }
+	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
+		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ m_hWnd }
 	};
-	::std::shared_ptr<UI::D2D::Policies::OutInteractivity> pPlugInteractivityPolicy{
-		new UI::D2D::Policies::OutInteractivity{ *pFocusTracker }
+	::std::shared_ptr<UI::D2D::Policies::PlugInteractivity> pPlugInteractivityPolicy{
+		new UI::D2D::Policies::PlugInteractivity{ *pFocusTracker }
 	};
 
 	for (Remote::Input& input : m_pMixer->get_Inputs()) {
@@ -269,8 +269,8 @@ void Window::BuildScene() {
 		::std::vector<::std::unique_ptr<UI::IComponent>> cpPlug{};
 
 		for (Remote::Output& output : m_pMixer->get_Outputs()) {
-			::std::unique_ptr<UI::D2D::Graphics::Glyphs::Out> pPlugGlyph{
-				new UI::D2D::Graphics::Glyphs::Out{
+			::std::unique_ptr<UI::D2D::Graphics::Glyphs::Plug> pPlugGlyph{
+				new UI::D2D::Graphics::Glyphs::Plug{
 					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
 			} };
 
@@ -278,11 +278,11 @@ void Window::BuildScene() {
 				new PlugStatePromotion<Remote::Input, Remote::RangeIterator<Remote::Input>, Remote::Output, Remote::RangeIterator<Remote::Output>, decltype(checkboxMap)>{ *m_pMixer, input, output, checkboxMap }
 			};
 
-			::std::unique_ptr<UI::D2D::Controls::Out> pPlug{
+			::std::unique_ptr<UI::D2D::Controls::Plug> pPlug{
 				(cpPlug.size()
 					? ::std::make_unique<UI::Decorators::Margin<
 						UI::Decorators::RegionCheck<
-							UI::D2D::Controls::Out>>>(
+							UI::D2D::Controls::Plug>>>(
 								::linear_algebra::vectord{ 0, 2 },
 								::linear_algebra::vectord{ 0, 0 },
 								*pInputTracker,
@@ -292,7 +292,7 @@ void Window::BuildScene() {
 								pPlugGlyphUpdatePolicy,
 								pPlugInteractivityPolicy
 					) : ::std::make_unique<UI::Decorators::RegionCheck<
-						UI::D2D::Controls::Out>>(
+						UI::D2D::Controls::Plug>>(
 							*pInputTracker,
 							::std::move(pPlugGlyph),
 							pCheckboxStateChangePolicy,
@@ -302,7 +302,7 @@ void Window::BuildScene() {
 				))
 			};
 
-			UI::D2D::Controls::Out& checkbox{ *pPlug };
+			UI::D2D::Controls::Plug& checkbox{ *pPlug };
 			m_pMixer->on_Plug(input, output, [&checkbox](bool plug)->void {
 				int value{ plug };
 				checkbox.Set(value, false);

@@ -54,7 +54,7 @@
     <ClInclude Include="Graphics\Glyphs\Gainer.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Out.h">
+    <ClInclude Include="Graphics\Glyphs\Plug.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
     <ClInclude Include="Policies\GainerGlyphUpdate.h">
@@ -87,19 +87,19 @@
     <ClInclude Include="Controls\Knob.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\OutGlyphUpdate.h">
+    <ClInclude Include="Policies\PlugGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\VbanGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Controls\Out.h">
+    <ClInclude Include="Controls\Plug.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="Controls\Vban.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\OutInteractivity.h">
+    <ClInclude Include="Policies\PlugInteractivity.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\VbanInteractivity.h">
@@ -134,13 +134,13 @@
     <ClCompile Include="Policies\KnobGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Glyphs\Out.cpp">
+    <ClCompile Include="Graphics\Glyphs\Plug.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Vban.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
-    <ClCompile Include="Policies\OutGlyphUpdate.cpp">
+    <ClCompile Include="Policies\PlugGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
     </ClCompile>
     <ClCompile Include="Policies\VbanGlyphUpdate.cpp">

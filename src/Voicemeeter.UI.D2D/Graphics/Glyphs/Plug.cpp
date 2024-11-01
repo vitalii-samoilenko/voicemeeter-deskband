@@ -3,14 +3,14 @@
 #include <wrl/client.h>
 #include <d2d1_3.h>
 
-#include "Out.h"
+#include "Plug.h"
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "dwrite")
 
 using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
 
-Out::Out(
+Plug::Plug(
 	Graphics::Canvas& canvas,
 	const ::std::wstring& label
 ) : Glyph{ canvas, { 41, 19 } }
@@ -19,7 +19,7 @@ Out::Out(
 
 }
 
-void Out::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Plug::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	Glyph::Redraw(point, vertex);
 
 	const Palette& palette{ m_canvas.get_Palette() };
