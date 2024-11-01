@@ -54,8 +54,7 @@ namespace Voicemeeter {
 				virtual void set_Gain(double value) override {
 					m_mixer.set_Dirty();
 					m_gain = value;
-					m_mixer.get_Remote()
-						.VBVMR_SetParameterFloat(const_cast<char*>((m_key + ".Gain").c_str()), static_cast<float>(m_gain));
+					m_mixer.set_Parameter(const_cast<char*>((m_key + ".Gain").c_str()), static_cast<float>(m_gain));
 				};
 				void on_Gain(const ::std::function<void(double)>& callback) {
 					m_cGainCallback.push_back(callback);
@@ -66,8 +65,7 @@ namespace Voicemeeter {
 				virtual void set_Mute(bool value) override {
 					m_mixer.set_Dirty();
 					m_mute = value;
-					m_mixer.get_Remote()
-						.VBVMR_SetParameterFloat(const_cast<char*>((m_key + ".Mute").c_str()), m_mute);
+					m_mixer.set_Parameter(const_cast<char*>((m_key + ".Mute").c_str()), m_mute);
 				};
 				void on_Mute(const ::std::function<void(bool)>& callback) {
 					m_cMuteCallback.push_back(callback);
@@ -80,17 +78,14 @@ namespace Voicemeeter {
 						return;
 					}
 
-					float value{};
-					m_mixer.get_Remote()
-						.VBVMR_GetParameterFloat(const_cast<char*>((m_key + ".Gain").c_str()), &value);
+					float value{ m_mixer.get_Parameter(m_key + ".Gain") };
 					if (!(::std::abs(m_gain - value) < 0.01)) {
 						m_gain = value;
 						for (const ::std::function<void(double)>& callback : m_cGainCallback) {
 							callback(m_gain);
 						}
 					}
-					m_mixer.get_Remote()
-						.VBVMR_GetParameterFloat(const_cast<char*>((m_key + ".Mute").c_str()), &value);
+					value = m_mixer.get_Parameter(m_key + ".Mute");
 					if (!(::std::abs(m_mute - value) < 0.01)) {
 						m_mute = !(value < 0.01);
 						for (const ::std::function<void(double)>& callback : m_cMuteCallback) {

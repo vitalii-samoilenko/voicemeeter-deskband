@@ -27,7 +27,6 @@ Plenty of space always available in the taskbar
 ### Limitations
 
 - No Windows 11 support (yet)
-- Voicemeeter Potato only (for now)
 - Bugs (by using this software you are doing so at your own risk)
 
 ### Install

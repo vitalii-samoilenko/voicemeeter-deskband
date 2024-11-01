@@ -9,6 +9,7 @@ namespace Voicemeeter {
 		INetwork& operator=(const INetwork&) = delete;
 		INetwork& operator=(INetwork&&) = delete;
 
+		virtual bool get_Supported() const = 0;
 		virtual bool get_Vban() const = 0;
 		virtual void set_Vban(bool value) = 0;
 

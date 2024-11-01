@@ -173,44 +173,47 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		return (state / 100. - 90.) / 3.75;
 	};
 
-	::std::unique_ptr<VbanStatePromotion<decltype(checkboxMap)>> vban_pStatePromotionPolicy{
-		new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
-	};
-	::std::unique_ptr<UI::D2D::Graphics::Glyphs::Vban> vban_pGlyph{
-		new UI::D2D::Graphics::Glyphs::Vban{
-			*pCanvas
-	} };
 	::std::shared_ptr<UI::Policies::CheckboxStateChange> pCheckboxStateChangePolicy{
 		new UI::Policies::CheckboxStateChange{}
-	};
-	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ hWnd }
-	};
-	::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
-		new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
 	};
 
 	::std::vector<::std::unique_ptr<UI::IComponent>> cpComponent{};
 
-	::std::unique_ptr<UI::D2D::Controls::Vban> pVban{
-		new UI::Decorators::RegionCheck<
-			UI::D2D::Controls::Vban>{
-				*pInputTracker,
-				::std::move(vban_pGlyph),
-				pCheckboxStateChangePolicy,
-				::std::move(vban_pStatePromotionPolicy),
-				pVbanGlyphUpdatePolicy,
-				pVbanInteractivityPolicy
-	} };
+	::Remote::Network& network{ mixer.get_Network() };
+	if (network.get_Supported()) {
+		::std::unique_ptr<VbanStatePromotion<decltype(checkboxMap)>> vban_pStatePromotionPolicy{
+			new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
+		};
+		::std::unique_ptr<UI::D2D::Graphics::Glyphs::Vban> vban_pGlyph{
+			new UI::D2D::Graphics::Glyphs::Vban{
+				*pCanvas
+		} };
+		::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
+			new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ hWnd }
+		};
+		::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
+			new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
+		};
 
-	UI::D2D::Controls::Vban& checkbox{ *pVban };
-	mixer.get_Network()
-		.on_Vban([&checkbox](bool vban)->void {
-		int value{ vban };
-		checkbox.Set(value, false);
-	});
+		::std::unique_ptr<UI::D2D::Controls::Vban> pVban{
+			new UI::Decorators::RegionCheck<
+				UI::D2D::Controls::Vban>{
+					*pInputTracker,
+					::std::move(vban_pGlyph),
+					pCheckboxStateChangePolicy,
+					::std::move(vban_pStatePromotionPolicy),
+					pVbanGlyphUpdatePolicy,
+					pVbanInteractivityPolicy
+		} };
 
-	cpComponent.push_back(::std::move(pVban));
+		UI::D2D::Controls::Vban& checkbox{ *pVban };
+		network.on_Vban([&checkbox](bool vban)->void {
+			int value{ vban };
+			checkbox.Set(value, false);
+		});
+
+		cpComponent.push_back(::std::move(pVban));
+	}
 
 	::std::shared_ptr<UI::D2D::Policies::KnobStateChange> pKnobStateChangePolicy{
 		new UI::D2D::Policies::KnobStateChange{}

@@ -25,10 +25,7 @@ void Channel::on_Level(const ::std::function<void(double)>& callback) {
 }
 
 void Channel::Update() {
-	float level{ 0 };
-	m_mixer.get_Remote()
-		.VBVMR_GetLevel(m_type, m_channel, &level);
-
+	float level{ m_mixer.get_Level(m_type, m_channel) };
 	if (::std::abs(m_level - level) < 0.0001) {
 		return;
 	}

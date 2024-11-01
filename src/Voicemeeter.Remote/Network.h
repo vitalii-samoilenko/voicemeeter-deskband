@@ -23,6 +23,7 @@ namespace Voicemeeter {
 			Network& operator=(const Network&) = delete;
 			Network& operator=(Network&&) = delete;
 
+			virtual bool get_Supported() const override;
 			virtual bool get_Vban() const override;
 			virtual void set_Vban(bool value) override;
 			void on_Vban(const ::std::function<void(bool)>& callback);

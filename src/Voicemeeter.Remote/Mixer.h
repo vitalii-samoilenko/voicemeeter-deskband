@@ -7,6 +7,8 @@
 
 #include "Environment/ITimer.h"
 #include "Voicemeeter/IMixer.h"
+#include "Windows/Error.h"
+#include "Windows/Messages.h"
 
 #include "Api.h"
 #include "Input.h"
@@ -46,8 +48,11 @@ namespace Voicemeeter {
 			Mixer& operator=(const Mixer&) = delete;
 			Mixer& operator=(Mixer&&) = delete;
 
-			inline const T_VBVMR_INTERFACE& get_Remote() const {
-				return m_remote;
+			float get_Parameter(const ::std::string& name) const;
+			float get_Level(long type, long channel) const;
+			void set_Parameter(const ::std::string& name, float value);
+			inline long get_Type() const {
+				return m_type;
 			}
 			inline void set_Dirty() {
 				m_dirty = true;
@@ -75,6 +80,7 @@ namespace Voicemeeter {
 			::std::unordered_map<::std::pair<unsigned long long, unsigned long long>, ::std::vector<::std::function<void(bool)>>> m_cCallback;
 			bool m_dirty;
 			::std::chrono::time_point<::std::chrono::system_clock> m_restart;
+			long m_type;
 		};
 	}
 }
