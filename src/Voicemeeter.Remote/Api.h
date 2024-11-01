@@ -1081,7 +1081,7 @@ extern "C" {
 	long VBVMR_MB_PushSettings(void* lpParam);
 
 
-
+	long InitializeDLLInterfaces(T_VBVMR_INTERFACE& iVMR);
 
 
 #ifdef __cplusplus

@@ -12,7 +12,7 @@ namespace Voicemeeter {
 		virtual bool get_Vban() const = 0;
 		virtual void set_Vban(bool value) = 0;
 
-	private:
+	protected:
 		INetwork() = default;
 
 		~INetwork() = default;

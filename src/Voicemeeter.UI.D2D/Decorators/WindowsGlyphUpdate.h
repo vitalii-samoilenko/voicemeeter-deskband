@@ -7,7 +7,6 @@
 
 #include "Windows/Wrappers.h"
 
-#include "Voicemeeter.UI/Graphics/IGlyph.h"
 #include "Voicemeeter.UI/Policies/IGlyphUpdate.h"
 
 namespace Voicemeeter {
@@ -16,9 +15,6 @@ namespace Voicemeeter {
 			namespace Decorators {
 				template<typename TGlyph, typename TState, typename TGlyphUpdate>
 				class WindowsGlyphUpdate : public TGlyphUpdate {
-					static_assert(
-						::std::is_base_of_v<UI::Graphics::IGlyph, TGlyph>,
-						"TGlyph must be derived from Glyph");
 					static_assert(
 						::std::is_base_of_v<Policies::IGlyphUpdate<TGlyph, TState>, TGlyphUpdate>,
 						"TGlyphUpdate must be derived from IGlyphUpdate<TGlyph, TState>");

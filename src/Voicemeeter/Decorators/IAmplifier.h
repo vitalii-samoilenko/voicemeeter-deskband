@@ -1,17 +1,8 @@
 #pragma once
 
-#include <type_traits>
-
-#include "../IBus.h"
-
 namespace Voicemeeter {
 	namespace Decorators {
-		template<typename TBus>
-		class IAmplifier : public TBus {
-			static_assert(
-				::std::is_base_of_v<IBus, TBus>,
-				"TBus must be derived from IBus");
-
+		class IAmplifier {
 		public:
 			IAmplifier(const IAmplifier&) = delete;
 			IAmplifier(IAmplifier&&) = delete;
@@ -24,7 +15,7 @@ namespace Voicemeeter {
 			virtual bool get_Mute() const = 0;
 			virtual void set_Mute(bool value) = 0;
 
-		private:
+		protected:
 			IAmplifier() = default;
 
 			~IAmplifier() = default;

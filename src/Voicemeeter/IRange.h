@@ -18,10 +18,10 @@ namespace Voicemeeter {
 		IRange& operator=(const IRange&) = delete;
 		IRange& operator=(IRange&&) = delete;
 
-		TIterator begin() const = 0;
-		TIterator end() const = 0;
+		virtual TIterator begin() const = 0;
+		virtual TIterator end() const = 0;
 
-	private:
+	protected:
 		IRange() = default;
 
 		~IRange() = default;

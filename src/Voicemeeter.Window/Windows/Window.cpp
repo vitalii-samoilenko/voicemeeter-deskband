@@ -17,8 +17,10 @@ Window::Window(
 	HINSTANCE hInstance
 ) : m_hWnd{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
-  , m_pScene{ nullptr }
-  , m_pTimer{ nullptr } {
+  , m_pUiTimer{ nullptr }
+  , m_pMixerTimer{ nullptr }
+  , m_pMixer{ nullptr }
+  , m_pScene{ nullptr } {
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT rc{};
@@ -80,8 +82,10 @@ LRESULT CALLBACK Window::WndProcW(
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
-			pWnd->m_pTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
+			pWnd->m_pUiTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
 			pWnd->BuildScene();
 
 			if (::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
@@ -92,7 +96,12 @@ LRESULT CALLBACK Window::WndProcW(
 			PostQuitMessage(0);
 		} return OK;
 		case WM_TIMER: {
-			pWnd->m_pTimer->Elapse();
+			UINT_PTR id{ static_cast<UINT_PTR>(wParam) };
+			if (id == pWnd->m_pUiTimer->get_Id()) {
+				pWnd->m_pUiTimer->Elapse();
+			} else if (id == pWnd->m_pMixerTimer->get_Id()) {
+				pWnd->m_pMixerTimer->Elapse();
+			}
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({

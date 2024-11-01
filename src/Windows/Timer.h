@@ -16,11 +16,15 @@ namespace Windows {
 		Timer& operator=(const Timer&) = delete;
 		Timer& operator=(Timer&&) = delete;
 
-		virtual void Set(::std::chrono::milliseconds duration, const ::std::function<void()>& callback) override;
+		inline UINT_PTR get_Id() const {
+			return reinterpret_cast<UINT_PTR>(this);
+		};
+
+		virtual void Set(::std::chrono::milliseconds duration, const ::std::function<bool()>& callback) override;
 		virtual void Elapse();
 
 	private:
 		HWND m_hWnd;
-		::std::function<void()> m_callback;
+		::std::function<bool()> m_callback;
 	};
 }

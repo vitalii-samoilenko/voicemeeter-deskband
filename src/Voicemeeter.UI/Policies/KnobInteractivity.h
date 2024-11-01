@@ -102,13 +102,15 @@ namespace Voicemeeter {
 
 				void UnpinLater(Controls::Knob<TGlyph>& component) const {
 					m_timer.Set(::std::chrono::milliseconds{ 400 },
-						[this, &component]()->void {
+						[this, &component]()->bool {
 							if (m_inputTracker.get_Track(component)) {
-								return;
+								return false;
 							}
 							States::Knob state{ component.get_State() };
 							state.pinned = false;
 							component.Set(state, true);
+
+							return false;
 						});
 				};
 			};
