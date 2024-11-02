@@ -13,7 +13,7 @@ Network::Network(
 }
 
 bool Network::get_Supported() const {
-	return 1 < m_mixer.get_Type();
+	return Type::Voicemeeter < m_mixer.get_Type();
 }
 bool Network::get_Vban() const {
 	return m_vban;

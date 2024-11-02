@@ -23,7 +23,7 @@ Mixer::Mixer(
 	if (m_remote.VBVMR_Login()) {
 		throw ::Windows::Error{ MSG_ERR_GENERAL, "Cannot connect to Voicemeeter" };
 	}
-	if (m_remote.VBVMR_GetVoicemeeterType(&m_type)) {
+	if (m_remote.VBVMR_GetVoicemeeterType(reinterpret_cast<long*>(&m_type))) {
 		throw ::Windows::Error{ MSG_ERR_GENERAL, "Cannot get Voicemeeter type" };
 	}
 	m_cInput.emplace(
@@ -33,7 +33,7 @@ Mixer::Mixer(
 		::std::string{ "P" }
 	);
 	switch (m_type) {
-	case 1: {
+	case Type::Voicemeeter: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[2]" },
 			*this, 1L, 4L,
@@ -53,7 +53,7 @@ Mixer::Mixer(
 			::std::string{ "B1" }
 		);
 	} break;
-	case 2: {
+	case Type::Banana: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[3]" },
 			*this, 1L, 6L,
@@ -85,7 +85,7 @@ Mixer::Mixer(
 			::std::string{ "B2" }
 		);
 	} break;
-	case 3: {
+	case Type::Potato: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[5]" },
 			*this, 1L, 10L,
@@ -203,6 +203,9 @@ void Mixer::set_Parameter(const ::std::string& name, float value) {
 	}
 }
 
+::Voicemeeter::Type Mixer::get_Type() const {
+	return m_type;
+}
 Network& Mixer::get_Network() {
 	return m_network;
 }

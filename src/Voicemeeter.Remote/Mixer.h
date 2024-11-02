@@ -51,9 +51,6 @@ namespace Voicemeeter {
 			float get_Parameter(const ::std::string& name) const;
 			float get_Level(long type, long channel) const;
 			void set_Parameter(const ::std::string& name, float value);
-			inline long get_Type() const {
-				return m_type;
-			}
 			inline void set_Dirty() {
 				m_dirty = true;
 			};
@@ -61,6 +58,7 @@ namespace Voicemeeter {
 				m_restart = ::std::chrono::system_clock::now();
 			}
 
+			virtual Type get_Type() const override;
 			virtual Network& get_Network() override;
 			virtual const Range<Input>& get_Inputs() const override;
 			virtual const Range<Output>& get_Outputs() const override;
@@ -72,6 +70,7 @@ namespace Voicemeeter {
 		private:
 			::Environment::ITimer& m_timer;
 			T_VBVMR_INTERFACE m_remote;
+			Type m_type;
 			Network m_network;
 			Range<Input> m_cInput;
 			Range<Output> m_cOutput;
@@ -80,7 +79,6 @@ namespace Voicemeeter {
 			::std::unordered_map<::std::pair<unsigned long long, unsigned long long>, ::std::vector<::std::function<void(bool)>>> m_cCallback;
 			bool m_dirty;
 			::std::chrono::time_point<::std::chrono::system_clock> m_restart;
-			long m_type;
 		};
 	}
 }
