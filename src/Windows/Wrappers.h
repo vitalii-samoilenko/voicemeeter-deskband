@@ -4,7 +4,8 @@
 #include <windowsx.h>
 #include <uxtheme.h>
 
-#include "error.h"
+#include "Error.h"
+#include "Messages.h"
 
 namespace Windows {
 	inline bool ThrowIfFailed(HRESULT code, const char* what) {
@@ -117,14 +118,16 @@ namespace Windows {
 		}
 	}
 
-	inline DWORD wSetWindowLongPtrW(
+	inline void wSetWindowLongPtrW(
 		_In_ HWND hWnd,
 		_In_ int nIndex,
 		_In_ LONG_PTR dwNewLong
 	) {
 		SetLastError(0);
 		SetWindowLongPtrW(hWnd, nIndex, dwNewLong);
-		return GetLastError();
+		if (GetLastError()) {
+			throw Error{ "Could not set window data" };
+		}
 	}
 
 	template<typename T>

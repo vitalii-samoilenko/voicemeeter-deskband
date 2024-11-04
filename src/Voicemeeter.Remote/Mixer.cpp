@@ -20,10 +20,15 @@ Mixer::Mixer(
 	if (InitializeDLLInterfaces(m_remote) != 0) {
 		throw ::Windows::Error{ MSG_ERR_GENERAL, "Cannot initialize interfaces" };
 	}
-	if (m_remote.VBVMR_Login()) {
+	long login{ m_remote.VBVMR_Login() };
+	if (login < 0) {
 		throw ::Windows::Error{ MSG_ERR_GENERAL, "Cannot connect to Voicemeeter" };
+	} else if (login) {
+		m_remote.VBVMR_Logout();
+		throw ::Windows::Error{ MSG_ERR_GENERAL, "Voicemeeter is not started" };
 	}
 	if (m_remote.VBVMR_GetVoicemeeterType(reinterpret_cast<long*>(&m_type))) {
+		m_remote.VBVMR_Logout();
 		throw ::Windows::Error{ MSG_ERR_GENERAL, "Cannot get Voicemeeter type" };
 	}
 	m_cInput.emplace(

@@ -1,4 +1,6 @@
 #include <cmath>
+#include <fstream>
+#include <string>
 #include <utility>
 
 #include "Voicemeeter.Scene.D2D.Remote/Build.h"
@@ -70,7 +72,11 @@ LRESULT CALLBACK Window::WndProcW(
 	WPARAM wParam,
 	LPARAM lParam
 ) {
-	auto shutdown = [](long long errCode)->LRESULT {
+	auto shutdown = [uMsg](long long errCode)->LRESULT {
+		if (uMsg == WM_NCCREATE) {
+			return FALSE;
+		}
+
 		::Windows::ErrorMessageBox(errCode);
 		PostQuitMessage(0);
 
@@ -78,20 +84,16 @@ LRESULT CALLBACK Window::WndProcW(
 	};
 	try {
 		Window* pWnd{ ::Windows::wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
-
 		switch (uMsg) {
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
-			pWnd->m_hWnd = hWnd;
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pUiTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
 			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(hWnd, *pWnd, *pWnd->m_pUiTimer, *pWnd->m_pMixer));
-
-			if (::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd))) {
-				return FALSE;
-			}
+			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+			pWnd->m_hWnd = hWnd;
 		} break;
 		case WM_DESTROY: {
 			PostQuitMessage(0);
@@ -198,6 +200,15 @@ LRESULT CALLBACK Window::WndProcW(
 		}
 	}
 	catch (const ::Windows::Error& e) {
+		WCHAR temp[MAX_PATH];
+		if (GetTempPathW(MAX_PATH, temp)) {
+			::std::wstring path{ temp };
+			::std::fstream log{ path.append(L"Voicemeeter.DeskBand.log"), log.out | log.app };
+			if (log.is_open()) {
+				log << e.what() << ::std::endl;
+			}
+		}
+
 		return shutdown(e.code());
 	}
 	catch (...) {

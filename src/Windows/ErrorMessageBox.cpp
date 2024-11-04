@@ -3,6 +3,7 @@
 #include "ErrorMessageBox.h"
 
 int ::Windows::ErrorMessageBox(
+	HMODULE hModule,
 	long long cptCode,
 	long long errCode
 ) {
@@ -11,11 +12,11 @@ int ::Windows::ErrorMessageBox(
 	auto guardBuff = ::estd::make_guard([&lpCptBuff, &lpErrBuff]()->void {
 		LocalFree(lpCptBuff);
 		LocalFree(lpErrBuff);
-		});
+	});
 	FormatMessageW(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS
 		| FORMAT_MESSAGE_FROM_HMODULE,
-		NULL,
+		hModule,
 		static_cast<DWORD>(cptCode),
 		0,
 		reinterpret_cast<LPWSTR>(&lpCptBuff),
@@ -25,7 +26,7 @@ int ::Windows::ErrorMessageBox(
 	FormatMessageW(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS
 		| FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL,
+		hModule,
 		static_cast<DWORD>(errCode),
 		0,
 		reinterpret_cast<LPWSTR>(&lpErrBuff),
