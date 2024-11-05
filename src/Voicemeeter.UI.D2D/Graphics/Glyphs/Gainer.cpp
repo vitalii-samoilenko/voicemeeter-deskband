@@ -55,51 +55,51 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 		), "Geometry finalization failed");
 	}
 
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->DrawRoundedRectangle(
 			::D2D1::RoundedRect(::D2D1::RectF(0.75F, 11.75F, 164.25F, 28.25F), 7.25F, 7.25F),
 			pBrush,
 			1.5F);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillRoundedRectangle(
 			::D2D1::RoundedRect(::D2D1::RectF(0.F, 11.F, 28.0F, 29.F), 8.F, 8.F),
 			pBrush);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillRectangle(
 			::D2D1::Rect(24.F, 11.F, m_level, 29.F),
 			pBrush);
 	D2D1_MATRIX_3X2_F base{};
 	double scale{ get_Size().x / get_BaseSize().x };
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->GetTransform(&base);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Rotation(-45.F, ::D2D1::Point2F(0.F, 20.F))
 			* base
 			* ::D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(m_level * scale), 0.F));
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillGeometry(
 			pHalfCircle,
 			palette.get_pBrush(palette.get_Theme()
 				.LightGlass));
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Rotation(135.F, ::D2D1::Point2F(0.F, 20.F))
 			* base
 			* ::D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(m_level * scale), 0.F));
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillGeometry(
 			pHalfCircle,
 			palette.get_pBrush(palette.get_Theme()
 				.DarkGlass));
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(base);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->DrawEllipse(
 			::D2D1::Ellipse(::D2D1::Point2F(m_level, 20.F), 18.75F, 18.75F),
 			pBrush,
 			2.5F);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillEllipse(
 			::D2D1::Ellipse(::D2D1::Point2F(m_level, 20.F), 2.75F, 2.75F),
 			palette.get_pBrush(palette.get_Theme()

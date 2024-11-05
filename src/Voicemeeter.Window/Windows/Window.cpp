@@ -20,8 +20,10 @@ Window::Window(
 	HINSTANCE hInstance
 ) : m_hWnd{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
-  , m_pUiTimer{ nullptr }
+  , m_pCompositionTimer{ nullptr }
+  , m_pGraphicsTimer{ nullptr }
   , m_pMixerTimer{ nullptr }
+  , m_lpTimer{}
   , m_pMixer{ nullptr }
   , m_pScene{ nullptr } {
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -34,13 +36,13 @@ Window::Window(
 	WNDCLASSW wndClass{};
 	wndClass.hInstance = hInstance;
 	wndClass.lpszClassName = LPSZ_CLASS_NAME;
-	wndClass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	wndClass.style = CS_DBLCLKS;
 	wndClass.lpfnWndProc = WndProcW;
 	wndClass.hCursor = ::Windows::wLoadCursorW(NULL, IDC_ARROW);
 
 	::Windows::wRegisterClassW(&wndClass);
 	::Windows::wCreateWindowExW(
-		NULL,
+		WS_EX_NOREDIRECTIONBITMAP,
 		LPSZ_CLASS_NAME,
 		NULL,
 		STYLE,
@@ -88,10 +90,17 @@ LRESULT CALLBACK Window::WndProcW(
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
-			pWnd->m_pUiTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pGraphicsTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
+			pWnd->m_lpTimer.emplace(pWnd->m_pGraphicsTimer->get_Id(), pWnd->m_pGraphicsTimer.get());
+			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
-			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(hWnd, *pWnd, *pWnd->m_pUiTimer, *pWnd->m_pMixer));
+			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
+				hWnd, *pWnd,
+				*pWnd->m_pCompositionTimer, *pWnd->m_pGraphicsTimer,
+				*pWnd->m_pMixer));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 			pWnd->m_hWnd = hWnd;
 		} break;
@@ -99,33 +108,18 @@ LRESULT CALLBACK Window::WndProcW(
 			PostQuitMessage(0);
 		} return OK;
 		case WM_TIMER: {
-			UINT_PTR id{ static_cast<UINT_PTR>(wParam) };
-			if (id == pWnd->m_pUiTimer->get_Id()) {
-				pWnd->m_pUiTimer->Elapse();
-			} else if (id == pWnd->m_pMixerTimer->get_Id()) {
-				pWnd->m_pMixerTimer->Elapse();
-			}
+			pWnd->m_lpTimer[static_cast<UINT_PTR>(wParam)]
+				->Elapse();
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({
 				static_cast<double>(LOWORD(lParam)),
 				static_cast<double>(HIWORD(lParam))
 			});
-		} return OK;
-		case WM_PAINT: {
-			PAINTSTRUCT ps;
-			::Windows::wBeginPaint(hWnd, &ps);
-
-			pWnd->m_pScene->Redraw({
-					static_cast<double>(ps.rcPaint.left),
-					static_cast<double>(ps.rcPaint.top)
-				}, {
-					static_cast<double>(ps.rcPaint.right - ps.rcPaint.left),
-					static_cast<double>(ps.rcPaint.bottom - ps.rcPaint.top)
-				}
+			pWnd->m_pScene->Redraw(
+				pWnd->m_pScene->get_Position(),
+				pWnd->m_pScene->get_Size()
 			);
-
-			EndPaint(hWnd, &ps);
 		} return OK;
 		case WM_LBUTTONDOWN: {
 			pWnd->m_pScene->MouseLDown({
@@ -135,6 +129,18 @@ LRESULT CALLBACK Window::WndProcW(
 		} return OK;
 		case WM_LBUTTONDBLCLK: {
 			pWnd->m_pScene->MouseLDouble({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
+		} return OK;
+		case WM_MBUTTONDOWN: {
+			pWnd->m_pScene->MouseMDown({
+				static_cast<double>(GET_X_LPARAM(lParam)),
+				static_cast<double>(GET_Y_LPARAM(lParam))
+			});
+		} return OK;
+		case WM_MBUTTONDBLCLK: {
+			pWnd->m_pScene->MouseMDouble({
 				static_cast<double>(GET_X_LPARAM(lParam)),
 				static_cast<double>(GET_Y_LPARAM(lParam))
 			});

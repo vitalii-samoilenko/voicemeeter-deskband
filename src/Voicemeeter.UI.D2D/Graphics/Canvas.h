@@ -4,14 +4,19 @@
 #include <string>
 #include <typeinfo>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "estd/linear_algebra.h"
 
 #include <wrl/client.h>
 #include <d2d1_3.h>
+#include <dcomp.h>
 #include <dwrite_3.h>
+#include <dxgi1_6.h>
 
+#include "Environment/ITimer.h"
 #include "Voicemeeter.UI/Graphics/ICanvas.h"
+#include "Voicemeeter.UI/Graphics/IGlyph.h"
 
 #include "Theme.h"
 
@@ -22,12 +27,14 @@ namespace Voicemeeter {
 		namespace D2D {
 			namespace Graphics {
 				class Palette;
+				class Queue;
 
 				class Canvas final : public ICanvas {
 				public:
 					Canvas(
 						HWND hWnd,
-						const Theme& theme
+						const Theme& theme,
+						::Environment::ITimer& timer
 					);
 					Canvas() = delete;
 					Canvas(const Canvas&) = delete;
@@ -50,22 +57,31 @@ namespace Voicemeeter {
 					inline ID2D1Factory7* get_pD2dFactory() const {
 						return m_pD2dFactory.Get();
 					}
-					inline ID2D1HwndRenderTarget* get_pRenderTarget() const {
-						return m_pD2dRenderTarget.Get();
+					inline ID2D1DeviceContext5* get_pD2dDeviceContext() const {
+						return m_pD2dDeviceContext.Get();
 					};
+					inline IDXGISwapChain1* get_pDxgiSwapChain() const {
+						return m_pDxgiSwapChain.Get();
+					}
 					inline const Palette& get_Palette() const {
 						return *m_pPalette;
 					}
+					inline Queue& get_Queue() const {
+						return *m_pQueue;
+					}
 
 				private:
-					HWND m_hWnd;
-					::linear_algebra::vectord m_position;
+					::linear_algebra::vectord m_point;
 					::linear_algebra::vectord m_vertex;
 					::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 					::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
-					::Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pD2dRenderTarget;
-					::Microsoft::WRL::ComPtr<ID2D1GdiInteropRenderTarget> m_pD2dGdiRenderTarget;
+					::Microsoft::WRL::ComPtr<ID2D1DeviceContext5> m_pD2dDeviceContext;
+					::Microsoft::WRL::ComPtr<IDXGISwapChain1> m_pDxgiSwapChain;
+					::Microsoft::WRL::ComPtr<IDCompositionTarget> m_pCompositionTarget;
 					::std::unique_ptr<Palette> m_pPalette;
+					::std::unique_ptr<Queue> m_pQueue;
+
+					void ResetTarget();
 				};
 
 				class Palette final {
@@ -98,6 +114,30 @@ namespace Voicemeeter {
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1PathGeometry>> m_cpGeometry;
+				};
+
+				class Queue final {
+				public:
+					Queue(
+						::Environment::ITimer& timer,
+						Canvas& canvas
+					);
+					Queue() = delete;
+					Queue(const Queue&) = delete;
+					Queue(Queue&&) = delete;
+
+					~Queue() = default;
+
+					Queue& operator=(const Queue&) = delete;
+					Queue& operator=(Queue&&) = delete;
+
+					inline void Push(IGlyph& glyph) {
+						m_cpGlyph.insert(&glyph);
+					};
+
+				private:
+					Canvas& m_canvas;
+					::std::unordered_set<IGlyph*> m_cpGlyph;
 				};
 			}
 		}

@@ -53,6 +53,14 @@ namespace Voicemeeter {
 					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseLDouble(point);
 				};
+				virtual bool MouseMDown(const ::linear_algebra::vectord& point) override {
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
+						&& TComponent::MouseMDown(point);
+				};
+				virtual bool MouseMDouble(const ::linear_algebra::vectord& point) override {
+					return (is_inside(point) || m_inputTracker.get_Track(*this))
+						&& TComponent::MouseMDouble(point);
+				};
 				virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
 					return (is_inside(point) || m_inputTracker.get_Track(*this))
 						&& TComponent::MouseRDown(point);

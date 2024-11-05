@@ -24,6 +24,8 @@ namespace Voicemeeter {
 
 			virtual bool MouseLDown(const ::linear_algebra::vectord& point) override;
 			virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override;
+			virtual bool MouseMDown(const ::linear_algebra::vectord& point) override;
+			virtual bool MouseMDouble(const ::linear_algebra::vectord& point) override;
 			virtual bool MouseRDown(const ::linear_algebra::vectord& point) override;
 			virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override;
 			virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override;

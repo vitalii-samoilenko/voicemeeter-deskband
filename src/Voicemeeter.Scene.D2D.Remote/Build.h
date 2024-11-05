@@ -14,7 +14,8 @@ namespace Voicemeeter {
 				UI::D2D::Scene* Build(
 					HWND hWnd,
 					::Environment::IInputTracker& inputTracker,
-					::Environment::ITimer& timer,
+					::Environment::ITimer& compositionTimer,
+					::Environment::ITimer& graphicsTimer,
 					::Voicemeeter::Remote::Mixer& mixer
 				);
 			}

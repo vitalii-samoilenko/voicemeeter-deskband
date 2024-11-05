@@ -20,6 +20,12 @@ void CarouselInteractivity::MouseLDown(Controls::Carousel& component, const ::li
 void CarouselInteractivity::MouseLDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
 	component.SetNext();
 }
+void CarouselInteractivity::MouseMDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
+
+}
+void CarouselInteractivity::MouseMDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
+
+}
 void CarouselInteractivity::MouseRDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const {
 
 }

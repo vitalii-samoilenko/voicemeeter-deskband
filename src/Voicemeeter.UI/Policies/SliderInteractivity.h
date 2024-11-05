@@ -34,6 +34,12 @@ namespace Voicemeeter {
 				virtual void MouseLDouble(Controls::Slider<Graphics::IGlyph>& component, const ::linear_algebra::vectord& point) const override {
 					component.SetDefault();
 				};
+				virtual void MouseMDown(Controls::Slider<Graphics::IGlyph>& component, const ::linear_algebra::vectord& point) const override {
+
+				};
+				virtual void MouseMDouble(Controls::Slider<Graphics::IGlyph>& component, const ::linear_algebra::vectord& point) const override {
+					
+				};
 				virtual void MouseRDown(Controls::Slider<Graphics::IGlyph>& component, const ::linear_algebra::vectord& point) const override {
 
 				};

@@ -44,6 +44,14 @@ bool InputTracker::MouseLDouble(const ::linear_algebra::vectord& point) {
 	return m_pTracked
 		&& m_pTracked->MouseLDouble(point);
 }
+bool InputTracker::MouseMDown(const ::linear_algebra::vectord& point) {
+	return m_pTracked
+		&& m_pTracked->MouseMDown(point);
+}
+bool InputTracker::MouseMDouble(const ::linear_algebra::vectord& point) {
+	return m_pTracked
+		&& m_pTracked->MouseMDouble(point);
+}
 bool InputTracker::MouseRDown(const ::linear_algebra::vectord& point) {
 	return m_pTracked
 		&& m_pTracked->MouseRDown(point);

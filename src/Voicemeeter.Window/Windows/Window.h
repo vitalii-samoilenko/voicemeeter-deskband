@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <windows.h>
 
@@ -33,8 +34,10 @@ namespace Voicemeeter {
 		private:
 			HWND m_hWnd;
 			UINT m_dpi;
-			::std::unique_ptr<::Windows::Timer> m_pUiTimer;
+			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
+			::std::unique_ptr<::Windows::Timer> m_pGraphicsTimer;
 			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
+			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
 			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;
 			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pScene;
 

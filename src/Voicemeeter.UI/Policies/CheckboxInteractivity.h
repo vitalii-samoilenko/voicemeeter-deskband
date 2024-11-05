@@ -37,6 +37,12 @@ namespace Voicemeeter {
 				virtual void MouseLDouble(Controls::Checkbox<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 					component.SetNext();
 				};
+				virtual void MouseMDown(Controls::Checkbox<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+
+				};
+				virtual void MouseMDouble(Controls::Checkbox<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+					
+				};
 				virtual void MouseRDown(Controls::Checkbox<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 
 				};

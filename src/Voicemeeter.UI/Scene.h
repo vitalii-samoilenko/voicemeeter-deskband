@@ -71,6 +71,16 @@ namespace Voicemeeter {
 					|| m_focusTracker->MouseLDouble(point)
 					|| m_pComposition->MouseLDouble(point);
 			};
+			virtual bool MouseMDown(const ::linear_algebra::vectord& point) override {
+				return m_inputTracker->MouseMDown(point)
+					|| m_focusTracker->MouseMDown(point)
+					|| m_pComposition->MouseMDown(point);
+			};
+			virtual bool MouseMDouble(const ::linear_algebra::vectord& point) override {
+				return m_inputTracker->MouseMDouble(point)
+					|| m_focusTracker->MouseMDouble(point)
+					|| m_pComposition->MouseMDouble(point);
+			};
 			virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
 				return m_inputTracker->MouseRDown(point)
 					|| m_focusTracker->MouseRDown(point)

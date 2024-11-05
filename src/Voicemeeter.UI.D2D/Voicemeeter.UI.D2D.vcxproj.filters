@@ -108,6 +108,9 @@
     <ClInclude Include="Policies\KnobInteractivity.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
+    <ClInclude Include="Decorators\QueueGlyphUpdate.h">
+      <Filter>Header Files\Decorators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="Policies\VbanGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Queue.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

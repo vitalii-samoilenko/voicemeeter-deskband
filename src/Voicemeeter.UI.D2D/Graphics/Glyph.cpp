@@ -29,7 +29,7 @@ const ::linear_algebra::vectord& Glyph::get_BaseSize() const {
 }
 
 void Glyph::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Scale(
 				static_cast<FLOAT>(m_vertex.x / m_baseVertex.x),

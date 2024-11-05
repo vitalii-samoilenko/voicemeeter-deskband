@@ -26,6 +26,8 @@ namespace Voicemeeter {
 
 				virtual void MouseLDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const override;
 				virtual void MouseLDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const override;
+				virtual void MouseMDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const override;
+				virtual void MouseMDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const override;
 				virtual void MouseRDown(Controls::Carousel& component, const ::linear_algebra::vectord& point) const override;
 				virtual void MouseRDouble(Controls::Carousel& component, const ::linear_algebra::vectord& point) const override;
 				virtual void MouseWheel(Controls::Carousel& component, const ::linear_algebra::vectord& point, int delta) const override;

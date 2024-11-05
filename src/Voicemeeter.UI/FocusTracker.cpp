@@ -39,6 +39,12 @@ bool FocusTracker::MouseLDown(const ::linear_algebra::vectord& point) {
 bool FocusTracker::MouseLDouble(const ::linear_algebra::vectord& point) {
 	return false;
 }
+bool FocusTracker::MouseMDown(const ::linear_algebra::vectord& point) {
+	return false;
+}
+bool FocusTracker::MouseMDouble(const ::linear_algebra::vectord& point) {
+	return false;
+}
 bool FocusTracker::MouseRDown(const ::linear_algebra::vectord& point) {
 	return false;
 }

@@ -29,6 +29,8 @@ namespace Voicemeeter {
 
 				virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 				virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseMDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseMDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 				virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 				virtual void MouseRDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
 				virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point, int delta) const = 0;

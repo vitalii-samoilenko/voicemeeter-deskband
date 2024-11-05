@@ -55,17 +55,23 @@ namespace Voicemeeter {
 
 					UnpinLater(component);
 				};
-				virtual void MouseRDown(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+				virtual void MouseMDown(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 					m_focusTracker.set_Track(component, true);
 
 					States::Knob state{ component.get_State() };
 					state.enabled = !state.enabled;
 					component.Set(state, true);
 				};
-				virtual void MouseRDouble(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+				virtual void MouseMDouble(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
 					States::Knob state{ component.get_State() };
 					state.enabled = !state.enabled;
 					component.Set(state, true);
+				};
+				virtual void MouseRDown(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+
+				};
+				virtual void MouseRDouble(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point) const override {
+
 				};
 				virtual void MouseWheel(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point, int delta) const override {
 					m_focusTracker.set_Track(component, true);

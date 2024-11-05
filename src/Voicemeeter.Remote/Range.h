@@ -50,7 +50,7 @@ namespace Voicemeeter {
 		public:
 			Range(
 			) : m_cpElement{}
-			  , m_cLookup{} {
+			  , m_lElement{} {
 
 			};
 			Range(const Range&) = delete;
@@ -66,10 +66,10 @@ namespace Voicemeeter {
 				::std::shared_ptr<T> pElement{
 					new T{ ::std::forward<Args>(args)... }
 				};
-				m_cLookup.insert({
+				m_lElement.emplace(
 					reinterpret_cast<unsigned long long>(pElement.get()),
 					m_cpElement.size()
-				});
+				);
 				m_cpElement.push_back(
 					::std::move(pElement)
 				);
@@ -78,13 +78,13 @@ namespace Voicemeeter {
 				unsigned long long addr{
 					reinterpret_cast<unsigned long long>(&element)
 				};
-				m_cLookup.insert({
+				m_lElement.emplace(
 					addr,
 					m_cpElement.size()
-				});
+				);
 				m_cpElement.push_back(
 					range.m_cpElement.at(
-						range.m_cLookup
+						range.m_lElement
 							.find(addr)
 								->second
 					)
@@ -92,22 +92,22 @@ namespace Voicemeeter {
 			}
 			void erase(const T& element) {
 				typename ::std::unordered_map<unsigned long long, size_t>::iterator lastLookup{
-					m_cLookup.find(reinterpret_cast<unsigned long long>(&*m_cpElement.back()))
+					m_lElement.find(reinterpret_cast<unsigned long long>(&*m_cpElement.back()))
 				};
 				typename ::std::unordered_map<unsigned long long, size_t>::iterator elementLookup{
-					m_cLookup.find(reinterpret_cast<unsigned long long>(&element))
+					m_lElement.find(reinterpret_cast<unsigned long long>(&element))
 				};
 				::std::swap(m_cpElement.back(), m_cpElement.at(elementLookup->second));
 				lastLookup->second = elementLookup->second;
 				m_cpElement.pop_back();
-				m_cLookup.erase(elementLookup);
+				m_lElement.erase(elementLookup);
 			}
 			RangeIterator<T> find(const T& element) {
 				typename ::std::unordered_map<unsigned long long, size_t>::iterator lookup{
-					m_cLookup.find(reinterpret_cast<unsigned long long>(&element))
+					m_lElement.find(reinterpret_cast<unsigned long long>(&element))
 				};
 				return RangeIterator<T>{
-					(lookup == m_cLookup.end()
+					(lookup == m_lElement.end()
 						? m_cpElement.end()
 						: m_cpElement.begin() + lookup->second)
 				};
@@ -122,7 +122,7 @@ namespace Voicemeeter {
 
 		private:
 			::std::vector<::std::shared_ptr<T>> m_cpElement;
-			::std::unordered_map<unsigned long long, size_t> m_cLookup;
+			::std::unordered_map<unsigned long long, size_t> m_lElement;
 		};
 	}
 }

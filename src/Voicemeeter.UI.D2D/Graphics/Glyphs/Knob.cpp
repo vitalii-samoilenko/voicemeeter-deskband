@@ -73,7 +73,7 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 			&metrics
 		), "Text measurement failed");
 
-		m_canvas.get_pRenderTarget()
+		m_canvas.get_pD2dDeviceContext()
 			->DrawTextLayout(
 				::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
 				pLayout.Get(),
@@ -90,32 +90,32 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 			&metrics
 		), "Text measurement failed");
 
-		m_canvas.get_pRenderTarget()
+		m_canvas.get_pD2dDeviceContext()
 			->DrawTextLayout(
 				::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
 				pLayout,
 				pBrush);
 	}
 
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->DrawEllipse(
 			::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
 			pBrush,
 			3.F);
 	D2D1_MATRIX_3X2_F base{};
 	double scale{ get_Size().x / get_BaseSize().x };
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->GetTransform(&base);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Translation(24.F, 9.F)
 			* ::D2D1::Matrix3x2F::Rotation(m_gain, ::D2D1::Point2F(24.F, 24.F))
 			* base);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillEllipse(
 			::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
 			palette.get_pBrush(palette.get_Theme()
 				.Indicator));
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(base);
 };

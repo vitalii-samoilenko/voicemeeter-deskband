@@ -18,7 +18,7 @@
 #include "Voicemeeter.UI.D2D/Controls/Knob.h"
 #include "Voicemeeter.UI.D2D/Controls/Plug.h"
 #include "Voicemeeter.UI.D2D/Controls/Vban.h"
-#include "Voicemeeter.UI.D2D/Decorators/WindowsGlyphUpdate.h"
+#include "Voicemeeter.UI.D2D/Decorators/QueueGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Knob.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Plug.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Vban.h"
@@ -151,7 +151,8 @@ private:
 UI::D2D::Scene* Scene::D2D::Remote::Build(
 	HWND hWnd,
 	::Environment::IInputTracker& inputTracker,
-	::Environment::ITimer& timer,
+	::Environment::ITimer& compositionTimer,
+	::Environment::ITimer& graphicsTimer,
 	::Voicemeeter::Remote::Mixer& mixer
 ) {
 	::std::unique_ptr<UI::FocusTracker> pFocusTracker{
@@ -163,7 +164,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 
 	const UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
 	::std::unique_ptr<UI::D2D::Graphics::Canvas> pCanvas{
-		new UI::D2D::Graphics::Canvas{ hWnd, theme }
+		new UI::D2D::Graphics::Canvas{ hWnd, theme, graphicsTimer }
 	};
 
 	auto checkboxMap = [](const int& state)->bool {
@@ -188,8 +189,8 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			new UI::D2D::Graphics::Glyphs::Vban{
 				*pCanvas
 		} };
-		::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
-			new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ hWnd }
+		::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
+			new UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ *pCanvas }
 		};
 		::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
 			new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
@@ -218,15 +219,15 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	::std::shared_ptr<UI::D2D::Policies::KnobStateChange> pKnobStateChangePolicy{
 		new UI::D2D::Policies::KnobStateChange{}
 	};
-	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ hWnd }
+	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
+		new UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ *pCanvas }
 	};
 	::std::shared_ptr<UI::D2D::Policies::KnobInteractivity> pKnobInteractivityPolicy{
-		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , timer }
+		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , compositionTimer }
 	};
 
-	::std::shared_ptr<UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
-		new UI::D2D::Decorators::WindowsGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ hWnd }
+	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
+		new UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ *pCanvas }
 	};
 	::std::shared_ptr<UI::D2D::Policies::PlugInteractivity> pPlugInteractivityPolicy{
 		new UI::D2D::Policies::PlugInteractivity{ *pFocusTracker }

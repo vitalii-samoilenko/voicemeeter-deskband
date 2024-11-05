@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <shlobj.h> // for IDeskband2, IObjectWithSite, IPesistStream, and IInputObject
 #include <windows.h>
@@ -80,8 +81,10 @@ namespace Voicemeeter {
 			HWND                m_hWnd;                 // main window of deskband
 			HWND                m_hWndParent;           // parent window of deskband
 			UINT m_dpi;
-			::std::unique_ptr<::Windows::Timer> m_pUiTimer;
+			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
+			::std::unique_ptr<::Windows::Timer> m_pGraphicsTimer;
 			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
+			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
 			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;
 			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pScene;
 

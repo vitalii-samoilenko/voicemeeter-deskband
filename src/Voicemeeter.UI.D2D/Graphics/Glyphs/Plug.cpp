@@ -67,16 +67,16 @@ void Plug::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 		&metrics
 	), "Text measurement failed");
 
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->DrawRoundedRectangle(
 			::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 18.25F), 6.25F, 6.25F),
 			pBrush,
 			1.5F);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->FillGeometry(
 			pTriangle,
 			pBrush);
-	m_canvas.get_pRenderTarget()
+	m_canvas.get_pD2dDeviceContext()
 		->DrawTextLayout(
 			::D2D1::Point2F(34.F - metrics.width, (19.F - metrics.height) / 2),
 			pLayout,

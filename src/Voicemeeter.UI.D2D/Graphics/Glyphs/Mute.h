@@ -43,19 +43,19 @@ namespace Voicemeeter {
 										.Inactive))
 							};
 
-							m_canvas.get_pRenderTarget()
+							m_canvas.get_pD2dDeviceContext()
 								->DrawRoundedRectangle(
 									::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 39.25F), 6.25F, 6.25F),
 									pBrush,
 									1.5F);
 							D2D1_MATRIX_3X2_F base{};
-							m_canvas.get_pRenderTarget()
+							m_canvas.get_pD2dDeviceContext()
 								->GetTransform(&base);
-							m_canvas.get_pRenderTarget()
+							m_canvas.get_pD2dDeviceContext()
 								->SetTransform(
 									::D2D1::Matrix3x2F::Scale(1.5F, 1.5F)
 									* base);
-							m_canvas.get_pRenderTarget()
+							m_canvas.get_pD2dDeviceContext()
 								->DrawTextW(
 									L"M",
 									1,
@@ -63,7 +63,7 @@ namespace Voicemeeter {
 										.FontFamily),
 									D2D1::RectF(7.F, 4.0F, 300.F, 200.F),
 									pBrush);
-							m_canvas.get_pRenderTarget()
+							m_canvas.get_pD2dDeviceContext()
 								->SetTransform(base);
 						};
 

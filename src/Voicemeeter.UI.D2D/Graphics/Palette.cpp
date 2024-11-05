@@ -68,7 +68,7 @@ ID2D1SolidColorBrush* Palette::get_pBrush(const ::D2D1::ColorF& color) const {
 				const_cast<::D2D1::ColorF&>(color))]
 	};
 	if (!pBrush) {
-		::Windows::ThrowIfFailed(m_canvas.get_pRenderTarget()
+		::Windows::ThrowIfFailed(m_canvas.get_pD2dDeviceContext()
 			->CreateSolidColorBrush(
 				color,
 				&pBrush

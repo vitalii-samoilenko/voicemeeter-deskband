@@ -17,6 +17,8 @@ namespace Voicemeeter {
 
 				virtual bool MouseLDown(const ::linear_algebra::vectord& point) = 0;
 				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) = 0;
+				virtual bool MouseMDown(const ::linear_algebra::vectord& point) = 0;
+				virtual bool MouseMDouble(const ::linear_algebra::vectord& point) = 0;
 				virtual bool MouseRDown(const ::linear_algebra::vectord& point) = 0;
 				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) = 0;
 				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) = 0;

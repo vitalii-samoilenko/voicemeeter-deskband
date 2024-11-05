@@ -1,12 +1,17 @@
+#include <array>
 #include <cmath>
 #include <tuple>
 #include <utility>
+
+#include <d3d11_4.h>
 
 #include "Windows/Wrappers.h"
 
 #include "Canvas.h"
 
 #pragma comment(lib, "d2d1")
+#pragma comment(lib, "d3d11")
+#pragma comment(lib, "dcomp")
 #pragma comment(lib, "dwrite")
 #pragma comment(lib, "uxtheme")
 
@@ -14,15 +19,17 @@ using namespace ::Voicemeeter::UI::D2D::Graphics;
 
 Canvas::Canvas(
 	HWND hWnd,
-	const Theme& theme
-) : m_hWnd{ hWnd }
-  , m_pPalette{ nullptr }
-  , m_position{ ::linear_algebra::vectord::origin() }
-  , m_vertex{ 50, 50 }
+	const Theme& theme,
+	::Environment::ITimer& timer
+) : m_point{ ::linear_algebra::vectord::origin() }
+  , m_vertex{ 8., 8. }
   , m_pDwFactory{ nullptr }
   , m_pD2dFactory{ nullptr }
-  , m_pD2dRenderTarget{ nullptr }
-  , m_pD2dGdiRenderTarget{ nullptr } {
+  , m_pD2dDeviceContext{ nullptr }
+  , m_pDxgiSwapChain{ nullptr }
+  , m_pCompositionTarget{ nullptr }
+  , m_pPalette{ nullptr }
+  , m_pQueue{ nullptr } {
 	::Windows::ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");
@@ -43,59 +50,195 @@ Canvas::Canvas(
 		m_pD2dFactory.ReleaseAndGetAddressOf()
 	), "Direct2D factory creation failed");
 
-	::Windows::ThrowIfFailed(m_pD2dFactory->CreateHwndRenderTarget(
-		D2D1::RenderTargetProperties(
-			D2D1_RENDER_TARGET_TYPE_DEFAULT,
-			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
-			0.F, 0.F,
-			D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE),
-		::D2D1::HwndRenderTargetProperties(
-			hWnd,
-			::D2D1::SizeU(
-				static_cast<UINT32>(::std::ceil(m_vertex.x)),
-				static_cast<UINT32>(::std::ceil(m_vertex.y))),
-			D2D1_PRESENT_OPTIONS_RETAIN_CONTENTS),
-		&m_pD2dRenderTarget
-	), "Render target creation failed");
+	D3D_FEATURE_LEVEL pFeatureLevel[] {
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_2,
+		D3D_FEATURE_LEVEL_9_1
+	};
+	::Microsoft::WRL::ComPtr<ID3D11Device> pD3dDevice{ nullptr };
+	::Microsoft::WRL::ComPtr<ID3D11DeviceContext> pD3dContext{ nullptr };
+	::Windows::ThrowIfFailed(D3D11CreateDevice(
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE, NULL,
+		D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_BGRA_SUPPORT
+#ifndef NDEBUG
+		| D3D11_CREATE_DEVICE_DEBUG,
+#else
+		,
+#endif // NDEBUG
+		pFeatureLevel, static_cast<UINT>(::std::size(pFeatureLevel)), D3D11_SDK_VERSION,
+		&pD3dDevice, nullptr, &pD3dContext
+	), "Direct3D device creation failed");
 
-	::Windows::ThrowIfFailed(m_pD2dRenderTarget->QueryInterface(
-		IID_PPV_ARGS(&m_pD2dGdiRenderTarget)
-	), "GDI render target creation failed");
+	::Microsoft::WRL::ComPtr<IDXGIDevice1> pDxgiDevice{ nullptr };
+	::Windows::ThrowIfFailed(pD3dDevice.As(
+		&pDxgiDevice
+	), "Could not get DXGI device");
+
+	::Microsoft::WRL::ComPtr<ID2D1Device5> pD2dDevice{ nullptr };
+	::Windows::ThrowIfFailed(m_pD2dFactory->CreateDevice(
+		pDxgiDevice.Get(),
+		&pD2dDevice
+	), "Direct2D device creation failed");
+
+	::Windows::ThrowIfFailed(pD2dDevice->CreateDeviceContext(
+		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+		&m_pD2dDeviceContext
+	), "Direct2D device context creation failed");
+
+	::Microsoft::WRL::ComPtr<IDXGIAdapter> pDxgiAdapter{ nullptr };
+	::Windows::ThrowIfFailed(pDxgiDevice->GetAdapter(
+		&pDxgiAdapter
+	), "Could not get DXGI adapter");
+
+	::Microsoft::WRL::ComPtr<IDXGIFactory2> pDxgiFactory{ nullptr };
+	::Windows::ThrowIfFailed(pDxgiAdapter->GetParent(
+		IID_PPV_ARGS(&pDxgiFactory)
+	), "Could not get DXGI factory");
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
+		static_cast<UINT>(m_vertex.x),
+		static_cast<UINT>(m_vertex.y),
+		DXGI_FORMAT_B8G8R8A8_UNORM,
+		FALSE,
+		DXGI_SAMPLE_DESC{
+			1U, 0U
+		},
+		DXGI_USAGE_RENDER_TARGET_OUTPUT, 2U,
+		DXGI_SCALING_STRETCH,
+		DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
+		DXGI_ALPHA_MODE_PREMULTIPLIED,
+		0U
+	};
+	::Windows::ThrowIfFailed(pDxgiFactory->CreateSwapChainForComposition(
+		pD3dDevice.Get(),
+		&swapChainDesc,
+		nullptr,
+		&m_pDxgiSwapChain
+	), "DXGI swap chain creation failed");
+
+	::Windows::ThrowIfFailed(pDxgiDevice->SetMaximumFrameLatency(
+		1
+	), "Could not set maximum frame latency");
+
+	::Microsoft::WRL::ComPtr<IDCompositionDevice> pCompositionDevice{ nullptr };
+	::Windows::ThrowIfFailed(DCompositionCreateDevice(
+		pDxgiDevice.Get(),
+		IID_PPV_ARGS(&pCompositionDevice)
+	), "Composition device creation failed");
+
+	::Windows::ThrowIfFailed(pCompositionDevice->CreateTargetForHwnd(
+		hWnd, TRUE,
+		&m_pCompositionTarget
+	), "Composition target creation failed");
+
+	::Microsoft::WRL::ComPtr<IDCompositionVisual> pCompositionVisual{ nullptr };
+	::Windows::ThrowIfFailed(pCompositionDevice->CreateVisual(
+		&pCompositionVisual
+	), "Composition visual creation failed");
+
+	::Windows::ThrowIfFailed(pCompositionVisual->SetContent(
+		m_pDxgiSwapChain.Get()
+	), "Could not set swap chain content");
+
+	::Windows::ThrowIfFailed(m_pCompositionTarget->SetRoot(
+		pCompositionVisual.Get()
+	), "Could not set composition target root");
+
+	::Windows::ThrowIfFailed(pCompositionDevice->Commit(
+	), "Could not commit composition device");
 
 	m_pPalette.reset(new Palette{ theme, *this });
+	m_pQueue.reset(new Queue{ timer, *this });
+
+	ResetTarget();
 }
 
 const ::linear_algebra::vectord& Canvas::get_Position() const {
-	return m_position;
+	return m_point;
 }
 const ::linear_algebra::vectord& Canvas::get_Size() const {
 	return m_vertex;
 }
 
 void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
-	HDC hDc{};
-	::Windows::ThrowIfFailed(m_pD2dGdiRenderTarget->GetDC(
-		D2D1_DC_INITIALIZE_MODE_COPY, &hDc
-	), "Cannot get device context");
-	RECT rc{
-		static_cast<LONG>(::std::floor(point.x)),
-		static_cast<LONG>(::std::floor(point.y)),
-		static_cast<LONG>(::std::ceil(point.x + vertex.x)),
-		static_cast<LONG>(::std::ceil(point.y + vertex.y))
-	};
+	m_pD2dDeviceContext->SetTransform(::D2D1::IdentityMatrix());
+	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+	m_pD2dDeviceContext->FillRectangle(
+		::D2D1::RectF(
+			static_cast<FLOAT>(point.x), 
+			static_cast<FLOAT>(point.y),
+			static_cast<FLOAT>(point.x + vertex.x),
+			static_cast<FLOAT>(point.y + vertex.y)
+		),
+		m_pPalette->get_pBrush(
+			m_pPalette->get_Theme()
 #ifdef NDEBUG
-	::Windows::wDrawThemeParentBackground(m_hWnd, hDc, &rc);
+				.Transparent)
 #else
-	FillRect(hDc, &rc, CreateSolidBrush(RGB(44, 61, 77)));
+				.Background)
 #endif
-	m_pD2dGdiRenderTarget->ReleaseDC(&rc);
+	);
+	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 }
+
 void Canvas::Resize(const ::linear_algebra::vectord& vertex) {
-	::Windows::ThrowIfFailed(m_pD2dRenderTarget->Resize(
-		::D2D1::SizeU(
-			static_cast<UINT32>(::std::ceil(vertex.x)),
-			static_cast<UINT32>(::std::ceil(vertex.y)))
-	), "Render target resize failed");
+	m_pD2dDeviceContext->SetTarget(nullptr);
+
+	::Windows::ThrowIfFailed(m_pDxgiSwapChain->ResizeBuffers(
+		0U,
+		static_cast<UINT>(::std::ceil(vertex.x)),
+		static_cast<UINT>(::std::ceil(vertex.y)),
+		DXGI_FORMAT_UNKNOWN,
+		0U
+	), "Swap chain resize failed");
+
+	ResetTarget();
 
 	m_vertex = vertex;
+}
+
+void Canvas::ResetTarget() {
+	::Microsoft::WRL::ComPtr<IDXGISurface> pDxgiBackBuffer{ nullptr };
+	::Windows::ThrowIfFailed(m_pDxgiSwapChain->GetBuffer(
+		0U, IID_PPV_ARGS(&pDxgiBackBuffer)
+	), "Could not get back buffer");
+
+	D2D1_BITMAP_PROPERTIES1 bitmapProperties{
+		D2D1_PIXEL_FORMAT{
+			DXGI_FORMAT_B8G8R8A8_UNORM,
+			D2D1_ALPHA_MODE_PREMULTIPLIED
+		},
+		0.F, 0.F,
+		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+		nullptr
+	};
+	::Microsoft::WRL::ComPtr<ID2D1Bitmap1> pD2dBmp{ nullptr };
+	::Windows::ThrowIfFailed(m_pD2dDeviceContext->CreateBitmapFromDxgiSurface(
+		pDxgiBackBuffer.Get(),
+		&bitmapProperties,
+		&pD2dBmp
+	), "Bitmap creation failed");
+	m_pD2dDeviceContext->SetTarget(pD2dBmp.Get());
+
+	m_pD2dDeviceContext->BeginDraw();
+
+	m_pD2dDeviceContext->Clear(m_pPalette->get_Theme()
+#ifdef NDEBUG
+		.Transparent
+#else
+		.Background
+#endif
+	);
+
+	::Windows::ThrowIfFailed(m_pD2dDeviceContext->EndDraw(
+	), "Render failed");
+
+	::Windows::ThrowIfFailed(m_pDxgiSwapChain->Present(
+		1, 0
+	), "Presentation failed");
 }
