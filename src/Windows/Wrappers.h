@@ -106,16 +106,18 @@ namespace Windows {
 		}
 	}
 
-	inline void wBeginPaint(
+	inline HDC wBeginPaint(
 		_In_ HWND hWnd,
 		_Out_ LPPAINTSTRUCT lpPaint
 	) {
-		if (BeginPaint(
+		HDC hDc{ BeginPaint(
 			hWnd,
 			lpPaint
-		) == NULL) {
+		) };
+		if (hDc == NULL) {
 			throw Error{ "Cannot begin painting" };
 		}
+		return hDc;
 	}
 
 	inline void wSetWindowLongPtrW(

@@ -487,6 +487,8 @@ LRESULT CALLBACK DeskBand::WndProcW(
 		} return OK;
 		case WM_ERASEBKGND: {
 			if (pWnd->m_fCompositionEnabled) {
+				::Windows::wDrawThemeParentBackground(hWnd, reinterpret_cast<HDC>(wParam), NULL);
+
 				return 1;
 			}
 		} break;
