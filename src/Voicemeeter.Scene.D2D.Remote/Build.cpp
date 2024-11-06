@@ -243,19 +243,34 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ input, gainerMap, checkboxMap }
 		};
 
-		::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{
-			new UI::Decorators::Margin<
-				UI::Decorators::RegionCheck<
-					UI::D2D::Controls::Knob>>{
-						::linear_algebra::vectord{ 2, 0 },
-						::linear_algebra::vectord{ 0, 0 },
-						* pInputTracker,
+		::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{ nullptr };
+		if (cpComponent.empty()) {
+			pKnob.reset(
+				new UI::Decorators::RegionCheck<
+					UI::D2D::Controls::Knob>{
+						*pInputTracker,
 						::std::move(pKnobGlyph),
 						pKnobStateChangePolicy,
 						::std::move(pKnobStatePromotionPolicy),
 						pKnobGlyphUpdatePolicy,
 						pKnobInteractivityPolicy
-		} };
+			} );
+		} else {
+			pKnob.reset(
+				new UI::Decorators::Margin<
+					UI::Decorators::RegionCheck<
+						UI::D2D::Controls::Knob>>{
+							::linear_algebra::vectord{ 2, 0 },
+							::linear_algebra::vectord{ 0, 0 },
+							*pInputTracker,
+							::std::move(pKnobGlyph),
+							pKnobStateChangePolicy,
+							::std::move(pKnobStatePromotionPolicy),
+							pKnobGlyphUpdatePolicy,
+							pKnobInteractivityPolicy
+			} );
+		}
+
 
 		UI::D2D::Controls::Knob& knob{ *pKnob };
 		input.on_Gain([&knob](double gain)->void {

@@ -158,7 +158,7 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi) {
 	if (pdbi->dwMask & DBIM_MINSIZE) {
 		switch (m_pMixer->get_Type()) {
 		case Type::Voicemeeter: {
-			pdbi->ptMinSize.x = 190;
+			pdbi->ptMinSize.x = 189;
 			pdbi->ptMinSize.y = 30;
 		} break;
 		case Type::Banana: {
