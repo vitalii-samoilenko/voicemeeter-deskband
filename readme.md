@@ -62,3 +62,17 @@ Explorer.exe &
 
 - Resizable (lock/unlock taskbar to adjust)
 - Interactive (left click/right click/wheel/left hold and move)
+
+#### Customization
+
+Custom colors and font family could be set via registry key:
+
+```
+HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Theme
+```
+
+Value names could be taken from [Theme.h](src/Voicemeeter.UI.D2D/Graphics/Theme.h)
+
+Font family is REG_SZ
+
+Color type is DWORD in hexadecimal format RRGGBB
