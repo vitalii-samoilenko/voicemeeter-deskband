@@ -61,7 +61,7 @@ Explorer.exe &
 ### Features
 
 - Resizable (lock/unlock taskbar to adjust)
-- Interactive (left click/right click/wheel/left hold and move)
+- Interactive (left click/right click/middle click/wheel/left hold and move)
 
 #### Customization
 
