@@ -177,11 +177,7 @@ void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 		),
 		m_pPalette->get_pBrush(
 			m_pPalette->get_Theme()
-#ifdef NDEBUG
-				.Transparent)
-#else
 				.Background)
-#endif
 	);
 	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 }
@@ -223,21 +219,13 @@ void Canvas::ResetTarget() {
 		&bitmapProperties,
 		&pD2dBmp
 	), "Bitmap creation failed");
+
 	m_pD2dDeviceContext->SetTarget(pD2dBmp.Get());
-
 	m_pD2dDeviceContext->BeginDraw();
-
 	m_pD2dDeviceContext->Clear(m_pPalette->get_Theme()
-#ifdef NDEBUG
-		.Transparent
-#else
-		.Background
-#endif
-	);
-
+		.Background);
 	::Windows::ThrowIfFailed(m_pD2dDeviceContext->EndDraw(
 	), "Render failed");
-
 	::Windows::ThrowIfFailed(m_pDxgiSwapChain->Present(
 		1, 0
 	), "Presentation failed");

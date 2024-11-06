@@ -1,7 +1,5 @@
 #pragma once
 
-#include "estd/type_traits.h"
-
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
@@ -16,10 +14,10 @@ namespace Voicemeeter {
 				IStateChange& operator=(const IStateChange&) = delete;
 				IStateChange& operator=(IStateChange&&) = delete;
 
-				virtual bool SetDefault(::estd::remove_cvref_t<TState>& state) const = 0;
-				virtual bool SetNext(::estd::remove_cvref_t<TState>& state) const = 0;
-				virtual bool SetPrevious(::estd::remove_cvref_t<TState>& state) const = 0;
-				virtual bool Set(::estd::remove_cvref_t<TState>& dst, ::estd::remove_cvref_t<TState>& src) const = 0;
+				virtual bool SetDefault(TState& state) const = 0;
+				virtual bool SetNext(TState& state) const = 0;
+				virtual bool SetPrevious(TState& state) const = 0;
+				virtual bool Set(TState& dst, TState& src) const = 0;
 
 			protected:
 				IStateChange() = default;

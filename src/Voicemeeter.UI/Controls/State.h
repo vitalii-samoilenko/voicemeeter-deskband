@@ -4,7 +4,6 @@
 #include <utility>
 
 #include "estd/linear_algebra.h"
-#include "estd/type_traits.h"
 
 #include "../Policies/IStateChange.h"
 #include "../Policies/IStatePromotion.h"
@@ -43,7 +42,7 @@ namespace Voicemeeter {
 				State& operator=(const State&) = delete;
 				State& operator=(State&&) = delete;
 
-				const ::estd::remove_cvref_t<TState>& get_State() const {
+				const TState& get_State() const {
 					return m_state;
 				};
 
@@ -68,7 +67,7 @@ namespace Voicemeeter {
 
 					OnSet(true);
 				}
-				void Set(::estd::remove_cvref_t<TState>& src, bool promote) {
+				void Set(TState& src, bool promote) {
 					if (!m_pStateChangePolicy->Set(m_state, src)) {
 						return;
 					}
@@ -145,11 +144,11 @@ namespace Voicemeeter {
 				};
 
 			private:
-				::estd::remove_cvref_t<TState> m_state;
-				::std::unique_ptr<::estd::remove_cvref_t<TGlyph>> m_pGlyph;
-				::std::shared_ptr<Policies::IStateChange<::estd::remove_cvref_t<TState>>> m_pStateChangePolicy;
-				::std::unique_ptr<Policies::IStatePromotion<::estd::remove_cvref_t<TState>>> m_pStatePromotionPolicy;
-				::std::shared_ptr<Policies::IGlyphUpdate<::estd::remove_cvref_t<TGlyph>, ::estd::remove_cvref_t<TState>>> m_pGlyphUpdatePolicy;
+				TState m_state;
+				::std::unique_ptr<TGlyph> m_pGlyph;
+				::std::shared_ptr<Policies::IStateChange<TState>> m_pStateChangePolicy;
+				::std::unique_ptr<Policies::IStatePromotion<TState>> m_pStatePromotionPolicy;
+				::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>> m_pGlyphUpdatePolicy;
 				::std::shared_ptr<Policies::IInteractivity<State>> m_pInteractivityPolicy;
 
 				void OnSet(bool promote) {

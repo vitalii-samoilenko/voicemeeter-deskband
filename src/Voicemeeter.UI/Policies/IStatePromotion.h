@@ -1,7 +1,5 @@
 #pragma once
 
-#include "estd/type_traits.h"
-
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
@@ -16,7 +14,7 @@ namespace Voicemeeter {
 				IStatePromotion& operator=(const IStatePromotion&) = delete;
 				IStatePromotion& operator=(IStatePromotion&&) = delete;
 
-				virtual void Promote(const ::estd::remove_cvref_t<TState>& state) const = 0;
+				virtual void Promote(const TState& state) const = 0;
 
 			protected:
 				IStatePromotion() = default;

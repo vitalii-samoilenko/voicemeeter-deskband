@@ -2,8 +2,6 @@
 
 #include <type_traits>
 
-#include "estd/type_traits.h"
-
 #include "../Graphics/IGlyph.h"
 
 namespace Voicemeeter {
@@ -12,7 +10,7 @@ namespace Voicemeeter {
 			template<typename TGlyph, typename TState>
 			class IGlyphUpdate {
 				static_assert(
-					::std::is_base_of_v<Graphics::IGlyph, ::estd::remove_cvref_t<TGlyph>>,
+					::std::is_base_of_v<Graphics::IGlyph, TGlyph>,
 					"TGlyph must be derived from IGlyph");
 
 			public:
@@ -24,7 +22,7 @@ namespace Voicemeeter {
 				IGlyphUpdate& operator=(const IGlyphUpdate&) = delete;
 				IGlyphUpdate& operator=(IGlyphUpdate&&) = delete;
 
-				virtual void Update(::estd::remove_cvref_t<TGlyph>& glyph, const ::estd::remove_cvref_t<TState>& state) const = 0;
+				virtual void Update(TGlyph& glyph, const TState& state) const = 0;
 
 			protected:
 				IGlyphUpdate() = default;

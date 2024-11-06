@@ -3,7 +3,6 @@
 #include <type_traits>
 
 #include "estd/linear_algebra.h"
-#include "estd/type_traits.h"
 
 #include "../IComponent.h"
 
@@ -13,7 +12,7 @@ namespace Voicemeeter {
 			template<typename TComponent>
 			class IInteractivity {
 				static_assert(
-					::std::is_base_of_v<IComponent, ::estd::remove_cvref_t<TComponent>>,
+					::std::is_base_of_v<IComponent, TComponent>,
 					"TComponent must be derived from IComponent");
 
 			public:
@@ -25,17 +24,17 @@ namespace Voicemeeter {
 				IInteractivity& operator=(const IInteractivity&) = delete;
 				IInteractivity& operator=(IInteractivity&&) = delete;
 
-				virtual void set_Focus(::estd::remove_cvref_t<TComponent>& component, bool value) const = 0;
+				virtual void set_Focus(TComponent& component, bool value) const = 0;
 
-				virtual void MouseLDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseLDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseMDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseMDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseRDown(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseRDouble(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseWheel(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point, int delta) const = 0;
-				virtual void MouseMove(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
-				virtual void MouseLUp(::estd::remove_cvref_t<TComponent>& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseLDown(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseLDouble(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseMDown(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseMDouble(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseRDown(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseRDouble(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseWheel(TComponent& component, const ::linear_algebra::vectord& point, int delta) const = 0;
+				virtual void MouseMove(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
+				virtual void MouseLUp(TComponent& component, const ::linear_algebra::vectord& point) const = 0;
 
 			protected:
 				IInteractivity() = default;

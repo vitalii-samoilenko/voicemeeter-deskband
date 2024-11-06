@@ -12,13 +12,10 @@ using namespace ::Voicemeeter::UI::D2D;
 void Scene::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	m_pCanvas->get_pD2dDeviceContext()
 		->BeginDraw();
-
 	UI::Scene<Graphics::Canvas>::Redraw(point, vertex);
-
 	::Windows::ThrowIfFailed(m_pCanvas->get_pD2dDeviceContext()
 		->EndDraw(
 	), "Render failed");
-
 	RECT rect{
 		static_cast<LONG>(::std::floor(point.x)),
 		static_cast<LONG>(::std::floor(point.y)),

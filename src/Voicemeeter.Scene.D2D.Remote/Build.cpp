@@ -31,6 +31,7 @@
 #include "Voicemeeter.UI.D2D/Policies/PlugInteractivity.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanInteractivity.h"
+#include "Windows/Registry.h"
 
 #include "Build.h"
 
@@ -148,6 +149,48 @@ private:
 	TMutedMapper m_mutedMapper;
 };
 
+UI::D2D::Graphics::Theme LoadTheme() {
+	UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
+	HKEY hKey{ HKEY_CURRENT_USER };
+	::std::wstring subKey{ LR"(SOFTWARE\VoicemeeterDeskBand\Theme)" };
+	::Windows::Registry::TryGetValue(hKey, subKey, L"FontFamily", theme.FontFamily);
+	DWORD color{};
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Warning", color)) {
+		theme.Warning = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Danger", color)) {
+		theme.Danger = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"DarkGlass", color)) {
+		theme.DarkGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"LightGlass", color)) {
+		theme.LightGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"PrimaryActive", color)) {
+		theme.PrimaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"SecondaryActive", color)) {
+		theme.SecondaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Inactive", color)) {
+		theme.Inactive = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Indicator", color)) {
+		theme.Indicator = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"EqualizerLow", color)) {
+		theme.EqualizerLow = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"EqualizerMedium", color)) {
+		theme.EqualizerMedium = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	if (::Windows::Registry::TryGetValue(hKey, subKey, L"EqualizerHigh", color)) {
+		theme.EqualizerHigh = ::D2D1::ColorF(static_cast<UINT32>(color));
+	}
+	return theme;
+}
+
 UI::D2D::Scene* Scene::D2D::Remote::Build(
 	HWND hWnd,
 	::Environment::IInputTracker& inputTracker,
@@ -162,7 +205,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		new UI::InputTracker{ inputTracker }
 	};
 
-	const UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
+	const UI::D2D::Graphics::Theme theme{ LoadTheme() };
 	::std::unique_ptr<UI::D2D::Graphics::Canvas> pCanvas{
 		new UI::D2D::Graphics::Canvas{ hWnd, theme, graphicsTimer }
 	};
@@ -189,8 +232,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			new UI::D2D::Graphics::Glyphs::Vban{
 				*pCanvas
 		} };
-		::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
-			new UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ *pCanvas }
+		::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<
+			UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>> pVbanGlyphUpdatePolicy{
+			new UI::D2D::Decorators::QueueGlyphUpdate<
+				UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ *pCanvas }
 		};
 		::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
 			new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
@@ -219,15 +264,19 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	::std::shared_ptr<UI::D2D::Policies::KnobStateChange> pKnobStateChangePolicy{
 		new UI::D2D::Policies::KnobStateChange{}
 	};
-	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
-		new UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ *pCanvas }
+	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<
+		UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>> pKnobGlyphUpdatePolicy{
+		new UI::D2D::Decorators::QueueGlyphUpdate<
+			UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ *pCanvas }
 	};
 	::std::shared_ptr<UI::D2D::Policies::KnobInteractivity> pKnobInteractivityPolicy{
 		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , compositionTimer }
 	};
 
-	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
-		new UI::D2D::Decorators::QueueGlyphUpdate<UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ *pCanvas }
+	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<
+		UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
+		new UI::D2D::Decorators::QueueGlyphUpdate<
+			UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ *pCanvas }
 	};
 	::std::shared_ptr<UI::D2D::Policies::PlugInteractivity> pPlugInteractivityPolicy{
 		new UI::D2D::Policies::PlugInteractivity{ *pFocusTracker }

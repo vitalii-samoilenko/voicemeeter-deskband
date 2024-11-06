@@ -30,6 +30,7 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="ErrorMessageBox.h" />
     <ClInclude Include="Messages.h" />
+    <ClInclude Include="Registry.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Wrappers.h" />
   </ItemGroup>
@@ -55,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ErrorMessageBox.cpp" />
+    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
