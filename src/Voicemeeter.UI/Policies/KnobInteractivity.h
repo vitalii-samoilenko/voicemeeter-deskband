@@ -4,6 +4,7 @@
 
 #include "Environment/ITimer.h"
 
+#include "../Direction.h"
 #include "../IFocusTracker.h"
 #include "../IInputTracker.h"
 #include "../Controls/Knob.h"
@@ -12,7 +13,7 @@
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
-			template<typename TGlyph>
+			template<UI::Direction Direction, typename TGlyph>
 			class KnobInteractivity : public IInteractivity<Controls::Knob<TGlyph>> {
 			public:
 				explicit KnobInteractivity(
@@ -88,10 +89,7 @@ namespace Voicemeeter {
 						return;
 					}
 
-					double scale{ component.get_Size().x / component.get_BaseSize().x };
-					States::Knob state{ component.get_State() };
-					state.gain += static_cast<int>((point.x - m_inputTracker.get_Position().x) * 100. / scale);
-					component.Set(state, true);
+					OnMouseMove(component, point, UI::Direction_Tag<Direction>{});
 
 					m_inputTracker.set_Position(point);
 				};
@@ -105,6 +103,20 @@ namespace Voicemeeter {
 				IFocusTracker& m_focusTracker;
 				IInputTracker& m_inputTracker;
 				::Environment::ITimer& m_timer;
+
+				void OnMouseMove(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point, UI::Direction_Tag<UI::Direction::Right>) const {
+					double scale{ component.get_Size().x / component.get_BaseSize().x };
+					States::Knob state{ component.get_State() };
+					state.gain += static_cast<int>((point.x - m_inputTracker.get_Position().x) * 100. / scale);
+					component.Set(state, true);
+				}
+
+				void OnMouseMove(Controls::Knob<TGlyph>& component, const ::linear_algebra::vectord& point, Direction_Tag<UI::Direction::Down>) const {
+					double scale{ component.get_Size().y / component.get_BaseSize().y };
+					States::Knob state{ component.get_State() };
+					state.gain += static_cast<int>((point.y - m_inputTracker.get_Position().y) * 100. / scale);
+					component.Set(state, true);
+				}
 
 				void UnpinLater(Controls::Knob<TGlyph>& component) const {
 					m_timer.Set(::std::chrono::milliseconds{ 400 },

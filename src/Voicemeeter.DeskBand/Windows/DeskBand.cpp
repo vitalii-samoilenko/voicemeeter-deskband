@@ -5,6 +5,7 @@
 
 #include "estd/linear_algebra.h"
 
+#include "Voicemeeter.UI/Direction.h"
 #include "Voicemeeter.Scene.D2D.Remote/Build.h"
 #include "Windows/Wrappers.h"
 #include "Windows/ErrorMessageBox.h"
@@ -33,6 +34,7 @@ DeskBand::DeskBand(
   , m_pInputObjectSite{ NULL }
   , m_fHasFocus{ FALSE }
   , m_fIsDirty{ FALSE }
+  , m_fCompositionEnabled{ FALSE }
   , m_dwBandID{ 0 }
   ,	m_hWnd{ NULL }
   , m_hWndParent{ NULL }
@@ -386,8 +388,15 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd->m_lpTimer.emplace(pWnd->m_pGraphicsTimer->get_Id(), pWnd->m_pGraphicsTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
+			RECT taskbar{};
+			UI::Direction direction{
+				(GetClientRect(pWnd->m_hWndParent, &taskbar)
+					&& taskbar.right < taskbar.bottom
+					? UI::Direction::Down
+					: UI::Direction::Right)
+			};
 			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
-				hWnd, *pWnd,
+				hWnd, direction, *pWnd,
 				*pWnd->m_pCompositionTimer, *pWnd->m_pGraphicsTimer,
 				*pWnd->m_pMixer));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));

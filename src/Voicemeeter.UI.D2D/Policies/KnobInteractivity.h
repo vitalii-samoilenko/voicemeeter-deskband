@@ -10,7 +10,8 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Policies {
-				using KnobInteractivity = KnobInteractivity<Graphics::Glyphs::Knob>;
+				using RightKnobInteractivity = KnobInteractivity<UI::Direction::Right, Graphics::Glyphs::Knob>;
+				using DownKnobInteractivity = KnobInteractivity<UI::Direction::Down, Graphics::Glyphs::Knob>;
 			}
 		}
 	}

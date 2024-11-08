@@ -4,8 +4,10 @@
 #include <utility>
 
 #include "Voicemeeter.Scene.D2D.Remote/Build.h"
-#include "Windows/Wrappers.h"
+#include "Voicemeeter.UI/Direction.h"
 #include "Windows/ErrorMessageBox.h"
+#include "Windows/Registry.h"
+#include "Windows/Wrappers.h"
 
 #include "Window.h"
 
@@ -98,7 +100,7 @@ LRESULT CALLBACK Window::WndProcW(
 			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
 			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
-				hWnd, *pWnd,
+				hWnd, UI::Direction::Right, *pWnd,
 				*pWnd->m_pCompositionTimer, *pWnd->m_pGraphicsTimer,
 				*pWnd->m_pMixer));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));

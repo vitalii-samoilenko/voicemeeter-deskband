@@ -204,6 +204,7 @@
     <ClInclude Include="Controls\Slider.h" />
     <ClInclude Include="Decorators\Margin.h" />
     <ClInclude Include="Decorators\RegionCheck.h" />
+    <ClInclude Include="Direction.h" />
     <ClInclude Include="FocusTracker.h" />
     <ClInclude Include="Graphics\Glyphs\Frame.h" />
     <ClInclude Include="Graphics\ICanvas.h" />

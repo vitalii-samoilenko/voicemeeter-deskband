@@ -193,6 +193,7 @@ UI::D2D::Graphics::Theme LoadTheme() {
 
 UI::D2D::Scene* Scene::D2D::Remote::Build(
 	HWND hWnd,
+	UI::Direction direction,
 	::Environment::IInputTracker& inputTracker,
 	::Environment::ITimer& compositionTimer,
 	::Environment::ITimer& graphicsTimer,
@@ -269,8 +270,13 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		new UI::D2D::Decorators::QueueGlyphUpdate<
 			UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ *pCanvas }
 	};
-	::std::shared_ptr<UI::D2D::Policies::KnobInteractivity> pKnobInteractivityPolicy{
-		new UI::D2D::Policies::KnobInteractivity{ *pInputTracker, *pFocusTracker , compositionTimer }
+	::std::shared_ptr<UI::Policies::IInteractivity<UI::D2D::Controls::Knob>> pKnobInteractivityPolicy{
+		(direction == UI::Direction::Right
+			? static_cast<UI::Policies::IInteractivity<UI::D2D::Controls::Knob>*>(new UI::D2D::Policies::RightKnobInteractivity{ 
+				*pInputTracker, *pFocusTracker , compositionTimer
+			}) : new UI::D2D::Policies::DownKnobInteractivity{
+					*pInputTracker, *pFocusTracker , compositionTimer
+			})
 	};
 
 	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<
@@ -280,6 +286,12 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	};
 	::std::shared_ptr<UI::D2D::Policies::PlugInteractivity> pPlugInteractivityPolicy{
 		new UI::D2D::Policies::PlugInteractivity{ *pFocusTracker }
+	};
+
+	::linear_algebra::vectord left_top{
+		(direction == UI::Direction::Right
+			? ::linear_algebra::vectord{ 2, 0 }
+			: ::linear_algebra::vectord{ 0, 2 })
 	};
 
 	for (::Voicemeeter::Remote::Input& input : mixer.get_Inputs()) {
@@ -309,7 +321,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 				new UI::Decorators::Margin<
 					UI::Decorators::RegionCheck<
 						UI::D2D::Controls::Knob>>{
-							::linear_algebra::vectord{ 2, 0 },
+							left_top,
 							::linear_algebra::vectord{ 0, 0 },
 							*pInputTracker,
 							::std::move(pKnobGlyph),
@@ -402,8 +414,8 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 				cpComponent.push_back(
 					::std::make_unique<UI::Decorators::Margin<
 						UI::Decorators::RegionCheck<
-							UI::Panels::Stack<UI::Panels::Direction::Down>>>>(
-								::linear_algebra::vectord{ 2, 0 },
+							UI::Panels::Stack<UI::Direction::Down>>>>(
+								left_top,
 								::linear_algebra::vectord{ 0, 0 },
 								*pInputTracker,
 								cpPlug.begin(),
@@ -429,7 +441,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			new UI::Decorators::Margin<
 				UI::Decorators::RegionCheck<
 					UI::D2D::Controls::Knob>>{
-						::linear_algebra::vectord{ 2, 0 },
+						left_top,
 						::linear_algebra::vectord{ 0, 0 },
 						* pInputTracker,
 						::std::move(pKnobGlyph),
@@ -469,10 +481,15 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	}
 
 	::std::unique_ptr<UI::IComponent> pComposition{
-		new UI::Panels::Stack<UI::Panels::Direction::Right>{
-			cpComponent.begin(),
-			cpComponent.end()
-	} };
+		(direction == UI::Direction::Right
+			? static_cast<UI::IComponent*>(new UI::Panels::Stack<UI::Direction::Right>{
+				cpComponent.begin(),
+				cpComponent.end()
+			}) : new UI::Panels::Stack<UI::Direction::Down>{
+				cpComponent.begin(),
+				cpComponent.end()
+			})
+	};
 
 	return new UI::D2D::Scene{
 		::std::move(pInputTracker),

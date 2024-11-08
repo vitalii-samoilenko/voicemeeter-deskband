@@ -8,17 +8,13 @@
 #include "estd/type_traits.h"
 #include "estd/linear_algebra.h"
 
+#include "../Direction.h"
 #include "../IPanel.h"
 #include "../IComponent.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Panels {
-			enum class Direction {
-				Right = 0,
-				Down = 1
-			};
-
 			template<Direction>
 			class Stack : public IPanel {
 			public:

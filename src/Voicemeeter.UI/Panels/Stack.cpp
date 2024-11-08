@@ -3,6 +3,7 @@
 
 #include "Stack.h"
 
+using namespace ::Voicemeeter::UI;
 using namespace ::Voicemeeter::UI::Panels;
 
 template<>
