@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{357CC4A1-4BE3-4282-8736-450AD70108D5}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		todo = todo
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI", "src\Voicemeeter.UI\Voicemeeter.UI.vcxproj", "{8EBF00E4-20BE-4230-97BA-8DD20F2F35CB}"
