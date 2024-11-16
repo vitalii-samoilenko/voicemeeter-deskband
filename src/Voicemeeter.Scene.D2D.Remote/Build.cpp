@@ -355,18 +355,17 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			state.enabled = mute;
 			knob.Set(state, false);
 		});
-		int i{ 0 };
 		for (::Voicemeeter::Remote::Channel& channel : input.get_Channels()) {
+			UI::States::Knob state{ knob.get_State() };
+			size_t i{ state.level.size() };
+			state.level.emplace_back();
+			knob.Set(state, false);
+
 			channel.on_Level([&knob, i](double level)->void {
 				UI::States::Knob state{ knob.get_State() };
-				if (i) {
-					state.rightLevel = static_cast<int>(level * 10000.);
-				} else {
-					state.leftLevel = static_cast<int>(level * 10000.);
-				}
+				state.level[i] = static_cast<int>(level * 10000.);
 				knob.Set(state, false);
 			});
-			++i;
 		}
 
 		cpComponent.push_back(::std::move(pKnob));
@@ -486,19 +485,17 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			state.enabled = mute;
 			knob.Set(state, false);
 			});
-		int i{ 0 };
 		for (::Voicemeeter::Remote::Channel& channel : output.get_Channels()) {
+			UI::States::Knob state{ knob.get_State() };
+			size_t i{ state.level.size() };
+			state.level.emplace_back();
+			knob.Set(state, false);
+
 			channel.on_Level([&knob, i](double level)->void {
 				UI::States::Knob state{ knob.get_State() };
-				if (i) {
-					state.rightLevel = static_cast<int>(level * 10000.);
-				}
-				else {
-					state.leftLevel = static_cast<int>(level * 10000.);
-				}
+				state.level[i] = static_cast<int>(level * 10000.);
 				knob.Set(state, false);
 			});
-			++i;
 		}
 
 		cpComponent.push_back(::std::move(pKnob));

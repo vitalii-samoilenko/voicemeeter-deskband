@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "../States/Knob.h"
 #include "IStateChange.h"
 
@@ -11,7 +13,7 @@ namespace Voicemeeter {
 				int Min,
 				int Max,
 				int Delta>
-			class KnobStateChange final : public IStateChange<States::Knob> {
+			class KnobStateChange : public IStateChange<States::Knob> {
 			public:
 				KnobStateChange() = default;
 				KnobStateChange(const KnobStateChange&) = delete;
@@ -54,22 +56,7 @@ namespace Voicemeeter {
 				};
 				virtual bool Set(States::Knob& dst, States::Knob& src) const override {
 					bool result{ false };
-					if (dst.pinned != src.pinned) {
-						dst.pinned = src.pinned;
-						result = true;
-					}
-					if (dst.enabled != src.enabled) {
-						dst.enabled = src.enabled;
-						result = true;
-					}
-					if (dst.leftLevel != src.leftLevel) {
-						dst.leftLevel = src.leftLevel;
-						result = true;
-					}
-					if (dst.rightLevel != src.rightLevel) {
-						dst.rightLevel = src.rightLevel;
-						result = true;
-					}
+
 					if (dst.gain != src.gain) {
 						if (Max < src.gain) {
 							if (Max != dst.gain) {
@@ -85,6 +72,18 @@ namespace Voicemeeter {
 							dst.gain = src.gain;
 							result = true;
 						}
+					}
+					if (dst.level != src.level) {
+						dst.level = ::std::move(src.level);
+						result = true;
+					}
+					if (dst.enabled != src.enabled) {
+						dst.enabled = src.enabled;
+						result = true;
+					}
+					if (dst.pinned != src.pinned) {
+						dst.pinned = src.pinned;
+						result = true;
 					}
 
 					return result;

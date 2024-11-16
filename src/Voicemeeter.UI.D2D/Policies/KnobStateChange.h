@@ -8,7 +8,19 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Policies {
-				using KnobStateChange = UI::Policies::KnobStateChange<9000, -13500, 13500, 1>;
+				class KnobStateChange : public UI::Policies::KnobStateChange<9000, -13500, 13500, 1> {
+				public:
+					KnobStateChange() = default;
+					KnobStateChange(const KnobStateChange&) = delete;
+					KnobStateChange(KnobStateChange&&) = delete;
+
+					~KnobStateChange() = default;
+
+					KnobStateChange& operator=(const KnobStateChange&) = delete;
+					KnobStateChange& operator=(KnobStateChange&&) = delete;
+
+					virtual bool Set(States::Knob& dst, States::Knob& src) const override;
+				};
 			}
 		}
 	}

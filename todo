@@ -1,4 +1,3 @@
-Optimized knob state change policy at concrete Glyph level to reduce redraw operations
 Vertical bar panels reduction
 pch
 Up to date doc
@@ -12,4 +11,3 @@ Contextual menu prototype (select physical input/output)
 Configuration tool
 ::estd::(chrono::)timer for rendering and update operations?
 Hidden state?
-All channels support

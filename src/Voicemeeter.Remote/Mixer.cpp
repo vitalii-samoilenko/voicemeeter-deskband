@@ -38,24 +38,42 @@ Mixer::Mixer(
 		*this, LevelType::PostFaderInput, 1L,
 		::std::string{ "P" }
 	);
+	m_cOutput.emplace(
+		*this, ::std::string{ "Bus[0]" },
+		*this, LevelType::Output, 0L,
+		*this, LevelType::Output, 1L,
+		*this, LevelType::Output, 2L,
+		*this, LevelType::Output, 3L,
+		*this, LevelType::Output, 4L,
+		*this, LevelType::Output, 5L,
+		*this, LevelType::Output, 6L,
+		*this, LevelType::Output, 7L,
+		::std::string{ "A1" }
+	);
 	switch (m_type) {
 	case Type::Voicemeeter: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[2]" },
 			*this, LevelType::PostFaderInput, 4L,
 			*this, LevelType::PostFaderInput, 5L,
+			*this, LevelType::PostFaderInput, 6L,
+			*this, LevelType::PostFaderInput, 7L,
+			*this, LevelType::PostFaderInput, 8L,
+			*this, LevelType::PostFaderInput, 9L,
+			*this, LevelType::PostFaderInput, 10L,
+			*this, LevelType::PostFaderInput, 11L,
 			::std::string{ "V" }
-		);
-		m_cOutput.emplace(
-			*this, ::std::string{ "Bus[0]" },
-			*this, LevelType::Output, 0L,
-			*this, LevelType::Output, 1L,
-			::std::string{ "A1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[1]" },
 			*this, LevelType::Output, 8L,
 			*this, LevelType::Output, 9L,
+			*this, LevelType::Output, 10L,
+			*this, LevelType::Output, 11L,
+			*this, LevelType::Output, 12L,
+			*this, LevelType::Output, 13L,
+			*this, LevelType::Output, 14L,
+			*this, LevelType::Output, 15L,
 			::std::string{ "B1" }
 		);
 	} break;
@@ -64,30 +82,48 @@ Mixer::Mixer(
 			*this, ::std::string{ "Strip[3]" },
 			*this, LevelType::PostFaderInput, 6L,
 			*this, LevelType::PostFaderInput, 7L,
+			*this, LevelType::PostFaderInput, 8L,
+			*this, LevelType::PostFaderInput, 9L,
+			*this, LevelType::PostFaderInput, 10L,
+			*this, LevelType::PostFaderInput, 11L,
+			*this, LevelType::PostFaderInput, 12L,
+			*this, LevelType::PostFaderInput, 13L,
 			::std::string{ "V" }
-		);
-		m_cOutput.emplace(
-			*this, ::std::string{ "Bus[0]" },
-			*this, LevelType::Output, 0L,
-			*this, LevelType::Output, 1L,
-			::std::string{ "A1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[1]" },
 			*this, LevelType::Output, 8L,
 			*this, LevelType::Output, 9L,
+			*this, LevelType::Output, 10L,
+			*this, LevelType::Output, 11L,
+			*this, LevelType::Output, 12L,
+			*this, LevelType::Output, 13L,
+			*this, LevelType::Output, 14L,
+			*this, LevelType::Output, 15L,
 			::std::string{ "A2" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[3]" },
 			*this, LevelType::Output, 24L,
 			*this, LevelType::Output, 25L,
+			*this, LevelType::Output, 26L,
+			*this, LevelType::Output, 27L,
+			*this, LevelType::Output, 28L,
+			*this, LevelType::Output, 29L,
+			*this, LevelType::Output, 30L,
+			*this, LevelType::Output, 31L,
 			::std::string{ "B1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[4]" },
 			*this, LevelType::Output, 32L,
 			*this, LevelType::Output, 33L,
+			*this, LevelType::Output, 34L,
+			*this, LevelType::Output, 35L,
+			*this, LevelType::Output, 36L,
+			*this, LevelType::Output, 37L,
+			*this, LevelType::Output, 38L,
+			*this, LevelType::Output, 39L,
 			::std::string{ "B2" }
 		);
 	} break;
@@ -96,30 +132,48 @@ Mixer::Mixer(
 			*this, ::std::string{ "Strip[5]" },
 			*this, LevelType::PostFaderInput, 10L,
 			*this, LevelType::PostFaderInput, 11L,
+			*this, LevelType::PostFaderInput, 12L,
+			*this, LevelType::PostFaderInput, 13L,
+			*this, LevelType::PostFaderInput, 14L,
+			*this, LevelType::PostFaderInput, 15L,
+			*this, LevelType::PostFaderInput, 16L,
+			*this, LevelType::PostFaderInput, 17L,
 			::std::string{ "V" }
-		);
-		m_cOutput.emplace(
-			*this, ::std::string{ "Bus[0]" },
-			*this, LevelType::Output, 0L,
-			*this, LevelType::Output, 1L,
-			::std::string{ "A1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[1]" },
 			*this, LevelType::Output, 8L,
 			*this, LevelType::Output, 9L,
+			*this, LevelType::Output, 10L,
+			*this, LevelType::Output, 11L,
+			*this, LevelType::Output, 12L,
+			*this, LevelType::Output, 13L,
+			*this, LevelType::Output, 14L,
+			*this, LevelType::Output, 15L,
 			::std::string{ "A2" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[5]" },
 			*this, LevelType::Output, 40L,
 			*this, LevelType::Output, 41L,
+			*this, LevelType::Output, 42L,
+			*this, LevelType::Output, 43L,
+			*this, LevelType::Output, 44L,
+			*this, LevelType::Output, 45L,
+			*this, LevelType::Output, 46L,
+			*this, LevelType::Output, 47L,
 			::std::string{ "B1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[6]" },
 			*this, LevelType::Output, 48L,
 			*this, LevelType::Output, 49L,
+			*this, LevelType::Output, 50L,
+			*this, LevelType::Output, 51L,
+			*this, LevelType::Output, 52L,
+			*this, LevelType::Output, 53L,
+			*this, LevelType::Output, 54L,
+			*this, LevelType::Output, 55L,
 			::std::string{ "B2" }
 		);
 	} break;

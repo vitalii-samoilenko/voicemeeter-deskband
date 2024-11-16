@@ -239,6 +239,7 @@
     <ClCompile Include="Graphics\Queue.cpp" />
     <ClCompile Include="Policies\GainerGlyphUpdate.cpp" />
     <ClCompile Include="Policies\KnobGlyphUpdate.cpp" />
+    <ClCompile Include="Policies\KnobStateChange.cpp" />
     <ClCompile Include="Policies\PlugGlyphUpdate.cpp" />
     <ClCompile Include="Policies\VbanGlyphUpdate.cpp" />
     <ClCompile Include="Scene.cpp" />

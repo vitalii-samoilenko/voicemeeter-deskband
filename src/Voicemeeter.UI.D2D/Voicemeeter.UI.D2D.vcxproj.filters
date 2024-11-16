@@ -158,5 +158,8 @@
     <ClCompile Include="Graphics\Queue.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Policies\KnobStateChange.cpp">
+      <Filter>Source Files\Policies</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

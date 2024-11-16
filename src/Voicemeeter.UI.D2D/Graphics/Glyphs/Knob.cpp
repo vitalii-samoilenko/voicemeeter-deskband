@@ -17,8 +17,7 @@ Knob::Knob(
 	const ::std::wstring& label
 ) : Glyph{ canvas, { 48, 48 } }
   , m_gain{}
-  , m_leftLevel{}
-  , m_rightLevel{}
+  , m_level{}
   , m_enabled{}
   , m_pinned{}
   , m_label{ label } {
@@ -27,8 +26,6 @@ Knob::Knob(
 
 void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
 	Glyph::Redraw(point, vertex);
-
-	float level{ ::std::max(m_leftLevel, m_rightLevel) };
 
 	const Palette& palette{ m_canvas.get_Palette() };
 	ID2D1SolidColorBrush* pBrush{
@@ -41,13 +38,13 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 						.Danger)
 					: palette.get_pBrush(palette.get_Theme()
 						.PrimaryActive)
-				: level < 0.05F
+				: m_level < 0.05F
 					? palette.get_pBrush(palette.get_Theme()
 						.Inactive)
-					: level < 7.F
+					: m_level < 7.F
 						? palette.get_pBrush(palette.get_Theme()
 							.EqualizerLow)
-						: level < 100.F
+						: m_level < 100.F
 							? palette.get_pBrush(palette.get_Theme()
 								.EqualizerMedium)
 							: palette.get_pBrush(palette.get_Theme()
