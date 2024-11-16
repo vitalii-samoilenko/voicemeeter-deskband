@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Policies">
       <UniqueIdentifier>{34cdc5e9-a0a1-408b-adae-4616b8ff5f30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Decorators\Interactivity">
+      <UniqueIdentifier>{6c670d67-699d-45b7-8a09-68661f62703d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Canvas.h">
@@ -99,17 +102,20 @@
     <ClInclude Include="Controls\Vban.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\PlugInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\VbanInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\KnobInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Decorators\QueueGlyphUpdate.h">
       <Filter>Header Files\Decorators</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Knob.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Gainer.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Plug.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Vban.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

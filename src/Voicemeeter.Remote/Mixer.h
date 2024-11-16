@@ -7,8 +7,6 @@
 
 #include "Environment/ITimer.h"
 #include "Voicemeeter/IMixer.h"
-#include "Windows/Error.h"
-#include "Windows/Messages.h"
 
 #include "Api.h"
 #include "Input.h"
@@ -24,9 +22,11 @@ struct ::std::iterator_traits<::Voicemeeter::Remote::RangeIterator<::Voicemeeter
 	typedef ::Voicemeeter::Remote::Output value_type;
 };
 template<>
-struct ::std::hash<::std::pair<unsigned long long, unsigned long long>> {
-	size_t operator()(const ::std::pair<unsigned long long, unsigned long long>& key) const {
-		return static_cast<size_t>(key.first ^ key.second);
+struct ::std::hash<::std::pair<void*, void*>> {
+	size_t operator()(const ::std::pair<void*, void*>& key) const {
+		return static_cast<size_t>(
+			reinterpret_cast<unsigned long long>(key.first)
+			^ reinterpret_cast<unsigned long long>(key.second));
 	}
 };
 
@@ -74,9 +74,9 @@ namespace Voicemeeter {
 			Network m_network;
 			Range<Input> m_cInput;
 			Range<Output> m_cOutput;
-			::std::unordered_map<unsigned long long, Range<Output>> m_cInputPlugs;
-			::std::unordered_map<unsigned long long, Range<Input>> m_cOutputPlugs;
-			::std::unordered_map<::std::pair<unsigned long long, unsigned long long>, ::std::vector<::std::function<void(bool)>>> m_cCallback;
+			::std::unordered_map<void*, Range<Output>> m_cInputPlugs;
+			::std::unordered_map<void*, Range<Input>> m_cOutputPlugs;
+			::std::unordered_map<::std::pair<void*, void*>, ::std::vector<::std::function<void(bool)>>> m_cCallback;
 			bool m_dirty;
 			::std::chrono::time_point<::std::chrono::system_clock> m_restart;
 		};

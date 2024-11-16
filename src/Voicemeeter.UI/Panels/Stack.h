@@ -1,12 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "estd/type_traits.h"
-#include "estd/linear_algebra.h"
 
 #include "../Direction.h"
 #include "../IPanel.h"
@@ -47,7 +45,8 @@ namespace Voicemeeter {
 
 				};
 				virtual const ::linear_algebra::vectord& get_Position() const override {
-					return m_cpComponent.front()->get_Position();
+					return m_cpComponent.front()
+						->get_Position();
 				};
 				virtual const ::linear_algebra::vectord& get_Size() const override {
 					return m_vertex;

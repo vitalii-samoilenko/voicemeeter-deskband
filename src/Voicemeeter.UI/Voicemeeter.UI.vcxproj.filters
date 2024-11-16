@@ -49,6 +49,9 @@
     <Filter Include="Header Files\States">
       <UniqueIdentifier>{6c7a9c28-1944-4024-9109-f7846a15d4c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Decorators\Interactivity">
+      <UniqueIdentifier>{75c08ab8-cc71-49d5-881e-e09e0771a70f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\ICanvas.h">
@@ -87,9 +90,6 @@
     <ClInclude Include="IInputTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\IGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
@@ -126,14 +126,8 @@
     <ClInclude Include="Controls\Carousel.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\CarouselInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Controls\Slider.h">
       <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\SliderInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\CarouselGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
@@ -147,9 +141,6 @@
     <ClInclude Include="States\Knob.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\KnobInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\KnobStateChange.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
@@ -162,11 +153,20 @@
     <ClInclude Include="Controls\Checkbox.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\CheckboxInteractivity.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Carousel.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Checkbox.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Knob.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Interactivity\Slider.h">
+      <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +181,6 @@
     </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Frame.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
-    </ClCompile>
-    <ClCompile Include="Policies\CarouselInteractivity.cpp">
-      <Filter>Source Files\Policies</Filter>
     </ClCompile>
     <ClCompile Include="Policies\CarouselGlyphUpdate.cpp">
       <Filter>Source Files\Policies</Filter>

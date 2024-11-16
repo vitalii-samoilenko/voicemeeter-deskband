@@ -3,12 +3,9 @@
 #include <memory>
 #include <utility>
 
-#include "estd/linear_algebra.h"
-
 #include "../Policies/IStateChange.h"
 #include "../Policies/IStatePromotion.h"
 #include "../Policies/IGlyphUpdate.h"
-#include "../Policies/IInteractivity.h"
 #include "../IControl.h"
 
 namespace Voicemeeter {
@@ -18,17 +15,15 @@ namespace Voicemeeter {
 			class State : public IControl {
 			public:
 				State(
-					::std::unique_ptr<TGlyph> pGlyph,
-					::std::shared_ptr<Policies::IStateChange<TState>> pStateChangePolicy,
-					::std::unique_ptr<Policies::IStatePromotion<TState>> pStatePromotionPolicy,
-					::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>> pGlyphUpdatePolicy,
-					::std::shared_ptr<Policies::IInteractivity<State>> pInteractivityPolicy
+					::std::unique_ptr<TGlyph>& pGlyph,
+					const ::std::shared_ptr<Policies::IStateChange<TState>>& pStateChangePolicy,
+					::std::unique_ptr<Policies::IStatePromotion<TState>>& pStatePromotionPolicy,
+					const ::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>>& pGlyphUpdatePolicy
 				) : m_state{}
 				  , m_pGlyph{ ::std::move(pGlyph) }
-				  , m_pStateChangePolicy{ ::std::move(pStateChangePolicy) }
+				  , m_pStateChangePolicy{ pStateChangePolicy }
 				  , m_pStatePromotionPolicy{ ::std::move(pStatePromotionPolicy) }
-				  , m_pGlyphUpdatePolicy{ ::std::move(pGlyphUpdatePolicy) }
-				  , m_pInteractivityPolicy{ ::std::move(pInteractivityPolicy) } {
+				  , m_pGlyphUpdatePolicy{ pGlyphUpdatePolicy } {
 					if (m_pStateChangePolicy->SetDefault(m_state)) {
 						m_pGlyphUpdatePolicy->Update(*m_pGlyph, m_state);
 					}
@@ -76,7 +71,7 @@ namespace Voicemeeter {
 				}
 
 				virtual void set_Focus(bool value) override {
-					m_pInteractivityPolicy->set_Focus(*this, value);
+
 				};
 				virtual const ::linear_algebra::vectord& get_Position() const override {
 					return m_pGlyph->get_Position();
@@ -98,48 +93,30 @@ namespace Voicemeeter {
 					m_pGlyph->Move(point);
 				};
 				virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseLDown(*this, point);
-
 					return true;
 				};
 				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseLDouble(*this, point);
-
 					return true;
 				};
 				virtual bool MouseMDown(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseMDown(*this, point);
-
 					return true;
 				};
 				virtual bool MouseMDouble(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseMDouble(*this, point);
-
 					return true;
 				};
 				virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseRDown(*this, point);
-
 					return true;
 				};
 				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseRDouble(*this, point);
-
 					return true;
 				};
 				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
-					m_pInteractivityPolicy->MouseWheel(*this, point, delta);
-
 					return true;
 				};
 				virtual bool MouseMove(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseMove(*this, point);
-
 					return true;
 				};
 				virtual bool MouseLUp(const ::linear_algebra::vectord& point) override {
-					m_pInteractivityPolicy->MouseLUp(*this, point);
-
 					return true;
 				};
 
@@ -149,7 +126,6 @@ namespace Voicemeeter {
 				::std::shared_ptr<Policies::IStateChange<TState>> m_pStateChangePolicy;
 				::std::unique_ptr<Policies::IStatePromotion<TState>> m_pStatePromotionPolicy;
 				::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>> m_pGlyphUpdatePolicy;
-				::std::shared_ptr<Policies::IInteractivity<State>> m_pInteractivityPolicy;
 
 				void OnSet(bool promote) {
 					if (promote) {

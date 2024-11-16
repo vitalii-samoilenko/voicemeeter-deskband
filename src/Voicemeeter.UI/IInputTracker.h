@@ -1,10 +1,7 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
-
-#include "Traits/IInteractive.h"
-
 #include "IComponent.h"
+#include "Traits/IInteractive.h"
 
 namespace Voicemeeter {
 	namespace UI {

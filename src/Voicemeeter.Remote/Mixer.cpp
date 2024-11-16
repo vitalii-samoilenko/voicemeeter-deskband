@@ -1,4 +1,5 @@
-#include <cmath>
+#include "Windows/Error.h"
+#include "Windows/Messages.h"
 
 #include "Mixer.h"
 
@@ -33,101 +34,103 @@ Mixer::Mixer(
 	}
 	m_cInput.emplace(
 		*this, ::std::string{ "Strip[0]" },
-		*this, 1L, 0L,
-		*this, 1L, 1L,
+		*this, LevelType::PostFaderInput, 0L,
+		*this, LevelType::PostFaderInput, 1L,
 		::std::string{ "P" }
 	);
 	switch (m_type) {
 	case Type::Voicemeeter: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[2]" },
-			*this, 1L, 4L,
-			*this, 1L, 5L,
+			*this, LevelType::PostFaderInput, 4L,
+			*this, LevelType::PostFaderInput, 5L,
 			::std::string{ "V" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[0]" },
-			*this, 3L, 0L,
-			*this, 3L, 1L,
+			*this, LevelType::Output, 0L,
+			*this, LevelType::Output, 1L,
 			::std::string{ "A1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[1]" },
-			*this, 3L, 8L,
-			*this, 3L, 9L,
+			*this, LevelType::Output, 8L,
+			*this, LevelType::Output, 9L,
 			::std::string{ "B1" }
 		);
 	} break;
 	case Type::Banana: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[3]" },
-			*this, 1L, 6L,
-			*this, 1L, 7L,
+			*this, LevelType::PostFaderInput, 6L,
+			*this, LevelType::PostFaderInput, 7L,
 			::std::string{ "V" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[0]" },
-			*this, 3L, 0L,
-			*this, 3L, 1L,
+			*this, LevelType::Output, 0L,
+			*this, LevelType::Output, 1L,
 			::std::string{ "A1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[1]" },
-			*this, 3L, 8L,
-			*this, 3L, 9L,
+			*this, LevelType::Output, 8L,
+			*this, LevelType::Output, 9L,
 			::std::string{ "A2" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[3]" },
-			*this, 3L, 24L,
-			*this, 3L, 25L,
+			*this, LevelType::Output, 24L,
+			*this, LevelType::Output, 25L,
 			::std::string{ "B1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[4]" },
-			*this, 3L, 32L,
-			*this, 3L, 33L,
+			*this, LevelType::Output, 32L,
+			*this, LevelType::Output, 33L,
 			::std::string{ "B2" }
 		);
 	} break;
 	case Type::Potato: {
 		m_cInput.emplace(
 			*this, ::std::string{ "Strip[5]" },
-			*this, 1L, 10L,
-			*this, 1L, 11L,
+			*this, LevelType::PostFaderInput, 10L,
+			*this, LevelType::PostFaderInput, 11L,
 			::std::string{ "V" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[0]" },
-			*this, 3L, 0L,
-			*this, 3L, 1L,
+			*this, LevelType::Output, 0L,
+			*this, LevelType::Output, 1L,
 			::std::string{ "A1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[1]" },
-			*this, 3L, 8L,
-			*this, 3L, 9L,
+			*this, LevelType::Output, 8L,
+			*this, LevelType::Output, 9L,
 			::std::string{ "A2" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[5]" },
-			*this, 3L, 40L,
-			*this, 3L, 41L,
+			*this, LevelType::Output, 40L,
+			*this, LevelType::Output, 41L,
 			::std::string{ "B1" }
 		);
 		m_cOutput.emplace(
 			*this, ::std::string{ "Bus[6]" },
-			*this, 3L, 48L,
-			*this, 3L, 49L,
+			*this, LevelType::Output, 48L,
+			*this, LevelType::Output, 49L,
 			::std::string{ "B2" }
 		);
 	} break;
 	}
 	for (const Input& input : m_cInput) {
-		m_cInputPlugs[reinterpret_cast<unsigned long long>(&input)];
+		m_cInputPlugs[reinterpret_cast<void*>(
+			const_cast<Input*>(&input))];
 	}
 	for (const Output& output : m_cOutput) {
-		m_cOutputPlugs[reinterpret_cast<unsigned long long>(&output)];
+		m_cOutputPlugs[reinterpret_cast<void*>(
+			const_cast<Output*>(&output))];
 	}
 	m_timer.Set(::std::chrono::milliseconds{ 100 },
 		[this]()->bool {
@@ -138,7 +141,7 @@ Mixer::Mixer(
 			bool isDirty{
 				dirty
 				&& !m_dirty
-				&& !(::std::chrono::system_clock::now() - m_restart < ::std::chrono::milliseconds{2000})
+				&& !(::std::chrono::system_clock::now() - m_restart < ::std::chrono::milliseconds{ 2000 })
 			};
 			m_dirty = false;
 
@@ -155,9 +158,9 @@ Mixer::Mixer(
 			}
 
 			for (Input& input : m_cInput) {
-				Range<Output>& inputPlugs{ m_cInputPlugs[reinterpret_cast<unsigned long long>(&input)] };
+				Range<Output>& inputPlugs{ m_cInputPlugs[reinterpret_cast<void*>(&input)] };
 				for (Output& output : m_cOutput) {
-					Range<Input>& outputPlugs{ m_cOutputPlugs[reinterpret_cast<unsigned long long>(&output)] };
+					Range<Input>& outputPlugs{ m_cOutputPlugs[reinterpret_cast<void*>(&output)] };
 					bool plug{ inputPlugs.find(output) != inputPlugs.end() };
 
 					float value{ get_Parameter(input.get_Key() + "." + output.get_Label()) };
@@ -171,8 +174,8 @@ Mixer::Mixer(
 							outputPlugs.erase(input);
 						}
 						for (const ::std::function<void(bool)>& callback : m_cCallback[::std::make_pair(
-							reinterpret_cast<unsigned long long>(&input),
-							reinterpret_cast<unsigned long long>(&output)
+							reinterpret_cast<void*>(&input),
+							reinterpret_cast<void*>(&output)
 						)]) {
 							callback(plug);
 						}
@@ -221,27 +224,37 @@ const Range<Output>& Mixer::get_Outputs() const {
 	return m_cOutput;
 }
 const Range<Output>& Mixer::get_Plugs(const Input& input) const {
-	return m_cInputPlugs.find(reinterpret_cast<unsigned long long>(&input))
+	return m_cInputPlugs.find(reinterpret_cast<void*>(
+			const_cast<Input*>(&input)))
 		->second;
 }
 const Range<Input>& Mixer::get_Plugs(const Output& output) const {
-	return m_cOutputPlugs.find(reinterpret_cast<unsigned long long>(&output))
+	return m_cOutputPlugs.find(reinterpret_cast<void*>(
+			const_cast<Output*>(&output)))
 		->second;
 }
 void Mixer::set_Plug(const Input& input, const Output& output, bool value) {
 	set_Dirty();
+	void* pInput{
+		reinterpret_cast<void*>(
+			const_cast<Input*>(&input))
+	};
+	void* pOutput{
+		reinterpret_cast<void*>(
+			const_cast<Output*>(&output))
+	};
 	if (value) {
-		m_cInputPlugs.find(reinterpret_cast<unsigned long long>(&input))
+		m_cInputPlugs.find(pInput)
 			->second
 				.copy(output, m_cOutput);
-		m_cOutputPlugs.find(reinterpret_cast<unsigned long long>(&output))
+		m_cOutputPlugs.find(pOutput)
 			->second
 				.copy(input, m_cInput);
 	} else {
-		m_cInputPlugs.find(reinterpret_cast<unsigned long long>(&input))
+		m_cInputPlugs.find(pInput)
 			->second
 				.erase(output);
-		m_cOutputPlugs.find(reinterpret_cast<unsigned long long>(&output))
+		m_cOutputPlugs.find(pOutput)
 			->second
 				.erase(input);
 	}
@@ -249,7 +262,9 @@ void Mixer::set_Plug(const Input& input, const Output& output, bool value) {
 }
 void Mixer::on_Plug(const Input& input, const Output& output, const ::std::function<void(bool)>& callback) {
 	m_cCallback[::std::make_pair(
-		reinterpret_cast<unsigned long long>(&input),
-		reinterpret_cast<unsigned long long>(&output)
+		reinterpret_cast<void*>(
+			const_cast<Input*>(&input)),
+		reinterpret_cast<void*>(
+			const_cast<Output*>(&output))
 	)].push_back(callback);
 }

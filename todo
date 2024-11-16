@@ -1,6 +1,6 @@
-Interactivity policy as decorator instead of an object
 Optimized knob state change policy at concrete Glyph level to reduce redraw operations
 Vertical bar panels reduction
+pch
 Up to date doc
 Docking concept
 Dock/undock checkbox UI concept
@@ -12,3 +12,4 @@ Contextual menu prototype (select physical input/output)
 Configuration tool
 ::estd::(chrono::)timer for rendering and update operations?
 Hidden state?
+All channels support

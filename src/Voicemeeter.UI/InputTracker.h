@@ -1,10 +1,7 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
-
 #include "Environment/IInputTracker.h"
 
-#include "IComponent.h"
 #include "IInputTracker.h"
 
 namespace Voicemeeter {

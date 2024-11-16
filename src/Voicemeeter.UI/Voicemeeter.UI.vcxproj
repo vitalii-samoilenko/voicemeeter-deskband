@@ -202,6 +202,10 @@
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Checkbox.h" />
     <ClInclude Include="Controls\Slider.h" />
+    <ClInclude Include="Decorators\Interactivity\Carousel.h" />
+    <ClInclude Include="Decorators\Interactivity\Checkbox.h" />
+    <ClInclude Include="Decorators\Interactivity\Knob.h" />
+    <ClInclude Include="Decorators\Interactivity\Slider.h" />
     <ClInclude Include="Decorators\Margin.h" />
     <ClInclude Include="Decorators\RegionCheck.h" />
     <ClInclude Include="Direction.h" />
@@ -218,18 +222,13 @@
     <ClInclude Include="IScene.h" />
     <ClInclude Include="Panels\Stack.h" />
     <ClInclude Include="Policies\CarouselGlyphUpdate.h" />
-    <ClInclude Include="Policies\CarouselInteractivity.h" />
-    <ClInclude Include="Policies\CheckboxInteractivity.h" />
     <ClInclude Include="Policies\CheckboxStateChange.h" />
     <ClInclude Include="Policies\CircularStateChange.h" />
     <ClInclude Include="Policies\IGlyphUpdate.h" />
-    <ClInclude Include="Policies\IInteractivity.h" />
     <ClInclude Include="Policies\IStateChange.h" />
     <ClInclude Include="Policies\IStatePromotion.h" />
-    <ClInclude Include="Policies\KnobInteractivity.h" />
     <ClInclude Include="Policies\KnobStateChange.h" />
     <ClInclude Include="Policies\RangeStateChange.h" />
-    <ClInclude Include="Policies\SliderInteractivity.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="States\Knob.h" />
     <ClInclude Include="Traits\IInteractive.h" />
@@ -245,7 +244,6 @@
     <ClCompile Include="InputTracker.cpp" />
     <ClCompile Include="Panels\Stack.cpp" />
     <ClCompile Include="Policies\CarouselGlyphUpdate.cpp" />
-    <ClCompile Include="Policies\CarouselInteractivity.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

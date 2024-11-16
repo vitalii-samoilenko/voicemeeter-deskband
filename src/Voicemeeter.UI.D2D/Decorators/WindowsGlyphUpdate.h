@@ -3,8 +3,6 @@
 #include <cmath>
 #include <type_traits>
 
-#include "estd/linear_algebra.h"
-
 #include "Windows/Wrappers.h"
 
 #include "Voicemeeter.UI/Policies/IGlyphUpdate.h"
@@ -40,8 +38,10 @@ namespace Voicemeeter {
 						::linear_algebra::vectord topLeft{ glyph.get_Position() };
 						::linear_algebra::vectord bottomRight{ topLeft + glyph.get_Size() };
 						RECT rc{
-							static_cast<LONG>(::std::floor(topLeft.x)), static_cast<LONG>(::std::floor(topLeft.y)),
-							static_cast<LONG>(::std::ceil(bottomRight.x)), static_cast<LONG>(::std::ceil(bottomRight.y)),
+							static_cast<LONG>(::std::floor(topLeft.x)),
+							static_cast<LONG>(::std::floor(topLeft.y)),
+							static_cast<LONG>(::std::ceil(bottomRight.x)),
+							static_cast<LONG>(::std::ceil(bottomRight.y)),
 						};
 
 						::Windows::wInvalidateRect(m_hWnd, &rc, TRUE);

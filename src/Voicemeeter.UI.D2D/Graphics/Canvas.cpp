@@ -170,10 +170,10 @@ void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
 	m_pD2dDeviceContext->FillRectangle(
 		::D2D1::RectF(
-			static_cast<FLOAT>(point.x), 
-			static_cast<FLOAT>(point.y),
-			static_cast<FLOAT>(point.x + vertex.x),
-			static_cast<FLOAT>(point.y + vertex.y)
+			static_cast<FLOAT>(::std::floor(point.x)),
+			static_cast<FLOAT>(::std::floor(point.y)),
+			static_cast<FLOAT>(::std::ceil(point.x + vertex.x)),
+			static_cast<FLOAT>(::std::ceil(point.y + vertex.y))
 		),
 		m_pPalette->get_pBrush(
 			m_pPalette->get_Theme()

@@ -1,12 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "estd/type_traits.h"
-#include "estd/linear_algebra.h"
 
 #include "../IGlyph.h"
 

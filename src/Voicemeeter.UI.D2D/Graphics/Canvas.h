@@ -6,13 +6,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "estd/linear_algebra.h"
-
-#include <wrl/client.h>
 #include <d2d1_3.h>
 #include <dcomp.h>
 #include <dwrite_3.h>
 #include <dxgi1_6.h>
+#include <wrl/client.h>
 
 #include "Environment/ITimer.h"
 #include "Voicemeeter.UI/Graphics/ICanvas.h"

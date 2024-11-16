@@ -1,12 +1,10 @@
-#include <algorithm>
-
 #include "Mixer.h"
 
 using namespace Voicemeeter::Remote;
 
 Channel::Channel(
-	Mixer& mixer,
-	long type,
+	const Mixer& mixer,
+	LevelType type,
 	long channel
 ) : m_mixer{ mixer }
   , m_type{ type }
@@ -25,7 +23,7 @@ void Channel::on_Level(const ::std::function<void(double)>& callback) {
 }
 
 void Channel::Update() {
-	float level{ m_mixer.get_Level(m_type, m_channel) };
+	float level{ m_mixer.get_Level(static_cast<long>(m_type), m_channel) };
 	if (::std::abs(m_level - level) < 0.0001) {
 		return;
 	}

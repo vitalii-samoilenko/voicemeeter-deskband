@@ -8,12 +8,12 @@
 
 namespace Voicemeeter {
 	namespace Remote {
-		class Bus : public IBus<Channel, RangeIterator<Channel>> {
+		class Bus : public IBus<Channel, Range<Channel>::iterator_type> {
 		public:
 			template<typename... Args>
 			Bus(
-				Mixer& mixer,
-				long type,
+				const Mixer& mixer,
+				LevelType type,
 				long channel,
 				Args&& ...args
 			) : Bus{ ::std::forward<Args>(args)... } {

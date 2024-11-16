@@ -1,8 +1,5 @@
 #pragma once
 
-#include <type_traits>
-#include <utility>
-
 #include "type_traits.h"
 
 namespace estd {
@@ -13,8 +10,8 @@ namespace estd {
 			"Func must be invocable with no arguments and void return type");
 
 	public:
-		inline explicit guard(Func release) noexcept
-			: m_release{ ::std::move(release) } {
+		inline explicit guard(const Func& release) noexcept
+			: m_release{ release } {
 
 		};
 		guard(const guard&) = delete;
@@ -32,7 +29,7 @@ namespace estd {
 	};
 
 	template<typename Func>
-	inline guard<Func> make_guard(Func release) noexcept {
+	inline guard<Func> make_guard(const Func& release) noexcept {
 		return guard<Func>{ release };
 	}
 }

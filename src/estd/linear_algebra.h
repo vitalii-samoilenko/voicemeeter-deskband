@@ -1,19 +1,18 @@
 #pragma once
 
 #include <limits>
-#include <type_traits>
 
 #include "type_traits.h"
 
 namespace linear_algebra {
-	template<typename TScalar>
+	template<typename T>
 	struct vector final {
 		static_assert(
-			::std::is_arithmetic_v<TScalar>,
-			"TScalar must be of arithmetic type");
+			::std::is_arithmetic_v<T>,
+			"T must be of arithmetic type");
 
-		TScalar x;
-		TScalar y;
+		T x;
+		T y;
 
 		vector() = default;
 		vector(const vector&) = default;
@@ -30,30 +29,30 @@ namespace linear_algebra {
 
 		static constexpr vector infinity() {
 			return {
-				::std::numeric_limits<TScalar>::max(),
-				::std::numeric_limits<TScalar>::max()
+				::std::numeric_limits<T>::max(),
+				::std::numeric_limits<T>::max()
 			};
 		}
 	};
 
-	template<typename TScalar>
-	vector<TScalar> operator+(const vector<TScalar>& lhs, const vector<TScalar>& rhs) {
+	template<typename T>
+	vector<T> operator+(const vector<T>& lhs, const vector<T>& rhs) {
 		return {
 			lhs.x + rhs.x,
 			lhs.y + rhs.y
 		};
 	};
 
-	template<typename TScalar>
-	vector<TScalar> operator-(const vector<TScalar>& lhs, const vector<TScalar>& rhs) {
+	template<typename T>
+	vector<T> operator-(const vector<T>& lhs, const vector<T>& rhs) {
 		return {
 			lhs.x - rhs.x,
 			lhs.y - rhs.y
 		};
 	};
 
-	template<typename TScalar>
-	vector<TScalar> operator*(const vector<TScalar>& lhs, TScalar rhs) {
+	template<typename T>
+	vector<T> operator*(const vector<T>& lhs, T rhs) {
 		return {
 			lhs.x * rhs,
 			lhs.y * rhs
@@ -61,20 +60,20 @@ namespace linear_algebra {
 	};
 
 
-	template<typename TScalar>
+	template<typename T>
 	bool is_inside(
-		const vector<TScalar>& point,
-		const vector<TScalar>& vertex) {
+		const vector<T>& point,
+		const vector<T>& vertex) {
 		return !(point.x < 0)
 			&& !(point.y < 0)
 			&& point.x < vertex.x
 			&& point.y < vertex.y;
 	};
-	template<typename TScalar>
+	template<typename T>
 	bool is_overlapping(
-		const vector<TScalar>& lhs_point, const vector<TScalar>& lhs_vertex,
-		const vector<TScalar>& rhs_point, const vector<TScalar>& rhs_vertex) {
-		vector<TScalar> abs_vertex{ lhs_point + lhs_vertex };
+		const vector<T>& lhs_point, const vector<T>& lhs_vertex,
+		const vector<T>& rhs_point, const vector<T>& rhs_vertex) {
+		vector<T> abs_vertex{ lhs_point + lhs_vertex };
 		if (!is_inside(rhs_point, abs_vertex)) {
 			return false;
 		}

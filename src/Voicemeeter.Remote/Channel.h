@@ -9,11 +9,18 @@ namespace Voicemeeter {
 	namespace Remote {
 		class Mixer;
 
+		enum class LevelType : long {
+			PreFaderInput = 0L,
+			PostFaderInput = 1L,
+			PostMuteInput = 2L,
+			Output = 3L
+		};
+
 		class Channel : public IChannel {
 		public:
 			Channel(
-				Mixer& mixer,
-				long type,
+				const Mixer& mixer,
+				LevelType type,
 				long channel
 			);
 			Channel() = delete;
@@ -31,8 +38,8 @@ namespace Voicemeeter {
 			void Update();
 
 		private:
-			Mixer& m_mixer;
-			long m_type;
+			const Mixer& m_mixer;
+			LevelType m_type;
 			long m_channel;
 			double m_level;
 			::std::vector<::std::function<void(double)>> m_cCallback;
@@ -44,5 +51,5 @@ namespace Voicemeeter {
 
 template<>
 struct ::std::iterator_traits<::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Channel>> {
-	typedef ::Voicemeeter::Remote::Channel value_type;
+	using value_type = ::Voicemeeter::Remote::Channel;
 };

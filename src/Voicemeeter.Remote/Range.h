@@ -29,6 +29,7 @@ namespace Voicemeeter {
 
 			RangeIterator& operator++() {
 				++m_current;
+
 				return *this;
 			};
 			T& operator*() {
@@ -48,6 +49,8 @@ namespace Voicemeeter {
 		template<typename T>
 		class Range : public IRange<T, RangeIterator<T>> {
 		public:
+			using iterator_type = RangeIterator<T>;
+
 			Range(
 			) : m_cpElement{}
 			  , m_lElement{} {
@@ -63,48 +66,49 @@ namespace Voicemeeter {
 
 			template<typename... Args>
 			void emplace(Args&& ...args) {
-				::std::shared_ptr<T> pElement{
-					new T{ ::std::forward<Args>(args)... }
-				};
-				m_lElement.emplace(
-					reinterpret_cast<unsigned long long>(pElement.get()),
-					m_cpElement.size()
+				m_cpElement.emplace_back(
+					::std::move(::std::shared_ptr<T>{
+						new T{ ::std::forward<Args>(args)... }
+					})
 				);
-				m_cpElement.push_back(
-					::std::move(pElement)
+				m_lElement.emplace(
+					reinterpret_cast<void*>(m_cpElement.back()
+						.get()),
+					m_cpElement.size() - 1
 				);
 			};
 			void copy(const T& element, const Range<T>& range) {
-				unsigned long long addr{
-					reinterpret_cast<unsigned long long>(&element)
+				void* pElement{
+					reinterpret_cast<void*>(
+						const_cast<T*>(&element))
 				};
-				m_lElement.emplace(
-					addr,
-					m_cpElement.size()
-				);
 				m_cpElement.push_back(
 					range.m_cpElement.at(
 						range.m_lElement
-							.find(addr)
+							.find(pElement)
 								->second
 					)
 				);
+				m_lElement.emplace(
+					pElement,
+					m_cpElement.size() - 1
+				);
 			}
 			void erase(const T& element) {
-				typename ::std::unordered_map<unsigned long long, size_t>::iterator lastLookup{
-					m_lElement.find(reinterpret_cast<unsigned long long>(&*m_cpElement.back()))
-				};
-				typename ::std::unordered_map<unsigned long long, size_t>::iterator elementLookup{
-					m_lElement.find(reinterpret_cast<unsigned long long>(&element))
+				typename ::std::unordered_map<void*, size_t>::iterator elementLookup{
+					m_lElement.find(reinterpret_cast<void*>(
+						const_cast<T*>(&element)))
 				};
 				::std::swap(m_cpElement.back(), m_cpElement.at(elementLookup->second));
-				lastLookup->second = elementLookup->second;
+				m_lElement[reinterpret_cast<void*>(m_cpElement[elementLookup->second]
+					.get())] = elementLookup->second;
 				m_cpElement.pop_back();
 				m_lElement.erase(elementLookup);
 			}
 			RangeIterator<T> find(const T& element) {
-				typename ::std::unordered_map<unsigned long long, size_t>::iterator lookup{
-					m_lElement.find(reinterpret_cast<unsigned long long>(&element))
+				typename ::std::unordered_map<void*, size_t>::iterator lookup{
+					m_lElement.find(reinterpret_cast<void*>(
+						const_cast<T*>(&element)))
 				};
 				return RangeIterator<T>{
 					(lookup == m_lElement.end()
@@ -122,7 +126,7 @@ namespace Voicemeeter {
 
 		private:
 			::std::vector<::std::shared_ptr<T>> m_cpElement;
-			::std::unordered_map<unsigned long long, size_t> m_lElement;
+			::std::unordered_map<void*, size_t> m_lElement;
 		};
 	}
 }

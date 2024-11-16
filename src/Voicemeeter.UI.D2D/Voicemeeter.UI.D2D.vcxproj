@@ -206,6 +206,10 @@
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Plug.h" />
     <ClInclude Include="Controls\Vban.h" />
+    <ClInclude Include="Decorators\Interactivity\Knob.h" />
+    <ClInclude Include="Decorators\Interactivity\Gainer.h" />
+    <ClInclude Include="Decorators\Interactivity\Plug.h" />
+    <ClInclude Include="Decorators\Interactivity\Vban.h" />
     <ClInclude Include="Decorators\QueueGlyphUpdate.h" />
     <ClInclude Include="Decorators\WindowsGlyphUpdate.h" />
     <ClInclude Include="Graphics\Canvas.h" />
@@ -219,12 +223,9 @@
     <ClInclude Include="Policies\GainerGlyphUpdate.h" />
     <ClInclude Include="Policies\GainerStateChange.h" />
     <ClInclude Include="Policies\KnobGlyphUpdate.h" />
-    <ClInclude Include="Policies\KnobInteractivity.h" />
     <ClInclude Include="Policies\KnobStateChange.h" />
     <ClInclude Include="Policies\PlugGlyphUpdate.h" />
-    <ClInclude Include="Policies\PlugInteractivity.h" />
     <ClInclude Include="Policies\VbanGlyphUpdate.h" />
-    <ClInclude Include="Policies\VbanInteractivity.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>

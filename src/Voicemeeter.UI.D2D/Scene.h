@@ -1,7 +1,5 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
-
 #include "Voicemeeter.UI/Scene.h"
 
 #include "Graphics/Canvas.h"

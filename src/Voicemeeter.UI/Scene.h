@@ -4,10 +4,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "estd/linear_algebra.h"
-
 #include "Graphics/ICanvas.h"
-
 #include "IComponent.h"
 #include "IFocusTracker.h"
 #include "IInputTracker.h"
@@ -23,10 +20,10 @@ namespace Voicemeeter {
 
 		public:
 			Scene(
-				::std::unique_ptr<IInputTracker> inputTracker,
-				::std::unique_ptr<IFocusTracker> focusTracker,
-				::std::unique_ptr<TCanvas> pCanvas,
-				::std::unique_ptr<IComponent> pComposition
+				::std::unique_ptr<IInputTracker>& inputTracker,
+				::std::unique_ptr<IFocusTracker>& focusTracker,
+				::std::unique_ptr<TCanvas>& pCanvas,
+				::std::unique_ptr<IComponent>& pComposition
 			) : m_inputTracker{ ::std::move(inputTracker) }
 			  , m_focusTracker{ ::std::move(focusTracker) }
 			  , m_pCanvas{ ::std::move(pCanvas) }

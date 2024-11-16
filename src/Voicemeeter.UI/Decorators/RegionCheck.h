@@ -3,8 +3,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "estd/linear_algebra.h"
-
 #include "../IComponent.h"
 #include "../IInputTracker.h"
 

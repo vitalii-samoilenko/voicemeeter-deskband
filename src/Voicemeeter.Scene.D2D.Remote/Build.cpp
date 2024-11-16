@@ -18,6 +18,9 @@
 #include "Voicemeeter.UI.D2D/Controls/Knob.h"
 #include "Voicemeeter.UI.D2D/Controls/Plug.h"
 #include "Voicemeeter.UI.D2D/Controls/Vban.h"
+#include "Voicemeeter.UI.D2D/Decorators/Interactivity/Knob.h"
+#include "Voicemeeter.UI.D2D/Decorators/Interactivity/Plug.h"
+#include "Voicemeeter.UI.D2D/Decorators/Interactivity/Vban.h"
 #include "Voicemeeter.UI.D2D/Decorators/QueueGlyphUpdate.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Knob.h"
 #include "Voicemeeter.UI.D2D/Graphics/Glyphs/Plug.h"
@@ -25,12 +28,9 @@
 #include "Voicemeeter.UI.D2D/Graphics/Canvas.h"
 #include "Voicemeeter.UI.D2D/Graphics/Theme.h"
 #include "Voicemeeter.UI.D2D/Policies/KnobGlyphUpdate.h"
-#include "Voicemeeter.UI.D2D/Policies/KnobInteractivity.h"
 #include "Voicemeeter.UI.D2D/Policies/KnobStateChange.h"
 #include "Voicemeeter.UI.D2D/Policies/PlugGlyphUpdate.h"
-#include "Voicemeeter.UI.D2D/Policies/PlugInteractivity.h"
 #include "Voicemeeter.UI.D2D/Policies/VbanGlyphUpdate.h"
-#include "Voicemeeter.UI.D2D/Policies/VbanInteractivity.h"
 #include "Windows/Registry.h"
 
 #include "Build.h"
@@ -199,10 +199,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	::Environment::ITimer& graphicsTimer,
 	::Voicemeeter::Remote::Mixer& mixer
 ) {
-	::std::unique_ptr<UI::FocusTracker> pFocusTracker{
+	::std::unique_ptr<UI::IFocusTracker> pFocusTracker{
 		new UI::FocusTracker{}
 	};
-	::std::unique_ptr<UI::InputTracker> pInputTracker{
+	::std::unique_ptr<UI::IInputTracker> pInputTracker{
 		new UI::InputTracker{ inputTracker }
 	};
 
@@ -218,7 +218,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		return (state / 100. - 90.) / 3.75;
 	};
 
-	::std::shared_ptr<UI::Policies::CheckboxStateChange> pCheckboxStateChangePolicy{
+	::std::shared_ptr<UI::Policies::IStateChange<int>> pCheckboxStateChangePolicy{
 		new UI::Policies::CheckboxStateChange{}
 	};
 
@@ -226,7 +226,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 
 	::Remote::Network& network{ mixer.get_Network() };
 	if (network.get_Supported()) {
-		::std::unique_ptr<VbanStatePromotion<decltype(checkboxMap)>> vban_pStatePromotionPolicy{
+		::std::unique_ptr<UI::Policies::IStatePromotion<int>> vban_pStatePromotionPolicy{
 			new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
 		};
 		::std::unique_ptr<UI::D2D::Graphics::Glyphs::Vban> vban_pGlyph{
@@ -238,19 +238,17 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			new UI::D2D::Decorators::QueueGlyphUpdate<
 				UI::D2D::Graphics::Glyphs::Vban, int, UI::D2D::Policies::VbanGlyphUpdate>{ *pCanvas }
 		};
-		::std::shared_ptr<UI::D2D::Policies::VbanInteractivity> pVbanInteractivityPolicy{
-			new UI::D2D::Policies::VbanInteractivity{ *pFocusTracker }
-		};
 
 		::std::unique_ptr<UI::D2D::Controls::Vban> pVban{
 			new UI::Decorators::RegionCheck<
-				UI::D2D::Controls::Vban>{
-					*pInputTracker,
-					::std::move(vban_pGlyph),
-					pCheckboxStateChangePolicy,
-					::std::move(vban_pStatePromotionPolicy),
-					pVbanGlyphUpdatePolicy,
-					pVbanInteractivityPolicy
+				UI::D2D::Decorators::Interactivity::Vban<
+					UI::D2D::Controls::Vban>>{
+						*pInputTracker,
+						*pFocusTracker,
+						vban_pGlyph,
+						pCheckboxStateChangePolicy,
+						vban_pStatePromotionPolicy,
+						pVbanGlyphUpdatePolicy
 		} };
 
 		UI::D2D::Controls::Vban& checkbox{ *pVban };
@@ -270,22 +268,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		new UI::D2D::Decorators::QueueGlyphUpdate<
 			UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob, UI::D2D::Policies::KnobGlyphUpdate>{ *pCanvas }
 	};
-	::std::shared_ptr<UI::Policies::IInteractivity<UI::D2D::Controls::Knob>> pKnobInteractivityPolicy{
-		(direction == UI::Direction::Right
-			? static_cast<UI::Policies::IInteractivity<UI::D2D::Controls::Knob>*>(new UI::D2D::Policies::RightKnobInteractivity{ 
-				*pInputTracker, *pFocusTracker , compositionTimer
-			}) : new UI::D2D::Policies::DownKnobInteractivity{
-					*pInputTracker, *pFocusTracker , compositionTimer
-			})
-	};
-
 	::std::shared_ptr<UI::D2D::Decorators::QueueGlyphUpdate<
 		UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>> pPlugGlyphUpdatePolicy{
 		new UI::D2D::Decorators::QueueGlyphUpdate<
 			UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ *pCanvas }
-	};
-	::std::shared_ptr<UI::D2D::Policies::PlugInteractivity> pPlugInteractivityPolicy{
-		new UI::D2D::Policies::PlugInteractivity{ *pFocusTracker }
 	};
 
 	::linear_algebra::vectord left_top{
@@ -300,36 +286,61 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
 		} };
 
-		::std::unique_ptr<KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>> pKnobStatePromotionPolicy{
+		::std::unique_ptr<UI::Policies::IStatePromotion<UI::States::Knob>> pKnobStatePromotionPolicy{
 			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ input, gainerMap, checkboxMap }
 		};
 
 		::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{ nullptr };
 		if (cpComponent.empty()) {
 			pKnob.reset(
-				new UI::Decorators::RegionCheck<
-					UI::D2D::Controls::Knob>{
-						*pInputTracker,
-						::std::move(pKnobGlyph),
-						pKnobStateChangePolicy,
-						::std::move(pKnobStatePromotionPolicy),
-						pKnobGlyphUpdatePolicy,
-						pKnobInteractivityPolicy
-			} );
+				(direction == UI::Direction::Right
+					? static_cast<UI::D2D::Controls::Knob*>(new UI::Decorators::RegionCheck<
+						UI::D2D::Decorators::Interactivity::Knob<
+							UI::Direction::Right, UI::D2D::Controls::Knob>>{
+								*pInputTracker,
+								*pInputTracker, *pFocusTracker, compositionTimer,
+								pKnobGlyph,
+								pKnobStateChangePolicy,
+								pKnobStatePromotionPolicy,
+								pKnobGlyphUpdatePolicy
+					}) : new UI::Decorators::RegionCheck<
+						UI::D2D::Decorators::Interactivity::Knob<
+							UI::Direction::Down, UI::D2D::Controls::Knob>>{
+								*pInputTracker,
+								*pInputTracker, *pFocusTracker, compositionTimer,
+								pKnobGlyph,
+								pKnobStateChangePolicy,
+								pKnobStatePromotionPolicy,
+								pKnobGlyphUpdatePolicy
+					} ));
 		} else {
 			pKnob.reset(
-				new UI::Decorators::Margin<
-					UI::Decorators::RegionCheck<
-						UI::D2D::Controls::Knob>>{
-							left_top,
-							::linear_algebra::vectord{ 0, 0 },
-							*pInputTracker,
-							::std::move(pKnobGlyph),
-							pKnobStateChangePolicy,
-							::std::move(pKnobStatePromotionPolicy),
-							pKnobGlyphUpdatePolicy,
-							pKnobInteractivityPolicy
-			} );
+				(direction == UI::Direction::Right
+					? static_cast<UI::D2D::Controls::Knob*>(new UI::Decorators::Margin<
+						UI::Decorators::RegionCheck<
+							UI::D2D::Decorators::Interactivity::Knob<
+								UI::Direction::Right, UI::D2D::Controls::Knob>>>{
+									left_top,
+									::linear_algebra::vectord{ 0, 0 },
+									*pInputTracker,
+									*pInputTracker, *pFocusTracker, compositionTimer,
+									pKnobGlyph,
+									pKnobStateChangePolicy,
+									pKnobStatePromotionPolicy,
+									pKnobGlyphUpdatePolicy
+					}) : new UI::Decorators::Margin<
+						UI::Decorators::RegionCheck<
+							UI::D2D::Decorators::Interactivity::Knob<
+								UI::Direction::Down, UI::D2D::Controls::Knob>>>{
+									left_top,
+									::linear_algebra::vectord{ 0, 0 },
+									*pInputTracker,
+									*pInputTracker, *pFocusTracker, compositionTimer,
+									pKnobGlyph,
+									pKnobStateChangePolicy,
+									pKnobStatePromotionPolicy,
+									pKnobGlyphUpdatePolicy
+					} ));
 		}
 
 
@@ -368,10 +379,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
 			} };
 
-			::std::unique_ptr<PlugStatePromotion<
-				::Voicemeeter::Remote::Input, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Input>,
-				::Voicemeeter::Remote::Output, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Output>,
-				decltype(checkboxMap)>> pPlugStatePromotionPolicy{
+			::std::unique_ptr<UI::Policies::IStatePromotion<int>> pPlugStatePromotionPolicy{
 				new PlugStatePromotion<
 					::Voicemeeter::Remote::Input, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Input>,
 					::Voicemeeter::Remote::Output, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Output>,
@@ -382,24 +390,26 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 				(cpPlug.size()
 					? ::std::make_unique<UI::Decorators::Margin<
 						UI::Decorators::RegionCheck<
-							UI::D2D::Controls::Plug>>>(
-								::linear_algebra::vectord{ 0, 2 },
-								::linear_algebra::vectord{ 0, 0 },
-								*pInputTracker,
-								::std::move(pPlugGlyph),
-								pCheckboxStateChangePolicy,
-								::std::move(pPlugStatePromotionPolicy),
-								pPlugGlyphUpdatePolicy,
-								pPlugInteractivityPolicy
+							UI::D2D::Decorators::Interactivity::Plug<
+								UI::D2D::Controls::Plug>>>>(
+									::linear_algebra::vectord{ 0, 2 },
+									::linear_algebra::vectord{ 0, 0 },
+									*pInputTracker,
+									*pFocusTracker,
+									pPlugGlyph,
+									pCheckboxStateChangePolicy,
+									pPlugStatePromotionPolicy,
+									pPlugGlyphUpdatePolicy
 					) : ::std::make_unique<UI::Decorators::RegionCheck<
-						UI::D2D::Controls::Plug>>(
-							*pInputTracker,
-							::std::move(pPlugGlyph),
-							pCheckboxStateChangePolicy,
-							::std::move(pPlugStatePromotionPolicy),
-							pPlugGlyphUpdatePolicy,
-							pPlugInteractivityPolicy
-				))
+						UI::D2D::Decorators::Interactivity::Plug<
+							UI::D2D::Controls::Plug>>>(
+								*pInputTracker,
+								*pFocusTracker,
+								pPlugGlyph,
+								pCheckboxStateChangePolicy,
+								pPlugStatePromotionPolicy,
+								pPlugGlyphUpdatePolicy
+					))
 			};
 
 			UI::D2D::Controls::Plug& checkbox{ *pPlug };
@@ -433,23 +443,37 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
 		} };
 
-		::std::unique_ptr<KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>> pKnobStatePromotionPolicy{
+		::std::unique_ptr<UI::Policies::IStatePromotion<UI::States::Knob>> pKnobStatePromotionPolicy{
 			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ output, gainerMap, checkboxMap }
 		};
 
 		::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{
-			new UI::Decorators::Margin<
-				UI::Decorators::RegionCheck<
-					UI::D2D::Controls::Knob>>{
-						left_top,
-						::linear_algebra::vectord{ 0, 0 },
-						* pInputTracker,
-						::std::move(pKnobGlyph),
-						pKnobStateChangePolicy,
-						::std::move(pKnobStatePromotionPolicy),
-						pKnobGlyphUpdatePolicy,
-						pKnobInteractivityPolicy
-		} };
+			(direction == UI::Direction::Right
+				? static_cast<UI::D2D::Controls::Knob*>(new UI::Decorators::Margin<
+					UI::Decorators::RegionCheck<
+						UI::D2D::Decorators::Interactivity::Knob<
+							UI::Direction::Right, UI::D2D::Controls::Knob>>>{
+								left_top,
+								::linear_algebra::vectord{ 0, 0 },
+								*pInputTracker,
+								*pInputTracker, *pFocusTracker, compositionTimer,
+								pKnobGlyph,
+								pKnobStateChangePolicy,
+								pKnobStatePromotionPolicy,
+								pKnobGlyphUpdatePolicy
+				}) : new UI::Decorators::Margin<
+					UI::Decorators::RegionCheck<
+						UI::D2D::Decorators::Interactivity::Knob<
+							UI::Direction::Down, UI::D2D::Controls::Knob>>>{
+								left_top,
+								::linear_algebra::vectord{ 0, 0 },
+								*pInputTracker,
+								*pInputTracker, *pFocusTracker, compositionTimer,
+								pKnobGlyph,
+								pKnobStateChangePolicy,
+								pKnobStatePromotionPolicy,
+								pKnobGlyphUpdatePolicy
+				} )};
 
 		UI::D2D::Controls::Knob& knob{ *pKnob };
 		output.on_Gain([&knob](double gain)->void {
@@ -492,9 +516,9 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	};
 
 	return new UI::D2D::Scene{
-		::std::move(pInputTracker),
-		::std::move(pFocusTracker),
-		::std::move(pCanvas),
-		::std::move(pComposition)
+		pInputTracker,
+		pFocusTracker,
+		pCanvas,
+		pComposition
 	};
 }

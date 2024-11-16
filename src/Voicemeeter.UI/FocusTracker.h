@@ -1,8 +1,5 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
-
-#include "IComponent.h"
 #include "IFocusTracker.h"
 
 namespace Voicemeeter {

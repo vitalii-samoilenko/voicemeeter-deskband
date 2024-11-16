@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include "estd/linear_algebra.h"
-
 #include <d2d1_3.h>
 
 #include "../Canvas.h"
