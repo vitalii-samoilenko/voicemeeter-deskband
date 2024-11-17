@@ -10,8 +10,6 @@ namespace Voicemeeter {
 		namespace D2D {
 			namespace Graphics {
 				namespace Glyphs {
-					struct Triangle {};
-
 					class Plug : public Glyph {
 					public:
 						Plug(

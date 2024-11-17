@@ -79,8 +79,8 @@ namespace Voicemeeter {
 			};
 			void copy(const T& element, const Range<T>& range) {
 				void* pElement{
-					reinterpret_cast<void*>(
-						const_cast<T*>(&element))
+					reinterpret_cast<void*>(&
+						const_cast<T&>(element))
 				};
 				m_cpElement.push_back(
 					range.m_cpElement.at(
@@ -96,8 +96,9 @@ namespace Voicemeeter {
 			}
 			void erase(const T& element) {
 				typename ::std::unordered_map<void*, size_t>::iterator elementLookup{
-					m_lElement.find(reinterpret_cast<void*>(
-						const_cast<T*>(&element)))
+					m_lElement.find(
+						reinterpret_cast<void*>(&
+							const_cast<T&>(element)))
 				};
 				::std::swap(m_cpElement.back(), m_cpElement.at(elementLookup->second));
 				m_lElement[reinterpret_cast<void*>(m_cpElement[elementLookup->second]
@@ -107,8 +108,9 @@ namespace Voicemeeter {
 			}
 			RangeIterator<T> find(const T& element) {
 				typename ::std::unordered_map<void*, size_t>::iterator lookup{
-					m_lElement.find(reinterpret_cast<void*>(
-						const_cast<T*>(&element)))
+					m_lElement.find(
+						reinterpret_cast<void*>(&
+							const_cast<T&>(element)))
 				};
 				return RangeIterator<T>{
 					(lookup == m_lElement.end()

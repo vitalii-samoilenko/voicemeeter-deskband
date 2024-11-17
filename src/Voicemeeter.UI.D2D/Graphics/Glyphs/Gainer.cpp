@@ -27,33 +27,44 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 				.PrimaryActive))
 	};
 	bool fresh{ false };
-	ID2D1PathGeometry* pHalfCircle{ palette.get_pGeometry(typeid(HalfCircle), fresh) };
-	if (fresh) {
-		::Microsoft::WRL::ComPtr<ID2D1GeometrySink> pSink{ nullptr };
-		::Windows::ThrowIfFailed(pHalfCircle->Open(
-			&pSink
-		), "Geometry initialization failed");
+	ID2D1GeometryRealization* pHalfCircle{ palette.get_pGeometry(typeid(HalfCircle),
+		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+			::Microsoft::WRL::ComPtr<ID2D1PathGeometry> pPath{ nullptr };
+			::Windows::ThrowIfFailed(m_canvas.get_pD2dFactory()
+				->CreatePathGeometry(
+					&pPath
+			), "Path creation failed");
+			::Microsoft::WRL::ComPtr<ID2D1GeometrySink> pSink{ nullptr };
+			::Windows::ThrowIfFailed(pPath->Open(
+				&pSink
+			), "Path initialization failed");
 
-		pSink->BeginFigure(
-			::D2D1::Point2F(0.F, 0.F),
-			D2D1_FIGURE_BEGIN_FILLED
-		);
-		pSink->AddArc(
-			::D2D1::ArcSegment(
-				::D2D1::Point2F(0.F, 40.F),
-				::D2D1::Size(20.F, 20.F),
-				180.F,
-				D2D1_SWEEP_DIRECTION_CLOCKWISE,
-				D2D1_ARC_SIZE_SMALL
-			)
-		);
-		pSink->EndFigure(
-			D2D1_FIGURE_END_CLOSED
-		);
+			pSink->BeginFigure(
+				::D2D1::Point2F(0.F, 0.F),
+				D2D1_FIGURE_BEGIN_FILLED
+			);
+			pSink->AddArc(
+				::D2D1::ArcSegment(
+					::D2D1::Point2F(0.F, 40.F),
+					::D2D1::Size(20.F, 20.F),
+					180.F,
+					D2D1_SWEEP_DIRECTION_CLOCKWISE,
+					D2D1_ARC_SIZE_SMALL
+				)
+			);
+			pSink->EndFigure(
+				D2D1_FIGURE_END_CLOSED
+			);
 
-		::Windows::ThrowIfFailed(pSink->Close(
-		), "Geometry finalization failed");
-	}
+			::Windows::ThrowIfFailed(pSink->Close(
+			), "Path finalization failed");
+
+			::Windows::ThrowIfFailed(m_canvas.get_pD2dDeviceContext()
+				->CreateFilledGeometryRealization(
+					pPath.Get(), flatteringTolerance,
+					ppGeometry
+			), "Geometry creation failed");
+		}) };
 
 	m_canvas.get_pD2dDeviceContext()
 		->DrawRoundedRectangle(
@@ -78,7 +89,7 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 			* base
 			* ::D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(m_level * scale), 0.F));
 	m_canvas.get_pD2dDeviceContext()
-		->FillGeometry(
+		->DrawGeometryRealization(
 			pHalfCircle,
 			palette.get_pBrush(palette.get_Theme()
 				.LightGlass));
@@ -88,7 +99,7 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 			* base
 			* ::D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(m_level * scale), 0.F));
 	m_canvas.get_pD2dDeviceContext()
-		->FillGeometry(
+		->DrawGeometryRealization(
 			pHalfCircle,
 			palette.get_pBrush(palette.get_Theme()
 				.DarkGlass));

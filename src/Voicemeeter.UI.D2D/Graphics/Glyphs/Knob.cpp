@@ -50,6 +50,38 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 							: palette.get_pBrush(palette.get_Theme()
 								.EqualizerHigh))
 	};
+	struct Frame {};
+	ID2D1GeometryRealization* pFrame{ palette.get_pGeometry(typeid(Frame),
+		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+			::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
+			::Windows::ThrowIfFailed(m_canvas.get_pD2dFactory()
+				->CreateEllipseGeometry(
+					::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
+					&pEllipse
+			), "Ellipse creation failed");
+
+			::Windows::ThrowIfFailed(m_canvas.get_pD2dDeviceContext()
+				->CreateStrokedGeometryRealization(
+					pEllipse.Get(), flatteringTolerance, 3.F, nullptr,
+					ppGeometry
+			), "Geometry creation failed");
+		}) };
+	struct Indicator {};
+	ID2D1GeometryRealization* pIndicator{ palette.get_pGeometry(typeid(Indicator),
+		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+			::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
+			::Windows::ThrowIfFailed(m_canvas.get_pD2dFactory()
+				->CreateEllipseGeometry(
+					::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
+					&pEllipse
+			), "Ellipse creation failed");
+
+			::Windows::ThrowIfFailed(m_canvas.get_pD2dDeviceContext()
+				->CreateFilledGeometryRealization(
+					pEllipse.Get(), flatteringTolerance,
+					ppGeometry
+			), "Geometry creation failed");
+		}) };
 
 	if (m_pinned) {
 		::std::wstring label{ ::std::to_wstring(static_cast<int>(::std::abs((m_gain - 90) / 3.75))) };
@@ -95,10 +127,9 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 	}
 
 	m_canvas.get_pD2dDeviceContext()
-		->DrawEllipse(
-			::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
-			pBrush,
-			3.F);
+		->DrawGeometryRealization(
+			pFrame,
+			pBrush);
 	D2D1_MATRIX_3X2_F base{};
 	double scale{ get_Size().x / get_BaseSize().x };
 	m_canvas.get_pD2dDeviceContext()
@@ -109,8 +140,8 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 			* ::D2D1::Matrix3x2F::Rotation(m_gain, ::D2D1::Point2F(24.F, 24.F))
 			* base);
 	m_canvas.get_pD2dDeviceContext()
-		->FillEllipse(
-			::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
+		->DrawGeometryRealization(
+			pIndicator,
 			palette.get_pBrush(palette.get_Theme()
 				.Indicator));
 	m_canvas.get_pD2dDeviceContext()

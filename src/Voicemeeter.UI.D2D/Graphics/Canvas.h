@@ -12,6 +12,8 @@
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 
+#include "estd/type_traits.h"
+
 #include "Environment/ITimer.h"
 #include "Voicemeeter.UI/Graphics/ICanvas.h"
 #include "Voicemeeter.UI/Graphics/IGlyph.h"
@@ -103,15 +105,30 @@ namespace Voicemeeter {
 					IDWriteTextFormat* get_pTextFormat(const ::std::wstring& fontFamily) const;
 					IDWriteTextLayout* get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const;
 					ID2D1SolidColorBrush* get_pBrush(const ::D2D1::ColorF& color) const;
-					ID2D1PathGeometry* get_pGeometry(const ::std::type_info& type, bool& fresh) const;
+					template<typename Func,
+						::std::enable_if_t<
+							::estd::is_invocable_r<void, Func, ID2D1GeometryRealization**, FLOAT>::value,
+							bool> = true>
+					ID2D1GeometryRealization* get_pGeometry(const ::std::type_info& type, const Func& factory) const {
+						::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>& pGeometry{
+							m_cpGeometry[
+								reinterpret_cast<void*>(&
+									const_cast<::std::type_info&>(type))]
+						};
+						if (!pGeometry) {
+							factory(&pGeometry, m_flatteringTolerance);
+						}
+						return pGeometry.Get();
+					};
 
 				private:
 					Theme m_theme;
 					const Canvas& m_canvas;
+					const FLOAT m_flatteringTolerance;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
-					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1PathGeometry>> m_cpGeometry;
+					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>> m_cpGeometry;
 				};
 
 				class Queue final {

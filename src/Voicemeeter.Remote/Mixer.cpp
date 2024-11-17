@@ -179,12 +179,14 @@ Mixer::Mixer(
 	} break;
 	}
 	for (const Input& input : m_cInput) {
-		m_cInputPlugs[reinterpret_cast<void*>(
-			const_cast<Input*>(&input))];
+		m_cInputPlugs[
+			reinterpret_cast<void*>(&
+				const_cast<Input&>(input))];
 	}
 	for (const Output& output : m_cOutput) {
-		m_cOutputPlugs[reinterpret_cast<void*>(
-			const_cast<Output*>(&output))];
+		m_cOutputPlugs[
+			reinterpret_cast<void*>(&
+				const_cast<Output&>(output))];
 	}
 	m_timer.Set(::std::chrono::milliseconds{ 100 },
 		[this]()->bool {
@@ -212,9 +214,11 @@ Mixer::Mixer(
 			}
 
 			for (Input& input : m_cInput) {
-				Range<Output>& inputPlugs{ m_cInputPlugs[reinterpret_cast<void*>(&input)] };
+				Range<Output>& inputPlugs{ m_cInputPlugs[
+					reinterpret_cast<void*>(&input)] };
 				for (Output& output : m_cOutput) {
-					Range<Input>& outputPlugs{ m_cOutputPlugs[reinterpret_cast<void*>(&output)] };
+					Range<Input>& outputPlugs{ m_cOutputPlugs[
+						reinterpret_cast<void*>(&output)] };
 					bool plug{ inputPlugs.find(output) != inputPlugs.end() };
 
 					float value{ get_Parameter(input.get_Key() + "." + output.get_Label()) };
@@ -278,24 +282,26 @@ const Range<Output>& Mixer::get_Outputs() const {
 	return m_cOutput;
 }
 const Range<Output>& Mixer::get_Plugs(const Input& input) const {
-	return m_cInputPlugs.find(reinterpret_cast<void*>(
-			const_cast<Input*>(&input)))
+	return m_cInputPlugs.find(
+			reinterpret_cast<void*>(&
+				const_cast<Input&>(input)))
 		->second;
 }
 const Range<Input>& Mixer::get_Plugs(const Output& output) const {
-	return m_cOutputPlugs.find(reinterpret_cast<void*>(
-			const_cast<Output*>(&output)))
+	return m_cOutputPlugs.find(
+			reinterpret_cast<void*>(&
+				const_cast<Output&>(output)))
 		->second;
 }
 void Mixer::set_Plug(const Input& input, const Output& output, bool value) {
 	set_Dirty();
 	void* pInput{
-		reinterpret_cast<void*>(
-			const_cast<Input*>(&input))
+		reinterpret_cast<void*>(&
+			const_cast<Input&>(input))
 	};
 	void* pOutput{
-		reinterpret_cast<void*>(
-			const_cast<Output*>(&output))
+		reinterpret_cast<void*>(&
+			const_cast<Output&>(output))
 	};
 	if (value) {
 		m_cInputPlugs.find(pInput)
@@ -316,9 +322,9 @@ void Mixer::set_Plug(const Input& input, const Output& output, bool value) {
 }
 void Mixer::on_Plug(const Input& input, const Output& output, const ::std::function<void(bool)>& callback) {
 	m_cCallback[::std::make_pair(
-		reinterpret_cast<void*>(
-			const_cast<Input*>(&input)),
-		reinterpret_cast<void*>(
-			const_cast<Output*>(&output))
+		reinterpret_cast<void*>(&
+			const_cast<Input&>(input)),
+		reinterpret_cast<void*>(&
+			const_cast<Output&>(output))
 	)].push_back(callback);
 }

@@ -14,6 +14,7 @@ Palette::Palette(
 	const Canvas& canvas
 ) : m_theme{ theme }
   , m_canvas{ canvas }
+  , m_flatteringTolerance{ ::D2D1::ComputeFlatteningTolerance(::D2D1::IdentityMatrix(), 96.F, 96.F, 4.F) }
   , m_cpTextFormat{}
   , m_cpTextLayout{}
   , m_cpBrush{}
@@ -75,18 +76,4 @@ ID2D1SolidColorBrush* Palette::get_pBrush(const ::D2D1::ColorF& color) const {
 		), "Brush creation failed");
 	}
 	return pBrush.Get();
-}
-ID2D1PathGeometry* Palette::get_pGeometry(const ::std::type_info& type, bool& fresh) const {
-	::Microsoft::WRL::ComPtr<ID2D1PathGeometry>& pGeometry{
-		m_cpGeometry[
-			reinterpret_cast<void*>(&
-				const_cast<::std::type_info&>(type))]
-	};
-	if (fresh = !pGeometry, fresh) {
-		::Windows::ThrowIfFailed(m_canvas.get_pD2dFactory()
-			->CreatePathGeometry(
-				&pGeometry
-		), "Geometry creation failed");
-	}
-	return pGeometry.Get();
 }
