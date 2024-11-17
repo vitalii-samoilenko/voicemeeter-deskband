@@ -1,4 +1,8 @@
-Vertical bar panels reduction
+Geometry realizations
+Animations
+::estd::(chrono::)timer for rendering
+Resizing flickering
+Vertical bar panels reduction?
 pch
 Up to date doc
 Docking concept
@@ -9,5 +13,5 @@ Windows 11 default coloring theme
 D3D12
 Contextual menu prototype (select physical input/output)
 Configuration tool
-::estd::(chrono::)timer for rendering and update operations?
+::estd::(chrono::)timer for update operations?
 Hidden state?
