@@ -29,7 +29,7 @@ namespace Voicemeeter {
 						return false;
 					}
 					state.gain = Default;
-					//state.pinned = true;
+					//state.hold = true;
 					return true;
 				}
 				virtual bool SetNext(States::Knob& state) const override {
@@ -40,7 +40,7 @@ namespace Voicemeeter {
 					} else {
 						state.gain += Delta;
 					}
-					state.pinned = true;
+					state.hold = true;
 					return true;
 				};
 				virtual bool SetPrevious(States::Knob& state) const override {
@@ -51,7 +51,7 @@ namespace Voicemeeter {
 					} else {
 						state.gain -= Delta;
 					}
-					state.pinned = true;
+					state.hold = true;
 					return true;
 				};
 				virtual bool Set(States::Knob& dst, States::Knob& src) const override {
@@ -73,16 +73,17 @@ namespace Voicemeeter {
 							result = true;
 						}
 					}
-					if (dst.level != src.level) {
+					if (dst.level.size() != src.level.size()
+						|| (dst.level != src.level).max()) {
 						dst.level = ::std::move(src.level);
 						result = true;
 					}
-					if (dst.enabled != src.enabled) {
-						dst.enabled = src.enabled;
+					if (dst.toggle != src.toggle) {
+						dst.toggle = src.toggle;
 						result = true;
 					}
-					if (dst.pinned != src.pinned) {
-						dst.pinned = src.pinned;
+					if (dst.hold != src.hold) {
+						dst.hold = src.hold;
 						result = true;
 					}
 

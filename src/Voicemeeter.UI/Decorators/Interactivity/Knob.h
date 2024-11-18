@@ -45,7 +45,7 @@ namespace Voicemeeter {
 					virtual void set_Focus(bool value) override {
 						if (!value) {
 							States::Knob state{ TKnob::get_State() };
-							state.pinned = false;
+							state.hold = false;
 							TKnob::Set(state, false);
 						}
 					};
@@ -56,7 +56,7 @@ namespace Voicemeeter {
 						m_focusTracker.set_Track(*this, true);
 
 						States::Knob state{ TKnob::get_State() };
-						state.pinned = true;
+						state.hold = true;
 						TKnob::Set(state, false);
 
 						return true;
@@ -64,7 +64,7 @@ namespace Voicemeeter {
 					virtual bool MouseLDouble(const ::std::valarray<double>& point) override {
 						TKnob::SetDefault();
 
-						UnpinLater();
+						ReleaseLater();
 
 						return true;
 					};
@@ -72,14 +72,14 @@ namespace Voicemeeter {
 						m_focusTracker.set_Track(*this, true);
 
 						States::Knob state{ TKnob::get_State() };
-						state.enabled = !state.enabled;
+						state.toggle = !state.toggle;
 						TKnob::Set(state, true);
 
 						return true;
 					};
 					virtual bool MouseMDouble(const ::std::valarray<double>& point) override {
 						States::Knob state{ TKnob::get_State() };
-						state.enabled = !state.enabled;
+						state.toggle = !state.toggle;
 						TKnob::Set(state, true);
 
 						return true;
@@ -89,10 +89,10 @@ namespace Voicemeeter {
 
 						States::Knob state{ TKnob::get_State() };
 						state.gain += delta * 7;
-						state.pinned = true;
+						state.hold = true;
 						TKnob::Set(state, true);
 
-						UnpinLater();
+						ReleaseLater();
 
 						return true;
 					};
@@ -101,7 +101,10 @@ namespace Voicemeeter {
 							return true;
 						}
 
-						OnMouseMove(point, UI::Direction_Tag<Direction>{});
+						double scale{ TKnob::get_Size()[Direction] / TKnob::get_BaseSize()[Direction] };
+						States::Knob state{ TKnob::get_State() };
+						state.gain += static_cast<int>((point[Direction] - m_inputTracker.get_Position()[Direction]) * 100. / scale);
+						TKnob::Set(state, true);
 
 						m_inputTracker.set_Position(point);
 
@@ -110,7 +113,7 @@ namespace Voicemeeter {
 					virtual bool MouseLUp(const ::std::valarray<double>& point) override {
 						m_inputTracker.set_Track(*this, false);
 
-						UnpinLater();
+						ReleaseLater();
 
 						return true;
 					};
@@ -120,21 +123,7 @@ namespace Voicemeeter {
 					IFocusTracker& m_focusTracker;
 					::Environment::ITimer& m_timer;
 
-					void OnMouseMove(const ::std::valarray<double>& point, const UI::Direction_Tag<UI::Direction::Right>&) {
-						double scale{ TKnob::get_Size()[0] / TKnob::get_BaseSize()[0] };
-						States::Knob state{ TKnob::get_State() };
-						state.gain += static_cast<int>((point[0] - m_inputTracker.get_Position()[0]) * 100. / scale);
-						TKnob::Set(state, true);
-					}
-
-					void OnMouseMove(const ::std::valarray<double>& point, const Direction_Tag<UI::Direction::Down>&) {
-						double scale{ TKnob::get_Size()[1] / TKnob::get_BaseSize()[1]};
-						States::Knob state{ TKnob::get_State() };
-						state.gain += static_cast<int>((point[1] - m_inputTracker.get_Position()[1]) * 100. / scale);
-						TKnob::Set(state, true);
-					}
-
-					void UnpinLater() {
+					inline void ReleaseLater() {
 						m_timer.Set(::std::chrono::milliseconds{ 400 },
 							[this]()->bool {
 								if (m_inputTracker.get_Track(*this)) {
@@ -142,7 +131,7 @@ namespace Voicemeeter {
 								}
 
 								States::Knob state{ TKnob::get_State() };
-								state.pinned = false;
+								state.hold = false;
 								TKnob::Set(state, true);
 
 								return false;

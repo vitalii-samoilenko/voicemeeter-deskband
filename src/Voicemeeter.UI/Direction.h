@@ -6,8 +6,5 @@ namespace Voicemeeter {
 			Right = 0,
 			Down = 1
 		};
-
-		template<UI::Direction>
-		struct Direction_Tag {};
 	}
 }

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <d2d1_3.h>
+
 #include "../Canvas.h"
 #include "../Glyph.h"
 
@@ -12,9 +14,8 @@ namespace Voicemeeter {
 				namespace Glyphs {
 					class Knob : public Glyph {
 					public:
-						Knob(
-							Graphics::Canvas& canvas,
-							const ::std::wstring& label
+						explicit Knob(
+							Graphics::Canvas& canvas
 						);
 						Knob() = delete;
 						Knob(const Knob&) = delete;
@@ -25,28 +26,22 @@ namespace Voicemeeter {
 						Knob& operator=(const Knob&) = delete;
 						Knob& operator=(Knob&&) = delete;
 
-
-						inline void set_Gain(FLOAT value) {
-							m_gain = value;
+						inline void set_Label(const ::std::wstring& value) {
+							m_label = value;
 						};
-						inline void set_Level(FLOAT value) {
-							m_level = value;
+						inline void set_Color(const ::D2D1::ColorF& value) {
+							m_color = value;
 						};
-						inline void set_Enabled(bool value) {
-							m_enabled = value;
-						};
-						inline void set_Pinned(bool value) {
-							m_pinned = value;
+						inline void set_Angle(FLOAT value) {
+							m_angle = value;
 						};
 
 						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 
 					private:
 						::std::wstring m_label;
-						FLOAT m_gain;
-						FLOAT m_level;
-						bool m_enabled;
-						bool m_pinned;
+						::D2D1::ColorF m_color;
+						FLOAT m_angle;
 					};
 				}
 			}

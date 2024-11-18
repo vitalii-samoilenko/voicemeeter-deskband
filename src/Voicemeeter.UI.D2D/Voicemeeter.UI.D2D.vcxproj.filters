@@ -22,9 +22,6 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{f84acb07-b793-4c1e-b711-1abd03a315dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Controls">
-      <UniqueIdentifier>{ed8693f9-39a1-46c9-be4b-8cd0d6a24c8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Policies">
       <UniqueIdentifier>{6901b58c-e543-4994-8652-080a1b9ae71e}</UniqueIdentifier>
     </Filter>
@@ -37,8 +34,11 @@
     <Filter Include="Source Files\Policies">
       <UniqueIdentifier>{34cdc5e9-a0a1-408b-adae-4616b8ff5f30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Controls">
+      <UniqueIdentifier>{445440fa-063e-4340-a0ae-b39512f87398}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\Decorators\Interactivity">
-      <UniqueIdentifier>{6c670d67-699d-45b7-8a09-68661f62703d}</UniqueIdentifier>
+      <UniqueIdentifier>{2bc317fc-2279-4740-86fb-bb6c4b21d2a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,29 +48,11 @@
     <ClInclude Include="Graphics\Glyph.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Controls\Gainer.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\GainerStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Gainer.h">
-      <Filter>Header Files\Graphics\Glyphs</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Glyphs\Plug.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\GainerGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Decorators\WindowsGlyphUpdate.h">
-      <Filter>Header Files\Decorators</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Mute.h">
-      <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\Glyphs\Vban.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
@@ -87,14 +69,14 @@
     <ClInclude Include="Policies\KnobGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
-    <ClInclude Include="Controls\Knob.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\PlugGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\VbanGlyphUpdate.h">
       <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Controls\Knob.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="Controls\Plug.h">
       <Filter>Header Files\Controls</Filter>
@@ -102,13 +84,7 @@
     <ClInclude Include="Controls\Vban.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Decorators\QueueGlyphUpdate.h">
-      <Filter>Header Files\Decorators</Filter>
-    </ClInclude>
     <ClInclude Include="Decorators\Interactivity\Knob.h">
-      <Filter>Header Files\Decorators\Interactivity</Filter>
-    </ClInclude>
-    <ClInclude Include="Decorators\Interactivity\Gainer.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
     <ClInclude Include="Decorators\Interactivity\Plug.h">
@@ -124,12 +100,6 @@
     </ClCompile>
     <ClCompile Include="Graphics\Glyph.cpp">
       <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\Glyphs\Gainer.cpp">
-      <Filter>Source Files\Graphics\Glyphs</Filter>
-    </ClCompile>
-    <ClCompile Include="Policies\GainerGlyphUpdate.cpp">
-      <Filter>Source Files\Policies</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>

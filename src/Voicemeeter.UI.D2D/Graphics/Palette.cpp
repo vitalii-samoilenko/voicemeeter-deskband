@@ -24,9 +24,7 @@ Palette::Palette(
 
 IDWriteTextFormat* Palette::get_pTextFormat(const ::std::wstring& fontFamily) const {
 	::Microsoft::WRL::ComPtr<IDWriteTextFormat>& pTextFormat{
-		m_cpTextFormat[
-			reinterpret_cast<void*>(&
-				const_cast<::std::wstring&>(fontFamily))]
+		m_cpTextFormat[fontFamily]
 	};
 	if (!pTextFormat) {
 		::Windows::ThrowIfFailed(m_canvas.get_pDwFactory()
@@ -45,9 +43,7 @@ IDWriteTextFormat* Palette::get_pTextFormat(const ::std::wstring& fontFamily) co
 }
 IDWriteTextLayout* Palette::get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const {
 	::Microsoft::WRL::ComPtr<IDWriteTextLayout>& pTextLayout{
-		m_cpTextLayout[
-			reinterpret_cast<void*>(&
-				const_cast<::std::wstring&>(text))]
+		m_cpTextLayout[text]
 	};
 	if (!pTextLayout) {
 		::Windows::ThrowIfFailed(m_canvas.get_pDwFactory()
@@ -61,19 +57,4 @@ IDWriteTextLayout* Palette::get_pTextLayout(const ::std::wstring& text, const ::
 		), "Text layout creation failed");
 	}
 	return pTextLayout.Get();
-}
-ID2D1SolidColorBrush* Palette::get_pBrush(const ::D2D1::ColorF& color) const {
-	::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>& pBrush{
-		m_cpBrush[
-			reinterpret_cast<void*>(&
-				const_cast<::D2D1::ColorF&>(color))]
-	};
-	if (!pBrush) {
-		::Windows::ThrowIfFailed(m_canvas.get_pD2dDeviceContext()
-			->CreateSolidColorBrush(
-				color,
-				&pBrush
-		), "Brush creation failed");
-	}
-	return pBrush.Get();
 }

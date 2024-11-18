@@ -1,7 +1,6 @@
 #include "Windows/Wrappers.h"
 
 #include <wrl/client.h>
-#include <d2d1_3.h>
 
 #include "Vban.h"
 
@@ -12,24 +11,30 @@ using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
 
 Vban::Vban(
 	Graphics::Canvas& canvas
-) : Glyph{ canvas, { 39, 22 } }
-  , m_label{ L"V" }
-  , m_active{} {
+) : Glyph{ canvas, { 39., 22. } }
+  , m_color{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) } {
 
 }
 
 void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	Glyph::Redraw(point, vertex);
 
-	const Palette& palette{ m_canvas.get_Palette() };
-	ID2D1SolidColorBrush* pBrush{
-		(m_active
-			? palette.get_pBrush(palette.get_Theme()
-				.SecondaryActive)
-			: palette.get_pBrush(palette.get_Theme()
-				.Inactive))
-	};
 	struct Frame {};
+	struct FrameSide {};
+
+	const Palette& palette{ m_canvas.get_Palette() };
+	ID2D1SolidColorBrush* pBrush{ static_cast<ID2D1SolidColorBrush*>(
+		palette.get_pBrush(typeid(Frame),
+			[this](ID2D1Brush** ppBrush)->void {
+				ID2D1SolidColorBrush* pBrush{ nullptr };
+				::Windows::ThrowIfFailed(m_canvas.get_pD2dDeviceContext()
+					->CreateSolidColorBrush(
+						m_color,
+						&pBrush
+				), "Brush creation failed");
+				*ppBrush = pBrush;
+			})) };
+	pBrush->SetColor(m_color);
 	ID2D1GeometryRealization* pFrame{ palette.get_pGeometry(typeid(Frame),
 		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
 			::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
@@ -45,7 +50,6 @@ void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 					ppGeometry
 			), "Geometry creation failed");
 		}) };
-	struct FrameSide {};
 	ID2D1GeometryRealization* pFrameSide{ palette.get_pGeometry(typeid(FrameSide),
 		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
 			::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
@@ -63,7 +67,7 @@ void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 		}) };
 	IDWriteTextLayout* pLayout{
 		palette.get_pTextLayout(
-			m_label,
+			L"V",
 			palette.get_Theme()
 				.FontFamily
 		)

@@ -34,18 +34,6 @@
     <Filter Include="Header Files\Decorators">
       <UniqueIdentifier>{f6263b99-fc37-4061-986f-ac84587d12d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphics\Glyphs">
-      <UniqueIdentifier>{725b2197-0613-443d-8449-e79fb6ff29d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics">
-      <UniqueIdentifier>{eac40226-372a-434a-8e28-8500fc925da9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\Glyphs">
-      <UniqueIdentifier>{7496f427-5209-45af-b51a-1e043c9a53d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Policies">
-      <UniqueIdentifier>{41edb6c8-e8db-4494-ad09-539d3260eda7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\States">
       <UniqueIdentifier>{6c7a9c28-1944-4024-9109-f7846a15d4c8}</UniqueIdentifier>
     </Filter>
@@ -90,13 +78,7 @@
     <ClInclude Include="IInputTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\IStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\IStatePromotion.h">
       <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
@@ -119,18 +101,6 @@
     </ClInclude>
     <ClInclude Include="Decorators\RegionCheck.h">
       <Filter>Header Files\Decorators</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Frame.h">
-      <Filter>Header Files\Graphics\Glyphs</Filter>
-    </ClInclude>
-    <ClInclude Include="Controls\Carousel.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Controls\Slider.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\CarouselGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
     </ClInclude>
     <ClInclude Include="Policies\CheckboxStateChange.h">
       <Filter>Header Files\Policies</Filter>
@@ -156,17 +126,17 @@
     <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Decorators\Interactivity\Carousel.h">
-      <Filter>Header Files\Decorators\Interactivity</Filter>
-    </ClInclude>
     <ClInclude Include="Decorators\Interactivity\Checkbox.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
     <ClInclude Include="Decorators\Interactivity\Knob.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
-    <ClInclude Include="Decorators\Interactivity\Slider.h">
-      <Filter>Header Files\Decorators\Interactivity</Filter>
+    <ClInclude Include="Policies\IGlyphUpdate.h">
+      <Filter>Header Files\Policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\IStatePromotion.h">
+      <Filter>Header Files\Policies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -178,12 +148,6 @@
     </ClCompile>
     <ClCompile Include="InputTracker.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\Glyphs\Frame.cpp">
-      <Filter>Source Files\Graphics\Glyphs</Filter>
-    </ClCompile>
-    <ClCompile Include="Policies\CarouselGlyphUpdate.cpp">
-      <Filter>Source Files\Policies</Filter>
     </ClCompile>
     <ClCompile Include="FocusTracker.cpp">
       <Filter>Source Files</Filter>

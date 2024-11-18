@@ -352,13 +352,13 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		});
 		input.on_Mute([&knob](bool mute)->void {
 			UI::States::Knob state{ knob.get_State() };
-			state.enabled = mute;
+			state.toggle = mute;
 			knob.Set(state, false);
 		});
 		for (::Voicemeeter::Remote::Channel& channel : input.get_Channels()) {
 			UI::States::Knob state{ knob.get_State() };
 			size_t i{ state.level.size() };
-			state.level.emplace_back();
+			state.level.resize(state.level.size() + 1);
 			knob.Set(state, false);
 
 			channel.on_Level([&knob, i](double level)->void {
@@ -482,13 +482,13 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			});
 		output.on_Mute([&knob](bool mute)->void {
 			UI::States::Knob state{ knob.get_State() };
-			state.enabled = mute;
+			state.toggle = mute;
 			knob.Set(state, false);
 			});
 		for (::Voicemeeter::Remote::Channel& channel : output.get_Channels()) {
 			UI::States::Knob state{ knob.get_State() };
 			size_t i{ state.level.size() };
-			state.level.emplace_back();
+			state.level.resize(state.level.size() + 1);
 			knob.Set(state, false);
 
 			channel.on_Level([&knob, i](double level)->void {

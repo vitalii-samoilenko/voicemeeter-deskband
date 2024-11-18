@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <d2d1_3.h>
 
 #include "../Canvas.h"
 #include "../Glyph.h"
@@ -24,15 +24,14 @@ namespace Voicemeeter {
 						Vban& operator=(const Vban&) = delete;
 						Vban& operator=(Vban&&) = delete;
 
-						inline void set_Active(bool value) {
-							m_active = value;
+						inline void set_Color(const ::D2D1::ColorF& value) {
+							m_color = value;
 						};
 
 						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 
 					private:
-						::std::wstring m_label;
-						bool m_active;
+						::D2D1::ColorF m_color;
 					};
 				}
 			}

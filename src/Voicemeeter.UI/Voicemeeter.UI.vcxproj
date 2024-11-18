@@ -198,19 +198,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Controls\Carousel.h" />
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Checkbox.h" />
-    <ClInclude Include="Controls\Slider.h" />
-    <ClInclude Include="Decorators\Interactivity\Carousel.h" />
     <ClInclude Include="Decorators\Interactivity\Checkbox.h" />
     <ClInclude Include="Decorators\Interactivity\Knob.h" />
-    <ClInclude Include="Decorators\Interactivity\Slider.h" />
     <ClInclude Include="Decorators\Margin.h" />
     <ClInclude Include="Decorators\RegionCheck.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="FocusTracker.h" />
-    <ClInclude Include="Graphics\Glyphs\Frame.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />
     <ClInclude Include="IComponent.h" />
@@ -221,7 +216,6 @@
     <ClInclude Include="IPanel.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="Panels\Stack.h" />
-    <ClInclude Include="Policies\CarouselGlyphUpdate.h" />
     <ClInclude Include="Policies\CheckboxStateChange.h" />
     <ClInclude Include="Policies\CircularStateChange.h" />
     <ClInclude Include="Policies\IGlyphUpdate.h" />
@@ -240,10 +234,8 @@
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
     <ClCompile Include="FocusTracker.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Frame.cpp" />
     <ClCompile Include="InputTracker.cpp" />
     <ClCompile Include="Panels\Stack.cpp" />
-    <ClCompile Include="Policies\CarouselGlyphUpdate.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

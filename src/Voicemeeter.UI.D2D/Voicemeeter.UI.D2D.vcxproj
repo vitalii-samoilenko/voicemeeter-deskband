@@ -202,26 +202,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Controls\Gainer.h" />
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Plug.h" />
     <ClInclude Include="Controls\Vban.h" />
     <ClInclude Include="Decorators\Interactivity\Knob.h" />
-    <ClInclude Include="Decorators\Interactivity\Gainer.h" />
     <ClInclude Include="Decorators\Interactivity\Plug.h" />
     <ClInclude Include="Decorators\Interactivity\Vban.h" />
-    <ClInclude Include="Decorators\QueueGlyphUpdate.h" />
-    <ClInclude Include="Decorators\WindowsGlyphUpdate.h" />
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
-    <ClInclude Include="Graphics\Glyphs\Gainer.h" />
     <ClInclude Include="Graphics\Glyphs\Knob.h" />
-    <ClInclude Include="Graphics\Glyphs\Mute.h" />
     <ClInclude Include="Graphics\Glyphs\Plug.h" />
     <ClInclude Include="Graphics\Glyphs\Vban.h" />
     <ClInclude Include="Graphics\Theme.h" />
-    <ClInclude Include="Policies\GainerGlyphUpdate.h" />
-    <ClInclude Include="Policies\GainerStateChange.h" />
     <ClInclude Include="Policies\KnobGlyphUpdate.h" />
     <ClInclude Include="Policies\KnobStateChange.h" />
     <ClInclude Include="Policies\PlugGlyphUpdate.h" />
@@ -231,13 +223,11 @@
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp" />
     <ClCompile Include="Graphics\Glyph.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Gainer.cpp" />
     <ClCompile Include="Graphics\Glyphs\Knob.cpp" />
     <ClCompile Include="Graphics\Glyphs\Plug.cpp" />
     <ClCompile Include="Graphics\Glyphs\Vban.cpp" />
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Graphics\Queue.cpp" />
-    <ClCompile Include="Policies\GainerGlyphUpdate.cpp" />
     <ClCompile Include="Policies\KnobGlyphUpdate.cpp" />
     <ClCompile Include="Policies\KnobStateChange.cpp" />
     <ClCompile Include="Policies\PlugGlyphUpdate.cpp" />

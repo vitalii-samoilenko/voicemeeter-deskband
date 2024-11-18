@@ -29,27 +29,23 @@ bool ::Voicemeeter::UI::D2D::Policies::KnobStateChange::Set(States::Knob& dst, S
 			result = true;
 		}
 	}
-	if (dst.enabled != src.enabled) {
-		dst.enabled = src.enabled;
+	if (dst.toggle != src.toggle) {
+		dst.toggle = src.toggle;
 		result = true;
 	}
-	if (dst.pinned != src.pinned) {
-		dst.pinned = src.pinned;
+	if (dst.hold != src.hold) {
+		dst.hold = src.hold;
 		result = true;
 	}
-	if (result || dst.enabled || dst.pinned) {
+	if (result || dst.toggle || dst.hold) {
 		dst.level = ::std::move(src.level);
 	} else if (dst.level.size() != src.level.size()) {
 		dst.level = ::std::move(src.level);
 		result = true;
 	} else {
-		int lhs_max{ ::std::numeric_limits<int>::min() };
-		int rhs_max{ ::std::numeric_limits<int>::min() };
-		for (size_t i{ 0 }; i < src.level.size(); ++i) {
-			lhs_max = ::std::max(lhs_max, dst.level[i]);
-			rhs_max = ::std::max(rhs_max, src.level[i]);
-			dst.level[i] = src.level[i];
-		}
+		int lhs_max{ dst.level.max() };
+		int rhs_max{ src.level.max() };
+		dst.level = ::std::move(src.level);
 		if (lhs_max != rhs_max) {
 			if (rhs_max < lhs_max) {
 				::std::swap(lhs_max, rhs_max);

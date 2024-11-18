@@ -104,7 +104,21 @@ namespace Voicemeeter {
 					};
 					IDWriteTextFormat* get_pTextFormat(const ::std::wstring& fontFamily) const;
 					IDWriteTextLayout* get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const;
-					ID2D1SolidColorBrush* get_pBrush(const ::D2D1::ColorF& color) const;
+					template<typename Func,
+						::std::enable_if_t<
+							::estd::is_invocable_r<void, Func, ID2D1Brush**>::value,
+							bool> = true>
+					ID2D1Brush* get_pBrush(const ::std::type_info& type, const Func& factory) const {
+						::Microsoft::WRL::ComPtr<ID2D1Brush>& pBrush{
+							m_cpBrush[
+								reinterpret_cast<void*>(&
+									const_cast<::std::type_info&>(type))]
+						};
+						if (!pBrush) {
+							factory(&pBrush);
+						}
+						return pBrush.Get();
+					};
 					template<typename Func,
 						::std::enable_if_t<
 							::estd::is_invocable_r<void, Func, ID2D1GeometryRealization**, FLOAT>::value,
@@ -125,9 +139,9 @@ namespace Voicemeeter {
 					Theme m_theme;
 					const Canvas& m_canvas;
 					const FLOAT m_flatteringTolerance;
-					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;
-					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
-					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_cpBrush;
+					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;
+					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
+					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1Brush>> m_cpBrush;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>> m_cpGeometry;
 				};
 
