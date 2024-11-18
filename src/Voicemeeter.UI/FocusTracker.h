@@ -19,15 +19,15 @@ namespace Voicemeeter {
 			virtual bool get_Track(IComponent& component) const override;
 			virtual void set_Track(IComponent& component, bool value) override;
 
-			virtual bool MouseLDown(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseMDown(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseMDouble(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseRDown(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override;
-			virtual bool MouseMove(const ::linear_algebra::vectord& point) override;
-			virtual bool MouseLUp(const ::linear_algebra::vectord& point) override;
+			virtual bool MouseLDown(const ::std::valarray<double>& point) override;
+			virtual bool MouseLDouble(const ::std::valarray<double>& point) override;
+			virtual bool MouseMDown(const ::std::valarray<double>& point) override;
+			virtual bool MouseMDouble(const ::std::valarray<double>& point) override;
+			virtual bool MouseRDown(const ::std::valarray<double>& point) override;
+			virtual bool MouseRDouble(const ::std::valarray<double>& point) override;
+			virtual bool MouseWheel(const ::std::valarray<double>& point, int delta) override;
+			virtual bool MouseMove(const ::std::valarray<double>& point) override;
+			virtual bool MouseLUp(const ::std::valarray<double>& point) override;
 
 		private:
 			IComponent* m_pTracked;

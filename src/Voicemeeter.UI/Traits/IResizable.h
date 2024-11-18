@@ -1,6 +1,6 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
+#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -13,7 +13,7 @@ namespace Voicemeeter {
 				IResizable& operator=(const IResizable&) = delete;
 				IResizable& operator=(IResizable&&) = delete;
 
-				virtual void Resize(const ::linear_algebra::vectord& vertex) = 0;
+				virtual void Resize(const ::std::valarray<double>& vertex) = 0;
 
 			protected:
 				IResizable() = default;

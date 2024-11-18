@@ -19,7 +19,7 @@ Plug::Plug(
 
 }
 
-void Plug::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Plug::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	Glyph::Redraw(point, vertex);
 
 	const Palette& palette{ m_canvas.get_Palette() };

@@ -1,9 +1,6 @@
 #include <cmath>
 #include <fstream>
 #include <string>
-#include <utility>
-
-#include "estd/linear_algebra.h"
 
 #include "Voicemeeter.UI/Direction.h"
 #include "Voicemeeter.Scene.D2D.Remote/Build.h"
@@ -183,10 +180,10 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi) {
 	}
 
 	if (pdbi->dwMask & DBIM_ACTUAL) {
-		const ::linear_algebra::vectord& vertex{ m_pScene->get_Size() };
+		const ::std::valarray<double>& vertex{ m_pScene->get_Size() };
 
-		pdbi->ptActual.x = static_cast<LONG>(::std::ceil(vertex.x));
-		pdbi->ptActual.y = static_cast<LONG>(::std::ceil(vertex.y));
+		pdbi->ptActual.x = static_cast<LONG>(::std::ceil(vertex[0]));
+		pdbi->ptActual.y = static_cast<LONG>(::std::ceil(vertex[1]));
 	}
 
 	if (pdbi->dwMask & DBIM_TITLE) {
@@ -423,8 +420,8 @@ LRESULT CALLBACK DeskBand::WndProcW(
 		} return OK;
 		case WM_PRINTCLIENT: {
 			pWnd->m_pScene->Redraw(
-				::linear_algebra::vectord::origin(),
-				::linear_algebra::vectord::infinity()
+				pWnd->m_pScene->get_Position(),
+				pWnd->m_pScene->get_Size()
 			);
 		} return OK;
 		case WM_SIZE: {

@@ -73,50 +73,50 @@ namespace Voicemeeter {
 				virtual void set_Focus(bool value) override {
 
 				};
-				virtual const ::linear_algebra::vectord& get_Position() const override {
+				virtual const ::std::valarray<double>& get_Position() const override {
 					return m_pGlyph->get_Position();
 				};
-				virtual const ::linear_algebra::vectord& get_Size() const override {
+				virtual const ::std::valarray<double>& get_Size() const override {
 					return m_pGlyph->get_Size();
 				};
-				virtual const ::linear_algebra::vectord& get_BaseSize() const override {
+				virtual const ::std::valarray<double>& get_BaseSize() const override {
 					return m_pGlyph->get_BaseSize();
 				};
 
-				virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
+				virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
 					m_pGlyph->Redraw(point, vertex);
 				};
-				virtual void Rescale(const ::linear_algebra::vectord& vertex) override {
+				virtual void Rescale(const ::std::valarray<double>& vertex) override {
 					m_pGlyph->Rescale(vertex);
 				};
-				virtual void Move(const ::linear_algebra::vectord& point) override {
+				virtual void Move(const ::std::valarray<double>& point) override {
 					m_pGlyph->Move(point);
 				};
-				virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseLDouble(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseMDown(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseMDown(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseMDouble(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseMDouble(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseRDown(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseRDown(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseRDouble(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseRDouble(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseWheel(const ::linear_algebra::vectord& point, int delta) override {
+				virtual bool MouseWheel(const ::std::valarray<double>& point, int delta) override {
 					return true;
 				};
-				virtual bool MouseMove(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseMove(const ::std::valarray<double>& point) override {
 					return true;
 				};
-				virtual bool MouseLUp(const ::linear_algebra::vectord& point) override {
+				virtual bool MouseLUp(const ::std::valarray<double>& point) override {
 					return true;
 				};
 

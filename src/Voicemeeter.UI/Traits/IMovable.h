@@ -1,6 +1,6 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
+#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -13,7 +13,7 @@ namespace Voicemeeter {
 				IMovable& operator=(const IMovable&) = delete;
 				IMovable& operator=(IMovable&&) = delete;
 
-				virtual void Move(const ::linear_algebra::vectord& point) = 0;
+				virtual void Move(const ::std::valarray<double>& point) = 0;
 
 			protected:
 				IMovable() = default;

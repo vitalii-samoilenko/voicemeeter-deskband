@@ -35,13 +35,13 @@ namespace Voicemeeter {
 					virtual void Update(TGlyph& glyph, const TState& state) const {
 						TGlyphUpdate::Update(glyph, state);
 
-						::linear_algebra::vectord topLeft{ glyph.get_Position() };
-						::linear_algebra::vectord bottomRight{ topLeft + glyph.get_Size() };
+						::std::valarray<double> topLeft{ glyph.get_Position() };
+						::std::valarray<double> bottomRight{ topLeft + glyph.get_Size() };
 						RECT rc{
-							static_cast<LONG>(::std::floor(topLeft.x)),
-							static_cast<LONG>(::std::floor(topLeft.y)),
-							static_cast<LONG>(::std::ceil(bottomRight.x)),
-							static_cast<LONG>(::std::ceil(bottomRight.y)),
+							static_cast<LONG>(::std::floor(topLeft[0])),
+							static_cast<LONG>(::std::floor(topLeft[1])),
+							static_cast<LONG>(::std::ceil(bottomRight[0])),
+							static_cast<LONG>(::std::ceil(bottomRight[1])),
 						};
 
 						::Windows::wInvalidateRect(m_hWnd, &rc, TRUE);

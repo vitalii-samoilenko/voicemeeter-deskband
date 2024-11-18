@@ -2,25 +2,25 @@
 
 using namespace ::Voicemeeter::UI::Graphics::Glyphs;
 
-const ::linear_algebra::vectord& Frame::get_Position() const {
+const ::std::valarray<double>& Frame::get_Position() const {
 	return m_cpGlyph[m_frame]->get_Position();
 }
-const ::linear_algebra::vectord& Frame::get_Size() const {
+const ::std::valarray<double>& Frame::get_Size() const {
 	return m_cpGlyph[m_frame]->get_Size();
 }
-const ::linear_algebra::vectord& Frame::get_BaseSize() const {
+const ::std::valarray<double>& Frame::get_BaseSize() const {
 	return m_cpGlyph[m_frame]->get_BaseSize();
 }
 
-void Frame::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Frame::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	m_cpGlyph[m_frame]->Redraw(point, vertex);
 }
-void Frame::Move(const ::linear_algebra::vectord& point) {
+void Frame::Move(const ::std::valarray<double>& point) {
 	for (const ::std::unique_ptr<IGlyph>& pGlyph : m_cpGlyph) {
 		pGlyph->Move(point);
 	}
 }
-void Frame::Rescale(const ::linear_algebra::vectord& vertex) {
+void Frame::Rescale(const ::std::valarray<double>& vertex) {
 	for (const ::std::unique_ptr<IGlyph>& pGlyph : m_cpGlyph) {
 		pGlyph->Rescale(vertex);
 	}

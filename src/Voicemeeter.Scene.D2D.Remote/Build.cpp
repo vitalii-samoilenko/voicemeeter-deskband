@@ -274,10 +274,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			UI::D2D::Graphics::Glyphs::Plug, int, UI::D2D::Policies::PlugGlyphUpdate>{ *pCanvas }
 	};
 
-	::linear_algebra::vectord left_top{
+	::std::valarray<double> left_top{
 		(direction == UI::Direction::Right
-			? ::linear_algebra::vectord{ 2, 0 }
-			: ::linear_algebra::vectord{ 0, 2 })
+			? ::std::valarray<double>{ 2., 0. }
+			: ::std::valarray<double>{ 0., 2. })
 	};
 
 	for (::Voicemeeter::Remote::Input& input : mixer.get_Inputs()) {
@@ -321,7 +321,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 							UI::D2D::Decorators::Interactivity::Knob<
 								UI::Direction::Right, UI::D2D::Controls::Knob>>>{
 									left_top,
-									::linear_algebra::vectord{ 0, 0 },
+									::std::valarray<double>{ 0., 0. },
 									*pInputTracker,
 									*pInputTracker, *pFocusTracker, compositionTimer,
 									pKnobGlyph,
@@ -333,7 +333,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 							UI::D2D::Decorators::Interactivity::Knob<
 								UI::Direction::Down, UI::D2D::Controls::Knob>>>{
 									left_top,
-									::linear_algebra::vectord{ 0, 0 },
+									::std::valarray<double>{ 0., 0. },
 									*pInputTracker,
 									*pInputTracker, *pFocusTracker, compositionTimer,
 									pKnobGlyph,
@@ -391,8 +391,8 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 						UI::Decorators::RegionCheck<
 							UI::D2D::Decorators::Interactivity::Plug<
 								UI::D2D::Controls::Plug>>>>(
-									::linear_algebra::vectord{ 0, 2 },
-									::linear_algebra::vectord{ 0, 0 },
+									::std::valarray<double>{ 0., 2. },
+									::std::valarray<double>{ 0., 0. },
 									*pInputTracker,
 									*pFocusTracker,
 									pPlugGlyph,
@@ -425,7 +425,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 						UI::Decorators::RegionCheck<
 							UI::Panels::Stack<UI::Direction::Down>>>>(
 								left_top,
-								::linear_algebra::vectord{ 0, 0 },
+								::std::valarray<double>{ 0., 0. },
 								*pInputTracker,
 								cpPlug.begin(),
 								cpPlug.end()
@@ -453,7 +453,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 						UI::D2D::Decorators::Interactivity::Knob<
 							UI::Direction::Right, UI::D2D::Controls::Knob>>>{
 								left_top,
-								::linear_algebra::vectord{ 0, 0 },
+								::std::valarray<double>{ 0., 0. },
 								*pInputTracker,
 								*pInputTracker, *pFocusTracker, compositionTimer,
 								pKnobGlyph,
@@ -465,7 +465,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 						UI::D2D::Decorators::Interactivity::Knob<
 							UI::Direction::Down, UI::D2D::Controls::Knob>>>{
 								left_top,
-								::linear_algebra::vectord{ 0, 0 },
+								::std::valarray<double>{ 0., 0. },
 								*pInputTracker,
 								*pInputTracker, *pFocusTracker, compositionTimer,
 								pKnobGlyph,

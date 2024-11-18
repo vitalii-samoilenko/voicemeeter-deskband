@@ -45,11 +45,11 @@ namespace Voicemeeter {
 					Canvas& operator=(const Canvas&) = delete;
 					Canvas& operator=(Canvas&&) = delete;
 
-					virtual const ::linear_algebra::vectord& get_Position() const override;
-					virtual const ::linear_algebra::vectord& get_Size() const override;
+					virtual const ::std::valarray<double>& get_Position() const override;
+					virtual const ::std::valarray<double>& get_Size() const override;
 
-					virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
-					virtual void Resize(const ::linear_algebra::vectord& vertex) override;
+					virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
+					virtual void Resize(const ::std::valarray<double>& vertex) override;
 
 					inline IDWriteFactory7* get_pDwFactory() const {
 						return m_pDwFactory.Get();
@@ -71,8 +71,8 @@ namespace Voicemeeter {
 					}
 
 				private:
-					::linear_algebra::vectord m_point;
-					::linear_algebra::vectord m_vertex;
+					::std::valarray<double> m_point;
+					::std::valarray<double> m_vertex;
 					::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 					::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 					::Microsoft::WRL::ComPtr<ID2D1DeviceContext5> m_pD2dDeviceContext;

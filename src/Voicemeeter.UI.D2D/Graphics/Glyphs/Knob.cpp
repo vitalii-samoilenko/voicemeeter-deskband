@@ -24,7 +24,7 @@ Knob::Knob(
 
 }
 
-void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	Glyph::Redraw(point, vertex);
 
 	const Palette& palette{ m_canvas.get_Palette() };
@@ -131,7 +131,7 @@ void Knob::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra
 			pFrame,
 			pBrush);
 	D2D1_MATRIX_3X2_F base{};
-	double scale{ get_Size().x / get_BaseSize().x };
+	double scale{ get_Size()[0] / get_BaseSize()[0] };
 	m_canvas.get_pD2dDeviceContext()
 		->GetTransform(&base);
 	m_canvas.get_pD2dDeviceContext()

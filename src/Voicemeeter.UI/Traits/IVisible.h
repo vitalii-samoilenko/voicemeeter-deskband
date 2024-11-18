@@ -1,6 +1,6 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
+#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -13,10 +13,10 @@ namespace Voicemeeter {
 				IVisible& operator=(const IVisible&) = delete;
 				IVisible& operator=(IVisible&&) = delete;
 
-				virtual const ::linear_algebra::vectord& get_Position() const = 0;
-				virtual const ::linear_algebra::vectord& get_Size() const = 0;
+				virtual const ::std::valarray<double>& get_Position() const = 0;
+				virtual const ::std::valarray<double>& get_Size() const = 0;
 
-				virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) = 0;
+				virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) = 0;
 
 			protected:
 				IVisible() = default;

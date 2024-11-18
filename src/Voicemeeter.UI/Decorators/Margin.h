@@ -17,8 +17,8 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				Margin(
-					const ::linear_algebra::vectord& baseMarginTopLeft,
-					const ::linear_algebra::vectord& baseMarginBottomRight,
+					const ::std::valarray<double>& baseMarginTopLeft,
+					const ::std::valarray<double>& baseMarginBottomRight,
 					Args&&... args
 				) : TComponent{ ::std::forward<Args>(args)... }
 				  , m_position{ TComponent::get_Position() }
@@ -39,22 +39,18 @@ namespace Voicemeeter {
 				Margin& operator=(const Margin&) = delete;
 				Margin& operator=(Margin&&) = delete;
 
-				virtual const ::linear_algebra::vectord& get_Position() const override {
+				virtual const ::std::valarray<double>& get_Position() const override {
 					return m_position;
 				};
-				virtual const ::linear_algebra::vectord& get_Size() const override {
+				virtual const ::std::valarray<double>& get_Size() const override {
 					return m_vertex;
 				};
-				virtual const ::linear_algebra::vectord& get_BaseSize() const override {
+				virtual const ::std::valarray<double>& get_BaseSize() const override {
 					return m_baseVertex;
 				};
 
-				virtual void Rescale(const ::linear_algebra::vectord& vertex) override {
-					double scale{
-						::std::min<double>(
-							vertex.x / m_baseVertex.x,
-							vertex.y / m_baseVertex.y)
-					};
+				virtual void Rescale(const ::std::valarray<double>& vertex) override {
+					double scale{ (vertex / m_baseVertex).min() };
 
 					m_marginTopLeft = m_baseMarginTopLeft * scale;
 					m_marginBottomRight = m_baseMarginBottomRight * scale;
@@ -64,20 +60,20 @@ namespace Voicemeeter {
 
 					m_vertex = TComponent::get_Size() + m_marginTopLeft + m_marginBottomRight;
 				};
-				virtual void Move(const ::linear_algebra::vectord& point) override {
+				virtual void Move(const ::std::valarray<double>& point) override {
 					m_position = point;
 
 					TComponent::Move(point + m_marginTopLeft);
 				};
 
 			private:
-				::linear_algebra::vectord m_position;
-				::linear_algebra::vectord m_vertex;
-				::linear_algebra::vectord m_baseVertex;
-				::linear_algebra::vectord m_marginTopLeft;
-				::linear_algebra::vectord m_marginBottomRight;
-				::linear_algebra::vectord m_baseMarginTopLeft;
-				::linear_algebra::vectord m_baseMarginBottomRight;
+				::std::valarray<double> m_position;
+				::std::valarray<double> m_vertex;
+				::std::valarray<double> m_baseVertex;
+				::std::valarray<double> m_marginTopLeft;
+				::std::valarray<double> m_marginBottomRight;
+				::std::valarray<double> m_baseMarginTopLeft;
+				::std::valarray<double> m_baseMarginBottomRight;
 			};
 		}
 	}

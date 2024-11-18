@@ -15,8 +15,8 @@ namespace Voicemeeter {
 			IInputTracker& operator=(const IInputTracker&) = delete;
 			IInputTracker& operator=(IInputTracker&&) = delete;
 
-			virtual const ::linear_algebra::vectord& get_Position() const = 0;
-			virtual void set_Position(const ::linear_algebra::vectord& value) = 0;
+			virtual const ::std::valarray<double>& get_Position() const = 0;
+			virtual void set_Position(const ::std::valarray<double>& value) = 0;
 			virtual bool get_Track(IComponent& component) const = 0;
 			virtual void set_Track(IComponent& component, bool value) = 0;
 

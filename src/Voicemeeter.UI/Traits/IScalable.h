@@ -1,6 +1,6 @@
 #pragma once
 
-#include "estd/linear_algebra.h"
+#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -13,9 +13,9 @@ namespace Voicemeeter {
 				IScalable& operator=(const IScalable&) = delete;
 				IScalable& operator=(IScalable&&) = delete;
 
-				virtual const ::linear_algebra::vectord& get_BaseSize() const = 0;
+				virtual const ::std::valarray<double>& get_BaseSize() const = 0;
 
-				virtual void Rescale(const ::linear_algebra::vectord& vertex) = 0;
+				virtual void Rescale(const ::std::valarray<double>& vertex) = 0;
 
 			protected:
 				IScalable() = default;

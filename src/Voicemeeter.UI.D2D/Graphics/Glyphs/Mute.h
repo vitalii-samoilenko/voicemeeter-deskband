@@ -29,7 +29,7 @@ namespace Voicemeeter {
 						Mute& operator=(const Mute&) = delete;
 						Mute& operator=(Mute&&) = delete;
 
-						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override {
+						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
 							Glyph::Redraw(point, vertex);
 
 							const Palette& palette{ m_canvas.get_Palette() };

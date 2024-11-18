@@ -34,14 +34,14 @@ namespace Voicemeeter {
 					Carousel& operator=(const Carousel&) = delete;
 					Carousel& operator=(Carousel&&) = delete;
 
-					virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 						m_focusTracker.set_Track(component, true);
 
 						TCarousel::SetNext();
 
 						return true;
 					}
-					virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseLDouble(const ::std::valarray<double>& point) override {
 						TCarousel::SetNext();
 
 						return true;

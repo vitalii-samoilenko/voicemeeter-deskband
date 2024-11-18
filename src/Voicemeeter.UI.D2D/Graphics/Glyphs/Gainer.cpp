@@ -15,7 +15,7 @@ Gainer::Gainer(
 
 struct HalfCircle {};
 
-void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Gainer::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	Glyph::Redraw(point, vertex);
 
 	const Palette& palette{ m_canvas.get_Palette() };
@@ -80,7 +80,7 @@ void Gainer::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 			::D2D1::Rect(24.F, 11.F, m_level, 29.F),
 			pBrush);
 	D2D1_MATRIX_3X2_F base{};
-	double scale{ get_Size().x / get_BaseSize().x };
+	double scale{ get_Size()[0] / get_BaseSize()[0] };
 	m_canvas.get_pD2dDeviceContext()
 		->GetTransform(&base);
 	m_canvas.get_pD2dDeviceContext()

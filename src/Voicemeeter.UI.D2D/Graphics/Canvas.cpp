@@ -21,7 +21,7 @@ Canvas::Canvas(
 	HWND hWnd,
 	const Theme& theme,
 	::Environment::ITimer& timer
-) : m_point{ ::linear_algebra::vectord::origin() }
+) : m_point{ 0., 0. }
   , m_vertex{ 8., 8. }
   , m_pDwFactory{ nullptr }
   , m_pD2dFactory{ nullptr }
@@ -101,8 +101,8 @@ Canvas::Canvas(
 	), "Could not get DXGI factory");
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
-		static_cast<UINT>(m_vertex.x),
-		static_cast<UINT>(m_vertex.y),
+		static_cast<UINT>(m_vertex[0]),
+		static_cast<UINT>(m_vertex[1]),
 		DXGI_FORMAT_B8G8R8A8_UNORM,
 		FALSE,
 		DXGI_SAMPLE_DESC{
@@ -158,22 +158,22 @@ Canvas::Canvas(
 	ResetTarget();
 }
 
-const ::linear_algebra::vectord& Canvas::get_Position() const {
+const ::std::valarray<double>& Canvas::get_Position() const {
 	return m_point;
 }
-const ::linear_algebra::vectord& Canvas::get_Size() const {
+const ::std::valarray<double>& Canvas::get_Size() const {
 	return m_vertex;
 }
 
-void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	m_pD2dDeviceContext->SetTransform(::D2D1::IdentityMatrix());
 	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
 	m_pD2dDeviceContext->FillRectangle(
 		::D2D1::RectF(
-			static_cast<FLOAT>(::std::floor(point.x)),
-			static_cast<FLOAT>(::std::floor(point.y)),
-			static_cast<FLOAT>(::std::ceil(point.x + vertex.x)),
-			static_cast<FLOAT>(::std::ceil(point.y + vertex.y))
+			static_cast<FLOAT>(::std::floor(point[0])),
+			static_cast<FLOAT>(::std::floor(point[1])),
+			static_cast<FLOAT>(::std::ceil(point[0] + vertex[0])),
+			static_cast<FLOAT>(::std::ceil(point[1] + vertex[1]))
 		),
 		m_pPalette->get_pBrush(
 			m_pPalette->get_Theme()
@@ -182,13 +182,13 @@ void Canvas::Redraw(const ::linear_algebra::vectord& point, const ::linear_algeb
 	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 }
 
-void Canvas::Resize(const ::linear_algebra::vectord& vertex) {
+void Canvas::Resize(const ::std::valarray<double>& vertex) {
 	m_pD2dDeviceContext->SetTarget(nullptr);
 
 	::Windows::ThrowIfFailed(m_pDxgiSwapChain->ResizeBuffers(
 		0U,
-		static_cast<UINT>(::std::ceil(vertex.x)),
-		static_cast<UINT>(::std::ceil(vertex.y)),
+		static_cast<UINT>(::std::ceil(vertex[0])),
+		static_cast<UINT>(::std::ceil(vertex[1])),
 		DXGI_FORMAT_UNKNOWN,
 		0U
 	), "Swap chain resize failed");

@@ -23,14 +23,14 @@ Queue::Queue(
 				->BeginDraw();
 
 			for (IGlyph* pGlyph : m_cpGlyph) {
-				const ::linear_algebra::vectord& point{ pGlyph->get_Position() };
-				const ::linear_algebra::vectord& vertex{ pGlyph->get_Size() };
+				const ::std::valarray<double>& point{ pGlyph->get_Position() };
+				const ::std::valarray<double>& vertex{ pGlyph->get_Size() };
 
 				cRect.push_back({
-					static_cast<LONG>(::std::floor(point.x)),
-					static_cast<LONG>(::std::floor(point.y)),
-					static_cast<LONG>(::std::ceil(point.x + vertex.x)),
-					static_cast<LONG>(::std::ceil(point.y + vertex.y))
+					static_cast<LONG>(::std::floor(point[0])),
+					static_cast<LONG>(::std::floor(point[1])),
+					static_cast<LONG>(::std::ceil(point[0] + vertex[0])),
+					static_cast<LONG>(::std::ceil(point[1] + vertex[1]))
 				} );
 
 				m_canvas.Redraw(point, vertex);

@@ -20,8 +20,8 @@ namespace Voicemeeter {
 				Scene& operator=(const Scene&) = delete;
 				Scene& operator=(Scene&&) = delete;
 
-				void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
-				void Resize(const ::linear_algebra::vectord& vertex) override;
+				void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
+				void Resize(const ::std::valarray<double>& vertex) override;
 			};
 		}
 	}

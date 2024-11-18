@@ -34,14 +34,14 @@ namespace Voicemeeter {
 					Checkbox& operator=(const Checkbox&) = delete;
 					Checkbox& operator=(Checkbox&&) = delete;
 
-					virtual bool MouseLDown(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 						m_focusTracker.set_Track(*this, true);
 
 						TCheckbox::SetNext();
 
 						return true;
 					}
-					virtual bool MouseLDouble(const ::linear_algebra::vectord& point) override {
+					virtual bool MouseLDouble(const ::std::valarray<double>& point) override {
 						TCheckbox::SetNext();
 
 						return true;

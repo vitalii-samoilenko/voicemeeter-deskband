@@ -21,26 +21,26 @@ namespace Voicemeeter {
 					Glyph& operator=(const Glyph&) = delete;
 					Glyph& operator=(Glyph&&) = delete;
 
-					virtual const ::linear_algebra::vectord& get_Position() const override final;
-					virtual const ::linear_algebra::vectord& get_Size() const override final;
-					virtual const ::linear_algebra::vectord& get_BaseSize() const override final;
+					virtual const ::std::valarray<double>& get_Position() const override final;
+					virtual const ::std::valarray<double>& get_Size() const override final;
+					virtual const ::std::valarray<double>& get_BaseSize() const override final;
 
-					virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
-					virtual void Move(const ::linear_algebra::vectord& point) override final;
-					virtual void Rescale(const ::linear_algebra::vectord& vertex) override final;
+					virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
+					virtual void Move(const ::std::valarray<double>& point) override final;
+					virtual void Rescale(const ::std::valarray<double>& vertex) override final;
 
 				protected:
 					Canvas& m_canvas;
 
 					Glyph(
 						Canvas& canvas,
-						const ::linear_algebra::vectord& baseVertex
+						const ::std::valarray<double>& baseVertex
 					);
 
 				private:
-					::linear_algebra::vectord m_point;
-					::linear_algebra::vectord m_vertex;
-					::linear_algebra::vectord m_baseVertex;
+					::std::valarray<double> m_point;
+					::std::valarray<double> m_vertex;
+					::std::valarray<double> m_baseVertex;
 				};
 			}
 		}

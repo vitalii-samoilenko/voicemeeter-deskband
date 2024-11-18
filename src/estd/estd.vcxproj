@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="memory.h" />
-    <ClInclude Include="linear_algebra.h" />
     <ClInclude Include="type_traits.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

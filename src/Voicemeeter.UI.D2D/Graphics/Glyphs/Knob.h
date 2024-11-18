@@ -39,7 +39,7 @@ namespace Voicemeeter {
 							m_pinned = value;
 						};
 
-						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
+						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 
 					private:
 						::std::wstring m_label;

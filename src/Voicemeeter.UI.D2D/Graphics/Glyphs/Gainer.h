@@ -22,7 +22,7 @@ namespace Voicemeeter {
 						Gainer& operator=(const Gainer&) = delete;
 						Gainer& operator=(Gainer&&) = delete;
 
-						virtual void Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) override;
+						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 
 						inline void set_Level(FLOAT level) {
 							m_level = level;

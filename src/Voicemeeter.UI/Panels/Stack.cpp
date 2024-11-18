@@ -7,110 +7,102 @@ using namespace ::Voicemeeter::UI;
 using namespace ::Voicemeeter::UI::Panels;
 
 template<>
-void Stack<Direction::Right>::Rescale(const ::linear_algebra::vectord& vertex) {
-	double scale{
-		::std::min<double>(
-			vertex.x / m_baseVertex.x,
-			vertex.y / m_baseVertex.y)
-	};
+void Stack<Direction::Right>::Rescale(const ::std::valarray<double>& vertex) {
+	double scale{ (vertex / m_baseVertex).min() };
 
-	::linear_algebra::vectord actualVertex{
-		0,
-		m_baseVertex.y * scale
+	::std::valarray<double> actualVertex{
+		0.,
+		m_baseVertex[1] * scale
 	};
-	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
+	::std::valarray<double> componentPoint{ m_cpComponent.front()->get_Position() };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
-		const ::linear_algebra::vectord& componentBaseVertex{ pComponent->get_BaseSize() };
+		const ::std::valarray<double>& componentBaseVertex{ pComponent->get_BaseSize() };
 
 		pComponent->Move(componentPoint);
-		pComponent->Rescale(componentBaseVertex * (scale * m_baseVertex.y / componentBaseVertex.y));
+		pComponent->Rescale(componentBaseVertex * (scale * m_baseVertex[1] / componentBaseVertex[1]));
 
-		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
+		const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
 
-		componentPoint.x += componentVertex.x;
-		actualVertex.x += componentVertex.x;
+		componentPoint[0] += componentVertex[0];
+		actualVertex[0] += componentVertex[0];
 	}
 
 	m_vertex = actualVertex;
 }
 template<>
-void Stack<Direction::Down>::Rescale(const ::linear_algebra::vectord& vertex) {
-	double scale{
-		::std::min<double>(
-			vertex.x / m_baseVertex.x,
-			vertex.y / m_baseVertex.y)
-	};
+void Stack<Direction::Down>::Rescale(const ::std::valarray<double>& vertex) {
+	double scale{ (vertex / m_baseVertex).min() };
 
-	::linear_algebra::vectord actualVertex{
-		m_baseVertex.x * scale,
-		0
+	::std::valarray<double> actualVertex{
+		m_baseVertex[0] * scale,
+		0.
 	};
-	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
+	::std::valarray<double> componentPoint{ m_cpComponent.front()->get_Position() };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
-		const ::linear_algebra::vectord& componentBaseVertex{ pComponent->get_BaseSize() };
+		const ::std::valarray<double>& componentBaseVertex{ pComponent->get_BaseSize() };
 
 		pComponent->Move(componentPoint);
-		pComponent->Rescale(componentBaseVertex * (scale * m_baseVertex.x / componentBaseVertex.x));
+		pComponent->Rescale(componentBaseVertex * (scale * m_baseVertex[0] / componentBaseVertex[0]));
 
-		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
+		const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
 
-		componentPoint.y += componentVertex.y;
-		actualVertex.y += componentVertex.y;
+		componentPoint[1] += componentVertex[1];
+		actualVertex[1] += componentVertex[1];
 	}
 
 	m_vertex = actualVertex;
 }
 template<>
-void Stack<Direction::Right>::Move(const ::linear_algebra::vectord& point) {
-	::linear_algebra::vectord componentPoint{ point };
+void Stack<Direction::Right>::Move(const ::std::valarray<double>& point) {
+	::std::valarray<double> componentPoint{ point };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(componentPoint);
 
-		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
+		const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
 
-		componentPoint.x += componentVertex.x;
+		componentPoint[0] += componentVertex[0];
 	}
 }
 template<>
-void Stack<Direction::Down>::Move(const ::linear_algebra::vectord& point) {
-	::linear_algebra::vectord componentPoint{ point };
+void Stack<Direction::Down>::Move(const ::std::valarray<double>& point) {
+	::std::valarray<double> componentPoint{ point };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(componentPoint);
 
-		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
+		const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
 
-		componentPoint.y += componentVertex.y;
+		componentPoint[1] += componentVertex[1];
 	}
 }
 
 template<>
 void Stack<Direction::Right>::Arrange() {
-	::linear_algebra::vectord virtualVertex{
+	::std::valarray<double> virtualVertex{
 		::std::numeric_limits<double>::max(),
-		0
+		0.
 	};
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
-		virtualVertex.y = ::std::max<double>(virtualVertex.y, pComponent->get_BaseSize().y);
+		virtualVertex[1] = ::std::max<double>(virtualVertex[1], pComponent->get_BaseSize()[1]);
 	}
 
-	::linear_algebra::vectord actualVertex{
-		0,
-		virtualVertex.y
+	::std::valarray<double> actualVertex{
+		0.,
+		virtualVertex[1]
 	};
-	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
+	::std::valarray<double> componentPoint{ m_cpComponent.front()->get_Position() };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(componentPoint);
 		pComponent->Rescale(virtualVertex);
 
-		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
+		const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
 
-		componentPoint.x += componentVertex.x;
-		actualVertex.x += componentVertex.x;
+		componentPoint[0] += componentVertex[0];
+		actualVertex[0] += componentVertex[0];
 	}
 
 	m_baseVertex = actualVertex;
@@ -118,28 +110,28 @@ void Stack<Direction::Right>::Arrange() {
 }
 template<>
 void Stack<Direction::Down>::Arrange() {
-	::linear_algebra::vectord virtualVertex{
-		0,
+	::std::valarray<double> virtualVertex{
+		0.,
 		::std::numeric_limits<double>::max()
 	};
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
-		virtualVertex.x = ::std::max<double>(virtualVertex.x, pComponent->get_BaseSize().x);
+		virtualVertex[0] = ::std::max<double>(virtualVertex[0], pComponent->get_BaseSize()[0]);
 	}
 
-	::linear_algebra::vectord actualVertex{
-		virtualVertex.x,
-		0
+	::std::valarray<double> actualVertex{
+		virtualVertex[0],
+		0.
 	};
-	::linear_algebra::vectord componentPoint{ m_cpComponent.front()->get_Position() };
+	::std::valarray<double> componentPoint{ m_cpComponent.front()->get_Position() };
 
 	for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 		pComponent->Move(componentPoint);
 		pComponent->Rescale(virtualVertex);
 
-		const ::linear_algebra::vectord& componentVertex{ pComponent->get_Size() };
+		const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
 
-		componentPoint.y += componentVertex.y;
-		actualVertex.y += componentVertex.y;
+		componentPoint[1] += componentVertex[1];
+		actualVertex[1] += componentVertex[1];
 	}
 
 	m_baseVertex = actualVertex;

@@ -21,8 +21,5 @@
     <ClInclude Include="type_traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="linear_algebra.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

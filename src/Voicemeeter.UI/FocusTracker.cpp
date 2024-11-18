@@ -33,30 +33,30 @@ void FocusTracker::set_Track(IComponent& component, bool value) {
 		m_pTracked = nullptr;
 	}
 }
-bool FocusTracker::MouseLDown(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseLDown(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseLDouble(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseLDouble(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseMDown(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseMDown(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseMDouble(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseMDouble(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseRDown(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseRDown(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseRDouble(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseRDouble(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseWheel(const ::linear_algebra::vectord& point, int delta) {
+bool FocusTracker::MouseWheel(const ::std::valarray<double>& point, int delta) {
 	return false;
 }
-bool FocusTracker::MouseMove(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseMove(const ::std::valarray<double>& point) {
 	return false;
 }
-bool FocusTracker::MouseLUp(const ::linear_algebra::vectord& point) {
+bool FocusTracker::MouseLUp(const ::std::valarray<double>& point) {
 	return false;
 }

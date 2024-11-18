@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include <d2d1_3.h>
 
 #include "Glyph.h"
@@ -10,43 +8,39 @@ using namespace ::Voicemeeter::UI::D2D::Graphics;
 
 Glyph::Glyph(
 	Canvas& canvas,
-	const ::linear_algebra::vectord& baseVertex
+	const ::std::valarray<double>& baseVertex
 ) : m_canvas{ canvas }
-  , m_point{}
+  , m_point{ 0., 0. }
   , m_vertex{ baseVertex }
   , m_baseVertex{ baseVertex } {
 
 }
 
-const ::linear_algebra::vectord& Glyph::get_Position() const {
+const ::std::valarray<double>& Glyph::get_Position() const {
 	return m_point;
 }
-const ::linear_algebra::vectord& Glyph::get_Size() const {
+const ::std::valarray<double>& Glyph::get_Size() const {
 	return m_vertex;
 }
-const ::linear_algebra::vectord& Glyph::get_BaseSize() const {
+const ::std::valarray<double>& Glyph::get_BaseSize() const {
 	return m_baseVertex;
 }
 
-void Glyph::Redraw(const ::linear_algebra::vectord& point, const ::linear_algebra::vectord& vertex) {
+void Glyph::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Scale(
-				static_cast<FLOAT>(m_vertex.x / m_baseVertex.x),
-				static_cast<FLOAT>(m_vertex.y / m_baseVertex.y))
+				static_cast<FLOAT>(m_vertex[0] / m_baseVertex[0]),
+				static_cast<FLOAT>(m_vertex[1] / m_baseVertex[1]))
 			* ::D2D1::Matrix3x2F::Translation(
-				static_cast<FLOAT>(m_point.x),
-				static_cast<FLOAT>(m_point.y)));
+				static_cast<FLOAT>(m_point[0]),
+				static_cast<FLOAT>(m_point[1])));
 }
-void Glyph::Move(const ::linear_algebra::vectord& point) {
+void Glyph::Move(const ::std::valarray<double>& point) {
 	m_point = point;
 }
-void Glyph::Rescale(const ::linear_algebra::vectord& vertex) {
-	double scale{
-		::std::min<double>(
-			vertex.x / m_baseVertex.x,
-			vertex.y / m_baseVertex.y)
-	};
+void Glyph::Rescale(const ::std::valarray<double>& vertex) {
+	double scale{ (vertex / m_baseVertex).min() };
 
 	m_vertex = m_baseVertex * scale;
 }
