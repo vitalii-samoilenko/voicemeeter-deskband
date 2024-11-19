@@ -205,26 +205,26 @@
     <ClInclude Include="Decorators\Margin.h" />
     <ClInclude Include="Decorators\RegionCheck.h" />
     <ClInclude Include="Direction.h" />
-    <ClInclude Include="FocusTracker.h" />
     <ClInclude Include="Graphics\ICanvas.h" />
     <ClInclude Include="Graphics\IGlyph.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="IControl.h" />
-    <ClInclude Include="IFocusTracker.h" />
-    <ClInclude Include="IInputTracker.h" />
-    <ClInclude Include="InputTracker.h" />
     <ClInclude Include="IPanel.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="Panels\Stack.h" />
-    <ClInclude Include="Policies\CheckboxStateChange.h" />
-    <ClInclude Include="Policies\CircularStateChange.h" />
-    <ClInclude Include="Policies\IGlyphUpdate.h" />
-    <ClInclude Include="Policies\IStateChange.h" />
-    <ClInclude Include="Policies\IStatePromotion.h" />
-    <ClInclude Include="Policies\KnobStateChange.h" />
-    <ClInclude Include="Policies\RangeStateChange.h" />
+    <ClInclude Include="Policies\Glyph\IUpdate.h" />
+    <ClInclude Include="Policies\State\Changes\Checkbox.h" />
+    <ClInclude Include="Policies\State\Changes\Circular.h" />
+    <ClInclude Include="Policies\State\Changes\Knob.h" />
+    <ClInclude Include="Policies\State\Changes\Range.h" />
+    <ClInclude Include="Policies\State\IChange.h" />
+    <ClInclude Include="Policies\State\IPromotion.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="States\Knob.h" />
+    <ClInclude Include="Trackers\Focus.h" />
+    <ClInclude Include="Trackers\IFocus.h" />
+    <ClInclude Include="Trackers\IInput.h" />
+    <ClInclude Include="Trackers\Input.h" />
     <ClInclude Include="Traits\IInteractive.h" />
     <ClInclude Include="Traits\IMovable.h" />
     <ClInclude Include="Traits\IResizable.h" />
@@ -233,9 +233,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
-    <ClCompile Include="FocusTracker.cpp" />
-    <ClCompile Include="InputTracker.cpp" />
     <ClCompile Include="Panels\Stack.cpp" />
+    <ClCompile Include="Trackers\Focus.cpp" />
+    <ClCompile Include="Trackers\Input.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -40,6 +40,30 @@
     <Filter Include="Header Files\Decorators\Interactivity">
       <UniqueIdentifier>{2bc317fc-2279-4740-86fb-bb6c4b21d2a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Adapters">
+      <UniqueIdentifier>{e7d7ceb8-1bec-4119-93b9-de3f0fc89613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\State">
+      <UniqueIdentifier>{d88f7660-1754-453e-ae57-c5ca7d21b3ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\Glyph">
+      <UniqueIdentifier>{3c0a6ac1-7a60-4476-a5a4-885c9c4046f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Adapters\Glyph">
+      <UniqueIdentifier>{4d2283ff-85ca-4ce3-9844-6cb48b3e52f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\Glyph\Updates">
+      <UniqueIdentifier>{cb05238e-6c01-4ca7-b751-ebcff6ecc8d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\State\Changes">
+      <UniqueIdentifier>{e99011e5-b5a2-4771-9d7c-d096dfefab9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Policies\State">
+      <UniqueIdentifier>{877023c5-a3d6-4696-a4d4-a8287cf3a733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Policies\State\Changes">
+      <UniqueIdentifier>{428781c5-f5dd-4159-be92-6be9f039aa5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Canvas.h">
@@ -63,18 +87,6 @@
     <ClInclude Include="Graphics\Glyphs\Knob.h">
       <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\KnobStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\KnobGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\PlugGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\VbanGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Controls\Knob.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
@@ -93,6 +105,24 @@
     <ClInclude Include="Decorators\Interactivity\Vban.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
+    <ClInclude Include="Adapters\Glyph\IUpdate.h">
+      <Filter>Header Files\Adapters\Glyph</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Knob.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Plug.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Vban.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Passthrough.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\State\Changes\Knob.h">
+      <Filter>Header Files\Policies\State\Changes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -110,26 +140,17 @@
     <ClCompile Include="Graphics\Glyphs\Knob.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
-    <ClCompile Include="Policies\KnobGlyphUpdate.cpp">
-      <Filter>Source Files\Policies</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Plug.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Vban.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
-    <ClCompile Include="Policies\PlugGlyphUpdate.cpp">
-      <Filter>Source Files\Policies</Filter>
-    </ClCompile>
-    <ClCompile Include="Policies\VbanGlyphUpdate.cpp">
-      <Filter>Source Files\Policies</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\Queue.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Policies\KnobStateChange.cpp">
-      <Filter>Source Files\Policies</Filter>
+    <ClCompile Include="Policies\State\Changes\Knob.cpp">
+      <Filter>Source Files\Policies\State\Changes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

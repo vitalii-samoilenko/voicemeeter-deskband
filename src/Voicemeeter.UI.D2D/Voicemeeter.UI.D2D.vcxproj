@@ -202,6 +202,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Adapters\Glyph\IUpdate.h" />
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Plug.h" />
     <ClInclude Include="Controls\Vban.h" />
@@ -214,10 +215,11 @@
     <ClInclude Include="Graphics\Glyphs\Plug.h" />
     <ClInclude Include="Graphics\Glyphs\Vban.h" />
     <ClInclude Include="Graphics\Theme.h" />
-    <ClInclude Include="Policies\KnobGlyphUpdate.h" />
-    <ClInclude Include="Policies\KnobStateChange.h" />
-    <ClInclude Include="Policies\PlugGlyphUpdate.h" />
-    <ClInclude Include="Policies\VbanGlyphUpdate.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Passthrough.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Knob.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Plug.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Vban.h" />
+    <ClInclude Include="Policies\State\Changes\Knob.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
@@ -228,10 +230,7 @@
     <ClCompile Include="Graphics\Glyphs\Vban.cpp" />
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Graphics\Queue.cpp" />
-    <ClCompile Include="Policies\KnobGlyphUpdate.cpp" />
-    <ClCompile Include="Policies\KnobStateChange.cpp" />
-    <ClCompile Include="Policies\PlugGlyphUpdate.cpp" />
-    <ClCompile Include="Policies\VbanGlyphUpdate.cpp" />
+    <ClCompile Include="Policies\State\Changes\Knob.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

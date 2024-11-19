@@ -14,9 +14,8 @@ namespace Voicemeeter {
 				namespace Glyphs {
 					class Plug : public Glyph {
 					public:
-						Plug(
-							Graphics::Canvas& canvas,
-							const ::std::wstring& label
+						explicit Plug(
+							Graphics::Canvas& canvas
 						);
 						Plug() = delete;
 						Plug(const Plug&) = delete;
@@ -27,6 +26,9 @@ namespace Voicemeeter {
 						Plug& operator=(const Plug&) = delete;
 						Plug& operator=(Plug&&) = delete;
 
+						inline void set_Label(const ::std::string& value) {
+							m_label = value;
+						}
 						inline void set_Color(const ::D2D1::ColorF& value) {
 							m_color = value;
 						};
@@ -34,7 +36,7 @@ namespace Voicemeeter {
 						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 
 					private:
-						const ::std::wstring m_label;
+						::std::wstring m_label;
 						::D2D1::ColorF m_color;
 					};
 				}

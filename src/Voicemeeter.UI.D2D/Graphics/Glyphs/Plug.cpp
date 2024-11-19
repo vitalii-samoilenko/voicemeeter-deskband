@@ -10,10 +10,9 @@
 using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
 
 Plug::Plug(
-	Graphics::Canvas& canvas,
-	const ::std::wstring& label
+	Graphics::Canvas& canvas
 ) : Glyph{ canvas, { 41., 19. } }
-  , m_label{ label }
+  , m_label{}
   , m_color{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) } {
 
 }

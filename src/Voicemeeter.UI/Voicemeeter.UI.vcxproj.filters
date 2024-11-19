@@ -40,6 +40,21 @@
     <Filter Include="Header Files\Decorators\Interactivity">
       <UniqueIdentifier>{75c08ab8-cc71-49d5-881e-e09e0771a70f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Policies\State">
+      <UniqueIdentifier>{f4a347e3-f5b9-4dfa-a4c6-aee661c59b2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\Glyph">
+      <UniqueIdentifier>{5eea46f1-6fb1-4feb-b6c3-fe633fd89248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\State\Changes">
+      <UniqueIdentifier>{74268c3d-e421-43ad-b2cc-1e3f719ccd30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Trackers">
+      <UniqueIdentifier>{9b687cc8-c8be-4791-8cbe-9ff9dbf6187a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Trackers">
+      <UniqueIdentifier>{d5fdf7af-00b5-4a29-a4a6-228ec8c93068}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\ICanvas.h">
@@ -75,26 +90,11 @@
     <ClInclude Include="IControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IInputTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\IStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\CircularStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\RangeStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Panels\Stack.h">
       <Filter>Header Files\Panels</Filter>
-    </ClInclude>
-    <ClInclude Include="InputTracker.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Decorators\Margin.h">
       <Filter>Header Files\Decorators</Filter>
@@ -102,23 +102,11 @@
     <ClInclude Include="Decorators\RegionCheck.h">
       <Filter>Header Files\Decorators</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\CheckboxStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
     <ClInclude Include="Controls\Knob.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="States\Knob.h">
       <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\KnobStateChange.h">
-      <Filter>Header Files\Policies</Filter>
-    </ClInclude>
-    <ClInclude Include="IFocusTracker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FocusTracker.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Controls\Checkbox.h">
       <Filter>Header Files\Controls</Filter>
@@ -132,11 +120,38 @@
     <ClInclude Include="Decorators\Interactivity\Knob.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IGlyphUpdate.h">
-      <Filter>Header Files\Policies</Filter>
+    <ClInclude Include="Policies\State\IChange.h">
+      <Filter>Header Files\Policies\State</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\IStatePromotion.h">
-      <Filter>Header Files\Policies</Filter>
+    <ClInclude Include="Policies\Glyph\IUpdate.h">
+      <Filter>Header Files\Policies\Glyph</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\State\IPromotion.h">
+      <Filter>Header Files\Policies\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\State\Changes\Checkbox.h">
+      <Filter>Header Files\Policies\State\Changes</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\State\Changes\Circular.h">
+      <Filter>Header Files\Policies\State\Changes</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\State\Changes\Knob.h">
+      <Filter>Header Files\Policies\State\Changes</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\State\Changes\Range.h">
+      <Filter>Header Files\Policies\State\Changes</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackers\Focus.h">
+      <Filter>Header Files\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackers\IFocus.h">
+      <Filter>Header Files\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackers\IInput.h">
+      <Filter>Header Files\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackers\Input.h">
+      <Filter>Header Files\Trackers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,11 +161,11 @@
     <ClCompile Include="Controls\State.h">
       <Filter>Header Files\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="InputTracker.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Trackers\Focus.cpp">
+      <Filter>Source Files\Trackers</Filter>
     </ClCompile>
-    <ClCompile Include="FocusTracker.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Trackers\Input.cpp">
+      <Filter>Source Files\Trackers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

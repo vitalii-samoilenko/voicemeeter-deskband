@@ -2,15 +2,15 @@
 #include <limits>
 #include <utility>
 
-#include "KnobStateChange.h"
+#include "Knob.h"
 
-using namespace ::Voicemeeter::UI::D2D::Policies;
+using namespace ::Voicemeeter::UI::D2D::Policies::State::Changes;
 
 static constexpr int MIN{ -13500 };
 static constexpr int MAX{ 13500 };
 static int BREAKPOINTS[]{ 700, 10000, 5 };
 
-bool ::Voicemeeter::UI::D2D::Policies::KnobStateChange::Set(States::Knob& dst, States::Knob& src) const {
+bool Knob::Set(States::Knob& dst, States::Knob& src) const {
 	bool result{ false };
 
 	if (dst.gain != src.gain) {
