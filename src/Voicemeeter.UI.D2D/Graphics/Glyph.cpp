@@ -7,7 +7,7 @@
 using namespace ::Voicemeeter::UI::D2D::Graphics;
 
 Glyph::Glyph(
-	Canvas& canvas,
+	const Canvas& canvas,
 	const ::std::valarray<double>& baseVertex
 ) : m_canvas{ canvas }
   , m_point{ 0., 0. }

@@ -203,6 +203,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Adapters\Glyph\IUpdate.h" />
+    <ClInclude Include="Adapters\Glyph\Updates\Static\Knob.h" />
+    <ClInclude Include="Adapters\Glyph\Updates\Static\Plug.h" />
+    <ClInclude Include="Adapters\Glyph\Updates\Static\Vban.h" />
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Plug.h" />
     <ClInclude Include="Controls\Vban.h" />
@@ -223,14 +226,45 @@
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Adapters\Glyph\Updates\Static\Knob.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Static\Plug.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Static\Vban.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Adapters\Glyph\Updates\Static\</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="Graphics\Canvas.cpp" />
     <ClCompile Include="Graphics\Glyph.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Knob.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Plug.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Vban.cpp" />
+    <ClCompile Include="Graphics\Glyphs\Knob.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Graphics\Glyphs\Plug.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Graphics\Glyphs\Vban.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Graphics\Queue.cpp" />
-    <ClCompile Include="Policies\State\Changes\Knob.cpp" />
+    <ClCompile Include="Policies\State\Changes\Knob.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Policies\State\Changes\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Policies\State\Changes\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Policies\State\Changes\</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

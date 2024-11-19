@@ -6,13 +6,13 @@
 
 #include "Graphics/ICanvas.h"
 #include "IComponent.h"
-#include "IFocusTracker.h"
-#include "IInputTracker.h"
 #include "IScene.h"
+#include "Trackers/IFocus.h"
+#include "Trackers/IInput.h"
 
 namespace Voicemeeter {
 	namespace UI {
-		template<class TCanvas>
+		template<typename TCanvas>
 		class Scene : public IScene {
 			static_assert(
 				::std::is_base_of_v<Graphics::ICanvas, TCanvas>,
@@ -20,8 +20,8 @@ namespace Voicemeeter {
 
 		public:
 			Scene(
-				::std::unique_ptr<IInputTracker>& inputTracker,
-				::std::unique_ptr<IFocusTracker>& focusTracker,
+				::std::unique_ptr<Trackers::IInput>& inputTracker,
+				::std::unique_ptr<Trackers::IFocus>& focusTracker,
 				::std::unique_ptr<TCanvas>& pCanvas,
 				::std::unique_ptr<IComponent>& pComposition
 			) : m_inputTracker{ ::std::move(inputTracker) }
@@ -108,8 +108,8 @@ namespace Voicemeeter {
 			::std::unique_ptr<TCanvas> m_pCanvas;
 
 		private:
-			::std::unique_ptr<IInputTracker> m_inputTracker;
-			::std::unique_ptr<IFocusTracker> m_focusTracker;
+			::std::unique_ptr<Trackers::IInput> m_inputTracker;
+			::std::unique_ptr<Trackers::IFocus> m_focusTracker;
 			::std::unique_ptr<IComponent> m_pComposition;
 		};
 	}

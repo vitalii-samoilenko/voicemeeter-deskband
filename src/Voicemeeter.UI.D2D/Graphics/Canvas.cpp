@@ -175,9 +175,18 @@ void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<
 			static_cast<FLOAT>(::std::ceil(point[0] + vertex[0])),
 			static_cast<FLOAT>(::std::ceil(point[1] + vertex[1]))
 		),
-		m_pPalette->get_pBrush(
-			m_pPalette->get_Theme()
-				.Background)
+		m_pPalette->get_pBrush(typeid(Canvas),
+			[this](ID2D1Brush** ppBrush)->void {
+				ID2D1SolidColorBrush* pBrush{ nullptr };
+				::Windows::ThrowIfFailed(m_pD2dDeviceContext
+					->CreateSolidColorBrush(
+						m_pPalette
+							->get_Theme()
+								.Background,
+						&pBrush
+				), "Brush creation failed");
+				*ppBrush = pBrush;
+			})
 	);
 	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 }

@@ -18,8 +18,8 @@ namespace Voicemeeter {
 
 					public:
 						IUpdate() = delete;
-						IUpdate(const Update&) = delete;
-						IUpdate(Update&&) = delete;
+						IUpdate(const IUpdate&) = delete;
+						IUpdate(IUpdate&&) = delete;
 
 						IUpdate& operator=(const IUpdate&) = delete;
 						IUpdate& operator=(IUpdate&&) = delete;

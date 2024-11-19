@@ -30,14 +30,17 @@ namespace Voicemeeter {
 					virtual void Rescale(const ::std::valarray<double>& vertex) override final;
 
 				protected:
-					Canvas& m_canvas;
-
 					Glyph(
-						Canvas& canvas,
+						const Canvas& canvas,
 						const ::std::valarray<double>& baseVertex
 					);
 
+					inline const Canvas& get_Canvas() const {
+						return m_canvas;
+					}
+
 				private:
+					const Canvas& m_canvas;
 					::std::valarray<double> m_point;
 					::std::valarray<double> m_vertex;
 					::std::valarray<double> m_baseVertex;

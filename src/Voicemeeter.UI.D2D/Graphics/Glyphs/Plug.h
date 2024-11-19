@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					class Plug : public Glyph {
 					public:
 						explicit Plug(
-							Graphics::Canvas& canvas
+							const Graphics::Canvas& canvas
 						);
 						Plug() = delete;
 						Plug(const Plug&) = delete;
@@ -26,7 +26,7 @@ namespace Voicemeeter {
 						Plug& operator=(const Plug&) = delete;
 						Plug& operator=(Plug&&) = delete;
 
-						inline void set_Label(const ::std::string& value) {
+						inline void set_Label(const ::std::wstring& value) {
 							m_label = value;
 						}
 						inline void set_Color(const ::D2D1::ColorF& value) {

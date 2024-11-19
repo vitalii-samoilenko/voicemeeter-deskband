@@ -64,6 +64,24 @@
     <Filter Include="Source Files\Policies\State\Changes">
       <UniqueIdentifier>{428781c5-f5dd-4159-be92-6be9f039aa5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Adapters\Glyph\Updates">
+      <UniqueIdentifier>{4f6abca1-2d81-4983-9fad-8ba7891ffa18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Adapters\Glyph\Updates\Static">
+      <UniqueIdentifier>{40a90445-3735-4c4a-85a7-e0c60bcaec94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Adapters">
+      <UniqueIdentifier>{a25ff58c-bb08-43b8-a19c-bd0901ffef32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Adapters\Glyph">
+      <UniqueIdentifier>{07ef7907-6962-44e7-8e13-44e48c11d832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Adapters\Glyph\Updates">
+      <UniqueIdentifier>{1a861e71-cbe8-4924-ba32-778388a81ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Adapters\Glyph\Updates\Static">
+      <UniqueIdentifier>{8e19fd13-7f3e-4ebb-a608-1f367de62a03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Canvas.h">
@@ -123,6 +141,15 @@
     <ClInclude Include="Policies\State\Changes\Knob.h">
       <Filter>Header Files\Policies\State\Changes</Filter>
     </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Static\Plug.h">
+      <Filter>Header Files\Adapters\Glyph\Updates\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Static\Vban.h">
+      <Filter>Header Files\Adapters\Glyph\Updates\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Static\Knob.h">
+      <Filter>Header Files\Adapters\Glyph\Updates\Static</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -151,6 +178,15 @@
     </ClCompile>
     <ClCompile Include="Policies\State\Changes\Knob.cpp">
       <Filter>Source Files\Policies\State\Changes</Filter>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Static\Plug.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates\Static</Filter>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Static\Vban.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates\Static</Filter>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Static\Knob.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates\Static</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

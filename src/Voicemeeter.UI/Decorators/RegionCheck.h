@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "../IComponent.h"
-#include "../IInputTracker.h"
+#include "../Trackers/IInput.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -18,7 +18,7 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				RegionCheck(
-					IInputTracker& inputTracker,
+					Trackers::IInput& inputTracker,
 					Args&&... args
 				) : TComponent{ ::std::forward<Args>(args)... }
 				  , m_inputTracker{ inputTracker } {
@@ -81,7 +81,7 @@ namespace Voicemeeter {
 				};
 
 			private:
-				IInputTracker& m_inputTracker;
+				Trackers::IInput& m_inputTracker;
 
 				static inline bool is_inside(
 					const ::std::valarray<double>& point,

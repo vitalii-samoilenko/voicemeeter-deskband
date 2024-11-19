@@ -3,9 +3,9 @@
 #include <memory>
 #include <utility>
 
-#include "../Policies/IStateChange.h"
-#include "../Policies/IStatePromotion.h"
-#include "../Policies/IGlyphUpdate.h"
+#include "../Policies/Glyph/IUpdate.h"
+#include "../Policies/State/IChange.h"
+#include "../Policies/State/IPromotion.h"
 #include "../IControl.h"
 
 namespace Voicemeeter {
@@ -16,9 +16,9 @@ namespace Voicemeeter {
 			public:
 				State(
 					::std::unique_ptr<TGlyph>& pGlyph,
-					const ::std::shared_ptr<Policies::IStateChange<TState>>& pStateChangePolicy,
-					::std::unique_ptr<Policies::IStatePromotion<TState>>& pStatePromotionPolicy,
-					const ::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>>& pGlyphUpdatePolicy
+					const ::std::shared_ptr<Policies::State::IChange<TState>>& pStateChangePolicy,
+					::std::unique_ptr<Policies::State::IPromotion<TState>>& pStatePromotionPolicy,
+					const ::std::shared_ptr<Policies::Glyph::IUpdate<TGlyph, TState>>& pGlyphUpdatePolicy
 				) : m_state{}
 				  , m_pGlyph{ ::std::move(pGlyph) }
 				  , m_pStateChangePolicy{ pStateChangePolicy }
@@ -123,9 +123,9 @@ namespace Voicemeeter {
 			private:
 				TState m_state;
 				::std::unique_ptr<TGlyph> m_pGlyph;
-				::std::shared_ptr<Policies::IStateChange<TState>> m_pStateChangePolicy;
-				::std::unique_ptr<Policies::IStatePromotion<TState>> m_pStatePromotionPolicy;
-				::std::shared_ptr<Policies::IGlyphUpdate<TGlyph, TState>> m_pGlyphUpdatePolicy;
+				::std::shared_ptr<Policies::State::IChange<TState>> m_pStateChangePolicy;
+				::std::unique_ptr<Policies::State::IPromotion<TState>> m_pStatePromotionPolicy;
+				::std::shared_ptr<Policies::Glyph::IUpdate<TGlyph, TState>> m_pGlyphUpdatePolicy;
 
 				void OnSet(bool promote) {
 					if (promote) {
