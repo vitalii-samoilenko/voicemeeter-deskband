@@ -7,25 +7,31 @@
 #include "Graphics/ICanvas.h"
 #include "IComponent.h"
 #include "IScene.h"
+#include "Trackers/IDirty.h"
 #include "Trackers/IFocus.h"
 #include "Trackers/IInput.h"
 
 namespace Voicemeeter {
 	namespace UI {
-		template<typename TCanvas>
+		template<typename TCanvas, typename TDirty>
 		class Scene : public IScene {
 			static_assert(
 				::std::is_base_of_v<Graphics::ICanvas, TCanvas>,
 				"TCanvas must be derived from ICanvas");
+			static_assert(
+				::std::is_base_of_v<Trackers::IDirty, TDirty>,
+				"TDirty must be derived from IDirty");
 
 		public:
 			Scene(
-				::std::unique_ptr<Trackers::IInput>& inputTracker,
-				::std::unique_ptr<Trackers::IFocus>& focusTracker,
+				::std::unique_ptr<TDirty>& pDirtyTracker,
+				::std::unique_ptr<Trackers::IInput>& pInputTracker,
+				::std::unique_ptr<Trackers::IFocus>& pFocusTracker,
 				::std::unique_ptr<TCanvas>& pCanvas,
 				::std::unique_ptr<IComponent>& pComposition
-			) : m_inputTracker{ ::std::move(inputTracker) }
-			  , m_focusTracker{ ::std::move(focusTracker) }
+			) : m_pDirtyTracker{ ::std::move(pDirtyTracker) }
+			  , m_pInputTracker{ ::std::move(pInputTracker) }
+			  , m_pFocusTracker{ ::std::move(pFocusTracker) }
 			  , m_pCanvas{ ::std::move(pCanvas) }
 			  , m_pComposition{ ::std::move(pComposition) } {
 
@@ -40,8 +46,8 @@ namespace Voicemeeter {
 			Scene& operator=(Scene&&) = delete;
 
 			virtual void set_Focus(bool value) override {
-				m_inputTracker->set_Focus(value);
-				m_focusTracker->set_Focus(value);
+				m_pInputTracker->set_Focus(value);
+				m_pFocusTracker->set_Focus(value);
 			}
 			virtual const ::std::valarray<double>& get_Position() const override {
 				return m_pCanvas->get_Position();
@@ -51,7 +57,6 @@ namespace Voicemeeter {
 			};
 
 			virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
-				m_pCanvas->Redraw(point, vertex);
 				m_pComposition->Redraw(point, vertex);
 			};
 			virtual void Resize(const ::std::valarray<double>& vertex) override {
@@ -59,57 +64,64 @@ namespace Voicemeeter {
 				m_pComposition->Rescale(vertex);
 			};
 			virtual bool MouseLDown(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseLDown(point)
-					|| m_focusTracker->MouseLDown(point)
+				return m_pInputTracker->MouseLDown(point)
+					|| m_pFocusTracker->MouseLDown(point)
 					|| m_pComposition->MouseLDown(point);
 			};
 			virtual bool MouseLDouble(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseLDouble(point)
-					|| m_focusTracker->MouseLDouble(point)
+				return m_pInputTracker->MouseLDouble(point)
+					|| m_pFocusTracker->MouseLDouble(point)
 					|| m_pComposition->MouseLDouble(point);
 			};
 			virtual bool MouseMDown(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseMDown(point)
-					|| m_focusTracker->MouseMDown(point)
+				return m_pInputTracker->MouseMDown(point)
+					|| m_pFocusTracker->MouseMDown(point)
 					|| m_pComposition->MouseMDown(point);
 			};
 			virtual bool MouseMDouble(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseMDouble(point)
-					|| m_focusTracker->MouseMDouble(point)
+				return m_pInputTracker->MouseMDouble(point)
+					|| m_pFocusTracker->MouseMDouble(point)
 					|| m_pComposition->MouseMDouble(point);
 			};
 			virtual bool MouseRDown(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseRDown(point)
-					|| m_focusTracker->MouseRDown(point)
+				return m_pInputTracker->MouseRDown(point)
+					|| m_pFocusTracker->MouseRDown(point)
 					|| m_pComposition->MouseRDown(point);
 			};
 			virtual bool MouseRDouble(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseRDouble(point)
-					|| m_focusTracker->MouseRDouble(point)
+				return m_pInputTracker->MouseRDouble(point)
+					|| m_pFocusTracker->MouseRDouble(point)
 					|| m_pComposition->MouseRDouble(point);
 			};
 			virtual bool MouseWheel(const ::std::valarray<double>& point, int delta) override {
-				return m_inputTracker->MouseWheel(point, delta)
-					|| m_focusTracker->MouseWheel(point, delta)
+				return m_pInputTracker->MouseWheel(point, delta)
+					|| m_pFocusTracker->MouseWheel(point, delta)
 					|| m_pComposition->MouseWheel(point, delta);
 			};
 			virtual bool MouseMove(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseMove(point)
-					|| m_focusTracker->MouseMove(point)
+				return m_pInputTracker->MouseMove(point)
+					|| m_pFocusTracker->MouseMove(point)
 					|| m_pComposition->MouseMove(point);
 			};
 			virtual bool MouseLUp(const ::std::valarray<double>& point) override {
-				return m_inputTracker->MouseLUp(point)
-					|| m_focusTracker->MouseLUp(point)
+				return m_pInputTracker->MouseLUp(point)
+					|| m_pFocusTracker->MouseLUp(point)
 					|| m_pComposition->MouseLUp(point);
 			};
+			virtual void Redraw() {
+				m_pDirtyTracker->Redraw(
+					m_pDirtyTracker->get_Position(),
+					m_pDirtyTracker->get_Size()
+				);
+			}
 
 		protected:
 			::std::unique_ptr<TCanvas> m_pCanvas;
+			::std::unique_ptr<TDirty> m_pDirtyTracker;
 
 		private:
-			::std::unique_ptr<Trackers::IInput> m_inputTracker;
-			::std::unique_ptr<Trackers::IFocus> m_focusTracker;
+			::std::unique_ptr<Trackers::IInput> m_pInputTracker;
+			::std::unique_ptr<Trackers::IFocus> m_pFocusTracker;
 			::std::unique_ptr<IComponent> m_pComposition;
 		};
 	}

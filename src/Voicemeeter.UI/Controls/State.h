@@ -3,10 +3,11 @@
 #include <memory>
 #include <utility>
 
+#include "../IControl.h"
 #include "../Policies/Glyph/IUpdate.h"
 #include "../Policies/State/IChange.h"
 #include "../Policies/State/IPromotion.h"
-#include "../IControl.h"
+#include "../Trackers/IDirty.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -15,17 +16,20 @@ namespace Voicemeeter {
 			class State : public IControl {
 			public:
 				State(
+					Trackers::IDirty& dirtyTracker,
 					::std::unique_ptr<TGlyph>& pGlyph,
 					const ::std::shared_ptr<Policies::State::IChange<TState>>& pStateChangePolicy,
 					::std::unique_ptr<Policies::State::IPromotion<TState>>& pStatePromotionPolicy,
 					const ::std::shared_ptr<Policies::Glyph::IUpdate<TGlyph, TState>>& pGlyphUpdatePolicy
 				) : m_state{}
+				  , m_dirtyTracker{ dirtyTracker }
 				  , m_pGlyph{ ::std::move(pGlyph) }
 				  , m_pStateChangePolicy{ pStateChangePolicy }
 				  , m_pStatePromotionPolicy{ ::std::move(pStatePromotionPolicy) }
 				  , m_pGlyphUpdatePolicy{ pGlyphUpdatePolicy } {
 					if (m_pStateChangePolicy->SetDefault(m_state)) {
 						m_pGlyphUpdatePolicy->Update(*m_pGlyph, m_state);
+						m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 					}
 				};
 				State() = delete;
@@ -88,9 +92,11 @@ namespace Voicemeeter {
 				};
 				virtual void Rescale(const ::std::valarray<double>& vertex) override {
 					m_pGlyph->Rescale(vertex);
+					m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 				};
 				virtual void Move(const ::std::valarray<double>& point) override {
 					m_pGlyph->Move(point);
+					m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 				};
 				virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 					return true;
@@ -122,6 +128,7 @@ namespace Voicemeeter {
 
 			private:
 				TState m_state;
+				Trackers::IDirty& m_dirtyTracker;
 				::std::unique_ptr<TGlyph> m_pGlyph;
 				::std::shared_ptr<Policies::State::IChange<TState>> m_pStateChangePolicy;
 				::std::unique_ptr<Policies::State::IPromotion<TState>> m_pStatePromotionPolicy;
@@ -132,6 +139,7 @@ namespace Voicemeeter {
 						m_pStatePromotionPolicy->Promote(m_state);
 					}
 					m_pGlyphUpdatePolicy->Update(*m_pGlyph, m_state);
+					m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 				}
 			};
 		}

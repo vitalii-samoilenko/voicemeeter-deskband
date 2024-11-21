@@ -6,6 +6,7 @@
 #include <shlobj.h> // for IDeskband2, IObjectWithSite, IPesistStream, and IInputObject
 #include <windows.h>
 
+#include "Environment/IDirtyTracker.h"
 #include "Environment/IInputTracker.h"
 #include "Voicemeeter.Remote/Mixer.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
@@ -14,7 +15,8 @@
 namespace Voicemeeter {
 	namespace Windows {
 		class DeskBand final
-			: public ::Environment::IInputTracker
+			: public ::Environment::IDirtyTracker
+			, public ::Environment::IInputTracker
 			, public IDeskBand2
 			, public IPersistStream
 			, public IObjectWithSite
@@ -27,8 +29,9 @@ namespace Voicemeeter {
 			DeskBand& operator=(const DeskBand&) = delete;
 			DeskBand& operator=(DeskBand&&) = delete;
 
-			virtual void EnableInputTrack();
-			virtual void DisableInputTrack();
+			virtual void SetDirty() override;
+			virtual void EnableInputTrack() override;
+			virtual void DisableInputTrack() override;
 
 			// IUnknown
 			STDMETHODIMP QueryInterface(REFIID riid, void** ppv);
@@ -82,7 +85,6 @@ namespace Voicemeeter {
 			HWND                m_hWndParent;           // parent window of deskband
 			UINT m_dpi;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
-			::std::unique_ptr<::Windows::Timer> m_pGraphicsTimer;
 			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
 			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
 			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;

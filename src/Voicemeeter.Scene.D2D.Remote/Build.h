@@ -2,6 +2,7 @@
 
 #include "windows.h"
 
+#include "Environment/IDirtyTracker.h"
 #include "Environment/IInputTracker.h"
 #include "Environment/ITimer.h"
 #include "Voicemeeter.Remote/Mixer.h"
@@ -15,9 +16,9 @@ namespace Voicemeeter {
 				UI::D2D::Scene* Build(
 					HWND hWnd,
 					UI::Direction direction,
+					::Environment::IDirtyTracker& dirtyTracker,
 					::Environment::IInputTracker& inputTracker,
 					::Environment::ITimer& compositionTimer,
-					::Environment::ITimer& graphicsTimer,
 					::Voicemeeter::Remote::Mixer& mixer
 				);
 			}

@@ -13,7 +13,7 @@ namespace Voicemeeter {
 					class Vban : public Glyph {
 					public:
 						explicit Vban(
-							const Graphics::Canvas& canvas
+							Graphics::Canvas& canvas
 						);
 						Vban() = delete;
 						Vban(const Vban&) = delete;

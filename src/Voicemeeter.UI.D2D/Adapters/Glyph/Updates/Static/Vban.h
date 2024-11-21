@@ -10,10 +10,10 @@ namespace Voicemeeter {
 				namespace Glyph {
 					namespace Updates {
 						namespace Static {
-							class Vban : IUpdate<Graphics::Glyphs::Vban, int> {
+							class Vban : public IUpdate<Graphics::Glyphs::Vban, int> {
 							public:
 								explicit Vban(
-									const Graphics::Canvas& canvas
+									Graphics::Canvas& canvas
 								);
 								Vban() = delete;
 								Vban(const Vban&) = delete;

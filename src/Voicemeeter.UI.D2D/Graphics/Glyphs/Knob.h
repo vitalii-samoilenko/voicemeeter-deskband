@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					class Knob : public Glyph {
 					public:
 						explicit Knob(
-							const Graphics::Canvas& canvas
+							Graphics::Canvas& canvas
 						);
 						Knob() = delete;
 						Knob(const Knob&) = delete;

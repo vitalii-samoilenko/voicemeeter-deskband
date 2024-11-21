@@ -5,6 +5,7 @@
 
 #include <windows.h>
 
+#include "Environment/IDirtyTracker.h"
 #include "Environment/IInputTracker.h"
 #include "Voicemeeter.Remote/Mixer.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
@@ -12,7 +13,9 @@
 
 namespace Voicemeeter {
 	namespace Windows {
-		class Window final : public ::Environment::IInputTracker {
+		class Window final
+			: public ::Environment::IDirtyTracker
+			, public ::Environment::IInputTracker {
 		public:
 			explicit Window(
 				HINSTANCE hInstance
@@ -28,6 +31,7 @@ namespace Voicemeeter {
 
 			void Show(int nCmdShow) const;
 
+			virtual void SetDirty() override;
 			virtual void EnableInputTrack() override;
 			virtual void DisableInputTrack() override;
 
@@ -35,7 +39,6 @@ namespace Voicemeeter {
 			HWND m_hWnd;
 			UINT m_dpi;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
-			::std::unique_ptr<::Windows::Timer> m_pGraphicsTimer;
 			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
 			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
 			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;

@@ -14,7 +14,6 @@
 
 #include "estd/type_traits.h"
 
-#include "Environment/ITimer.h"
 #include "Voicemeeter.UI/Graphics/ICanvas.h"
 #include "Voicemeeter.UI/Graphics/IGlyph.h"
 
@@ -27,14 +26,12 @@ namespace Voicemeeter {
 		namespace D2D {
 			namespace Graphics {
 				class Palette;
-				class Queue;
 
 				class Canvas final : public ICanvas {
 				public:
 					Canvas(
 						HWND hWnd,
-						const Theme& theme,
-						::Environment::ITimer& timer
+						const Theme& theme
 					);
 					Canvas() = delete;
 					Canvas(const Canvas&) = delete;
@@ -66,9 +63,6 @@ namespace Voicemeeter {
 					inline const Palette& get_Palette() const {
 						return *m_pPalette;
 					}
-					inline Queue& get_Queue() const {
-						return *m_pQueue;
-					}
 
 				private:
 					::std::valarray<double> m_point;
@@ -79,7 +73,6 @@ namespace Voicemeeter {
 					::Microsoft::WRL::ComPtr<IDXGISwapChain1> m_pDxgiSwapChain;
 					::Microsoft::WRL::ComPtr<IDCompositionTarget> m_pCompositionTarget;
 					::std::unique_ptr<Palette> m_pPalette;
-					::std::unique_ptr<Queue> m_pQueue;
 
 					void ResetTarget();
 				};
@@ -143,30 +136,6 @@ namespace Voicemeeter {
 					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1Brush>> m_cpBrush;
 					mutable ::std::unordered_map<void*, ::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>> m_cpGeometry;
-				};
-
-				class Queue final {
-				public:
-					Queue(
-						::Environment::ITimer& timer,
-						Canvas& canvas
-					);
-					Queue() = delete;
-					Queue(const Queue&) = delete;
-					Queue(Queue&&) = delete;
-
-					~Queue() = default;
-
-					Queue& operator=(const Queue&) = delete;
-					Queue& operator=(Queue&&) = delete;
-
-					inline void Push(IGlyph& glyph) {
-						m_cpGlyph.insert(&glyph);
-					};
-
-				private:
-					Canvas& m_canvas;
-					::std::unordered_set<IGlyph*> m_cpGlyph;
 				};
 			}
 		}

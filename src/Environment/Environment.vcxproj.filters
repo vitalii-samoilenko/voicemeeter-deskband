@@ -21,5 +21,8 @@
     <ClInclude Include="IInputTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IDirtyTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,6 +15,7 @@ using namespace ::Voicemeeter::Windows;
 
 static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter" };
 static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
+static constexpr UINT WM_DIRTY{ WM_USER + 0U };
 
 static constexpr LRESULT OK{ 0 };
 
@@ -23,7 +24,6 @@ Window::Window(
 ) : m_hWnd{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
   , m_pCompositionTimer{ nullptr }
-  , m_pGraphicsTimer{ nullptr }
   , m_pMixerTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
@@ -63,6 +63,9 @@ void Window::Show(int nCmdShow) const {
 	);
 }
 
+void Window::SetDirty() {
+	::Windows::wPostMessageW(m_hWnd, WM_DIRTY, 0, 0);
+}
 void Window::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
@@ -77,34 +80,42 @@ LRESULT CALLBACK Window::WndProcW(
 	LPARAM lParam
 ) {
 	auto shutdown = [uMsg](long long errCode)->LRESULT {
+		::Windows::ErrorMessageBox(errCode);
+
 		if (uMsg == WM_NCCREATE) {
 			return FALSE;
 		}
-
-		::Windows::ErrorMessageBox(errCode);
 		PostQuitMessage(0);
 
 		return OK;
+	};
+	auto log = [](const char* message)->void {
+		WCHAR temp[MAX_PATH];
+		if (GetTempPathW(MAX_PATH, temp)) {
+			::std::wstring path{ temp };
+			::std::fstream log{ path.append(L"Voicemeeter.DeskBand.log"), log.out | log.app };
+			if (log.is_open()) {
+				log << message << ::std::endl;
+			}
+		}
 	};
 	try {
 		Window* pWnd{ ::Windows::wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
 		switch (uMsg) {
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
+			pWnd->m_hWnd = hWnd;
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pGraphicsTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
-			pWnd->m_lpTimer.emplace(pWnd->m_pGraphicsTimer->get_Id(), pWnd->m_pGraphicsTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
 			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
-				hWnd, UI::Direction::Right, *pWnd,
-				*pWnd->m_pCompositionTimer, *pWnd->m_pGraphicsTimer,
+				hWnd, UI::Direction::Right, *pWnd, *pWnd,
+				*pWnd->m_pCompositionTimer,
 				*pWnd->m_pMixer));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
-			pWnd->m_hWnd = hWnd;
 		} break;
 		case WM_DESTROY: {
 			PostQuitMessage(0);
@@ -118,10 +129,25 @@ LRESULT CALLBACK Window::WndProcW(
 				static_cast<double>(LOWORD(lParam)),
 				static_cast<double>(HIWORD(lParam))
 			});
+		} return OK;
+		case WM_PAINT: {
+			PAINTSTRUCT ps;
+			HDC hdc = ::Windows::wBeginPaint(hWnd, &ps);
 			pWnd->m_pScene->Redraw(
-				pWnd->m_pScene->get_Position(),
-				pWnd->m_pScene->get_Size()
+				::std::valarray<double>{
+					static_cast<double>(ps.rcPaint.left),
+					static_cast<double>(ps.rcPaint.top)
+				},
+				(ps.rcPaint.right && ps.rcPaint.bottom
+					? ::std::valarray<double>{
+						static_cast<double>(ps.rcPaint.right),
+						static_cast<double>(ps.rcPaint.bottom)
+					} : pWnd->m_pScene->get_Size())
 			);
+			EndPaint(hWnd, &ps);
+		} return OK;
+		case WM_DIRTY: {
+			pWnd->m_pScene->Redraw();
 		} return OK;
 		case WM_LBUTTONDOWN: {
 			pWnd->m_pScene->MouseLDown({
@@ -208,16 +234,14 @@ LRESULT CALLBACK Window::WndProcW(
 		}
 	}
 	catch (const ::Windows::Error& e) {
-		WCHAR temp[MAX_PATH];
-		if (GetTempPathW(MAX_PATH, temp)) {
-			::std::wstring path{ temp };
-			::std::fstream log{ path.append(L"Voicemeeter.DeskBand.log"), log.out | log.app };
-			if (log.is_open()) {
-				log << e.what() << ::std::endl;
-			}
-		}
+		log(e.what());
 
 		return shutdown(e.code());
+	}
+	catch (const ::std::exception& e) {
+		log(e.what());
+
+		return shutdown(MSG_ERR_GENERAL);
 	}
 	catch (...) {
 		return shutdown(MSG_ERR_GENERAL);

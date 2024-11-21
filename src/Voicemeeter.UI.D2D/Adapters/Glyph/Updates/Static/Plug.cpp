@@ -3,10 +3,14 @@
 using namespace ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Static;
 
 Plug::Plug(
-	const Graphics::Canvas& canvas,
+	Graphics::Canvas& canvas,
 	const ::std::wstring& label
 ) : IUpdate{ canvas } {
 	set_Label(label);
+	set_Color(get_Canvas()
+		.get_Palette()
+			.get_Theme()
+				.Inactive);
 }
 
 void Plug::Update(const int& state) {

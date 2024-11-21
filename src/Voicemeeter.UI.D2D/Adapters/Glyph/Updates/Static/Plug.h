@@ -12,10 +12,10 @@ namespace Voicemeeter {
 				namespace Glyph {
 					namespace Updates {
 						namespace Static {
-							class Plug : IUpdate<Graphics::Glyphs::Plug, int> {
+							class Plug : public IUpdate<Graphics::Glyphs::Plug, int> {
 							public:
 								Plug(
-									const Graphics::Canvas& canvas,
+									Graphics::Canvas& canvas,
 									const ::std::wstring& label
 								);
 								Plug() = delete;

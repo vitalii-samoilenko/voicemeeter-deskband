@@ -31,7 +31,7 @@ namespace Voicemeeter {
 
 				protected:
 					Glyph(
-						const Canvas& canvas,
+						Canvas& canvas,
 						const ::std::valarray<double>& baseVertex
 					);
 
@@ -40,7 +40,7 @@ namespace Voicemeeter {
 					}
 
 				private:
-					const Canvas& m_canvas;
+					Canvas& m_canvas;
 					::std::valarray<double> m_point;
 					::std::valarray<double> m_vertex;
 					::std::valarray<double> m_baseVertex;

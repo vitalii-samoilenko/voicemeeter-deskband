@@ -19,9 +19,11 @@ extern HINSTANCE    g_hInst;
 
 extern CLSID CLSID_DeskBand;
 
+static bool g_shutdown{ false };
+
 static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
-static constexpr DWORD EX_STYLE{ WS_EX_NOREDIRECTIONBITMAP };
 static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
+static constexpr UINT WM_DIRTY{ WM_USER + 0U };
 
 static constexpr LRESULT OK{ 0 };
 
@@ -37,7 +39,6 @@ DeskBand::DeskBand(
   , m_hWndParent{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
   , m_pCompositionTimer{ nullptr }
-  , m_pGraphicsTimer{ nullptr }
   , m_pMixerTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
@@ -55,6 +56,9 @@ DeskBand::~DeskBand() {
 	InterlockedDecrement(&g_cDllRef);
 }
 
+void DeskBand::SetDirty() {
+	::Windows::wPostMessageW(m_hWnd, WM_DIRTY, 0, 0);
+}
 void DeskBand::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
@@ -296,21 +300,21 @@ STDMETHODIMP DeskBand::SetSite(IUnknown* pUnkSite) {
 
 				RegisterClassW(&wc);
 
-				CreateWindowExW(
-					WS_EX_NOREDIRECTIONBITMAP,
-					LPSZ_CLASS_NAME,
-					NULL,
-					WS_CHILD,
-					0,
-					0,
-					0,
-					0,
-					m_hWndParent,
-					NULL,
-					g_hInst,
-					this);
+				g_shutdown = false;
 
-				if (!m_hWnd) {
+				if (CreateWindowExW(
+						WS_EX_NOREDIRECTIONBITMAP,
+						LPSZ_CLASS_NAME,
+						NULL,
+						WS_CHILD,
+						0,
+						0,
+						0,
+						0,
+						m_hWndParent,
+						NULL,
+						g_hInst,
+						this) == NULL) {
 					hr = E_FAIL;
 				}
 			}
@@ -363,26 +367,39 @@ LRESULT CALLBACK DeskBand::WndProcW(
 	WPARAM wParam,
 	LPARAM lParam
 ) {
+	if (g_shutdown) {
+		return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+	}
 	auto shutdown = [uMsg](long long errCode)->LRESULT {
+		::Windows::ErrorMessageBox(g_hInst, errCode);
+
 		if (uMsg == WM_NCCREATE) {
 			return FALSE;
 		}
-
-		::Windows::ErrorMessageBox(g_hInst, errCode);
+		g_shutdown = true;
 
 		return OK;
+	};
+	auto log = [](const char* message)->void {
+		WCHAR temp[MAX_PATH];
+		if (GetTempPathW(MAX_PATH, temp)) {
+			::std::wstring path{ temp };
+			::std::fstream log{ path.append(L"Voicemeeter.DeskBand.log"), log.out | log.app };
+			if (log.is_open()) {
+				log << message << ::std::endl;
+			}
+		}
 	};
 	try {
 		DeskBand* pWnd{ ::Windows::wGetWindowLongPtrW<DeskBand>(hWnd, GWLP_USERDATA) };
 		switch (uMsg) {
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<DeskBand*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
+			pWnd->m_hWnd = hWnd;
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pGraphicsTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
-			pWnd->m_lpTimer.emplace(pWnd->m_pGraphicsTimer->get_Id(), pWnd->m_pGraphicsTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
 			RECT taskbar{};
@@ -393,11 +410,10 @@ LRESULT CALLBACK DeskBand::WndProcW(
 					: UI::Direction::Right)
 			};
 			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
-				hWnd, direction, *pWnd,
-				*pWnd->m_pCompositionTimer, *pWnd->m_pGraphicsTimer,
+				hWnd, direction, *pWnd, *pWnd,
+				*pWnd->m_pCompositionTimer,
 				*pWnd->m_pMixer));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
-			pWnd->m_hWnd = hWnd;
 		} break;
 		case WM_SETFOCUS: {
 			pWnd->m_fHasFocus = TRUE;
@@ -418,21 +434,36 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd->m_lpTimer[static_cast<UINT_PTR>(wParam)]
 				->Elapse();
 		} return OK;
+		case WM_PAINT: {
+			PAINTSTRUCT ps;
+			HDC hdc = ::Windows::wBeginPaint(hWnd, &ps);
+			pWnd->m_pScene->Redraw(
+				::std::valarray<double>{
+					static_cast<double>(ps.rcPaint.left),
+					static_cast<double>(ps.rcPaint.top)
+				},
+				(ps.rcPaint.right && ps.rcPaint.bottom
+					? ::std::valarray<double>{
+						static_cast<double>(ps.rcPaint.right),
+						static_cast<double>(ps.rcPaint.bottom)
+					} : pWnd->m_pScene->get_Size())
+			);
+			EndPaint(hWnd, &ps);
+		} return OK;
 		case WM_PRINTCLIENT: {
 			pWnd->m_pScene->Redraw(
 				pWnd->m_pScene->get_Position(),
 				pWnd->m_pScene->get_Size()
 			);
 		} return OK;
+		case WM_DIRTY: {
+			pWnd->m_pScene->Redraw();
+		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Resize({
 				static_cast<double>(LOWORD(lParam)),
 				static_cast<double>(HIWORD(lParam))
 			});
-			pWnd->m_pScene->Redraw(
-				pWnd->m_pScene->get_Position(),
-				pWnd->m_pScene->get_Size()
-			);
 		} return OK;
 		case WM_LBUTTONDOWN: {
 			pWnd->m_pScene->MouseLDown({
@@ -501,16 +532,14 @@ LRESULT CALLBACK DeskBand::WndProcW(
 		}
 	}
 	catch (const ::Windows::Error& e) {
-		WCHAR temp[MAX_PATH];
-		if (GetTempPathW(MAX_PATH, temp)) {
-			::std::wstring path{ temp };
-			::std::fstream log{ path.append(L"Voicemeeter.DeskBand.log"), log.out | log.app };
-			if (log.is_open()) {
-				log << e.what() << ::std::endl;
-			}
-		}
+		log(e.what());
 
 		return shutdown(e.code());
+	}
+	catch (const ::std::exception& e) {
+		log(e.what());
+
+		return shutdown(MSG_ERR_GENERAL);
 	}
 	catch (...) {
 		return shutdown(MSG_ERR_GENERAL);

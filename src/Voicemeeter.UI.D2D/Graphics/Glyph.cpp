@@ -7,7 +7,7 @@
 using namespace ::Voicemeeter::UI::D2D::Graphics;
 
 Glyph::Glyph(
-	const Canvas& canvas,
+	Canvas& canvas,
 	const ::std::valarray<double>& baseVertex
 ) : m_canvas{ canvas }
   , m_point{ 0., 0. }
@@ -27,6 +27,7 @@ const ::std::valarray<double>& Glyph::get_BaseSize() const {
 }
 
 void Glyph::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
+	m_canvas.Redraw(m_point, m_vertex);
 	m_canvas.get_pD2dDeviceContext()
 		->SetTransform(
 			::D2D1::Matrix3x2F::Scale(

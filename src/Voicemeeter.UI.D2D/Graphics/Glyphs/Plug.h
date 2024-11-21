@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					class Plug : public Glyph {
 					public:
 						explicit Plug(
-							const Graphics::Canvas& canvas
+							Graphics::Canvas& canvas
 						);
 						Plug() = delete;
 						Plug(const Plug&) = delete;

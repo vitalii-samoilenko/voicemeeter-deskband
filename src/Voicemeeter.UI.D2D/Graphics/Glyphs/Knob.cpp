@@ -13,7 +13,7 @@
 using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
 
 Knob::Knob(
-	const Graphics::Canvas& canvas
+	Graphics::Canvas& canvas
 ) : Glyph{ canvas, { 48., 48. } }
   , m_label{}
   , m_color{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }

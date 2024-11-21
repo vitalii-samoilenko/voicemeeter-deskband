@@ -259,7 +259,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Graphics\Glyphs\</ObjectFileName>
     </ClCompile>
     <ClCompile Include="Graphics\Palette.cpp" />
-    <ClCompile Include="Graphics\Queue.cpp" />
     <ClCompile Include="Policies\State\Changes\Knob.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Remote|x64'">$(IntDir)Policies\State\Changes\</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)Policies\State\Changes\</ObjectFileName>

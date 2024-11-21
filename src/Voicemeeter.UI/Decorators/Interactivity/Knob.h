@@ -6,9 +6,9 @@
 #include "Environment/ITimer.h"
 
 #include "../../Direction.h"
-#include "../../IFocusTracker.h"
-#include "../../IInputTracker.h"
 #include "../../Controls/Knob.h"
+#include "../../Trackers/IFocus.h"
+#include "../../Trackers/IInput.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -18,13 +18,13 @@ namespace Voicemeeter {
 				class Knob : public TKnob {
 					static_assert(
 						::std::is_base_of_v<Controls::Knob<TGlyph>, TKnob>,
-						"TKnob must be derived from Knob<TGlyph>");
+						"TKnob must be derived from Knob");
 
 				public:
 					template<typename... Args>
 					explicit Knob(
-						IInputTracker& inputTracker,
-						IFocusTracker& focusTracker,
+						Trackers::IInput& inputTracker,
+						Trackers::IFocus& focusTracker,
 						::Environment::ITimer& timer,
 						Args&& ...args
 					) : TKnob{ ::std::forward<Args>(args)... }
@@ -101,9 +101,9 @@ namespace Voicemeeter {
 							return true;
 						}
 
-						double scale{ TKnob::get_Size()[Direction] / TKnob::get_BaseSize()[Direction] };
+						double scale{ TKnob::get_Size()[static_cast<size_t>(Direction)] / TKnob::get_BaseSize()[static_cast<size_t>(Direction)] };
 						States::Knob state{ TKnob::get_State() };
-						state.gain += static_cast<int>((point[Direction] - m_inputTracker.get_Position()[Direction]) * 100. / scale);
+						state.gain += static_cast<int>((point[static_cast<size_t>(Direction)] - m_inputTracker.get_Position()[static_cast<size_t>(Direction)]) * 100. / scale);
 						TKnob::Set(state, true);
 
 						m_inputTracker.set_Position(point);
@@ -119,8 +119,8 @@ namespace Voicemeeter {
 					};
 
 				private:
-					IInputTracker& m_inputTracker;
-					IFocusTracker& m_focusTracker;
+					Trackers::IInput& m_inputTracker;
+					Trackers::IFocus& m_focusTracker;
 					::Environment::ITimer& m_timer;
 
 					inline void ReleaseLater() {

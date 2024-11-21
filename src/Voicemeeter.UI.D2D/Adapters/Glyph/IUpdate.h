@@ -21,6 +21,8 @@ namespace Voicemeeter {
 						IUpdate(const IUpdate&) = delete;
 						IUpdate(IUpdate&&) = delete;
 
+						~IUpdate() = default;
+
 						IUpdate& operator=(const IUpdate&) = delete;
 						IUpdate& operator=(IUpdate&&) = delete;
 
@@ -33,8 +35,6 @@ namespace Voicemeeter {
 						) : TGlyph{ ::std::forward<Args>(args)... } {
 
 						}
-
-						~IUpdate() = default;
 					};
 				}
 			}

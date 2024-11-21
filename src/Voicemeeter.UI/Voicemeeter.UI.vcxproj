@@ -221,7 +221,9 @@
     <ClInclude Include="Policies\State\IPromotion.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="States\Knob.h" />
+    <ClInclude Include="Trackers\Dirty.h" />
     <ClInclude Include="Trackers\Focus.h" />
+    <ClInclude Include="Trackers\IDirty.h" />
     <ClInclude Include="Trackers\IFocus.h" />
     <ClInclude Include="Trackers\IInput.h" />
     <ClInclude Include="Trackers\Input.h" />
@@ -234,6 +236,7 @@
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
     <ClCompile Include="Panels\Stack.cpp" />
+    <ClCompile Include="Trackers\Dirty.cpp" />
     <ClCompile Include="Trackers\Focus.cpp" />
     <ClCompile Include="Trackers\Input.cpp" />
   </ItemGroup>

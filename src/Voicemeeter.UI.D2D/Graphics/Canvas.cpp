@@ -19,8 +19,7 @@ using namespace ::Voicemeeter::UI::D2D::Graphics;
 
 Canvas::Canvas(
 	HWND hWnd,
-	const Theme& theme,
-	::Environment::ITimer& timer
+	const Theme& theme
 ) : m_point{ 0., 0. }
   , m_vertex{ 8., 8. }
   , m_pDwFactory{ nullptr }
@@ -28,8 +27,7 @@ Canvas::Canvas(
   , m_pD2dDeviceContext{ nullptr }
   , m_pDxgiSwapChain{ nullptr }
   , m_pCompositionTarget{ nullptr }
-  , m_pPalette{ nullptr }
-  , m_pQueue{ nullptr } {
+  , m_pPalette{ nullptr } {
 	::Windows::ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");
@@ -153,7 +151,6 @@ Canvas::Canvas(
 	), "Could not commit composition device");
 
 	m_pPalette.reset(new Palette{ theme, *this });
-	m_pQueue.reset(new Queue{ timer, *this });
 
 	ResetTarget();
 }
@@ -170,10 +167,10 @@ void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<
 	m_pD2dDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
 	m_pD2dDeviceContext->FillRectangle(
 		::D2D1::RectF(
-			static_cast<FLOAT>(::std::floor(point[0])),
-			static_cast<FLOAT>(::std::floor(point[1])),
-			static_cast<FLOAT>(::std::ceil(point[0] + vertex[0])),
-			static_cast<FLOAT>(::std::ceil(point[1] + vertex[1]))
+			static_cast<FLOAT>(point[0]),
+			static_cast<FLOAT>(point[1]),
+			static_cast<FLOAT>(point[0] + vertex[0]),
+			static_cast<FLOAT>(point[1] + vertex[1])
 		),
 		m_pPalette->get_pBrush(typeid(Canvas),
 			[this](ID2D1Brush** ppBrush)->void {
@@ -228,14 +225,5 @@ void Canvas::ResetTarget() {
 		&bitmapProperties,
 		&pD2dBmp
 	), "Bitmap creation failed");
-
 	m_pD2dDeviceContext->SetTarget(pD2dBmp.Get());
-	m_pD2dDeviceContext->BeginDraw();
-	m_pD2dDeviceContext->Clear(m_pPalette->get_Theme()
-		.Background);
-	::Windows::ThrowIfFailed(m_pD2dDeviceContext->EndDraw(
-	), "Render failed");
-	::Windows::ThrowIfFailed(m_pDxgiSwapChain->Present(
-		1, 0
-	), "Presentation failed");
 }

@@ -24,6 +24,21 @@ namespace Windows {
 			throw Error{ "Window class registration failed" };
 		}
 	}
+
+	inline UINT wRegisterWindowMessageW(
+		_In_ LPCWSTR lpString
+	) {
+		UINT msgId{
+			RegisterWindowMessageW(
+				lpString
+			)
+		};
+		if (!msgId) {
+			throw Error{ "Window message registration failed" };
+		}
+		return msgId;
+	}
+
 	inline void wCreateWindowExW(
 		_In_ DWORD dwExStyle,
 		_In_opt_ LPCWSTR lpClassName,
@@ -50,6 +65,22 @@ namespace Windows {
 			lpParam
 		) == NULL) {
 			throw Error{ "Window creation failed" };
+		}
+	}
+
+	inline void wPostMessageW(
+		_In_opt_ HWND hWnd,
+		_In_ UINT Msg,
+		_In_ WPARAM wParam,
+		_In_ LPARAM lParam
+	) {
+		if (PostMessageW(
+			hWnd,
+			Msg,
+			wParam,
+			lParam
+		) == 0) {
+			throw Error{ "Post message failed" };
 		}
 	}
 

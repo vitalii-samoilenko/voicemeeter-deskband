@@ -153,6 +153,12 @@
     <ClInclude Include="Trackers\Input.h">
       <Filter>Header Files\Trackers</Filter>
     </ClInclude>
+    <ClInclude Include="Trackers\IDirty.h">
+      <Filter>Header Files\Trackers</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackers\Dirty.h">
+      <Filter>Header Files\Trackers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Panels\Stack.cpp">
@@ -165,6 +171,9 @@
       <Filter>Source Files\Trackers</Filter>
     </ClCompile>
     <ClCompile Include="Trackers\Input.cpp">
+      <Filter>Source Files\Trackers</Filter>
+    </ClCompile>
+    <ClCompile Include="Trackers\Dirty.cpp">
       <Filter>Source Files\Trackers</Filter>
     </ClCompile>
   </ItemGroup>

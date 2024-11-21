@@ -4,22 +4,22 @@
 #include <utility>
 
 #include "../../Controls/Checkbox.h"
-#include "../../IFocusTracker.h"
+#include "../../Trackers/IFocus.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Decorators {
 			namespace Interactivity {
-				template<typename TCheckbox>
+				template<typename TCheckbox, typename TGlyph>
 				class Checkbox : public TCheckbox {
 					static_assert(
-						::std::is_base_of_v<Controls::Checkbox, TCheckbox>,
+						::std::is_base_of_v<Controls::Checkbox<TGlyph>, TCheckbox>,
 						"TCheckbox must be derived from Checkbox");
 
 				public:
 					template<typename... Args>
 					explicit Checkbox(
-						IFocusTracker& focusTracker,
+						Trackers::IFocus& focusTracker,
 						Args&& ...args
 					) : TCheckbox{ ::std::forward<Args>(args)... }
 					  , m_focusTracker{ focusTracker } {
@@ -48,7 +48,7 @@ namespace Voicemeeter {
 					}
 
 				private:
-					IFocusTracker& m_focusTracker;
+					Trackers::IFocus& m_focusTracker;
 				};
 			}
 		}

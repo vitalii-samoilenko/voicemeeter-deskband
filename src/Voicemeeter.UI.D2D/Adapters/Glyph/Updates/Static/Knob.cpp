@@ -6,11 +6,16 @@
 using namespace ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Static;
 
 Knob::Knob(
-	const Graphics::Canvas& canvas,
+	Graphics::Canvas& canvas,
 	const ::std::wstring& label
 ) : IUpdate{ canvas }
   , m_label{ label } {
-
+	set_Label(m_label);
+	set_Color(get_Canvas()
+		.get_Palette()
+			.get_Theme()
+				.Inactive);
+	set_Angle(90.F);
 }
 
 void Knob::Update(const States::Knob& state) {
@@ -19,7 +24,11 @@ void Knob::Update(const States::Knob& state) {
 			static_cast<int>(
 				::std::floor((state.gain - 9000) / 375.))))
 		: m_label));
-	int level{ state.level.max() };
+	int level{
+		(state.level.size()
+			? state.level.max()
+			: 0)
+	};
 	set_Color((state.toggle
 		? get_Canvas()
 			.get_Palette()

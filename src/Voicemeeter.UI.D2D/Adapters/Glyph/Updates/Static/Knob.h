@@ -14,10 +14,10 @@ namespace Voicemeeter {
 				namespace Glyph {
 					namespace Updates {
 						namespace Static {
-							class Knob : IUpdate<Graphics::Glyphs::Knob, States::Knob> {
+							class Knob : public IUpdate<Graphics::Glyphs::Knob, States::Knob> {
 							public:
 								Knob(
-									const Graphics::Canvas& canvas,
+									Graphics::Canvas& canvas,
 									const ::std::wstring& label
 								);
 								Knob() = delete;

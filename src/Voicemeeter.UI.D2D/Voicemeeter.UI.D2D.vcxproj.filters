@@ -173,9 +173,6 @@
     <ClCompile Include="Graphics\Glyphs\Vban.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Queue.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Policies\State\Changes\Knob.cpp">
       <Filter>Source Files\Policies\State\Changes</Filter>
     </ClCompile>
