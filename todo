@@ -1,6 +1,5 @@
 Animations
 ::estd::(chrono::)timer for rendering
-Resizing flickering
 Vertical bar panels reduction?
 pch
 Up to date doc
@@ -14,5 +13,4 @@ Contextual menu prototype (select physical input/output)
 Configuration tool
 ::estd::(chrono::)timer for update operations?
 Hidden state?
-Deskband shutdown
 Knob numbers draw optimization
