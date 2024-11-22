@@ -1,4 +1,3 @@
-Animations
 ::estd::(chrono::)timer for rendering
 Vertical bar panels reduction?
 pch
@@ -13,4 +12,5 @@ Contextual menu prototype (select physical input/output)
 Configuration tool
 ::estd::(chrono::)timer for update operations?
 Hidden state?
+Powersafety
 Knob numbers draw optimization

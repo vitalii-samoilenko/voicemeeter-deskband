@@ -24,6 +24,7 @@ Window::Window(
 ) : m_hWnd{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
   , m_pCompositionTimer{ nullptr }
+  , m_pDirtyTimer{ nullptr }
   , m_pMixerTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
@@ -107,13 +108,15 @@ LRESULT CALLBACK Window::WndProcW(
 			pWnd->m_hWnd = hWnd;
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
+			pWnd->m_lpTimer.emplace(pWnd->m_pDirtyTimer->get_Id(), pWnd->m_pDirtyTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
 			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
 				hWnd, UI::Direction::Right, *pWnd, *pWnd,
-				*pWnd->m_pCompositionTimer,
+				*pWnd->m_pCompositionTimer, *pWnd->m_pDirtyTimer,
 				*pWnd->m_pMixer));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;

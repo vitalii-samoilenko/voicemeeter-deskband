@@ -29,8 +29,11 @@ namespace Voicemeeter {
 						inline void set_Label(const ::std::wstring& value) {
 							m_label = value;
 						};
-						inline void set_Color(const ::D2D1::ColorF& value) {
-							m_color = value;
+						inline void set_FrameColor(const ::D2D1::ColorF& value) {
+							m_frameColor = value;
+						};
+						inline void set_LabelColor(const ::D2D1::ColorF& value) {
+							m_labelColor = value;
 						};
 						inline void set_Angle(FLOAT value) {
 							m_angle = value;
@@ -40,7 +43,8 @@ namespace Voicemeeter {
 
 					private:
 						::std::wstring m_label;
-						::D2D1::ColorF m_color;
+						::D2D1::ColorF m_frameColor;
+						::D2D1::ColorF m_labelColor;
 						FLOAT m_angle;
 					};
 				}

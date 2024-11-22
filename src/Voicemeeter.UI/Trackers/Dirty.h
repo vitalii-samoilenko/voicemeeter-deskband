@@ -3,6 +3,7 @@
 #include <unordered_set>
 
 #include "Environment/IDirtyTracker.h"
+#include "Environment/ITimer.h"
 
 #include "../Graphics/IGlyph.h"
 #include "IDirty.h"
@@ -13,7 +14,8 @@ namespace Voicemeeter {
 			class Dirty final : public IDirty {
 			public:
 				explicit Dirty(
-					::Environment::IDirtyTracker& envDirtyTracker
+					::Environment::IDirtyTracker& envDirtyTracker,
+					::Environment::ITimer& envTimer
 				);
 				Dirty() = delete;
 				Dirty(const Dirty&) = delete;

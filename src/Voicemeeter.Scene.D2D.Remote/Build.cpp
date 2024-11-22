@@ -15,9 +15,12 @@
 #include "Voicemeeter.UI/States/Knob.h"
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Static/Knob.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Static/Plug.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Static/Vban.h"
+#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Knob.h"
+#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Plug.h"
+#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Vban.h"
+#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Knob.h"
+#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Plug.h"
+#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Vban.h"
 #include "Voicemeeter.UI.D2D/Controls/Knob.h"
 #include "Voicemeeter.UI.D2D/Controls/Plug.h"
 #include "Voicemeeter.UI.D2D/Controls/Vban.h"
@@ -199,10 +202,14 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	::Environment::IDirtyTracker& dirtyTracker,
 	::Environment::IInputTracker& inputTracker,
 	::Environment::ITimer& compositionTimer,
+	::Environment::ITimer& dirtyTimer,
 	::Voicemeeter::Remote::Mixer& mixer
 ) {
+	DWORD animations{ 1UL };
+	::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Animations", animations);
+
 	::std::unique_ptr<UI::Trackers::Dirty> pDirtyTracker{
-		new UI::Trackers::Dirty{ dirtyTracker }
+		new UI::Trackers::Dirty{ dirtyTracker, dirtyTimer }
 	};
 	::std::unique_ptr<UI::Trackers::IFocus> pFocusTracker{
 		new UI::Trackers::Focus{}
@@ -235,9 +242,12 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 			new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
 		};
 		::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Vban, int>> vban_pGlyph{
-			new UI::D2D::Adapters::Glyph::Updates::Static::Vban{
-				*pCanvas
-		} };
+			(animations
+				? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Vban, int>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Vban{
+						*pDirtyTracker, *pCanvas
+				}) : new UI::D2D::Adapters::Glyph::Updates::Vban{
+						*pCanvas
+		}) };
 		::std::shared_ptr<UI::D2D::Policies::Glyph::Updates::Vban> pVbanGlyphUpdatePolicy{
 			new UI::D2D::Policies::Glyph::Updates::Vban{}
 		};
@@ -278,9 +288,12 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 
 	for (::Voicemeeter::Remote::Input& input : mixer.get_Inputs()) {
 		::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>> pKnobGlyph{
-			new UI::D2D::Adapters::Glyph::Updates::Static::Knob{
-				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
-		} };
+			(animations
+				? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Knob{
+					*pDirtyTracker, *pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
+				}) : new UI::D2D::Adapters::Glyph::Updates::Knob{
+					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
+		}) };
 
 		::std::unique_ptr<UI::Policies::State::IPromotion<UI::States::Knob>> pKnobStatePromotionPolicy{
 			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ input, gainerMap, checkboxMap }
@@ -356,9 +369,12 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 
 		for (::Voicemeeter::Remote::Output& output : mixer.get_Outputs()) {
 			::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Plug, int>> pPlugGlyph{
-				new UI::D2D::Adapters::Glyph::Updates::Static::Plug{
-					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
-			} };
+				(animations
+					? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Plug, int>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Plug{
+						*pDirtyTracker, *pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
+					}) : new UI::D2D::Adapters::Glyph::Updates::Plug{
+						*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
+			}) };
 
 			::std::unique_ptr<UI::Policies::State::IPromotion<int>> pPlugStatePromotionPolicy{
 				new PlugStatePromotion<
@@ -412,9 +428,12 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 
 	for (::Voicemeeter::Remote::Output& output : mixer.get_Outputs()) {
 		::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>> pKnobGlyph{
-			new UI::D2D::Adapters::Glyph::Updates::Static::Knob{
-				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
-		} };
+			(animations
+				? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Knob{
+					*pDirtyTracker, *pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
+				}) : new UI::D2D::Adapters::Glyph::Updates::Knob{
+					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
+		}) };
 
 		::std::unique_ptr<UI::Policies::State::IPromotion<UI::States::Knob>> pKnobStatePromotionPolicy{
 			new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ output, gainerMap, checkboxMap }

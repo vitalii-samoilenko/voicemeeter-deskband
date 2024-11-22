@@ -37,7 +37,7 @@ namespace Voicemeeter {
 			Output, RangeIterator<Output>> {
 		public:
 			explicit Mixer(
-				::Environment::ITimer& timer
+				::Environment::ITimer& envTimer
 			);
 			Mixer() = delete;
 			Mixer(const Mixer&) = delete;
@@ -68,7 +68,6 @@ namespace Voicemeeter {
 			void on_Plug(const Input& input, const Output& output, const ::std::function<void(bool)>& callback);
 
 		private:
-			::Environment::ITimer& m_timer;
 			T_VBVMR_INTERFACE m_remote;
 			Type m_type;
 			Network m_network;

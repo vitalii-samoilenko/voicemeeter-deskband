@@ -16,7 +16,8 @@ Knob::Knob(
 	Graphics::Canvas& canvas
 ) : Glyph{ canvas, { 48., 48. } }
   , m_label{}
-  , m_color{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }
+  , m_frameColor{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }
+  , m_labelColor{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }
   , m_angle{} {
 
 }
@@ -25,6 +26,7 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	Glyph::Redraw(point, vertex);
 
 	struct Frame {};
+	struct Label {};
 	struct Indicator {};
 
 	ID2D1SolidColorBrush* pFrameBrush{ static_cast<ID2D1SolidColorBrush*>(
@@ -36,12 +38,27 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 						::Windows::ThrowIfFailed(get_Canvas()
 							.get_pD2dDeviceContext()
 								->CreateSolidColorBrush(
-									m_color,
+									m_frameColor,
 									&pBrush
 						), "Brush creation failed");
 						*ppBrush = pBrush;
 					})) };
-	pFrameBrush->SetColor(m_color);
+	pFrameBrush->SetColor(m_frameColor);
+	ID2D1SolidColorBrush* pLabelBrush{ static_cast<ID2D1SolidColorBrush*>(
+		get_Canvas()
+			.get_Palette()
+				.get_pBrush(typeid(Label),
+					[this](ID2D1Brush** ppBrush)->void {
+						ID2D1SolidColorBrush* pBrush{ nullptr };
+						::Windows::ThrowIfFailed(get_Canvas()
+							.get_pD2dDeviceContext()
+								->CreateSolidColorBrush(
+									m_labelColor,
+									&pBrush
+						), "Brush creation failed");
+						*ppBrush = pBrush;
+					})) };
+	pLabelBrush->SetColor(m_labelColor);
 	ID2D1SolidColorBrush* pIndicatorBrush{ static_cast<ID2D1SolidColorBrush*>(
 		get_Canvas()
 			.get_Palette()
@@ -116,7 +133,7 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 			->DrawTextLayout(
 				::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
 				pLayout,
-				pFrameBrush);
+				pLabelBrush);
 	get_Canvas()
 		.get_pD2dDeviceContext()
 			->DrawGeometryRealization(

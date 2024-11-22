@@ -6,11 +6,18 @@
 using namespace ::Voicemeeter::UI::Trackers;
 
 Dirty::Dirty(
-	::Environment::IDirtyTracker& envDirtyTracker
+	::Environment::IDirtyTracker& envDirtyTracker,
+	::Environment::ITimer& envTimer
 ) : m_envDirtyTracker{ envDirtyTracker }
   , m_point{ 0., 0. }
   , m_vertex{ 0., 0. } {
-
+	envTimer.Set(::std::chrono::milliseconds{ 1000 / 120 },
+		[this]()->bool {
+			if (!m_cpGlyph.empty()) {
+				m_envDirtyTracker.SetDirty();
+			}
+			return true;
+		});
 }
 
 const ::std::valarray<double>& Dirty::get_Position() const {
@@ -21,9 +28,6 @@ const ::std::valarray<double>& Dirty::get_Size() const {
 }
 void Dirty::set_Dirty(Graphics::IGlyph& glyph, bool value) {
 	if (value) {
-		if (m_cpGlyph.empty()) {
-			m_envDirtyTracker.SetDirty();
-		}
 		m_cpGlyph.insert(&glyph);
 	} else {
 		m_cpGlyph.erase(&glyph);

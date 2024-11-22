@@ -67,9 +67,6 @@
     <Filter Include="Header Files\Adapters\Glyph\Updates">
       <UniqueIdentifier>{4f6abca1-2d81-4983-9fad-8ba7891ffa18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Adapters\Glyph\Updates\Static">
-      <UniqueIdentifier>{40a90445-3735-4c4a-85a7-e0c60bcaec94}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Adapters">
       <UniqueIdentifier>{a25ff58c-bb08-43b8-a19c-bd0901ffef32}</UniqueIdentifier>
     </Filter>
@@ -79,8 +76,11 @@
     <Filter Include="Source Files\Adapters\Glyph\Updates">
       <UniqueIdentifier>{1a861e71-cbe8-4924-ba32-778388a81ea4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Adapters\Glyph\Updates\Static">
-      <UniqueIdentifier>{8e19fd13-7f3e-4ebb-a608-1f367de62a03}</UniqueIdentifier>
+    <Filter Include="Header Files\Adapters\Glyph\Updates\Animations">
+      <UniqueIdentifier>{00ae0697-e28d-4c4a-9660-9ce036e8f5d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Adapters\Glyph\Updates\Animations">
+      <UniqueIdentifier>{795cc902-140d-40ac-a03c-3c6d3a63397b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -141,14 +141,26 @@
     <ClInclude Include="Policies\State\Changes\Knob.h">
       <Filter>Header Files\Policies\State\Changes</Filter>
     </ClInclude>
-    <ClInclude Include="Adapters\Glyph\Updates\Static\Plug.h">
-      <Filter>Header Files\Adapters\Glyph\Updates\Static</Filter>
+    <ClInclude Include="Adapters\Glyph\Updates\Animation.h">
+      <Filter>Header Files\Adapters\Glyph\Updates</Filter>
     </ClInclude>
-    <ClInclude Include="Adapters\Glyph\Updates\Static\Vban.h">
-      <Filter>Header Files\Adapters\Glyph\Updates\Static</Filter>
+    <ClInclude Include="Adapters\Glyph\Updates\Animations\Plug.h">
+      <Filter>Header Files\Adapters\Glyph\Updates\Animations</Filter>
     </ClInclude>
-    <ClInclude Include="Adapters\Glyph\Updates\Static\Knob.h">
-      <Filter>Header Files\Adapters\Glyph\Updates\Static</Filter>
+    <ClInclude Include="Adapters\Glyph\Updates\Knob.h">
+      <Filter>Header Files\Adapters\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Plug.h">
+      <Filter>Header Files\Adapters\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Vban.h">
+      <Filter>Header Files\Adapters\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Animations\Knob.h">
+      <Filter>Header Files\Adapters\Glyph\Updates\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Glyph\Updates\Animations\Vban.h">
+      <Filter>Header Files\Adapters\Glyph\Updates\Animations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,14 +188,23 @@
     <ClCompile Include="Policies\State\Changes\Knob.cpp">
       <Filter>Source Files\Policies\State\Changes</Filter>
     </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Static\Plug.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates\Static</Filter>
+    <ClCompile Include="Adapters\Glyph\Updates\Animations\Plug.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates\Animations</Filter>
     </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Static\Vban.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates\Static</Filter>
+    <ClCompile Include="Adapters\Glyph\Updates\Knob.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates</Filter>
     </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Static\Knob.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates\Static</Filter>
+    <ClCompile Include="Adapters\Glyph\Updates\Plug.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Vban.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Animations\Vban.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Adapters\Glyph\Updates\Animations\Knob.cpp">
+      <Filter>Source Files\Adapters\Glyph\Updates\Animations</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

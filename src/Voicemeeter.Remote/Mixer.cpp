@@ -6,9 +6,8 @@
 using namespace Voicemeeter::Remote;
 
 Mixer::Mixer(
-	::Environment::ITimer& timer
-) : m_timer{ timer }
-  , m_remote{}
+	::Environment::ITimer& envTimer
+) : m_remote{}
   , m_network{ *this }
   , m_cInput{}
   , m_cOutput{}
@@ -188,7 +187,7 @@ Mixer::Mixer(
 			reinterpret_cast<void*>(&
 				const_cast<Output&>(output))];
 	}
-	m_timer.Set(::std::chrono::milliseconds{ 100 },
+	envTimer.Set(::std::chrono::milliseconds{ 100 },
 		[this]()->bool {
 			long dirty{ m_remote.VBVMR_IsParametersDirty() };
 			if (dirty < 0) {

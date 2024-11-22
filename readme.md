@@ -65,6 +65,16 @@ Explorer.exe &
 
 #### Customization
 
+By default UI is animated with target ~120 FPS (will be capped by monitor refresh rate if less and Windows message dispatch workload)
+
+In case if you experience any issues or seek performance boost/power safety you can disable animations via registry key:
+
+```
+HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand
+```
+
+Add DWORD value Animations and set it to 0
+
 Custom colors and font family could be set via registry key:
 
 ```

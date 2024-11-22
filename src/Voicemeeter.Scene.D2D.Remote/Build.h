@@ -19,6 +19,7 @@ namespace Voicemeeter {
 					::Environment::IDirtyTracker& dirtyTracker,
 					::Environment::IInputTracker& inputTracker,
 					::Environment::ITimer& compositionTimer,
+					::Environment::ITimer& dirtyTimer,
 					::Voicemeeter::Remote::Mixer& mixer
 				);
 			}
