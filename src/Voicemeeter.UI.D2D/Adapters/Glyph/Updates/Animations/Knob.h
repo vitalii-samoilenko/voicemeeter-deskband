@@ -47,7 +47,7 @@ namespace Voicemeeter {
 							private:
 								static const ::std::valarray<long long> g_baseVertex;
 								::std::wstring m_label;
-								int m_gain;
+								::std::wstring m_gain;
 							};
 						}
 					}

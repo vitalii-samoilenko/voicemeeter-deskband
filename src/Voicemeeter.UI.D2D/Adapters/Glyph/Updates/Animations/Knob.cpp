@@ -25,7 +25,7 @@ Knob::Knob(
 	const ::std::wstring& label
 ) : Animation{ dirtyTracker, canvas }
   , m_label{ label }
-  , m_gain{ 9000 } {
+  , m_gain{} {
 	set_Label(m_label);
 	const ::D2D1::ColorF& color{ get_Canvas()
 		.get_Palette()
@@ -34,7 +34,7 @@ Knob::Knob(
 	};
 	set_FrameColor(color);
 	set_LabelColor(color);
-	set_Angle(m_gain / 100.F);
+	set_Angle(90.F);
 }
 
 void Knob::OnUpdate(const States::Knob& state) {
@@ -74,8 +74,10 @@ void Knob::OnUpdate(const States::Knob& state) {
 		velocity[level_medium] = 1;
 		velocity[level_high] = 1;
 	}
-	m_gain = state.gain;
-	set_Angle(m_gain / 100.F);
+	m_gain = ::std::to_wstring(::std::abs(
+		static_cast<int>(
+			::std::floor((state.gain - 9000) / 375.))));
+	set_Angle(state.gain / 100.F);
 }
 void Knob::OnFrame() {
 	auto blend = [](::D2D1::ColorF& dst, const ::D2D1::ColorF& src, FLOAT alpha)->void {
@@ -130,7 +132,5 @@ void Knob::OnFrame() {
 	set_LabelColor(result);
 	set_Label((aVertex[label] < mid
 		? m_label
-		: ::std::to_wstring(::std::abs(
-			static_cast<int>(
-				::std::floor((m_gain - 9000) / 375.))))));
+		: m_gain));
 }
