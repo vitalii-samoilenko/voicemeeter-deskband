@@ -33,9 +33,6 @@
     <ClInclude Include="Mixer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Range.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>Header Files</Filter>
     </ClInclude>

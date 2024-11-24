@@ -1,7 +1,9 @@
 #pragma once
 
+#include <type_traits>
+#include <utility>
+
 #include "../../../Graphics/Glyphs/Vban.h"
-#include "../IUpdate.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -9,11 +11,22 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						class Vban : public IUpdate<Graphics::Glyphs::Vban, int> {
+						template<typename TVban>
+						class Vban : TVban {
+							static_assert(
+								::std::is_base_of_v<Graphics::Glyphs::VBan, TVban>,
+								"TVban must be derived from VBan");
+
 						public:
+							template<typename... Args>
 							explicit Vban(
-								Graphics::Canvas& canvas
-							);
+								Args&& ...args
+							) : TVban{ ::std::forward<Args>(args)... } {
+								TVban::set_Color(TVban::get_Canvas()
+									.get_Palette()
+										.get_Theme()
+											.Inactive);
+							};
 							Vban() = delete;
 							Vban(const Vban&) = delete;
 							Vban(Vban&&) = delete;
@@ -23,7 +36,17 @@ namespace Voicemeeter {
 							Vban& operator=(const Vban&) = delete;
 							Vban& operator=(Vban&&) = delete;
 
-							virtual void Update(const int& state) override;
+							void Update(const int& state) {
+								TVban::set_Color((state
+									? TVban::get_Canvas()
+										.get_Palette()
+											.get_Theme()
+												.SecondaryActive
+									: TVban::get_Canvas()
+										.get_Palette()
+											.get_Theme()
+												.Inactive));
+							};
 						};
 					}
 				}

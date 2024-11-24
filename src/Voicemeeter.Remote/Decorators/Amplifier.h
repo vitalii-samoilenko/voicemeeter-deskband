@@ -96,7 +96,7 @@ namespace Voicemeeter {
 
 			private:
 				Mixer& m_mixer;
-				::std::string m_key;
+				const ::std::string m_key;
 				double m_gain;
 				bool m_mute;
 				::std::vector<::std::function<void(double)>> m_cGainCallback;

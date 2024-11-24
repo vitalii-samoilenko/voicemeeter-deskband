@@ -25,7 +25,7 @@ namespace estd {
 		guard& operator=(guard&&) noexcept = default;
 
 	private:
-		Func m_release;
+		const Func m_release;
 	};
 
 	template<typename Func>

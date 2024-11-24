@@ -197,7 +197,6 @@
     <ClInclude Include="IChannel.h" />
     <ClInclude Include="IMixer.h" />
     <ClInclude Include="INetwork.h" />
-    <ClInclude Include="IRange.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

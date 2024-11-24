@@ -1,3 +1,7 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif // !NOMINMAX
+
 #include <codecvt>
 #include <locale>
 #include <memory>
@@ -11,8 +15,8 @@
 #include "Voicemeeter.UI/Panels/Stack.h"
 #include "Voicemeeter.UI/Policies/State/Changes/Checkbox.h"
 #include "Voicemeeter.UI/Policies/State/Changes/Knob.h"
-#include "Voicemeeter.UI/Policies/State/IPromotion.h"
 #include "Voicemeeter.UI/States/Knob.h"
+#include "Voicemeeter.UI/Trackers/Dirty.h"
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Knob.h"
@@ -41,118 +45,6 @@
 #include "Build.h"
 
 using namespace ::Voicemeeter;
-
-template<
-	typename TInput, typename TInputIterator,
-	typename TOutput, typename TOutputIterator,
-	typename TMapper>
-class PlugStatePromotion : public UI::Policies::State::IPromotion<int> {
-	static_assert(
-		::estd::is_invocable_r<bool, TMapper, const int&>(),
-		"TMapper must be invocable with const int& and must return bool");
-
-public:
-	PlugStatePromotion(
-		IMixer<TInput, TInputIterator, TOutput, TOutputIterator>& mixer,
-		const TInput& input,
-		const TOutput& output,
-		const TMapper& mapper
-	) : m_mixer{ mixer }
-		, m_input{ input }
-		, m_output{ output }
-		, m_mapper{ mapper } {
-
-	};
-	PlugStatePromotion() = delete;
-	PlugStatePromotion(const PlugStatePromotion&) = delete;
-	PlugStatePromotion(PlugStatePromotion&&) = delete;
-
-	~PlugStatePromotion() = default;
-
-	PlugStatePromotion& operator=(const PlugStatePromotion&) = delete;
-	PlugStatePromotion& operator=(PlugStatePromotion&&) = delete;
-
-	virtual void Promote(const int& state) const {
-		m_mixer.set_Plug(m_input, m_output, m_mapper(state));
-	};
-
-private:
-	IMixer<TInput, TInputIterator, TOutput, TOutputIterator>& m_mixer;
-	const TInput& m_input;
-	const TOutput& m_output;
-	TMapper m_mapper;
-};
-
-template<typename TMapper>
-class VbanStatePromotion : public UI::Policies::State::IPromotion<int> {
-	static_assert(
-		::estd::is_invocable_r<bool, TMapper, const int&>(),
-		"TMapper must be invocable with const int& and must return bool");
-
-public:
-	VbanStatePromotion(
-		INetwork& network,
-		const TMapper& mapper
-	) : m_network{ network }
-		, m_mapper{ mapper } {
-
-	};
-	VbanStatePromotion() = delete;
-	VbanStatePromotion(const VbanStatePromotion&) = delete;
-	VbanStatePromotion(VbanStatePromotion&&) = delete;
-
-	~VbanStatePromotion() = default;
-
-	VbanStatePromotion& operator=(const VbanStatePromotion&) = delete;
-	VbanStatePromotion& operator=(VbanStatePromotion&&) = delete;
-
-	virtual void Promote(const int& state) const {
-		m_network.set_Vban(m_mapper(state));
-	};
-
-private:
-	INetwork& m_network;
-	TMapper m_mapper;
-};
-
-template<typename TGainMapper, typename TMutedMapper>
-class KnobStatePromotion : public UI::Policies::State::IPromotion<UI::States::Knob> {
-	static_assert(
-		::estd::is_invocable_r<double, TGainMapper, const int&>(),
-		"TGainMapper must be invocable with const int& and must return double");
-	static_assert(
-		::estd::is_invocable_r<bool, TMutedMapper, const bool&>(),
-		"TMutedMapper must be invocable with const bool& and must return bool");
-
-public:
-	KnobStatePromotion(
-		Decorators::IAmplifier& amplifier,
-		const TGainMapper& gainMapper,
-		const TMutedMapper& mutedMapper
-	) : m_amplifier{ amplifier }
-		, m_gainMapper{ gainMapper }
-		, m_mutedMapper{ mutedMapper } {
-
-	};
-	KnobStatePromotion() = delete;
-	KnobStatePromotion(const KnobStatePromotion&) = delete;
-	KnobStatePromotion(KnobStatePromotion&&) = delete;
-
-	~KnobStatePromotion() = default;
-
-	KnobStatePromotion& operator=(const KnobStatePromotion&) = delete;
-	KnobStatePromotion& operator=(KnobStatePromotion&&) = delete;
-
-	virtual void Promote(const UI::States::Knob& state) const {
-		m_amplifier.set_Gain(m_gainMapper(state.gain));
-		m_amplifier.set_Mute(m_mutedMapper(state.toggle));
-	};
-
-private:
-	Decorators::IAmplifier& m_amplifier;
-	TGainMapper m_gainMapper;
-	TMutedMapper m_mutedMapper;
-};
 
 UI::D2D::Graphics::Theme LoadTheme() {
 	UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
@@ -208,7 +100,7 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 	DWORD animations{ 1UL };
 	::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Animations", animations);
 
-	::std::unique_ptr<UI::Trackers::Dirty> pDirtyTracker{
+	::std::unique_ptr<UI::Trackers::IDirty> pDirtyTracker{
 		new UI::Trackers::Dirty{ dirtyTracker, dirtyTimer }
 	};
 	::std::unique_ptr<UI::Trackers::IFocus> pFocusTracker{
@@ -230,17 +122,10 @@ UI::D2D::Scene* Scene::D2D::Remote::Build(
 		return (state / 100. - 90.) / 3.75;
 	};
 
-	::std::shared_ptr<UI::Policies::State::IChange<int>> pCheckboxStateChangePolicy{
-		new UI::Policies::State::Changes::Checkbox{}
-	};
-
 	::std::vector<::std::unique_ptr<UI::IComponent>> cpComponent{};
 
 	::Remote::Network& network{ mixer.get_Network() };
 	if (network.get_Supported()) {
-		::std::unique_ptr<UI::Policies::State::IPromotion<int>> vban_pStatePromotionPolicy{
-			new VbanStatePromotion<decltype(checkboxMap)>{ mixer.get_Network(), checkboxMap }
-		};
 		::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Vban, int>> vban_pGlyph{
 			(animations
 				? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Vban, int>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Vban{

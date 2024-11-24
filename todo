@@ -1,6 +1,10 @@
-::estd::(chrono::)timer for rendering
-Vertical bar panels reduction?
-pch
+Mixer wrapper / proxy?
+Proper Builder
+Rendering thread
+Powersafety
+Knob numbers draw optimization
+Panels revision
+pch?
 Up to date doc
 Docking concept
 Dock/undock checkbox UI concept
@@ -12,5 +16,3 @@ Contextual menu prototype (select physical input/output)
 Configuration tool
 ::estd::(chrono::)timer for update operations?
 Hidden state?
-Powersafety
-Knob numbers draw optimization

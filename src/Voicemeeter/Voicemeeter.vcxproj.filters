@@ -27,9 +27,6 @@
     <ClInclude Include="INetwork.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IRange.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IBus.h">
       <Filter>Header Files</Filter>
     </ClInclude>

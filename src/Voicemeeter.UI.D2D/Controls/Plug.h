@@ -2,8 +2,8 @@
 
 #include "Voicemeeter.UI/Controls/Checkbox.h"
 
-#include "../Adapters/Glyph/IUpdate.h"
 #include "../Graphics/Glyphs/Plug.h"
+#include "../Policies/Glyph/Updates/Plug.h"
 
 using namespace ::Voicemeeter::UI::Controls;
 
@@ -11,7 +11,13 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Controls {
-				using Plug = UI::Controls::Checkbox<Adapters::Glyph::IUpdate<D2D::Graphics::Glyphs::Plug, int>>;
+				template<
+					typename TGlyph,
+					typename TChangeNotify>
+				using Plug = UI::Controls::Checkbox<
+					TGlyph,
+					TChangeNotify,
+					Policies::Glyph::Updates::Plug<TGlyph>>;
 			}
 		}
 	}

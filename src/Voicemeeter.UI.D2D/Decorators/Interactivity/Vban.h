@@ -2,8 +2,8 @@
 
 #include "Voicemeeter.UI/Decorators/Interactivity/Checkbox.h"
 
-#include "../../Adapters/Glyph/IUpdate.h"
-#include "../../Graphics/Glyphs/Vban.h"
+#include "../../Controls/VBan.h"
+#include "../../Policies/Glyph/Updates/Vban.h"
 
 using namespace Voicemeeter::UI::Decorators::Interactivity;
 
@@ -12,8 +12,16 @@ namespace Voicemeeter {
 		namespace D2D {
 			namespace Decorators {
 				namespace Interactivity {
-					template<typename TCheckbox>
-					using Vban = UI::Decorators::Interactivity::Checkbox<TCheckbox, Adapters::Glyph::IUpdate<D2D::Graphics::Glyphs::Vban, int>>;
+					template<
+						typename TGlyph,
+						typename TChangeNotify>
+					using Vban = UI::Decorators::Interactivity::Checkbox<
+						Controls::Vban<
+							TGlyph,
+							TChangeNotify>,
+						TGlyph,
+						TChangeNotify,
+						Policies::Glyph::Updates::Vban<TGlyph>>;
 				}
 			}
 		}

@@ -14,10 +14,17 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Decorators {
 			namespace Interactivity {
-				template<UI::Direction Direction, typename TKnob, typename TGlyph>
+				template<
+					UI::Direction Direction,
+					typename TKnob,
+					int Default, int Min, int Max, int Delta,
+					typename TGlyph,
+					typename TStateSet,
+					typename TChangeNotify,
+					typename TGlyphUpdate>
 				class Knob : public TKnob {
 					static_assert(
-						::std::is_base_of_v<Controls::Knob<TGlyph>, TKnob>,
+						::std::is_base_of_v<Controls::Knob<Default, Min, Max, Delta, TGlyph, TStateSet, TChangeNotify, TGlyphUpdate>, TKnob>,
 						"TKnob must be derived from Knob");
 
 				public:

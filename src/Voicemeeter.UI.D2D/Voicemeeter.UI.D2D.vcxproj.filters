@@ -31,9 +31,6 @@
     <Filter Include="Source Files\Graphics\Glyphs">
       <UniqueIdentifier>{b214bcc1-530c-42c5-be27-07a6fcbda411}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Policies">
-      <UniqueIdentifier>{34cdc5e9-a0a1-408b-adae-4616b8ff5f30}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Controls">
       <UniqueIdentifier>{445440fa-063e-4340-a0ae-b39512f87398}</UniqueIdentifier>
     </Filter>
@@ -58,29 +55,11 @@
     <Filter Include="Header Files\Policies\State\Changes">
       <UniqueIdentifier>{e99011e5-b5a2-4771-9d7c-d096dfefab9a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Policies\State">
-      <UniqueIdentifier>{877023c5-a3d6-4696-a4d4-a8287cf3a733}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Policies\State\Changes">
-      <UniqueIdentifier>{428781c5-f5dd-4159-be92-6be9f039aa5d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Adapters\Glyph\Updates">
       <UniqueIdentifier>{4f6abca1-2d81-4983-9fad-8ba7891ffa18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Adapters">
-      <UniqueIdentifier>{a25ff58c-bb08-43b8-a19c-bd0901ffef32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Adapters\Glyph">
-      <UniqueIdentifier>{07ef7907-6962-44e7-8e13-44e48c11d832}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Adapters\Glyph\Updates">
-      <UniqueIdentifier>{1a861e71-cbe8-4924-ba32-778388a81ea4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Adapters\Glyph\Updates\Animations">
       <UniqueIdentifier>{00ae0697-e28d-4c4a-9660-9ce036e8f5d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Adapters\Glyph\Updates\Animations">
-      <UniqueIdentifier>{795cc902-140d-40ac-a03c-3c6d3a63397b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -123,18 +102,6 @@
     <ClInclude Include="Decorators\Interactivity\Vban.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
-    <ClInclude Include="Adapters\Glyph\IUpdate.h">
-      <Filter>Header Files\Adapters\Glyph</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Knob.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Plug.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Vban.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\Glyph\Updates\Passthrough.h">
       <Filter>Header Files\Policies\Glyph\Updates</Filter>
     </ClInclude>
@@ -162,12 +129,18 @@
     <ClInclude Include="Adapters\Glyph\Updates\Animations\Vban.h">
       <Filter>Header Files\Adapters\Glyph\Updates\Animations</Filter>
     </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Knob.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Plug.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Vban.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\Glyph.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
@@ -184,27 +157,6 @@
     </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Vban.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
-    </ClCompile>
-    <ClCompile Include="Policies\State\Changes\Knob.cpp">
-      <Filter>Source Files\Policies\State\Changes</Filter>
-    </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Animations\Plug.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates\Animations</Filter>
-    </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Knob.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates</Filter>
-    </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Plug.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates</Filter>
-    </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Vban.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates</Filter>
-    </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Animations\Vban.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates\Animations</Filter>
-    </ClCompile>
-    <ClCompile Include="Adapters\Glyph\Updates\Animations\Knob.cpp">
-      <Filter>Source Files\Adapters\Glyph\Updates\Animations</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -39,17 +39,10 @@ namespace Voicemeeter {
 
 		private:
 			const Mixer& m_mixer;
-			LevelType m_type;
-			long m_channel;
+			const LevelType m_type;
+			const long m_channel;
 			double m_level;
 			::std::vector<::std::function<void(double)>> m_cCallback;
 		};
 	}
 }
-
-#include "Range.h"
-
-template<>
-struct ::std::iterator_traits<::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Channel>> {
-	using value_type = ::Voicemeeter::Remote::Channel;
-};

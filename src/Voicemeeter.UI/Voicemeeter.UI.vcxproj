@@ -212,13 +212,13 @@
     <ClInclude Include="IPanel.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="Panels\Stack.h" />
-    <ClInclude Include="Policies\Glyph\IUpdate.h" />
+    <ClInclude Include="Policies\Size\Scales\PreserveRatio.h" />
+    <ClInclude Include="Policies\Size\Scales\Stretch.h" />
+    <ClInclude Include="Policies\State\Changes\Basic.h" />
     <ClInclude Include="Policies\State\Changes\Checkbox.h" />
     <ClInclude Include="Policies\State\Changes\Circular.h" />
     <ClInclude Include="Policies\State\Changes\Knob.h" />
     <ClInclude Include="Policies\State\Changes\Range.h" />
-    <ClInclude Include="Policies\State\IChange.h" />
-    <ClInclude Include="Policies\State\IPromotion.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="States\Knob.h" />
     <ClInclude Include="Trackers\Dirty.h" />
@@ -235,7 +235,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
-    <ClCompile Include="Panels\Stack.cpp" />
     <ClCompile Include="Trackers\Dirty.cpp" />
     <ClCompile Include="Trackers\Focus.cpp" />
     <ClCompile Include="Trackers\Input.cpp" />

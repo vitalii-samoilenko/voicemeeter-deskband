@@ -25,9 +25,6 @@
     <Filter Include="Header Files\Panels">
       <UniqueIdentifier>{20a51a6c-1ea1-447b-a945-f0aab021b1e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Panels">
-      <UniqueIdentifier>{f5119d72-9360-4f52-9984-d2a500b3a0cf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Controls">
       <UniqueIdentifier>{5e1d7b2d-4630-4463-9d94-f0785319389e}</UniqueIdentifier>
     </Filter>
@@ -43,9 +40,6 @@
     <Filter Include="Header Files\Policies\State">
       <UniqueIdentifier>{f4a347e3-f5b9-4dfa-a4c6-aee661c59b2e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Policies\Glyph">
-      <UniqueIdentifier>{5eea46f1-6fb1-4feb-b6c3-fe633fd89248}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Policies\State\Changes">
       <UniqueIdentifier>{74268c3d-e421-43ad-b2cc-1e3f719ccd30}</UniqueIdentifier>
     </Filter>
@@ -54,6 +48,12 @@
     </Filter>
     <Filter Include="Source Files\Trackers">
       <UniqueIdentifier>{d5fdf7af-00b5-4a29-a4a6-228ec8c93068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\Size">
+      <UniqueIdentifier>{067c0cc2-8880-4627-9aa3-20aca6d7254a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Policies\Size\Scales">
+      <UniqueIdentifier>{f29660ec-a4cb-4762-bec1-8108ca60a0ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,15 +120,6 @@
     <ClInclude Include="Decorators\Interactivity\Knob.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\State\IChange.h">
-      <Filter>Header Files\Policies\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\IUpdate.h">
-      <Filter>Header Files\Policies\Glyph</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\State\IPromotion.h">
-      <Filter>Header Files\Policies\State</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\State\Changes\Checkbox.h">
       <Filter>Header Files\Policies\State\Changes</Filter>
     </ClInclude>
@@ -159,11 +150,17 @@
     <ClInclude Include="Trackers\Dirty.h">
       <Filter>Header Files\Trackers</Filter>
     </ClInclude>
+    <ClInclude Include="Policies\State\Changes\Basic.h">
+      <Filter>Header Files\Policies\State\Changes</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Size\Scales\Stretch.h">
+      <Filter>Header Files\Policies\Size\Scales</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Size\Scales\PreserveRatio.h">
+      <Filter>Header Files\Policies\Size\Scales</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Panels\Stack.cpp">
-      <Filter>Source Files\Panels</Filter>
-    </ClCompile>
     <ClCompile Include="Controls\State.h">
       <Filter>Header Files\Controls</Filter>
     </ClCompile>

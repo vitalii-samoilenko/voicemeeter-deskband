@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
+#include <utility>
 
 #include "../../../Graphics/Glyphs/Plug.h"
-#include "../IUpdate.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -11,12 +12,24 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						class Plug : public IUpdate<Graphics::Glyphs::Plug, int> {
+						template<typename TPlug>
+						class Plug : public TPlug {
+							static_assert(
+								::std::is_base_of_v<Graphics::Glyphs::Plug, TPlug>,
+								"TPlug must be derived from Plug");
+
 						public:
-							Plug(
-								Graphics::Canvas& canvas,
-								const ::std::wstring& label
-							);
+							template<typename... Args>
+							explicit Plug(
+								const ::std::wstring& label,
+								Args&& ...args
+							) : TPlug{ ::std::forward<Args>(args)... } {
+								TPlug::set_Label(label);
+								TPlug::set_Color(TPlug::get_Canvas()
+									.get_Palette()
+										.get_Theme()
+											.Inactive);
+							};
 							Plug() = delete;
 							Plug(const Plug&) = delete;
 							Plug(Plug&&) = delete;
@@ -26,7 +39,17 @@ namespace Voicemeeter {
 							Plug& operator=(const Plug&) = delete;
 							Plug& operator=(Plug&&) = delete;
 
-							virtual void Update(const int& state) override;
+							void Update(const int& state) {
+								TPlug::set_Color((state
+									? TPlug::get_Canvas()
+										.get_Palette()
+											.get_Theme()
+												.PrimaryActive
+									: TPlug::get_Canvas()
+										.get_Palette()
+											.get_Theme()
+												.Inactive));
+							};
 						};
 					}
 				}

@@ -2,6 +2,8 @@
 
 #include <d2d1_3.h>
 
+#include "Voicemeeter.UI/Policies/Size/Scales/Stretch.h"
+
 #include "../Canvas.h"
 #include "../Glyph.h"
 
@@ -10,7 +12,7 @@ namespace Voicemeeter {
 		namespace D2D {
 			namespace Graphics {
 				namespace Glyphs {
-					class Vban : public Glyph {
+					class Vban : public Glyph<UI::Policies::Size::Scales::Stretch> {
 					public:
 						explicit Vban(
 							Graphics::Canvas& canvas

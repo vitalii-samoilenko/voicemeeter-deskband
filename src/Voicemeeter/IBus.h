@@ -1,18 +1,10 @@
 #pragma once
 
 #include <string>
-#include <type_traits>
-
-#include "IChannel.h"
-#include "IRange.h"
 
 namespace Voicemeeter {
-	template<typename TChannel, typename TChannelIterator>
+	template<typename TChannelRange>
 	class IBus {
-		static_assert(
-			::std::is_base_of_v<IChannel, TChannel>,
-			"TChannel must be derived from IChannel");
-
 	public:
 		IBus(const IBus&) = delete;
 		IBus(IBus&&) = delete;
@@ -21,7 +13,7 @@ namespace Voicemeeter {
 		IBus& operator=(IBus&&) = delete;
 
 		virtual const ::std::string& get_Label() const = 0;
-		virtual const IRange<TChannel, TChannelIterator>& get_Channels() const = 0;
+		virtual const TChannelRange& get_Channels() const = 0;
 
 	protected:
 		IBus() = default;

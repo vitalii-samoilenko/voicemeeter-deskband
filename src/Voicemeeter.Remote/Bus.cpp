@@ -5,19 +5,19 @@ using namespace Voicemeeter::Remote;
 Bus::Bus(
 	const ::std::string& label
 ) : m_label{ label }
-  , m_cChannel{ } {
+  , m_cpChannel{} {
 
 }
 
 const ::std::string& Bus::get_Label() const {
 	return m_label;
 }
-const Range<Channel>& Bus::get_Channels() const {
-	return m_cChannel;
+const ::std::vector<::std::unique_ptr<Channel>>& Bus::get_Channels() const {
+	return m_cpChannel;
 }
 
 void Bus::Update(bool dirty) {
-	for (Channel& channel : m_cChannel) {
-		channel.Update();
+	for (const ::std::unique_ptr<Channel>& pChannel : m_cpChannel) {
+		pChannel->Update();
 	}
 }

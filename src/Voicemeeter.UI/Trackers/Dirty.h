@@ -32,18 +32,14 @@ namespace Voicemeeter {
 
 				virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 
-				inline ::std::unordered_set<Graphics::IGlyph*>::const_iterator begin() const {
-					return m_cpGlyph.begin();
-				}
-				inline ::std::unordered_set<Graphics::IGlyph*>::const_iterator end() const {
-					return m_cpGlyph.end();
-				}
-
 			private:
 				::Environment::IDirtyTracker& m_envDirtyTracker;
 				mutable ::std::valarray<double> m_point;
 				mutable ::std::valarray<double> m_vertex;
+				mutable bool m_changed;
 				::std::unordered_set<Graphics::IGlyph*> m_cpGlyph;
+
+				void Adjust() const;
 			};
 		}
 	}

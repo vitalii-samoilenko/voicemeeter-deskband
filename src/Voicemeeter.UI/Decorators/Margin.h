@@ -8,7 +8,9 @@
 namespace Voicemeeter {
 	namespace UI {
 		namespace Decorators {
-			template<typename TComponent>
+			template<
+				typename TComponent,
+				typename TScale>
 			class Margin : public TComponent {
 				static_assert(
 					::std::is_base_of_v<IComponent, TComponent>,
@@ -17,18 +19,20 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				Margin(
-					const ::std::valarray<double>& baseMarginTopLeft,
-					const ::std::valarray<double>& baseMarginBottomRight,
+					const ::std::valarray<double>& baseMarginPoint,
+					const ::std::valarray<double>& baseMarginVertex,
+					const TScale& scale = {},
 					Args&&... args
 				) : TComponent{ ::std::forward<Args>(args)... }
 				  , m_position{ TComponent::get_Position() }
-				  , m_vertex{ TComponent::get_BaseSize() + baseMarginTopLeft + baseMarginBottomRight }
+				  , m_vertex{ TComponent::get_BaseSize() + baseMarginPoint + baseMarginVertex }
 				  , m_baseVertex{ m_vertex }
-				  , m_marginTopLeft{ baseMarginTopLeft }
-				  , m_marginBottomRight{ baseMarginBottomRight }
-				  , m_baseMarginTopLeft{ baseMarginTopLeft }
-				  , m_baseMarginBottomRight{ baseMarginBottomRight } {
-					TComponent::Move(m_position + baseMarginTopLeft);
+				  , m_marginPoint{ baseMarginPoint }
+				  , m_marginVertex{ baseMarginVertex }
+				  , m_baseMarginPoint{ baseMarginPoint }
+				  , m_baseMarginVertex{ baseMarginVertex }
+				  , m_scale{ scale } {
+					TComponent::Move(m_position + m_baseMarginPoint);
 				}
 				Margin() = delete;
 				Margin(const Margin&) = delete;
@@ -50,30 +54,31 @@ namespace Voicemeeter {
 				};
 
 				virtual void Rescale(const ::std::valarray<double>& vertex) override {
-					double scale{ (vertex / m_baseVertex).min() };
+					const ::std::valarray<double> scale{ m_scale(m_baseVertex, vertex) };
 
-					m_marginTopLeft = m_baseMarginTopLeft * scale;
-					m_marginBottomRight = m_baseMarginBottomRight * scale;
+					m_marginPoint = m_baseMarginPoint * scale;
+					m_marginVertex = m_baseMarginVertex * scale;
 
-					TComponent::Move(m_position + m_marginTopLeft);
-					TComponent::Rescale(vertex - m_marginTopLeft - m_marginBottomRight);
+					TComponent::Move(m_position + m_marginPoint);
+					TComponent::Rescale(vertex - m_marginPoint - m_marginVertex);
 
-					m_vertex = TComponent::get_Size() + m_marginTopLeft + m_marginBottomRight;
+					m_vertex = TComponent::get_Size() + m_marginPoint + m_marginVertex;
 				};
 				virtual void Move(const ::std::valarray<double>& point) override {
 					m_position = point;
 
-					TComponent::Move(point + m_marginTopLeft);
+					TComponent::Move(point + m_marginPoint);
 				};
 
 			private:
 				::std::valarray<double> m_position;
 				::std::valarray<double> m_vertex;
-				::std::valarray<double> m_baseVertex;
-				::std::valarray<double> m_marginTopLeft;
-				::std::valarray<double> m_marginBottomRight;
-				::std::valarray<double> m_baseMarginTopLeft;
-				::std::valarray<double> m_baseMarginBottomRight;
+				const ::std::valarray<double> m_baseVertex;
+				::std::valarray<double> m_marginPoint;
+				::std::valarray<double> m_marginVertex;
+				const ::std::valarray<double> m_baseMarginPoint;
+				const ::std::valarray<double> m_baseMarginVertex;
+				const TScale m_scale;
 			};
 		}
 	}

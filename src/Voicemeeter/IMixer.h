@@ -2,7 +2,6 @@
 
 #include "IBus.h"
 #include "INetwork.h"
-#include "IRange.h"
 
 namespace Voicemeeter {
 	enum class Type : long {
@@ -12,8 +11,12 @@ namespace Voicemeeter {
 	};
 
 	template<
-		typename TInput, typename TInputIterator,
-		typename TOutput, typename TOutputIterator>
+		typename TInput,
+		typename TInputRange,
+		typename TInputSlice,
+		typename TOutput,
+		typename TOutputRange,
+		typename TOutputSlice>
 	class IMixer {
 	public:
 		IMixer(const IMixer&) = delete;
@@ -24,10 +27,10 @@ namespace Voicemeeter {
 
 		virtual Type get_Type() const = 0;
 		virtual const INetwork& get_Network() = 0;
-		virtual const IRange<TInput, TInputIterator>& get_Inputs() const = 0;
-		virtual const IRange<TOutput, TOutputIterator>& get_Outputs() const = 0;
-		virtual const IRange<TOutput, TOutputIterator>& get_Plugs(const TInput& input) const = 0;
-		virtual const IRange<TInput, TInputIterator>& get_Plugs(const TOutput& input) const = 0;
+		virtual const TInputRange& get_Inputs() const = 0;
+		virtual const TOutputRange& get_Outputs() const = 0;
+		virtual const TOutputSlice& get_Plugs(const TInput& input) const = 0;
+		virtual const TInputSlice& get_Plugs(const TOutput& input) const = 0;
 		virtual void set_Plug(const TInput& input, const TOutput& output, bool value) = 0;
 
 	protected:

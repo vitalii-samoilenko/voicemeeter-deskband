@@ -13,18 +13,15 @@
 
 namespace Voicemeeter {
 	namespace UI {
-		template<typename TCanvas, typename TDirty>
+		template<typename TCanvas>
 		class Scene : public IScene {
 			static_assert(
 				::std::is_base_of_v<Graphics::ICanvas, TCanvas>,
 				"TCanvas must be derived from ICanvas");
-			static_assert(
-				::std::is_base_of_v<Trackers::IDirty, TDirty>,
-				"TDirty must be derived from IDirty");
 
 		public:
 			Scene(
-				::std::unique_ptr<TDirty>& pDirtyTracker,
+				::std::unique_ptr<Trackers::IDirty>& pDirtyTracker,
 				::std::unique_ptr<Trackers::IInput>& pInputTracker,
 				::std::unique_ptr<Trackers::IFocus>& pFocusTracker,
 				::std::unique_ptr<TCanvas>& pCanvas,
@@ -116,13 +113,13 @@ namespace Voicemeeter {
 			}
 
 		protected:
-			::std::unique_ptr<TCanvas> m_pCanvas;
-			::std::unique_ptr<TDirty> m_pDirtyTracker;
+			const ::std::unique_ptr<TCanvas> m_pCanvas;
+			const ::std::unique_ptr<Trackers::IDirty> m_pDirtyTracker;
 
 		private:
-			::std::unique_ptr<Trackers::IInput> m_pInputTracker;
-			::std::unique_ptr<Trackers::IFocus> m_pFocusTracker;
-			::std::unique_ptr<IComponent> m_pComposition;
+			const ::std::unique_ptr<Trackers::IInput> m_pInputTracker;
+			const ::std::unique_ptr<Trackers::IFocus> m_pFocusTracker;
+			const ::std::unique_ptr<IComponent> m_pComposition;
 		};
 	}
 }

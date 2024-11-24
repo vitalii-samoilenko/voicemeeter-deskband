@@ -200,7 +200,6 @@
     <ClInclude Include="Mixer.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Output.h" />
-    <ClInclude Include="Range.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Api.cpp" />

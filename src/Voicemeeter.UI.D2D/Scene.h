@@ -1,17 +1,16 @@
 #pragma once
 
 #include "Voicemeeter.UI/Scene.h"
-#include "Voicemeeter.UI/Trackers/Dirty.h"
 
 #include "Graphics/Canvas.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
-			class Scene : public UI::Scene<Graphics::Canvas, Trackers::Dirty> {
+			class Scene : public UI::Scene<Graphics::Canvas> {
 			public:
 				Scene(
-					::std::unique_ptr<Trackers::Dirty>& pDirtyTracker,
+					::std::unique_ptr<Trackers::IDirty>& pDirtyTracker,
 					::std::unique_ptr<Trackers::IInput>& pInputTracker,
 					::std::unique_ptr<Trackers::IFocus>& pFocusTracker,
 					::std::unique_ptr<Graphics::Canvas>& pCanvas,

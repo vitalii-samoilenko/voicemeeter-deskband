@@ -10,10 +10,14 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Decorators {
 			namespace Interactivity {
-				template<typename TCheckbox, typename TGlyph>
+				template<
+					typename TCheckbox,
+					typename TGlyph,
+					typename TChangeNotify,
+					typename TGlyphUpdate>
 				class Checkbox : public TCheckbox {
 					static_assert(
-						::std::is_base_of_v<Controls::Checkbox<TGlyph>, TCheckbox>,
+						::std::is_base_of_v<Controls::Checkbox<TGlyph, TChangeNotify, TGlyphUpdate>, TCheckbox>,
 						"TCheckbox must be derived from Checkbox");
 
 				public:

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -13,7 +14,9 @@
 namespace Voicemeeter {
 	namespace UI {
 		namespace Panels {
-			template<Direction>
+			template<
+				Direction Direction,
+				typename TScale>
 			class Stack : public IPanel {
 			public:
 				template<typename TIterator,
@@ -24,13 +27,26 @@ namespace Voicemeeter {
 						bool> = true>
 				Stack(
 					TIterator begin,
-					TIterator end
-				) : m_baseVertex{}
-				  , m_cpComponent{}{
+					TIterator end,
+					const TScale& scale = {}
+				) : m_vertex{}
+				  , m_baseVertex { begin->get_BaseSize() }
+				  , m_cpComponent{}
+				  , m_scale{ scale } {
+					m_baseVertex[static_cast<size_t>(Direction)] = ::std::numeric_limits<double>::max();
+
 					for (; begin != end; ++begin) {
+						const ::std::valarray<double>& componentBaseVertex{ begin->get_BaseSize() };
+
+						auto maxVertex = m_baseVertex < componentBaseVertex;
+						m_baseVertex[maxVertex] = componentBaseVertex[maxVertex];
+
 						m_cpComponent.emplace_back(::std::move(*begin));
 					}
-					Arrange();
+
+					Stack::Rescale(m_baseVertex);
+
+					m_baseVertex[static_cast<size_t>(Direction)] = m_vertex[static_cast<size_t>(Direction)];
 				};
 				Stack() = delete;
 				Stack(const Stack&) = delete;
@@ -60,8 +76,34 @@ namespace Voicemeeter {
 						pComponent->Redraw(point, vertex);
 					}
 				};
-				virtual void Rescale(const ::std::valarray<double>& vertex) override;
-				virtual void Move(const ::std::valarray<double>& point) override;
+				virtual void Rescale(const ::std::valarray<double>& vertex) override {
+					::std::valarray<double> availableVertex{ m_baseVertex * m_scale(m_baseVertex, vertex) };
+					::std::valarray<double> componentPoint{ Stack::get_Position() };
+
+					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+						pComponent->Move(componentPoint);
+						pComponent->Rescale(availableVertex);
+
+						const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
+
+						componentPoint[static_cast<size_t>(Direction)] += componentVertex[static_cast<size_t>(Direction)];
+						availableVertex[static_cast<size_t>(Direction)] -= componentVertex[static_cast<size_t>(Direction)];
+					}
+
+					m_vertex = availableVertex;
+					m_vertex[static_cast<size_t>(Direction)] = componentPoint[static_cast<size_t>(Direction)]
+						- Stack::get_Position()[static_cast<size_t>(Direction)];
+				}
+				virtual void Move(const ::std::valarray<double>& point) override {
+					::std::valarray<double> componentPoint{ point };
+
+					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+						pComponent->Move(componentPoint);
+
+						componentPoint[static_cast<size_t>(Direction)] += pComponent->get_Size()
+							[static_cast<size_t>(Direction)];
+					}
+				}
 				virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
 						if (pComponent->MouseLDown(point)) {
@@ -139,23 +181,8 @@ namespace Voicemeeter {
 				::std::valarray<double> m_vertex;
 				::std::valarray<double> m_baseVertex;
 				::std::vector<::std::unique_ptr<IComponent>> m_cpComponent;
-
-				void Arrange();
+				const TScale m_scale;
 			};
-
-			template<>
-			void Stack<Direction::Right>::Rescale(const ::std::valarray<double>& vertex);
-			template<>
-			void Stack<Direction::Down>::Rescale(const ::std::valarray<double>& vertex);
-			template<>
-			void Stack<Direction::Right>::Move(const ::std::valarray<double>& point);
-			template<>
-			void Stack<Direction::Down>::Move(const ::std::valarray<double>& point);
-
-			template<>
-			void Stack<Direction::Right>::Arrange();
-			template<>
-			void Stack<Direction::Down>::Arrange();
-		};
+		}
 	}
 }

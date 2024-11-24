@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <utility>
+#include <vector>
 
 #include "Voicemeeter/IBus.h"
 
@@ -8,7 +10,7 @@
 
 namespace Voicemeeter {
 	namespace Remote {
-		class Bus : public IBus<Channel, Range<Channel>::iterator_type> {
+		class Bus : public IBus<::std::vector<::std::unique_ptr<Channel>>> {
 		public:
 			template<typename... Args>
 			Bus(
@@ -17,9 +19,11 @@ namespace Voicemeeter {
 				long channel,
 				Args&& ...args
 			) : Bus{ ::std::forward<Args>(args)... } {
-				m_cChannel.emplace(
-					mixer, type, channel
-				);
+				m_cpChannel.push_back(::std::move(
+					::std::make_unique<Channel>(
+						mixer, type, channel
+					)
+				));
 			}
 			explicit Bus(
 				const ::std::string& label
@@ -34,13 +38,13 @@ namespace Voicemeeter {
 			Bus& operator=(Bus&&) = delete;
 
 			virtual const ::std::string& get_Label() const override;
-			virtual const Range<Channel>& get_Channels() const override;
+			virtual const ::std::vector<::std::unique_ptr<Channel>>& get_Channels() const override;
 
 			virtual void Update(bool dirty);
 
 		private:
-			::std::string m_label;
-			Range<Channel> m_cChannel;
+			const ::std::string m_label;
+			::std::vector<::std::unique_ptr<Channel>> m_cpChannel;
 		};
 	}
 }

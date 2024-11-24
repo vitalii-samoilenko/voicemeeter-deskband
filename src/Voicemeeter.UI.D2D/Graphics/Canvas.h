@@ -65,7 +65,7 @@ namespace Voicemeeter {
 					}
 
 				private:
-					::std::valarray<double> m_point;
+					const ::std::valarray<double> m_point;
 					::std::valarray<double> m_vertex;
 					::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 					::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
@@ -129,7 +129,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					Theme m_theme;
+					const Theme m_theme;
 					const Canvas& m_canvas;
 					const FLOAT m_flatteringTolerance;
 					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;

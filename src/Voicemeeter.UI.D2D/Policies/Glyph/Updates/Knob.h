@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "Voicemeeter.UI/States/Knob.h"
 
 #include "../../../Graphics/Glyphs/Knob.h"
@@ -11,7 +13,11 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						using Knob = Passthrough<Graphics::Glyphs::Knob, States::Knob>;
+						template<typename TKnob,
+							::std::enable_if_t<
+								::std::is_base_of_v<Graphics::Glyphs::Knob, TKnob>,
+								bool> = true>
+						using Knob = Passthrough<TKnob, States::Knob>;
 					}
 				}
 			}

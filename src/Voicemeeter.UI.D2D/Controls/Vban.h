@@ -2,8 +2,8 @@
 
 #include "Voicemeeter.UI/Controls/Checkbox.h"
 
-#include "../Adapters/Glyph/IUpdate.h"
 #include "../Graphics/Glyphs/Vban.h"
+#include "../Policies/Glyph/Updates/Vban.h"
 
 using namespace ::Voicemeeter::UI::Controls;
 
@@ -11,7 +11,13 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Controls {
-				using Vban = UI::Controls::Checkbox<Adapters::Glyph::IUpdate<D2D::Graphics::Glyphs::Vban, int>>;
+				template<
+					typename TGlyph,
+					typename TChangeNotify>
+				using Vban = UI::Controls::Checkbox<
+					TGlyph,
+					TChangeNotify,
+					Policies::Glyph::Updates::Vban<TGlyph>>;
 			}
 		}
 	}

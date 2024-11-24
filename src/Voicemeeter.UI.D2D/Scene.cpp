@@ -11,12 +11,12 @@
 using namespace ::Voicemeeter::UI::D2D;
 
 Scene::Scene(
-	::std::unique_ptr<Trackers::Dirty>& pDirtyTracker,
+	::std::unique_ptr<Trackers::IDirty>& pDirtyTracker,
 	::std::unique_ptr<Trackers::IInput>& pInputTracker,
 	::std::unique_ptr<Trackers::IFocus>& pFocusTracker,
 	::std::unique_ptr<Graphics::Canvas>& pCanvas,
 	::std::unique_ptr<IComponent>& pComposition
-) : UI::Scene<Graphics::Canvas, Trackers::Dirty>{ pDirtyTracker, pInputTracker, pFocusTracker, pCanvas, pComposition }
+) : UI::Scene<Graphics::Canvas>{ pDirtyTracker, pInputTracker, pFocusTracker, pCanvas, pComposition }
   , m_first{ false } {
 
 }
@@ -24,7 +24,7 @@ Scene::Scene(
 void Scene::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
 	m_pCanvas->get_pD2dDeviceContext()
 		->BeginDraw();
-	UI::Scene<Graphics::Canvas, Trackers::Dirty>::Redraw(point, vertex);
+	UI::Scene<Graphics::Canvas>::Redraw(point, vertex);
 	::Windows::ThrowIfFailed(m_pCanvas->get_pD2dDeviceContext()
 		->EndDraw(
 	), "Render failed");
@@ -59,25 +59,27 @@ void Scene::Resize(const ::std::valarray<double>& vertex) {
 		::std::max(8., vertex[0]),
 		::std::max(8., vertex[1])
 	};
-	UI::Scene<Graphics::Canvas, Trackers::Dirty>::Resize(patched);
+	UI::Scene<Graphics::Canvas>::Resize(patched);
 	m_first = true;
 }
 void Scene::Redraw() {
-	const ::std::valarray<double>& cVertex{ m_pCanvas->get_Size() };
 	::std::vector<RECT> cRect{};
-	for (const IGlyph* pGlyph : *m_pDirtyTracker) {
-		const ::std::valarray<double>& point{ pGlyph->get_Position() };
-		const ::std::valarray<double>& vertex{ pGlyph->get_Size() };
-		cRect.push_back({
-			static_cast<LONG>(::std::floor(point[0])),
-			static_cast<LONG>(::std::floor(point[1])),
-			static_cast<LONG>(::std::ceil(::std::min(cVertex[0], point[0] + vertex[0]))),
-			static_cast<LONG>(::std::ceil(::std::min(cVertex[1], point[1] + vertex[1])))
-		});
+	if (!m_first) {
+		const ::std::valarray<double>& dirtyPoint{ m_pDirtyTracker->get_Position() };
+		const ::std::valarray<double>& dirtyVertex{ m_pDirtyTracker->get_Size() };
+		const ::std::valarray<double>& canvasVertex{ m_pCanvas->get_Size() };
+		for (size_t i{ 0 }; i < dirtyVertex.size(); i += canvasVertex.size()) {
+			cRect.push_back({
+				static_cast<LONG>(::std::floor(dirtyPoint[i])),
+				static_cast<LONG>(::std::floor(dirtyPoint[i + 1])),
+				static_cast<LONG>(::std::ceil(::std::min(canvasVertex[0], dirtyPoint[i] + dirtyVertex[i + 1]))),
+				static_cast<LONG>(::std::ceil(::std::min(canvasVertex[1], dirtyPoint[i] + dirtyVertex[i + 1])))
+			});
+		}
 	}
 	m_pCanvas->get_pD2dDeviceContext()
 		->BeginDraw();
-	UI::Scene<Graphics::Canvas, Trackers::Dirty>::Redraw();
+	UI::Scene<Graphics::Canvas>::Redraw();
 	::Windows::ThrowIfFailed(m_pCanvas->get_pD2dDeviceContext()
 		->EndDraw(
 	), "Render failed");
