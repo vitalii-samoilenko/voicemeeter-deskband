@@ -12,9 +12,9 @@ namespace Voicemeeter {
 			static_assert(
 				::std::is_base_of_v<Channel<Specification, TLine>, TChannel>,
 				"TChannel must be derived from Channel");
-			//static_assert(
-			//	::std::is_move_constructible_v<TChannel>,
-			//	"TChannel must be move constructible");
+			static_assert(
+				::std::is_move_constructible_v<TChannel>,
+				"TChannel must be move constructible");
 
 		public:
 			using TChannel::TChannel;

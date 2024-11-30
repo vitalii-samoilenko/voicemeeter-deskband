@@ -13,9 +13,9 @@ namespace Voicemeeter {
 		static_assert(
 			::std::is_base_of_v<Strip<typename Specification::Strip, TLine>, TStrip>,
 			"TStrip must be derived from Strip");
-		//static_assert(
-		//	::std::is_move_constructible_v<TStrip>,
-		//	"TStrip must be move constructible");
+		static_assert(
+			::std::is_move_constructible_v<TStrip>,
+			"TStrip must be move constructible");
 
 	public:
 		template<typename... Args,

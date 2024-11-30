@@ -25,18 +25,18 @@ namespace Voicemeeter {
 		static_assert(
 			::std::is_base_of_v<Bus<typename Specification::Output::Virtual, TVOLine, TVOStrip>, TVOutput>,
 			"TVOutput must be derived from Bus");
-		//static_assert(
-		//	::std::is_move_constructible_v<TPInput>,
-		//	"TPInput must be move constructible");
-		//static_assert(
-		//	::std::is_move_constructible_v<TVInput>,
-		//	"TVInput must be move constructible");
-		//static_assert(
-		//	::std::is_move_constructible_v<TPOutput>,
-		//	"TPOutput must be move constructible");
-		//static_assert(
-		//	::std::is_move_constructible_v<TVOutput>,
-		//	"TVOutput must be move constructible");
+		static_assert(
+			::std::is_move_constructible_v<TPInput>,
+			"TPInput must be move constructible");
+		static_assert(
+			::std::is_move_constructible_v<TVInput>,
+			"TVInput must be move constructible");
+		static_assert(
+			::std::is_move_constructible_v<TPOutput>,
+			"TPOutput must be move constructible");
+		static_assert(
+			::std::is_move_constructible_v<TVOutput>,
+			"TVOutput must be move constructible");
 
 	public:
 		inline Mixer(
