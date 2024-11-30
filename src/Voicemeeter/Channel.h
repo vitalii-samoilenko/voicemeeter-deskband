@@ -45,6 +45,6 @@ namespace Voicemeeter {
 		};
 
 	private:
-		const ::std::array<TLine, Specification::Width> m_cLine;
+		::std::array<TLine, Specification::Width> m_cLine;
 	};
 }
