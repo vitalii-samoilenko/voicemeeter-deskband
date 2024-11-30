@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <concepts>
 #include <type_traits>
+#include "estd/type_traits.h"
 #include <utility>
 
 #include "Strip.h"
@@ -13,12 +13,15 @@ namespace Voicemeeter {
 		static_assert(
 			::std::is_base_of_v<Strip<typename Specification::Strip, TLine>, TStrip>,
 			"TStrip must be derived from Strip");
-		static_assert(
-			::std::is_move_constructible_v<TStrip>,
-			"TStrip must be move constructible");
+		//static_assert(
+		//	::std::is_move_constructible_v<TStrip>,
+		//	"TStrip must be move constructible");
 
 	public:
-		template<typename... Args>
+		template<typename... Args,
+			::std::enable_if_t<
+				::estd::are_same<TStrip, Args...>(),
+				bool> = true>
 		inline explicit Bus(
 			Args&& ...args
 		) : m_cStrip{ ::std::forward<Args>(args)... } {
@@ -26,7 +29,7 @@ namespace Voicemeeter {
 		};
 		Bus() = delete;
 		Bus(const Bus&) = delete;
-		inline Bus(Bus&&) = default;
+		inline Bus(Bus&& other) = default;
 
 		inline ~Bus() = default;
 

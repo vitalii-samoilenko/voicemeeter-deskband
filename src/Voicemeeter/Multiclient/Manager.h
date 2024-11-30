@@ -22,7 +22,8 @@ namespace Voicemeeter {
 
 			template<typename TClient>
 			inline Subscription<Specification>& get_Subscription() const {
-				return m_cSubscription[typeid(TClient)];
+				return m_cSubscription[reinterpret_cast<void*>(&
+					const_cast<type_info&>(typeid(TClient)))];
 			};
 
 			inline auto begin() const {
@@ -33,7 +34,7 @@ namespace Voicemeeter {
 			};
 
 		private:
-			mutable ::std::unordered_map<const type_info&, Subscription<Specification>> m_cSubscription;
+			mutable ::std::unordered_map<void*, Subscription<Specification>> m_cSubscription;
 		};
 	}
 }

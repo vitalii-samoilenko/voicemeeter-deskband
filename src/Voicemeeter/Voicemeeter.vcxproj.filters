@@ -22,6 +22,12 @@
     <Filter Include="Header Files\Adapters\Multiclient">
       <UniqueIdentifier>{62604a5f-bb14-4f84-aff3-451bb3cf9553}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Adapters">
+      <UniqueIdentifier>{fb79e66c-01fa-48a1-a235-5c410054d0f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Adapters\Multiclient">
+      <UniqueIdentifier>{6baf2100-da04-4dea-92cb-2ad8b45c9b62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mixer.h">
@@ -69,5 +75,10 @@
     <ClInclude Include="Adapters\Multiclient\Cherry.h">
       <Filter>Header Files\Adapters\Multiclient</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Adapters\Multiclient\Cherry.cpp">
+      <Filter>Source Files\Adapters\Multiclient</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

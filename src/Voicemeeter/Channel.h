@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include <concepts>
 #include <type_traits>
+#include "estd/type_traits.h"
 #include <utility>
 
 #include "Multiclient/Manager.h"
@@ -14,14 +14,17 @@ namespace Voicemeeter {
 		static_assert(
 			::std::is_base_of_v<Line, TLine>,
 			"TLine must be derived from Line");
-		static_assert(
-			::std::is_move_constructible_v<TLine>,
-			"TLine must be move constructible");
+		//static_assert(
+		//	::std::is_move_constructible_v<TLine>,
+		//	"TLine must be move constructible");
 
 	public:
-		template<typename... Args>
+		template<typename... Args,
+			::std::enable_if_t<
+				::estd::are_same<TLine, Args...>(),
+				bool> = true>
 		inline explicit Channel(
-			Args&& ...args
+			 Args&& ...args
 		) : m_cLine{ ::std::forward<Args>(args)... } {
 
 		};

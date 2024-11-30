@@ -18,10 +18,10 @@ namespace Voicemeeter {
 			Subscription& operator=(Subscription&&) = delete;
 
 			inline const ::std::function<void(double)>& on_Level(size_t id) const {
-				return m_cInputLevelCallback[id];
+				return m_cLevelCallback[id];
 			};
 			inline void on_Level(size_t id, const ::std::function<void(double)>& callback) {
-				m_cInputLevelCallback[id] = callback;
+				m_cLevelCallback[id] = callback;
 			};
 			inline const ::std::function<void(double)>& on_Gain(size_t id) const {
 				return m_cGainCallback[id];

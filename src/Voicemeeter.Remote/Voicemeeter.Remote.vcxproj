@@ -195,6 +195,7 @@
     <ClInclude Include="Api.h" />
     <ClInclude Include="Bus.h" />
     <ClInclude Include="Channel.h" />
+    <ClInclude Include="Client.h" />
     <ClInclude Include="Decorators\Amplifier.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Mixer.h" />

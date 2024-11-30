@@ -26,8 +26,8 @@ namespace Voicemeeter {
 					size_t id,
 					Args&& ...args
 				) : Base{ ::std::forward<Args>(args)... }
-					, m_manager{ manager }
-					, m_id{ id } {
+				  , m_manager{ manager }
+				  , m_id{ id } {
 
 				};
 				Strip() = delete;

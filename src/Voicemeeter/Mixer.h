@@ -1,8 +1,8 @@
 #pragma once
 
 #include <bitset>
-#include <concepts>
 #include <type_traits>
+#include <utility>
 
 #include "Bus.h"
 
@@ -25,18 +25,18 @@ namespace Voicemeeter {
 		static_assert(
 			::std::is_base_of_v<Bus<typename Specification::Output::Virtual, TVOLine, TVOStrip>, TVOutput>,
 			"TVOutput must be derived from Bus");
-		static_assert(
-			::std::is_move_constructible_v<TPInput>,
-			"TPInput must be move constructible");
-		static_assert(
-			::std::is_move_constructible_v<TVInput>,
-			"TVInput must be move constructible");
-		static_assert(
-			::std::is_move_constructible_v<TPOutput>,
-			"TPOutput must be move constructible");
-		static_assert(
-			::std::is_move_constructible_v<TVOutput>,
-			"TVOutput must be move constructible");
+		//static_assert(
+		//	::std::is_move_constructible_v<TPInput>,
+		//	"TPInput must be move constructible");
+		//static_assert(
+		//	::std::is_move_constructible_v<TVInput>,
+		//	"TVInput must be move constructible");
+		//static_assert(
+		//	::std::is_move_constructible_v<TPOutput>,
+		//	"TPOutput must be move constructible");
+		//static_assert(
+		//	::std::is_move_constructible_v<TVOutput>,
+		//	"TVOutput must be move constructible");
 
 	public:
 		inline Mixer(
@@ -44,10 +44,11 @@ namespace Voicemeeter {
 			TVInput&& virtualInput,
 			TPOutput&& physicalOutput,
 			TVOutput&& virtualOutput
-		) : m_physicalInput{ physicalInput }
-		  , m_virtualInput{ virtualInput }
-		  , m_physicalOutput{ physicalOutput }
-		  , m_virtualOutput{ virtualOutput } {
+		) : m_physicalInput{ ::std::move(physicalInput) }
+		  , m_virtualInput{ ::std::move(virtualInput) }
+		  , m_physicalOutput{ ::std::move(physicalOutput) }
+		  , m_virtualOutput{ ::std::move(virtualOutput) }
+		  , m_cPlug{} {
 
 		};
 		Mixer() = delete;
@@ -65,12 +66,12 @@ namespace Voicemeeter {
 				&& (::std::is_same_v<TPOutput, TOutput> || ::std::is_same_v<TVOutput, TOutput>),
 				bool> = true>
 		inline bool get_Plug(decltype(TInput::begin()) input, decltype(TOutput::begin()) output) const {
-			constexpr InputOffset{
+			constexpr size_t InputOffset{
 				(::std::is_same_v<TPInput, TInput>
 					? 0
 					: Specification::Input::Physical::Width)
 			};
-			constexpr OutputOffset{
+			constexpr size_t OutputOffset{
 				(::std::is_same_v<TPOutput, TOutput>
 					? 0
 					: Specification::Output::Physical::Width)
@@ -95,12 +96,12 @@ namespace Voicemeeter {
 					&& (::std::is_same_v<TPOutput, TOutput> || ::std::is_same_v<TVOutput, TOutput>),
 					bool> = true>
 		inline void set_Plug(decltype(TInput::begin()) input, decltype(TOutput::begin()) output, bool value) {
-			constexpr InputOffset{
+			constexpr size_t InputOffset{
 				(::std::is_same_v<TPInput, TInput>
 					? 0
 					: Specification::Input::Physical::Width)
 			};
-			constexpr OutputOffset{
+			constexpr size_t OutputOffset{
 				(::std::is_same_v<TPOutput, TOutput>
 					? 0
 					: Specification::Output::Physical::Width)

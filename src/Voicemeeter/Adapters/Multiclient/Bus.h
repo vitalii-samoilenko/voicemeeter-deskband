@@ -19,12 +19,8 @@ namespace Voicemeeter {
 					"TStrip must be derived from Strip");
 
 			public:
-				template<typename... Args>
-				inline explicit Bus(
-					Args&& ...args
-				) : Base{ ::std::forward<Args>(args)... } {
+				using Base::Base;
 
-				};
 				Bus() = delete;
 				Bus(const Bus&) = delete;
 				inline Bus(Bus&&) = default;
