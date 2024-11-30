@@ -26,7 +26,7 @@ void Plug::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	ID2D1SolidColorBrush* pBrush{ static_cast<ID2D1SolidColorBrush*>(
 		get_Canvas()
 			.get_Palette()
-				.get_pBrush(typeid(Frame),
+				.get_pBrush<Frame>(
 					[this](ID2D1Brush** ppBrush)->void {
 						ID2D1SolidColorBrush* pBrush{ nullptr };
 						::Windows::ThrowIfFailed(get_Canvas()
@@ -40,62 +40,62 @@ void Plug::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	pBrush->SetColor(m_color);
 	ID2D1GeometryRealization* pFrame{ get_Canvas()
 		.get_Palette()
-			.get_pGeometry(typeid(Frame),
-		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-			::Microsoft::WRL::ComPtr<ID2D1RoundedRectangleGeometry> pRectangle{ nullptr };
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dFactory()
-					->CreateRoundedRectangleGeometry(
-						::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 18.25F), 6.25F, 6.25F),
-						&pRectangle
-			), "Rectangle creation failed");
+			.get_pGeometry<Frame>(
+				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+					::Microsoft::WRL::ComPtr<ID2D1RoundedRectangleGeometry> pRectangle{ nullptr };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dFactory()
+							->CreateRoundedRectangleGeometry(
+								::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 18.25F), 6.25F, 6.25F),
+								&pRectangle
+					), "Rectangle creation failed");
 
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dDeviceContext()
-					->CreateStrokedGeometryRealization(
-						pRectangle.Get(), flatteringTolerance, 1.5F, nullptr,
-						ppGeometry
-			), "Geometry creation failed");
-		}) };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dDeviceContext()
+							->CreateStrokedGeometryRealization(
+								pRectangle.Get(), flatteringTolerance, 1.5F, nullptr,
+								ppGeometry
+					), "Geometry creation failed");
+				}) };
 	ID2D1GeometryRealization* pTriangle{ get_Canvas()
 		.get_Palette()
-			.get_pGeometry(typeid(Triangle),
-		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-			::Microsoft::WRL::ComPtr<ID2D1PathGeometry> pPath{ nullptr };
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dFactory()
-					->CreatePathGeometry(
-						&pPath
-			), "Path creation failed");
-			::Microsoft::WRL::ComPtr<ID2D1GeometrySink> pSink{ nullptr };
-			::Windows::ThrowIfFailed(pPath->Open(
-				&pSink
-			), "Path initialization failed");
+			.get_pGeometry<Triangle>(
+				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+					::Microsoft::WRL::ComPtr<ID2D1PathGeometry> pPath{ nullptr };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dFactory()
+							->CreatePathGeometry(
+								&pPath
+					), "Path creation failed");
+					::Microsoft::WRL::ComPtr<ID2D1GeometrySink> pSink{ nullptr };
+					::Windows::ThrowIfFailed(pPath->Open(
+						&pSink
+					), "Path initialization failed");
 
-			pSink->BeginFigure(
-				::D2D1::Point2F(7.F, 3.5F),
-				D2D1_FIGURE_BEGIN_FILLED
-			);
-			pSink->AddLine(
-				::D2D1::Point2F(13.F, 9.F)
-			);
-			pSink->AddLine(
-				::D2D1::Point2F(7.F, 15.5F)
-			);
-			pSink->EndFigure(
-				D2D1_FIGURE_END_CLOSED
-			);
+					pSink->BeginFigure(
+						::D2D1::Point2F(7.F, 3.5F),
+						D2D1_FIGURE_BEGIN_FILLED
+					);
+					pSink->AddLine(
+						::D2D1::Point2F(13.F, 9.F)
+					);
+					pSink->AddLine(
+						::D2D1::Point2F(7.F, 15.5F)
+					);
+					pSink->EndFigure(
+						D2D1_FIGURE_END_CLOSED
+					);
 
-			::Windows::ThrowIfFailed(pSink->Close(
-			), "Path finalization failed");
+					::Windows::ThrowIfFailed(pSink->Close(
+					), "Path finalization failed");
 
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dDeviceContext()
-					->CreateFilledGeometryRealization(
-						pPath.Get(), flatteringTolerance,
-						ppGeometry
-			), "Geometry creation failed");
-		}) };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dDeviceContext()
+							->CreateFilledGeometryRealization(
+								pPath.Get(), flatteringTolerance,
+								ppGeometry
+					), "Geometry creation failed");
+				}) };
 	IDWriteTextLayout* pLayout{ get_Canvas()
 		.get_Palette()
 			.get_pTextLayout(

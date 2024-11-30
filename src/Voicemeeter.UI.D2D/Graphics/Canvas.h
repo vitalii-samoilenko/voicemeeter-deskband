@@ -97,11 +97,12 @@ namespace Voicemeeter {
 					};
 					IDWriteTextFormat* get_pTextFormat(const ::std::wstring& fontFamily) const;
 					IDWriteTextLayout* get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const;
-					template<typename Func,
+					template<typename TBrush, typename Func,
 						::std::enable_if_t<
 							::estd::is_invocable_r<void, Func, ID2D1Brush**>::value,
 							bool> = true>
-					ID2D1Brush* get_pBrush(const ::std::type_info& type, const Func& factory) const {
+					ID2D1Brush* get_pBrush(const Func& factory) const {
+						const ::std::type_info& type{ typeid(TBrush) };
 						::Microsoft::WRL::ComPtr<ID2D1Brush>& pBrush{
 							m_cpBrush[
 								reinterpret_cast<void*>(&
@@ -112,11 +113,12 @@ namespace Voicemeeter {
 						}
 						return pBrush.Get();
 					};
-					template<typename Func,
+					template<typename TGeometry, typename Func,
 						::std::enable_if_t<
 							::estd::is_invocable_r<void, Func, ID2D1GeometryRealization**, FLOAT>::value,
 							bool> = true>
-					ID2D1GeometryRealization* get_pGeometry(const ::std::type_info& type, const Func& factory) const {
+					ID2D1GeometryRealization* get_pGeometry(const Func& factory) const {
+						const ::std::type_info& type{ typeid(TGeometry) };
 						::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>& pGeometry{
 							m_cpGeometry[
 								reinterpret_cast<void*>(&

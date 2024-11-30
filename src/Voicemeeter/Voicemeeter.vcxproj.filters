@@ -13,25 +13,61 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Decorators">
-      <UniqueIdentifier>{51c6e0d0-7b29-45eb-b5c4-9e7213ad725d}</UniqueIdentifier>
+    <Filter Include="Header Files\Adapters">
+      <UniqueIdentifier>{3554855e-4536-437b-834a-f33e72599ff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Multiclient">
+      <UniqueIdentifier>{f12f3117-355c-4250-b6d7-d7243ed928bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Adapters\Multiclient">
+      <UniqueIdentifier>{62604a5f-bb14-4f84-aff3-451bb3cf9553}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IMixer.h">
+    <ClInclude Include="Mixer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IChannel.h">
+    <ClInclude Include="Channel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="INetwork.h">
+    <ClInclude Include="Line.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IBus.h">
+    <ClInclude Include="Multiclient\Subscription.h">
+      <Filter>Header Files\Multiclient</Filter>
+    </ClInclude>
+    <ClInclude Include="Strip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Decorators\IAmplifier.h">
-      <Filter>Header Files\Decorators</Filter>
+    <ClInclude Include="Bus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiclient\Manager.h">
+      <Filter>Header Files\Multiclient</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Amplifier.h">
+      <Filter>Header Files\Adapters</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Mute.h">
+      <Filter>Header Files\Adapters</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Multiclient\Line.h">
+      <Filter>Header Files\Adapters\Multiclient</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Multiclient\Strip.h">
+      <Filter>Header Files\Adapters\Multiclient</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Multiclient\Bus.h">
+      <Filter>Header Files\Adapters\Multiclient</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Network.h">
+      <Filter>Header Files\Adapters</Filter>
+    </ClInclude>
+    <ClInclude Include="Cherry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Adapters\Multiclient\Cherry.h">
+      <Filter>Header Files\Adapters\Multiclient</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

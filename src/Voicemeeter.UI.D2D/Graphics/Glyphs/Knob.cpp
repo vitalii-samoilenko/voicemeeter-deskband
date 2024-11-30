@@ -32,7 +32,7 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	ID2D1SolidColorBrush* pFrameBrush{ static_cast<ID2D1SolidColorBrush*>(
 		get_Canvas()
 			.get_Palette()
-				.get_pBrush(typeid(Frame),
+				.get_pBrush<Frame>(
 					[this](ID2D1Brush** ppBrush)->void {
 						ID2D1SolidColorBrush* pBrush{ nullptr };
 						::Windows::ThrowIfFailed(get_Canvas()
@@ -47,7 +47,7 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	ID2D1SolidColorBrush* pLabelBrush{ static_cast<ID2D1SolidColorBrush*>(
 		get_Canvas()
 			.get_Palette()
-				.get_pBrush(typeid(Label),
+				.get_pBrush<Label>(
 					[this](ID2D1Brush** ppBrush)->void {
 						ID2D1SolidColorBrush* pBrush{ nullptr };
 						::Windows::ThrowIfFailed(get_Canvas()
@@ -62,7 +62,7 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	ID2D1SolidColorBrush* pIndicatorBrush{ static_cast<ID2D1SolidColorBrush*>(
 		get_Canvas()
 			.get_Palette()
-				.get_pBrush(typeid(Frame),
+				.get_pBrush<Indicator>(
 					[this](ID2D1Brush** ppBrush)->void {
 						ID2D1SolidColorBrush* pBrush{ nullptr };
 						::Windows::ThrowIfFailed(get_Canvas()
@@ -78,42 +78,42 @@ void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 					})) };
 	ID2D1GeometryRealization* pFrame{ get_Canvas()
 		.get_Palette()
-			.get_pGeometry(typeid(Frame),
-		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-			::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dFactory()
-					->CreateEllipseGeometry(
-						::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
-						&pEllipse
-			), "Ellipse creation failed");
+			.get_pGeometry<Frame>(
+				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+					::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dFactory()
+							->CreateEllipseGeometry(
+								::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
+								&pEllipse
+					), "Ellipse creation failed");
 
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dDeviceContext()
-					->CreateStrokedGeometryRealization(
-						pEllipse.Get(), flatteringTolerance, 3.F, nullptr,
-						ppGeometry
-			), "Geometry creation failed");
-		}) };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dDeviceContext()
+							->CreateStrokedGeometryRealization(
+								pEllipse.Get(), flatteringTolerance, 3.F, nullptr,
+								ppGeometry
+					), "Geometry creation failed");
+				}) };
 	ID2D1GeometryRealization* pIndicator{ get_Canvas()
 		.get_Palette()
-			.get_pGeometry(typeid(Indicator),
-		[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-			::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dFactory()
-					->CreateEllipseGeometry(
-						::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
-						&pEllipse
-			), "Ellipse creation failed");
+			.get_pGeometry<Indicator>(
+				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
+					::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dFactory()
+							->CreateEllipseGeometry(
+								::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
+								&pEllipse
+					), "Ellipse creation failed");
 
-			::Windows::ThrowIfFailed(get_Canvas()
-				.get_pD2dDeviceContext()
-					->CreateFilledGeometryRealization(
-						pEllipse.Get(), flatteringTolerance,
-						ppGeometry
-			), "Geometry creation failed");
-		}) };
+					::Windows::ThrowIfFailed(get_Canvas()
+						.get_pD2dDeviceContext()
+							->CreateFilledGeometryRealization(
+								pEllipse.Get(), flatteringTolerance,
+								ppGeometry
+					), "Geometry creation failed");
+				}) };
 	IDWriteTextLayout* pLayout{ get_Canvas()
 		.get_Palette()
 			.get_pTextLayout(

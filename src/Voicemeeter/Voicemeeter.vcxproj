@@ -26,6 +26,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Adapters\Amplifier.h" />
+    <ClInclude Include="Adapters\Multiclient\Bus.h" />
+    <ClInclude Include="Adapters\Multiclient\Cherry.h" />
+    <ClInclude Include="Adapters\Multiclient\Line.h" />
+    <ClInclude Include="Adapters\Multiclient\Strip.h" />
+    <ClInclude Include="Adapters\Mute.h" />
+    <ClInclude Include="Adapters\Network.h" />
+    <ClInclude Include="Bus.h" />
+    <ClInclude Include="Channel.h" />
+    <ClInclude Include="Cherry.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="Multiclient\Manager.h" />
+    <ClInclude Include="Strip.h" />
+    <ClInclude Include="Mixer.h" />
+    <ClInclude Include="Multiclient\Subscription.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -191,13 +208,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Decorators\IAmplifier.h" />
-    <ClInclude Include="IBus.h" />
-    <ClInclude Include="IChannel.h" />
-    <ClInclude Include="IMixer.h" />
-    <ClInclude Include="INetwork.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
