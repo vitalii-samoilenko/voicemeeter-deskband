@@ -45,6 +45,8 @@ namespace Voicemeeter {
 					Mixer>;
 			};
 
+			using CherrySubscription = ::Voicemeeter::Multiclient::Subscription<CherrySpecification>;
+
 			class Cherry
 				: public ::Voicemeeter::Multiclient::Manager<CherrySpecification>
 				, private CherryDeclaration::Cherry {

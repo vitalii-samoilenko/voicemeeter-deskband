@@ -193,21 +193,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Api.h" />
-    <ClInclude Include="Bus.h" />
-    <ClInclude Include="Channel.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Decorators\Amplifier.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Mixer.h" />
-    <ClInclude Include="Network.h" />
-    <ClInclude Include="Output.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Api.cpp" />
-    <ClCompile Include="Bus.cpp" />
-    <ClCompile Include="Channel.cpp" />
-    <ClCompile Include="Mixer.cpp" />
-    <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -121,16 +121,16 @@ namespace Voicemeeter {
 				+ (OutputOffset + (output - m_output.begin()))] = value;
 		};
 
-		inline const TPInput& get_PhysicalInput() const {
+		inline TPInput& get_PhysicalInput() {
 			return m_physicalInput;
 		};
-		inline const TVInput& get_VirtualInput() const {
+		inline TVInput& get_VirtualInput() {
 			return m_virtualInput;
 		};
-		inline const TPOutput& get_PhysicalOutput() const {
+		inline TPOutput& get_PhysicalOutput() {
 			return m_physicalOutput;
 		};
-		inline const TVOutput& get_VirtualOutput() const {
+		inline TVOutput& get_VirtualOutput() {
 			return m_virtualOutput;
 		};
 

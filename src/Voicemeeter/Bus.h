@@ -29,17 +29,17 @@ namespace Voicemeeter {
 		};
 		Bus() = delete;
 		Bus(const Bus&) = delete;
-		inline Bus(Bus&& other) = default;
+		inline Bus(Bus&&) = default;
 
 		inline ~Bus() = default;
 
 		Bus& operator=(const Bus&) = delete;
 		Bus& operator=(Bus&&) = delete;
 
-		inline auto begin() const {
+		inline auto begin() {
 			return m_cStrip.begin();
 		};
-		inline auto end() const {
+		inline auto end() {
 			return m_cStrip.end();
 		};
 

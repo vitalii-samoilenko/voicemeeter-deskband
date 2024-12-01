@@ -36,10 +36,10 @@ namespace Voicemeeter {
 		Channel& operator=(const Channel&) = delete;
 		Channel& operator=(Channel&&) = delete;
 
-		inline auto begin() const {
+		inline auto begin() {
 			return m_cLine.begin();
 		};
-		inline auto end() const {
+		inline auto end() {
 			return m_cLine.end();
 		};
 

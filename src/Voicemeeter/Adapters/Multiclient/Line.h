@@ -41,10 +41,10 @@ namespace Voicemeeter {
 					}
 					Base::set_Level(value);
 					for (const auto& client_subscription : m_manager) {
-						if (client_subscription->first == &typeid(TClient)) {
+						if (client_subscription.first == &typeid(TClient)) {
 							continue;
 						}
-						client_subscription->second
+						client_subscription.second
 							.on_Level(m_id)
 								(value);
 					}
