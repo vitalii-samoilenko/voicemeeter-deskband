@@ -12,11 +12,11 @@ namespace estd {
 
 	template<typename TL, typename TR>
 	constexpr bool are_same() {
-	    return ::std::is_same_v<TL, TR>;
-	}
+		return ::std::is_same_v<TL, TR>;
+	};
 	
 	template<typename TL, typename TR, typename TN, typename... Args>
 	constexpr bool are_same() {
-	    return ::std::is_same_v<TL, TR> && are_same<TL, TN, Args...>();
-	}
+		return ::std::is_same_v<TL, TR> && are_same<TL, TN, Args...>();
+	};
 }

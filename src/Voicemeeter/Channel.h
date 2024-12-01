@@ -1,11 +1,10 @@
 #pragma once
 
 #include <array>
-#include <type_traits>
-#include "estd/type_traits.h"
 #include <utility>
 
-#include "Multiclient/Manager.h"
+#include "estd/type_traits.h"
+
 #include "Line.h"
 
 namespace Voicemeeter {

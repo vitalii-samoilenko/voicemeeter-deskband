@@ -36,10 +36,10 @@ namespace Voicemeeter {
 				m_cMuteCallback[id] = callback;
 			};
 			inline const ::std::function<void(bool)>& on_Vban() const {
-				return m_VbanCallback;
+				return m_vbanCallback;
 			};
 			inline void on_Vban(const ::std::function<void(bool)>& callback) {
-				m_VbanCallback = callback;
+				m_vbanCallback = callback;
 			};
 			inline const ::std::function<void(bool)>& on_Plug(size_t inputId, size_t outputId) const {
 				return m_cPlugCallback[(Specification::Input::Physical::Width + Specification::Input::Virtual::Width) * inputId
@@ -69,7 +69,7 @@ namespace Voicemeeter {
 			::std::array<::std::function<void(bool)>,
 				(Specification::Input::Physical::Width + Specification::Input::Virtual::Width)
 				* (Specification::Output::Physical::Width + Specification::Output::Virtual::Width)> m_cPlugCallback;
-			::std::function<void(bool)> m_VbanCallback;
+			::std::function<void(bool)> m_vbanCallback;
 		};
 	}
 }

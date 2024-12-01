@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
-#include <type_traits>
-#include "estd/type_traits.h"
 #include <utility>
+
+#include "estd/type_traits.h"
 
 #include "Strip.h"
 

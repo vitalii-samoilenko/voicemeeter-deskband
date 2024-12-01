@@ -50,7 +50,7 @@ namespace Voicemeeter {
 					}
 					Base::set_Gain(value);
 					for (auto& client_subscription : m_manager) {
-						if (client_subscription->first == typeid(TClient)) {
+						if (client_subscription->first == &typeid(TClient)) {
 							continue;
 						}
 						client_subscription->second
@@ -66,7 +66,7 @@ namespace Voicemeeter {
 					}
 					Base::set_Mute(value);
 					for (auto& client_subscription : m_manager) {
-						if (client_subscription->first == typeid(TClient)) {
+						if (client_subscription->first == &typeid(TClient)) {
 							continue;
 						}
 						client_subscription->second

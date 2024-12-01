@@ -86,15 +86,15 @@ namespace Voicemeeter {
 					? m_physicalOutput
 					: m_virtualOutput)
 			};
-			return m_cPlug[(InputOffset + m_input.begin() - input)
+			return m_cPlug[(InputOffset + (input - m_input.begin()))
 				* (Specification::Output::Physical::Width + Specification::Output::Virtual::Width)
-				+ (OutputOffset + m_output.begin() - output)];
+				+ (OutputOffset + (output - m_output.begin()))];
 		};
 		template<typename TInput, typename TOutput,
 			::std::enable_if_t<
-					(::std::is_same_v<TPInput, TInput> || ::std::is_same_v<TVInput, TInput>)
-					&& (::std::is_same_v<TPOutput, TOutput> || ::std::is_same_v<TVOutput, TOutput>),
-					bool> = true>
+				(::std::is_same_v<TPInput, TInput> || ::std::is_same_v<TVInput, TInput>)
+				&& (::std::is_same_v<TPOutput, TOutput> || ::std::is_same_v<TVOutput, TOutput>),
+				bool> = true>
 		inline void set_Plug(decltype(TInput::begin()) input, decltype(TOutput::begin()) output, bool value) {
 			constexpr size_t InputOffset{
 				(::std::is_same_v<TPInput, TInput>
@@ -116,21 +116,21 @@ namespace Voicemeeter {
 					? m_physicalOutput
 					: m_virtualOutput)
 			};
-			m_cPlug[(InputOffset + m_input.begin() - input)
+			m_cPlug[(InputOffset + (input - m_input.begin()))
 				* (Specification::Output::Physical::Width + Specification::Output::Virtual::Width)
-				+ (OutputOffset + m_output.begin() - output)] = value;
+				+ (OutputOffset + (output - m_output.begin()))] = value;
 		};
 
-		const TPInput& get_PhysicalInput() const {
+		inline const TPInput& get_PhysicalInput() const {
 			return m_physicalInput;
 		};
-		const TVInput& get_VirtualInput() const {
+		inline const TVInput& get_VirtualInput() const {
 			return m_virtualInput;
 		};
-		const TPOutput& get_PhysicalOutput() const {
+		inline const TPOutput& get_PhysicalOutput() const {
 			return m_physicalOutput;
 		};
-		const TVOutput& get_VirtualOutput() const {
+		inline const TVOutput& get_VirtualOutput() const {
 			return m_virtualOutput;
 		};
 

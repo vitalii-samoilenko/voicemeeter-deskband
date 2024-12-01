@@ -68,8 +68,8 @@ namespace Voicemeeter {
 						return;
 					}
 					BaseMixer::set_Plug<TInput, TOutput>(input, output, value);
-					for (auto& client_subscription : *this) {
-						if (client_subscription->first == typeid(TClient)) {
+					for (const auto& client_subscription : *this) {
+						if (client_subscription->first == &typeid(TClient)) {
 							continue;
 						}
 						client_subscription->second
@@ -84,8 +84,8 @@ namespace Voicemeeter {
 						return;
 					}
 					BaseMixer::set_Vban(value);
-					for (auto& client_subscription : *this) {
-						if (client_subscription->first == typeid(TClient)) {
+					for (const auto& client_subscription : *this) {
+						if (client_subscription->first == &typeid(TClient)) {
 							continue;
 						}
 						client_subscription->second

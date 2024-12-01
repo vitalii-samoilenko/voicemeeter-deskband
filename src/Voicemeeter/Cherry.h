@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Adapters/Network.h"
-
 namespace Voicemeeter {
 	struct CherrySpecification {
 		struct Input {

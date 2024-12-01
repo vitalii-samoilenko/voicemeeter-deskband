@@ -40,8 +40,8 @@ namespace Voicemeeter {
 						return;
 					}
 					Base::set_Level(value);
-					for (auto& client_subscription : m_manager) {
-						if (client_subscription->first == typeid(TClient)) {
+					for (const auto& client_subscription : m_manager) {
+						if (client_subscription->first == &typeid(TClient)) {
 							continue;
 						}
 						client_subscription->second

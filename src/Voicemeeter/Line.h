@@ -3,11 +3,11 @@
 namespace Voicemeeter {
 	class Line {
 	public:
-		Line() = default;
+		inline Line() = default;
 		Line(const Line&) = delete;
-		Line(Line&&) = default;
+		inline Line(Line&&) = default;
 
-		~Line() = default;
+		inline ~Line() = default;
 
 		Line& operator=(const Line&) = delete;
 		Line& operator=(Line&&) = delete;
