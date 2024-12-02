@@ -55,7 +55,7 @@ namespace Voicemeeter {
 						m_point = point;
 					};
 					virtual void Rescale(const ::std::valarray<double>& vertex) override {
-						m_vertex = m_scale(m_baseVertex, vertex);
+						m_vertex = m_baseVertex * m_scale(m_baseVertex, vertex);
 					};
 
 				protected:
