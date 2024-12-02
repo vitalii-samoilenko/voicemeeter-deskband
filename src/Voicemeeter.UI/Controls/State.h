@@ -24,7 +24,7 @@ namespace Voicemeeter {
 				typename TScale>
 			class State : public IControl {
 				static_assert(
-					::std::is_base_of_v<Graphics::IGlyph, TGlyph>(),
+					::std::is_base_of_v<Graphics::IGlyph, TGlyph>,
 					"TGlyph must be derived from IGlyph");
 				static_assert(
 					::estd::is_invocable_r<bool, TStateDefault, TState&>(),
@@ -42,8 +42,8 @@ namespace Voicemeeter {
 					::estd::is_invocable_r<void, TChangeNotify, const TState&>(),
 					"TChangeNotify must be invocable with const TState& arguments and void return type");
 				static_assert(
-					::estd::is_invocable_r<void, TGlyphUpdate, TGlyph&>(),
-					"TGlyphUpdate must be invocable with TGlyph& arguments and void return type");
+					::estd::is_invocable_r<void, TGlyphUpdate, TGlyph&, const TState&>(),
+					"TGlyphUpdate must be invocable with TGlyph&, const TState& arguments and void return type");
 				static_assert(
 					::estd::is_invocable_r<::std::valarray<double>, TScale, const ::std::valarray<double>&, const ::std::valarray<double>&>(),
 					"TScale must be invocable with const valarray<double>&, const valarray<double>& arguments and valarray<double> return type");
@@ -53,11 +53,11 @@ namespace Voicemeeter {
 					const ::std::valarray<double>& baseVertex,
 					Trackers::IDirty& dirtyTracker,
 					::std::unique_ptr<TGlyph>& pGlyph,
+					const TChangeNotify& changeNotify,
 					const TStateDefault& stateDefault = {},
 					const TStateNext& stateNext = {},
 					const TStatePrevious& statePrevious = {},
 					const TStateSet& stateSet = {},
-					const TChangeNotify& changeNotify = {},
 					const TGlyphUpdate& glyphUpdate = {},
 					const TScale& scale = {}
 				) : m_point{ 0., 0. }
@@ -99,7 +99,7 @@ namespace Voicemeeter {
 					OnSet(true);
 				}
 				void SetNext() {
-					if (!m_stateSet(m_state)) {
+					if (!m_stateNext(m_state)) {
 						return;
 					}
 					OnSet(true);

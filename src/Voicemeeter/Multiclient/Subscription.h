@@ -8,7 +8,25 @@ namespace Voicemeeter {
 		template<typename Specification>
 		class Subscription {
 		public:
-			inline Subscription() = default;
+			inline Subscription(
+			) : m_cLevelCallback{}
+			  , m_cGainCallback{}
+			  , m_cMuteCallback{}
+			  , m_cPlugCallback{}
+			  , m_vbanCallback{ [](bool)->void {} } {
+				for (::std::function<void(double)>& callback : m_cLevelCallback) {
+					callback = [](double)->void {};
+				}
+				for (::std::function<void(double)>& callback : m_cGainCallback) {
+					callback = [](double)->void {};
+				}
+				for (::std::function<void(bool)>& callback : m_cMuteCallback) {
+					callback = [](bool)->void {};
+				}
+				for (::std::function<void(bool)>& callback : m_cPlugCallback) {
+					callback = [](bool)->void {};
+				}
+			};
 			Subscription(const Subscription&) = delete;
 			Subscription(Subscription&&) = delete;
 

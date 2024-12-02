@@ -7,8 +7,9 @@
 
 #include "Environment/IDirtyTracker.h"
 #include "Environment/IInputTracker.h"
-#include "Voicemeeter.Remote/Mixer.h"
-#include "Voicemeeter.UI.D2D/Scene.h"
+#include "Voicemeeter/Adapters/Multiclient/Cherry.h"
+#include "Voicemeeter.Clients.Remote/Cherry.h"
+#include "Voicemeeter.Clients.UI.D2D/Cherry.h"
 #include "Windows/Timer.h"
 
 namespace Voicemeeter {
@@ -40,9 +41,10 @@ namespace Voicemeeter {
 			UINT m_dpi;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
 			::std::unique_ptr<::Windows::Timer> m_pDirtyTimer;
-			::std::unique_ptr<::Windows::Timer> m_pMixerTimer;
+			::std::unique_ptr<::Windows::Timer> m_pRemoteTimer;
 			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
-			::std::unique_ptr<::Voicemeeter::Remote::Mixer> m_pMixer;
+			::std::unique_ptr<::Voicemeeter::Adapters::Multiclient::Cherry> m_pMixer;
+			::std::unique_ptr<::Voicemeeter::Clients::Remote::Cherry> m_pRemote;
 			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pScene;
 
 			static LRESULT CALLBACK WndProcW(

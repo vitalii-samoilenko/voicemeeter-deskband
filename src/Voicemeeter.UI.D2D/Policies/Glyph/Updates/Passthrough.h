@@ -10,10 +10,10 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TGlyph, typename TState>
+						template<typename TScale, typename TGlyph, typename TState>
 						struct Passthrough {
 							static_assert(
-								::std::is_base_of_v<Graphics::Glyph, TGlyph>,
+								::std::is_base_of_v<Graphics::Glyph<TScale>, TGlyph>,
 								"TGlyph must be derived from Glyph");
 
 							inline void operator()(TGlyph& glyph, const TState& state) const {

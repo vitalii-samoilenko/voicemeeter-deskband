@@ -15,7 +15,7 @@ namespace Voicemeeter {
 							::std::enable_if_t<
 								::std::is_base_of_v<Graphics::Glyphs::Plug, TPlug>,
 								bool> = true>
-						using Plug = Passthrough<TPlug, int>;
+						using Plug = Passthrough<UI::Policies::Size::Scales::Stretch, TPlug, int>;
 					}
 				}
 			}

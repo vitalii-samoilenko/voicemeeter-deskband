@@ -15,7 +15,7 @@ namespace Voicemeeter {
 			public:
 				explicit Dirty(
 					::Environment::IDirtyTracker& envDirtyTracker,
-					::Environment::ITimer& envTimer
+					::Environment::ITimer& timer
 				);
 				Dirty() = delete;
 				Dirty(const Dirty&) = delete;

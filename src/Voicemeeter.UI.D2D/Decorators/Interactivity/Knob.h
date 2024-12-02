@@ -20,14 +20,14 @@ namespace Voicemeeter {
 						typename TChangeNotify>
 					using Knob = UI::Decorators::Interactivity::Knob<
 						Direction,
-						Controls::Knob<
-							TGlyph,
-							TChangeNotify>,
 						Policies::State::Changes::Knob::DEFAULT, Policies::State::Changes::Knob::MIN, Policies::State::Changes::Knob::MAX, Policies::State::Changes::Knob::DELTA,
 						Policies::State::Changes::Knob::Set,
 						TGlyph,
 						TChangeNotify,
-						Policies::Glyph::Updates::Knob<TGlyph>>;
+						Policies::Glyph::Updates::Knob<TGlyph>,
+						Controls::Knob<
+							TGlyph,
+							TChangeNotify>>;
 				}
 			}
 		}

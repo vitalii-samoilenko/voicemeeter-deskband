@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					namespace Updates {
 						namespace Animations {
 							template<typename TPlug>
-							class Plug : public Animation<1, TPlug, int> {
+							class Plug : public Animation<1, UI::Policies::Size::Scales::Stretch, TPlug, int> {
 								static_assert(
 									::std::is_base_of_v<Graphics::Glyphs::Plug, TPlug>,
 									"TPlug must be derived from Plug");
@@ -24,7 +24,7 @@ namespace Voicemeeter {
 									active = 0
 								};
 
-								using Animation = Animation<active + 1, TPlug, int>;
+								using Animation = Animation<active + 1, UI::Policies::Size::Scales::Stretch, TPlug, int>;
 
 							public:
 								template<typename... Args>

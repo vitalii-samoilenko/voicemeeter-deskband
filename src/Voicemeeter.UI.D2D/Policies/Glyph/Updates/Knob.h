@@ -17,7 +17,7 @@ namespace Voicemeeter {
 							::std::enable_if_t<
 								::std::is_base_of_v<Graphics::Glyphs::Knob, TKnob>,
 								bool> = true>
-						using Knob = Passthrough<TKnob, States::Knob>;
+						using Knob = Passthrough<UI::Policies::Size::Scales::Stretch, TKnob, States::Knob>;
 					}
 				}
 			}

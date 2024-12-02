@@ -12,9 +12,9 @@ namespace Voicemeeter {
 				namespace Glyph {
 					namespace Updates {
 						template<typename TVban>
-						class Vban : TVban {
+						class Vban : public TVban {
 							static_assert(
-								::std::is_base_of_v<Graphics::Glyphs::VBan, TVban>,
+								::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
 								"TVban must be derived from VBan");
 
 						public:

@@ -1,6 +1,6 @@
 #include "Client.h"
 
-using namespace ::Voicemeeter::Client::Remote;
+using namespace ::Voicemeeter::Clients::Remote;
 
 template<>
 template<>
@@ -130,6 +130,12 @@ long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Po
 
 void Client<::Voicemeeter::Adapters::Multiclient::Cherry>::Subscribe(::Environment::ITimer& timer) const {
 	auto& subscription = m_mixer.get_Subscription<Client>();
+	if (Type::Voicemeeter < m_type) {
+		subscription.on_Vban(
+			[this](bool value)->void {
+				m_remote.VBVMR_SetParameterFloat(const_cast<char*>("vban.Enable"), static_cast<float>(value));
+			});
+	}
 	for (auto& input : m_mixer.get_PhysicalInput()) {
 		size_t inputId{ input.get_Id() };
 		::std::string inputKey{ ToBusKey(inputId) };
@@ -235,6 +241,10 @@ void Client<::Voicemeeter::Adapters::Multiclient::Cherry>::Subscribe(::Environme
 				throw ::std::exception{ "Cannot check Voicemeeter" };
 			}
 			float value{ 0.F };
+			if (Type::Voicemeeter < m_type && dirty) {
+				m_remote.VBVMR_GetParameterFloat(const_cast<char*>("vban.Enable"), &value);
+				m_mixer.set_Vban<Client>(0.01F < value);
+			}
 			for (auto& strip : m_mixer.get_PhysicalInput()) {
 				if (dirty) {
 					::std::string key{ ToBusKey(strip.get_Id()) };

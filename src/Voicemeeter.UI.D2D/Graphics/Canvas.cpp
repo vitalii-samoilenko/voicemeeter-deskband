@@ -172,7 +172,7 @@ void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<
 			static_cast<FLOAT>(point[0] + vertex[0]),
 			static_cast<FLOAT>(point[1] + vertex[1])
 		),
-		m_pPalette->get_pBrush(typeid(Canvas),
+		m_pPalette->get_pBrush<Canvas>(
 			[this](ID2D1Brush** ppBrush)->void {
 				ID2D1SolidColorBrush* pBrush{ nullptr };
 				::Windows::ThrowIfFailed(m_pD2dDeviceContext

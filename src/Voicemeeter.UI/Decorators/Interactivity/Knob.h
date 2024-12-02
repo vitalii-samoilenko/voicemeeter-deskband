@@ -16,12 +16,12 @@ namespace Voicemeeter {
 			namespace Interactivity {
 				template<
 					UI::Direction Direction,
-					typename TKnob,
 					int Default, int Min, int Max, int Delta,
 					typename TGlyph,
 					typename TStateSet,
 					typename TChangeNotify,
-					typename TGlyphUpdate>
+					typename TGlyphUpdate,
+					typename TKnob>
 				class Knob : public TKnob {
 					static_assert(
 						::std::is_base_of_v<Controls::Knob<Default, Min, Max, Delta, TGlyph, TStateSet, TChangeNotify, TGlyphUpdate>, TKnob>,

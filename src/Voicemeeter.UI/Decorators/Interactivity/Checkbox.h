@@ -11,10 +11,10 @@ namespace Voicemeeter {
 		namespace Decorators {
 			namespace Interactivity {
 				template<
-					typename TCheckbox,
 					typename TGlyph,
 					typename TChangeNotify,
-					typename TGlyphUpdate>
+					typename TGlyphUpdate,
+					typename TCheckbox>
 				class Checkbox : public TCheckbox {
 					static_assert(
 						::std::is_base_of_v<Controls::Checkbox<TGlyph, TChangeNotify, TGlyphUpdate>, TCheckbox>,

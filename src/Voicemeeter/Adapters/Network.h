@@ -36,7 +36,7 @@ namespace Voicemeeter {
 			inline bool get_Vban() const {
 				return m_vban;
 			};
-			inline bool set_Vban(bool value) {
+			inline void set_Vban(bool value) {
 				m_vban = value;
 			};
 

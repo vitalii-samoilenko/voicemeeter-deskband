@@ -3,8 +3,6 @@
 #include <string>
 #include <utility>
 
-#include "Voicemeeter.Scene.D2D.Remote/Build.h"
-#include "Voicemeeter.UI/Direction.h"
 #include "Windows/ErrorMessageBox.h"
 #include "Windows/Registry.h"
 #include "Windows/Wrappers.h"
@@ -25,9 +23,10 @@ Window::Window(
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
   , m_pCompositionTimer{ nullptr }
   , m_pDirtyTimer{ nullptr }
-  , m_pMixerTimer{ nullptr }
+  , m_pRemoteTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
+  , m_pRemote{ nullptr }
   , m_pScene{ nullptr } {
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
@@ -109,15 +108,25 @@ LRESULT CALLBACK Window::WndProcW(
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pDirtyTimer->get_Id(), pWnd->m_pDirtyTimer.get());
-			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
-			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
-			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
-				hWnd, UI::Direction::Right, *pWnd, *pWnd,
+			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
+			pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
+			pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
+			::Voicemeeter::Clients::UI::D2D::Cherry builder{
+				hWnd,
+				*pWnd, *pWnd,
 				*pWnd->m_pCompositionTimer, *pWnd->m_pDirtyTimer,
-				*pWnd->m_pMixer));
+				*pWnd->m_pMixer
+			};
+			if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
+				builder
+					.WithNetwork(false)
+					.WithIgnoredStrip(3)
+					.WithIgnoredStrip(5);
+			}
+			pWnd->m_pScene.reset(builder.Build());
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_DESTROY: {

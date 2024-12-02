@@ -15,16 +15,16 @@ namespace Voicemeeter {
 					namespace Updates {
 						namespace Animations {
 							template<typename TVban>
-							class Vban : public Animation<1, TVban, int> {
+							class Vban : public Animation<1, UI::Policies::Size::Scales::Stretch, TVban, int> {
 								static_assert(
-									::std::is_base_of_v<Graphics::Glyphs::VBan, TVban>,
+									::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
 									"TVban must be derived from Vban");
 
 								enum animation_vector : size_t {
 									active = 0
 								};
 
-								using Animation = Animation<active + 1, TVban, int>;
+								using Animation = Animation<active + 1, UI::Policies::Size::Scales::Stretch, TVban, int>;
 
 							public:
 								template<typename... Args>
@@ -54,12 +54,12 @@ namespace Voicemeeter {
 								};
 
 								virtual void OnUpdate(const int& state) override {
-									TVban::get_Velocity()[active] = state
+									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
 								};
 								virtual void OnFrame() override {
-									FLOAT alpha{ static_cast<FLOAT>(TVban::get_AnimationSize()[active]) / m_baseVertex[active] };
+									FLOAT alpha{ static_cast<FLOAT>(Animation::get_AnimationSize()[active]) / m_baseVertex[active] };
 									const ::D2D1::ColorF& from{
 										TVban::get_Canvas()
 											.get_Palette()

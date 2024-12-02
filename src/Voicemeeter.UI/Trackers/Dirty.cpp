@@ -8,12 +8,12 @@ using namespace ::Voicemeeter::UI::Trackers;
 
 Dirty::Dirty(
 	::Environment::IDirtyTracker& envDirtyTracker,
-	::Environment::ITimer& envTimer
+	::Environment::ITimer& timer
 ) : m_envDirtyTracker{ envDirtyTracker }
   , m_point{ 0., 0. }
   , m_vertex{ 0., 0. }
   , m_changed{ false }{
-	envTimer.Set(::std::chrono::milliseconds{ 1000 / 120 },
+	timer.Set(::std::chrono::milliseconds{ 1000 / 120 },
 		[this]()->bool {
 			if (!m_cpGlyph.empty()) {
 				m_envDirtyTracker.SetDirty();

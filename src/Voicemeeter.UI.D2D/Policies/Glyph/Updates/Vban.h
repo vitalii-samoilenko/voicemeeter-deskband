@@ -15,7 +15,7 @@ namespace Voicemeeter {
 							::std::enable_if_t<
 								::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
 								bool> = true>
-						using Vban = Passthrough<TVban, int>;
+						using Vban = Passthrough<UI::Policies::Size::Scales::Stretch, TVban, int>;
 					}
 				}
 			}

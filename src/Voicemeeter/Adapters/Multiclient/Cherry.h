@@ -85,10 +85,10 @@ namespace Voicemeeter {
 					}
 					BaseMixer::set_Vban(value);
 					for (const auto& client_subscription : *this) {
-						if (client_subscription->first == &typeid(TClient)) {
+						if (client_subscription.first == &typeid(TClient)) {
 							continue;
 						}
-						client_subscription->second
+						client_subscription.second
 							.on_Vban()
 								(value);
 					}

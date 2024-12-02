@@ -30,13 +30,13 @@ namespace Voicemeeter {
 					TIterator end,
 					const TScale& scale = {}
 				) : m_vertex{}
-				  , m_baseVertex { begin->get_BaseSize() }
+				  , m_baseVertex { (*begin)->get_BaseSize() }
 				  , m_cpComponent{}
 				  , m_scale{ scale } {
 					m_baseVertex[static_cast<size_t>(Direction)] = ::std::numeric_limits<double>::max();
 
 					for (; begin != end; ++begin) {
-						const ::std::valarray<double>& componentBaseVertex{ begin->get_BaseSize() };
+						const ::std::valarray<double>& componentBaseVertex{ (*begin)->get_BaseSize() };
 
 						auto maxVertex = m_baseVertex < componentBaseVertex;
 						m_baseVertex[maxVertex] = componentBaseVertex[maxVertex];

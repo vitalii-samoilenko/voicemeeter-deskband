@@ -13,10 +13,10 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						template<size_t Dimension, typename TGlyph, typename TState>
+						template<size_t Dimension, typename TScale, typename TGlyph, typename TState>
 						class Animation : public TGlyph {
 							static_assert(
-								::std::is_base_of_v<Graphics::Glyph, TGlyph>,
+								::std::is_base_of_v<Graphics::Glyph<TScale>, TGlyph>,
 								"TGlyph must be derived from Glyph");
 
 						public:
@@ -37,7 +37,7 @@ namespace Voicemeeter {
 									::std::chrono::high_resolution_clock::time_point now{ ::std::chrono::high_resolution_clock::now() };
 									m_vertex += (::std::chrono::duration_cast<::std::chrono::microseconds>(now - m_point).count() * m_velocity);
 									m_vertex[m_vertex < 0LL] = 0LL;
-									const ::std::valarray<long long>& animationBaseVertex{ TGlyph::get_AnimationBaseSize() };
+									const ::std::valarray<long long>& animationBaseVertex{ get_AnimationBaseSize() };
 									auto maxVertex = animationBaseVertex < m_vertex;
 									m_vertex[maxVertex] = animationBaseVertex[maxVertex];
 									m_velocity[m_vertex == 0LL || m_vertex == animationBaseVertex] = 0LL;

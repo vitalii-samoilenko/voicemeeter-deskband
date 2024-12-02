@@ -18,7 +18,7 @@ namespace Voicemeeter {
 					namespace Updates {
 						namespace Animations {
 							template<typename TKnob>
-							class Knob : public Animation<7, TKnob, States::Knob> {
+							class Knob : public Animation<7, UI::Policies::Size::Scales::Stretch, TKnob, States::Knob> {
 								static_assert(
 									::std::is_base_of_v<Graphics::Glyphs::Knob, TKnob>,
 									"TKnob must be derived from Knob");
@@ -30,7 +30,7 @@ namespace Voicemeeter {
 									label = 6
 								};
 
-								using Animation = Animation<label + 1, TKnob, States::Knob>;
+								using Animation = Animation<label + 1, UI::Policies::Size::Scales::Stretch, TKnob, States::Knob>;
 
 							public:
 								template<typename... Args>

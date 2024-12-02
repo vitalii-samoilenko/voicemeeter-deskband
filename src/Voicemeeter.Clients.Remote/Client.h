@@ -63,6 +63,10 @@ namespace Voicemeeter {
 				Client& operator=(const Client&) = delete;
 				Client& operator=(Client&&) = delete;
 
+				inline Type get_Type() const {
+					return m_type;
+				};
+
 			private:
 				TMixer& m_mixer;
 				T_VBVMR_INTERFACE m_remote;
