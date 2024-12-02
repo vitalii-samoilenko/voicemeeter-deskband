@@ -71,6 +71,7 @@ namespace Voicemeeter {
 
 			template<Type Remote>
 			static ::std::string ToBusKey(size_t id);
+			static ::std::string ToBusSubKey(size_t id);
 			template<Type Remote>
 			static long ToChannelKey(size_t id);
 
@@ -96,29 +97,6 @@ namespace Voicemeeter {
 					return ToChannelKey<Type::Potato>(id);
 				default:
 					throw ::std::exception{ "Remote type is not supported" };
-				}
-			};
-
-			template<typename TBus>
-			void Update(TBus& bus, size_t size, LevelType levelType, bool dirty) const {
-				size_t i{ 0 };
-				float value{ 0.F };
-				for (auto& strip : bus) {
-					if (dirty) {
-						::std::string key{ ToBusKey(strip.get_Id()) };
-						m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Gain").c_str()), &value);
-						strip.set_Gain<Client>(value);
-						m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Mute").c_str()), &value);
-						strip.set_Mute<Client>(0.01F < value);
-					}
-					for (auto& line : strip) {
-						long key{ ToChannelKey(line.get_Id()) };
-						m_remote.VBVMR_GetLevel(static_cast<long>(levelType), key, &value);
-						line.set_Level<Client>(value);
-					}
-					if (++i == size) {
-						break;
-					}
 				}
 			};
 		};
