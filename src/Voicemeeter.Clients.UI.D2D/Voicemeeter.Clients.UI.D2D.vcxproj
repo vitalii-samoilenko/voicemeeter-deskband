@@ -30,7 +30,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{9d994208-264d-4b90-8ba7-30fc62304d9b}</ProjectGuid>
-    <RootNamespace>VoicemeeterSceneD2DRemote</RootNamespace>
+    <RootNamespace>VoicemeeterClientsUID2D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -195,7 +195,7 @@
     <ClInclude Include="Build.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Voicemeeter.Remote\Voicemeeter.Remote.vcxproj">
+    <ProjectReference Include="..\Voicemeeter.Clients.Remote\Voicemeeter.Clients.Remote.vcxproj">
       <Project>{a8201ccc-d675-42d9-947a-b6a27450275a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.UI.D2D\Voicemeeter.UI.D2D.vcxproj">

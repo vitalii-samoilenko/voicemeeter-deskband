@@ -1,6 +1,6 @@
 #include "Client.h"
 
-using namespace ::Voicemeeter::Remote;
+using namespace ::Voicemeeter::Client::Remote;
 
 template<>
 template<>

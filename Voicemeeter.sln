@@ -25,9 +25,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter", "src\Voicemee
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Environment", "src\Environment\Environment.vcxproj", "{C6D12871-1150-4F94-8136-975AA8A893E5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Remote", "src\Voicemeeter.Remote\Voicemeeter.Remote.vcxproj", "{A8201CCC-D675-42D9-947A-B6A27450275A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.Remote", "src\Voicemeeter.Clients.Remote\Voicemeeter.Clients.Remote.vcxproj", "{A8201CCC-D675-42D9-947A-B6A27450275A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Scene.D2D.Remote", "src\Voicemeeter.Scene.D2D.Remote\Voicemeeter.Scene.D2D.Remote.vcxproj", "{9D994208-264D-4B90-8BA7-30FC62304D9B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.D2D", "src\Voicemeeter.Clients.UI.D2D\Voicemeeter.Clients.UI.D2D.vcxproj", "{9D994208-264D-4B90-8BA7-30FC62304D9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

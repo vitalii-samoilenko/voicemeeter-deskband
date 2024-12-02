@@ -30,7 +30,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{a8201ccc-d675-42d9-947a-b6a27450275a}</ProjectGuid>
-    <RootNamespace>VoicemeeterRemote</RootNamespace>
+    <RootNamespace>VoicemeeterClientsRemote</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
