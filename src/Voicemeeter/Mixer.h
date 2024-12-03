@@ -62,63 +62,63 @@ namespace Voicemeeter {
 
 		template<typename TInput, typename TOutput,
 			::std::enable_if_t<
-				(::std::is_same_v<TPInput, TInput> || ::std::is_same_v<TVInput, TInput>)
-				&& (::std::is_same_v<TPOutput, TOutput> || ::std::is_same_v<TVOutput, TOutput>),
+				(::std::is_same_v<TPIStrip, TInput> || ::std::is_same_v<TVIStrip, TInput>)
+				&& (::std::is_same_v<TPOStrip, TOutput> || ::std::is_same_v<TVOStrip, TOutput>),
 				bool> = true>
-		inline bool get_Plug(decltype(TInput::begin()) input, decltype(TOutput::begin()) output) const {
+		inline bool get_Plug(TInput& input, TOutput& output) const {
 			constexpr size_t InputOffset{
-				(::std::is_same_v<TPInput, TInput>
+				(::std::is_same_v<TPIStrip, TInput>
 					? 0
 					: Specification::Input::Physical::Width)
 			};
 			constexpr size_t OutputOffset{
-				(::std::is_same_v<TPOutput, TOutput>
+				(::std::is_same_v<TPOStrip, TOutput>
 					? 0
 					: Specification::Output::Physical::Width)
 			};
-			const TInput& m_input{
-				(::std::is_same_v<TPInput, TInput>
-					? m_physicalInput
-					: m_virtualInput)
+			size_t iInput{
+				(::std::is_same_v<TPIStrip, TInput>
+					? reinterpret_cast<unsigned long long>(&input) - reinterpret_cast<unsigned long long>(&(*m_physicalInput.begin()))
+					: reinterpret_cast<unsigned long long>(&input) - reinterpret_cast<unsigned long long>(&(*m_virtualInput.begin()))) / sizeof(TInput)
 			};
-			const TOutput& m_output{
-				(::std::is_same_v<TPOutput, TOutput>
-					? m_physicalOutput
-					: m_virtualOutput)
+			size_t iOutput{
+				(::std::is_same_v<TPOStrip, TOutput>
+					? reinterpret_cast<unsigned long long>(&output) - reinterpret_cast<unsigned long long>(&(*m_physicalOutput.begin()))
+					: reinterpret_cast<unsigned long long>(&output) - reinterpret_cast<unsigned long long>(&(*m_virtualOutput.begin()))) / sizeof(TOutput)
 			};
-			return m_cPlug[(InputOffset + (input - m_input.begin()))
+			return m_cPlug[(InputOffset + iInput)
 				* (Specification::Output::Physical::Width + Specification::Output::Virtual::Width)
-				+ (OutputOffset + (output - m_output.begin()))];
+				+ (OutputOffset + iOutput)];
 		};
 		template<typename TInput, typename TOutput,
 			::std::enable_if_t<
-				(::std::is_same_v<TPInput, TInput> || ::std::is_same_v<TVInput, TInput>)
-				&& (::std::is_same_v<TPOutput, TOutput> || ::std::is_same_v<TVOutput, TOutput>),
+				(::std::is_same_v<TPIStrip, TInput> || ::std::is_same_v<TVIStrip, TInput>)
+				&& (::std::is_same_v<TPOStrip, TOutput> || ::std::is_same_v<TVOStrip, TOutput>),
 				bool> = true>
-		inline void set_Plug(decltype(TInput::begin()) input, decltype(TOutput::begin()) output, bool value) {
+		inline void set_Plug(TInput& input, TOutput& output, bool value) {
 			constexpr size_t InputOffset{
-				(::std::is_same_v<TPInput, TInput>
+				(::std::is_same_v<TPIStrip, TInput>
 					? 0
 					: Specification::Input::Physical::Width)
 			};
 			constexpr size_t OutputOffset{
-				(::std::is_same_v<TPOutput, TOutput>
+				(::std::is_same_v<TPOStrip, TOutput>
 					? 0
 					: Specification::Output::Physical::Width)
 			};
-			const TInput& m_input{
-				(::std::is_same_v<TPInput, TInput>
-					? m_physicalInput
-					: m_virtualInput)
+			size_t iInput{
+				(::std::is_same_v<TPIStrip, TInput>
+					? reinterpret_cast<unsigned long long>(&input) - reinterpret_cast<unsigned long long>(&(*m_physicalInput.begin()))
+					: reinterpret_cast<unsigned long long>(&input) - reinterpret_cast<unsigned long long>(&(*m_virtualInput.begin()))) / sizeof(TInput)
 			};
-			const TOutput& m_output{
-				(::std::is_same_v<TPOutput, TOutput>
-					? m_physicalOutput
-					: m_virtualOutput)
+			size_t iOutput{
+				(::std::is_same_v<TPOStrip, TOutput>
+					? reinterpret_cast<unsigned long long>(&output) - reinterpret_cast<unsigned long long>(&(*m_physicalOutput.begin()))
+					: reinterpret_cast<unsigned long long>(&output) - reinterpret_cast<unsigned long long>(&(*m_virtualOutput.begin()))) / sizeof(TOutput)
 			};
-			m_cPlug[(InputOffset + (input - m_input.begin()))
+			m_cPlug[(InputOffset + iInput)
 				* (Specification::Output::Physical::Width + Specification::Output::Virtual::Width)
-				+ (OutputOffset + (output - m_output.begin()))] = value;
+				+ (OutputOffset + iOutput)] = value;
 		};
 
 		inline TPInput& get_PhysicalInput() {
@@ -135,10 +135,10 @@ namespace Voicemeeter {
 		};
 
 	private:
-		TPInput m_physicalInput;
-		TVInput m_virtualInput;
-		TPOutput m_physicalOutput;
-		TVOutput m_virtualOutput;
+		mutable TPInput m_physicalInput;
+		mutable TVInput m_virtualInput;
+		mutable TPOutput m_physicalOutput;
+		mutable TVOutput m_virtualOutput;
 		::std::bitset<(Specification::Input::Physical::Width + Specification::Input::Virtual::Width) * (Specification::Output::Physical::Width + Specification::Output::Virtual::Width)> m_cPlug;
 	};
 }

@@ -56,7 +56,7 @@ namespace Voicemeeter {
 								};
 
 								virtual void OnUpdate(const int& state) override {
-									TPlug::get_Velocity()[active] = state
+									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
 								};

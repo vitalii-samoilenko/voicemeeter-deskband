@@ -3,399 +3,616 @@
 #endif // !NOMINMAX
 
 #include <codecvt>
+#include <exception>
 #include <locale>
 #include <memory>
 #include <vector>
 #include <utility>
 
-#include "Voicemeeter/Adapters/Multiclient/Cherry.h"
-#include "Voicemeeter.Clients.Remote/Cherry.h"
 #include "Voicemeeter.UI/Decorators/Margin.h"
 #include "Voicemeeter.UI/Decorators/RegionCheck.h"
 #include "Voicemeeter.UI/Panels/Stack.h"
 #include "Voicemeeter.UI/Policies/State/Changes/Checkbox.h"
-#include "Voicemeeter.UI/Policies/State/Changes/Knob.h"
-#include "Voicemeeter.UI/States/Knob.h"
-#include "Voicemeeter.UI/Trackers/Dirty.h"
-#include "Voicemeeter.UI/Trackers/Focus.h"
-#include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Knob.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Plug.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Vban.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Knob.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Plug.h"
 #include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Vban.h"
-#include "Voicemeeter.UI.D2D/Controls/Knob.h"
-#include "Voicemeeter.UI.D2D/Controls/Plug.h"
-#include "Voicemeeter.UI.D2D/Controls/Vban.h"
 #include "Voicemeeter.UI.D2D/Decorators/Interactivity/Knob.h"
 #include "Voicemeeter.UI.D2D/Decorators/Interactivity/Plug.h"
 #include "Voicemeeter.UI.D2D/Decorators/Interactivity/Vban.h"
-#include "Voicemeeter.UI.D2D/Graphics/Glyphs/Knob.h"
-#include "Voicemeeter.UI.D2D/Graphics/Glyphs/Plug.h"
-#include "Voicemeeter.UI.D2D/Graphics/Glyphs/Vban.h"
-#include "Voicemeeter.UI.D2D/Graphics/Canvas.h"
-#include "Voicemeeter.UI.D2D/Graphics/Theme.h"
-#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Knob.h"
-#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Plug.h"
-#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/VBan.h"
 #include "Voicemeeter.UI.D2D/Policies/State/Changes/Knob.h"
 #include "Windows/Registry.h"
 
-#include "Builder.h"
+#include "Cherry.h"
 
-using namespace ::Voicemeeter;
+using namespace ::Voicemeeter::Clients::UI::D2D;
 
-static UI::D2D::Graphics::Theme LoadTheme() {
-	UI::D2D::Graphics::Theme theme{ UI::D2D::Graphics::Theme::Default() };
-	HKEY hKey{ HKEY_CURRENT_USER };
-	::std::wstring subKey{ LR"(SOFTWARE\VoicemeeterDeskBand\Theme)" };
-	::Windows::Registry::TryGetValue(hKey, subKey, L"FontFamily", theme.FontFamily);
-	DWORD color{};
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Warning", color)) {
-		theme.Warning = ::D2D1::ColorF(static_cast<UINT32>(color));
+template<::Voicemeeter::UI::Direction Direction>
+inline static ::std::valarray<double> MarginPosition();
+template<>
+inline static ::std::valarray<double> MarginPosition<::Voicemeeter::UI::Direction::Right>() {
+	return ::std::valarray<double>{ 2., 0. };
+}
+template<>
+inline static ::std::valarray<double> MarginPosition<::Voicemeeter::UI::Direction::Down>() {
+	return ::std::valarray<double>{ 0., 2. };
+}
+
+inline static ::std::wstring ToLabel(size_t id) {
+	switch (id) {
+	case 0:
+		return L"P";
+	case 1:
+		return L"V";
+	case 2:
+		return L"A1";
+	case 3:
+		return L"A2";
+	case 4:
+		return L"B1";
+	case 5:
+		return L"B2";
+	default:
+		throw ::std::exception{ "Strip is not supported" };
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Danger", color)) {
-		theme.Danger = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+
+template<typename TGlyph>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::std::unique_ptr<TGlyph>& pGlyph,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	auto changeNotify = [&mixer](const int& state)->void {
+		mixer.set_Vban<Cherry>(state);
+	};
+	using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
+		::Voicemeeter::UI::D2D::Decorators::Interactivity::Vban<TGlyph, decltype(changeNotify)>>;
+	::std::unique_ptr<Control> pControl{
+		new Control{
+			inputTracker,
+			focusTracker,
+			pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+		}
+	};
+	subscription.on_Vban(
+		[&control = *pControl](bool value)->void {
+			int src{ value };
+			control.Set(src, false);
+		});
+	return pControl;
+}
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
+	bool animations,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	if (animations) {
+		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Vban<
+			::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ dirtyTracker, canvas } };
+		return ComposeVban(
+			dirtyTracker, focusTracker, inputTracker,
+			pGlyph,
+			mixer, subscription);
+	} else {
+		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Vban<
+			::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ canvas } };
+		return ComposeVban(
+			dirtyTracker, focusTracker, inputTracker,
+			pGlyph,
+			mixer, subscription);
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"DarkGlass", color)) {
-		theme.DarkGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+
+template<::Voicemeeter::UI::Direction Direction, ::Voicemeeter::UI::Direction MarginDirection, typename TGlyph, typename TStrip>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Environment::ITimer& timer,
+	::std::unique_ptr<TGlyph>& pGlyph,
+	TStrip& strip,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	auto changeNotify = [&strip](const ::Voicemeeter::UI::States::Knob& state)->void {
+		strip.set_Gain<Cherry>((state.gain / 100. - 90.) / 3.75);
+		strip.set_Mute<Cherry>(state.toggle);
+	};
+	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
+	using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
+		::Voicemeeter::UI::D2D::Decorators::Interactivity::Knob<Direction, TGlyph, decltype(changeNotify)>>;
+	::std::unique_ptr<Control> pControl{
+		(first
+			? new Control{
+				inputTracker,
+				inputTracker, focusTracker, timer,
+				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+			} : new ::Voicemeeter::UI::Decorators::Margin<Control, Scale>{
+				MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
+				inputTracker,
+				inputTracker, focusTracker, timer,
+				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+			})
+	};
+	subscription.on_Gain(strip.get_Id(),
+		[&control = *pControl](double value)->void {
+			::Voicemeeter::UI::States::Knob state{ control.get_State() };
+			state.gain = static_cast<int>((value * 3.75 + 90.) * 100.);
+			control.Set(state, false);
+		});
+	subscription.on_Mute(strip.get_Id(),
+		[&control = *pControl](bool value)->void {
+			::Voicemeeter::UI::States::Knob state{ control.get_State() };
+			state.toggle = value;
+			control.Set(state, false);
+		});
+	::Voicemeeter::UI::States::Knob state{ pControl->get_State() };
+	state.level.resize(strip.end() - strip.begin());
+	pControl->Set(state, false);
+	for (auto line = strip.begin(); line != strip.end(); ++line) {
+		subscription.on_Level(line->get_Id(),
+			[&control = *pControl, i = line - strip.begin()](double value)->void {
+				::Voicemeeter::UI::States::Knob state{ control.get_State() };
+				state.level[i] = static_cast<int>(value * 10000.);
+				control.Set(state, false);
+			});
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"LightGlass", color)) {
-		theme.LightGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+	return pControl;
+}
+template<::Voicemeeter::UI::Direction Direction, typename TGlyph, typename TStrip>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
+	::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Environment::ITimer& timer,
+	::std::unique_ptr<TGlyph>& pGlyph,
+	TStrip& strip,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	switch (marginDirection) {
+	case ::Voicemeeter::UI::Direction::Right:
+		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right>(
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			timer, pGlyph,
+			strip, mixer, subscription
+		);
+	case ::Voicemeeter::UI::Direction::Down:
+		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right>(
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			timer, pGlyph,
+			strip, mixer, subscription
+		);
+	default:
+		throw ::std::exception{ "Direction is not supported" };
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"PrimaryActive", color)) {
-		theme.PrimaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+template<typename TGlyph, typename TStrip>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
+	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Environment::ITimer& timer,
+	::std::unique_ptr<TGlyph>& pGlyph,
+	TStrip& strip,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	switch (direction) {
+	case ::Voicemeeter::UI::Direction::Right:
+		return ComposeKnob<::Voicemeeter::UI::Direction::Right>(
+			marginDirection,
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			timer, pGlyph,
+			strip, mixer, subscription
+		);
+	case ::Voicemeeter::UI::Direction::Down:
+		return ComposeKnob<::Voicemeeter::UI::Direction::Down>(
+			marginDirection,
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			timer, pGlyph,
+			strip, mixer, subscription
+		);
+	default:
+		throw ::std::exception{ "Direction is not supported" };
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"SecondaryActive", color)) {
-		theme.SecondaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+template<typename TStrip>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
+	bool animations, 
+	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Environment::ITimer& timer,
+	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
+	TStrip& strip,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	if (animations) {
+		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Knob<
+			::Voicemeeter::UI::D2D::Graphics::Glyphs::Knob>;
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), dirtyTracker, canvas } };
+		return ComposeKnob(
+			direction, marginDirection,
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			timer, pGlyph,
+			strip, mixer, subscription);
+	} else {
+		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Knob<
+			::Voicemeeter::UI::D2D::Graphics::Glyphs::Knob>;
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), canvas } };
+		return ComposeKnob(
+			direction, marginDirection,
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			timer, pGlyph,
+			strip, mixer, subscription);
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Inactive", color)) {
-		theme.Inactive = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+
+template<::Voicemeeter::UI::Direction MarginDirection, typename TGlyph, typename TInput, typename TOutput>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::std::unique_ptr<TGlyph>& pGlyph,
+	TInput& input, TOutput& output,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	auto changeNotify = [&input, &output, &mixer](const int& state)->void {
+		mixer.set_Plug<Cherry>(input, output, state);
+	};
+	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
+	using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
+		::Voicemeeter::UI::D2D::Decorators::Interactivity::Plug<TGlyph, decltype(changeNotify)>>;
+	::std::unique_ptr<Control> pControl{
+		(first
+			? new Control{
+				inputTracker,
+				focusTracker,
+				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+			} : new ::Voicemeeter::UI::Decorators::Margin<Control, Scale>{
+				MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
+				inputTracker,
+				focusTracker,
+				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+			})
+	};
+	subscription.on_Plug(input.get_Id(), output.get_Id(),
+		[&control = *pControl](bool value)->void {
+			int state{ value };
+			control.Set(state, false);
+		});
+	return pControl;
+}
+template<typename TGlyph, typename TInput, typename TOutput>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
+	::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::std::unique_ptr<TGlyph>& pGlyph,
+	TInput& input, TOutput& output,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	switch (marginDirection) {
+	case ::Voicemeeter::UI::Direction::Right:
+		return ComposePlug<::Voicemeeter::UI::Direction::Right>(
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			pGlyph,
+			input, output, mixer, subscription
+		);
+	case ::Voicemeeter::UI::Direction::Down:
+		return ComposePlug<::Voicemeeter::UI::Direction::Down>(
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			pGlyph,
+			input, output, mixer, subscription
+		);
+	default:
+		throw ::std::exception{ "Direction is not supported" };
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"Indicator", color)) {
-		theme.Indicator = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+template<typename TInput, typename TOutput>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
+	bool animations,
+	::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
+	TInput& input, TOutput& output,
+	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
+) {
+	if (animations) {
+		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Plug<
+			::Voicemeeter::UI::D2D::Graphics::Glyphs::Plug>;
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), dirtyTracker, canvas } };
+		return ComposePlug(
+			marginDirection,
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			pGlyph,
+			input, output, mixer, subscription
+		);
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"EqualizerLow", color)) {
-		theme.EqualizerLow = ::D2D1::ColorF(static_cast<UINT32>(color));
+	else {
+		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Plug<
+			::Voicemeeter::UI::D2D::Graphics::Glyphs::Plug>;
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), canvas } };
+		return ComposePlug(
+			marginDirection,
+			first,
+			dirtyTracker, focusTracker, inputTracker,
+			pGlyph,
+			input, output, mixer, subscription
+		);
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"EqualizerMedium", color)) {
-		theme.EqualizerMedium = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+
+template<::Voicemeeter::UI::Direction Direction, ::Voicemeeter::UI::Direction MarginDirection>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
+	bool first,
+	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>>& cpComponent
+) {
+	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
+	return ::std::unique_ptr<::Voicemeeter::UI::IComponent>{
+		(first
+			? new ::Voicemeeter::UI::Panels::Stack<Direction, Scale>{
+				cpComponent.begin(), cpComponent.end()
+			} : new ::Voicemeeter::UI::Decorators::Margin<
+				::Voicemeeter::UI::Panels::Stack<Direction, Scale>, Scale>{
+					MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
+					cpComponent.begin(), cpComponent.end()
+			})
+	};
+}
+template<::Voicemeeter::UI::Direction Direction>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
+	::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>>& cpComponent
+) {
+	switch (marginDirection) {
+	case ::Voicemeeter::UI::Direction::Right:
+		return ComposePanel<Direction, ::Voicemeeter::UI::Direction::Right>(first, cpComponent);
+	case ::Voicemeeter::UI::Direction::Down:
+		return ComposePanel<Direction, ::Voicemeeter::UI::Direction::Down>(first, cpComponent);
+	default:
+		throw ::std::exception{ "Direction is not supported" };
 	}
-	if (::Windows::Registry::TryGetValue(hKey, subKey, L"EqualizerHigh", color)) {
-		theme.EqualizerHigh = ::D2D1::ColorF(static_cast<UINT32>(color));
+}
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
+	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
+	bool first,
+	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>>& cpComponent
+) {
+	switch (direction) {
+	case ::Voicemeeter::UI::Direction::Right:
+		return ComposePanel<::Voicemeeter::UI::Direction::Right>(marginDirection, first, cpComponent);
+	case ::Voicemeeter::UI::Direction::Down:
+		return ComposePanel<::Voicemeeter::UI::Direction::Down>(marginDirection, first, cpComponent);
+	default:
+		throw ::std::exception{ "Direction is not supported" };
 	}
-	return theme;
 }
 
 template<>
-::Voicemeeter::UI::D2D::Scene* Clients::UI::D2D::Builder<Adapters::Multiclient::Cherry>::Build() {
+::std::unique_ptr<::Voicemeeter::UI::IComponent> Cherry::Compose(
+	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
+) {
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription = m_mixer.get_Subscription<Cherry>();
 	DWORD animations{ 1UL };
 	::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Animations", animations);
-
-	::std::unique_ptr<::Voicemeeter::UI::Trackers::IDirty> pDirtyTracker{
-		new ::Voicemeeter::UI::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
-	};
-	::std::unique_ptr<::Voicemeeter::UI::Trackers::IFocus> pFocusTracker{
-		new ::Voicemeeter::UI::Trackers::Focus{}
-	};
-	::std::unique_ptr<::Voicemeeter::UI::Trackers::IInput> pInputTracker{
-		new ::Voicemeeter::UI::Trackers::Input{ m_inputTracker }
-	};
-
-	const ::Voicemeeter::UI::D2D::Graphics::Theme theme{ LoadTheme() };
-	::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Canvas> pCanvas{
-		new ::Voicemeeter::UI::D2D::Graphics::Canvas{ m_hWnd, theme }
-	};
-
-	auto checkboxMap = [](const int& state)->bool {
-		return static_cast<bool>(state);
-	};
-	auto gainerMap = [](const int& state)->double {
-		return (state / 100. - 90.) / 3.75;
-	};
-
 	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpComponent{};
-	
-	using Client = ::Voicemeeter::UI::D2D::Scene;
-	auto& subscription = m_mixer.get_Subscription<Client>();
-
 	if (m_network) {
-		if (animations) {
-			using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Vban<
-				::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
-			using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Vban<Glyph>;
-			auto changeNotify = [&mixer = m_mixer](const int& state)->void {
-				mixer.set_Vban<Client>(state);
-			};
-			using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
-				::Voicemeeter::UI::Decorators::Interactivity::Checkbox<
-					Glyph, decltype(changeNotify), GlyphUpdate,
-					::Voicemeeter::UI::D2D::Controls::Vban<Glyph, decltype(changeNotify)>>>;
-			::std::unique_ptr<Glyph> pGlyph{ new Glyph{ *pDirtyTracker, *pCanvas } };
-			::std::unique_ptr<Control> pControl{ new Control{
-				*pInputTracker,
-				*pFocusTracker,
-				pGlyph->get_BaseSize(), *pDirtyTracker, pGlyph, changeNotify
-			} };
-			subscription.on_Vban(
-				[&control = *pControl](bool value)->void {
-					int src{ value };
-					control.Set(src, false);
-				});
-			cpComponent.push_back(::std::move(pControl));
-		} else {
-			using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Vban<
-				::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
-			using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Vban<Glyph>;
-			auto changeNotify = [&mixer = m_mixer](const int& state)->void {
-				mixer.set_Vban<Client>(state);
-			};
-			using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
-				::Voicemeeter::UI::Decorators::Interactivity::Checkbox<
-					Glyph, decltype(changeNotify), GlyphUpdate,
-					::Voicemeeter::UI::D2D::Controls::Vban<Glyph, decltype(changeNotify)>>>;
-			::std::unique_ptr<Glyph> pGlyph{ new Glyph{ *pCanvas } };
-			::std::unique_ptr<Control> pControl{ new Control{
-				*pInputTracker,
-				*pFocusTracker,
-				pGlyph->get_BaseSize(), *pDirtyTracker, pGlyph, changeNotify
-			} };
-			subscription.on_Vban(
-				[&control = *pControl](bool value)->void {
-					int src{ value };
-					control.Set(src, false);
-				});
-			cpComponent.push_back(::std::move(pControl));
+		cpComponent.push_back(::std::move(
+			ComposeVban(
+				animations,
+				dirtyTracker, focusTracker, inputTracker,
+				canvas,
+				m_mixer, subscription)));
+	}
+	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpBusComponent{};
+	for (auto& input : m_mixer.get_PhysicalInput()) {
+		if (m_cIgnoredStrip.find(input.get_Id()) != m_cIgnoredStrip.end()) {
+			continue;
+		}
+		cpBusComponent.push_back(::std::move(
+			ComposeKnob(
+				animations,
+				m_direction, m_direction,
+				cpBusComponent.empty(),
+				dirtyTracker, focusTracker, inputTracker,
+				m_compositionTimer, canvas,
+				input, m_mixer, subscription)));
+		::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpPlugComponent{};
+		for (auto& output : m_mixer.get_PhysicalOutput()) {
+			if (m_cIgnoredStrip.find(output.get_Id()) != m_cIgnoredStrip.end()) {
+				continue;
+			}
+			cpPlugComponent.push_back(::std::move(
+				ComposePlug(
+					animations,
+					::Voicemeeter::UI::Direction::Down,
+					cpPlugComponent.empty(),
+					dirtyTracker, focusTracker, inputTracker,
+					canvas,
+					input, output, m_mixer, subscription)));
+			if (cpPlugComponent.size() == 2) {
+				cpBusComponent.push_back(::std::move(
+					ComposePanel(
+						::Voicemeeter::UI::Direction::Down, m_direction,
+						cpBusComponent.empty(),
+						cpPlugComponent)));
+				cpPlugComponent.clear();
+			}
+		}
+		for (auto& output : m_mixer.get_VirtualOutput()) {
+			if (m_cIgnoredStrip.find(output.get_Id()) != m_cIgnoredStrip.end()) {
+				continue;
+			}
+			cpPlugComponent.push_back(::std::move(
+				ComposePlug(
+					animations,
+					::Voicemeeter::UI::Direction::Down,
+					cpPlugComponent.empty(),
+					dirtyTracker, focusTracker, inputTracker,
+					canvas,
+					input, output, m_mixer, subscription)));
+			if (cpPlugComponent.size() == 2) {
+				cpBusComponent.push_back(::std::move(
+					ComposePanel(
+						::Voicemeeter::UI::Direction::Down, m_direction,
+						cpBusComponent.empty(),
+						cpPlugComponent)));
+				cpPlugComponent.clear();
+			}
+		}
+		if (cpPlugComponent.size()) {
+			throw ::std::exception{ "Invalid layout" };
 		}
 	}
-
-	//::std::shared_ptr<UI::D2D::Policies::State::Changes::Knob> pKnobStateChangePolicy{
-	//	new UI::D2D::Policies::State::Changes::Knob{}
-	//};
-	//::std::shared_ptr<UI::D2D::Policies::Glyph::Updates::Knob> pKnobGlyphUpdatePolicy{
-	//	new UI::D2D::Policies::Glyph::Updates::Knob{}
-	//};
-	//::std::shared_ptr<UI::D2D::Policies::Glyph::Updates::Plug> pPlugGlyphUpdatePolicy{
-	//	new UI::D2D::Policies::Glyph::Updates::Plug{}
-	//};
-
-	//::std::valarray<double> left_top{
-	//	(direction == UI::Direction::Right
-	//		? ::std::valarray<double>{ 2., 0. }
-	//		: ::std::valarray<double>{ 0., 2. })
-	//};
-
-	//for (::Voicemeeter::Remote::Input& input : mixer.get_Inputs()) {
-	//	::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>> pKnobGlyph{
-	//		(animations
-	//			? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Knob{
-	//				*pDirtyTracker, *pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
-	//			}) : new UI::D2D::Adapters::Glyph::Updates::Knob{
-	//				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(input.get_Label())
-	//	}) };
-
-	//	::std::unique_ptr<UI::Policies::State::IPromotion<UI::States::Knob>> pKnobStatePromotionPolicy{
-	//		new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ input, gainerMap, checkboxMap }
-	//	};
-
-	//	::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{ nullptr };
-	//	if (cpComponent.empty()) {
-	//		pKnob.reset(
-	//			(direction == UI::Direction::Right
-	//				? static_cast<UI::D2D::Controls::Knob*>(new UI::Decorators::RegionCheck<
-	//					UI::D2D::Decorators::Interactivity::Knob<
-	//						UI::Direction::Right, UI::D2D::Controls::Knob>>{
-	//							*pInputTracker,
-	//							*pInputTracker, *pFocusTracker, compositionTimer,
-	//							*pDirtyTracker, pKnobGlyph, pKnobStateChangePolicy, pKnobStatePromotionPolicy, pKnobGlyphUpdatePolicy
-	//				}) : new UI::Decorators::RegionCheck<
-	//					UI::D2D::Decorators::Interactivity::Knob<
-	//						UI::Direction::Down, UI::D2D::Controls::Knob>>{
-	//							*pInputTracker,
-	//							*pInputTracker, *pFocusTracker, compositionTimer,
-	//							*pDirtyTracker, pKnobGlyph, pKnobStateChangePolicy, pKnobStatePromotionPolicy, pKnobGlyphUpdatePolicy
-	//				} ));
-	//	} else {
-	//		pKnob.reset(
-	//			(direction == UI::Direction::Right
-	//				? static_cast<UI::D2D::Controls::Knob*>(new UI::Decorators::Margin<
-	//					UI::Decorators::RegionCheck<
-	//						UI::D2D::Decorators::Interactivity::Knob<
-	//							UI::Direction::Right, UI::D2D::Controls::Knob>>>{
-	//								left_top, ::std::valarray<double>{ 0., 0. },
-	//								*pInputTracker,
-	//								*pInputTracker, *pFocusTracker, compositionTimer,
-	//								*pDirtyTracker, pKnobGlyph, pKnobStateChangePolicy, pKnobStatePromotionPolicy, pKnobGlyphUpdatePolicy
-	//				}) : new UI::Decorators::Margin<
-	//					UI::Decorators::RegionCheck<
-	//						UI::D2D::Decorators::Interactivity::Knob<
-	//							UI::Direction::Down, UI::D2D::Controls::Knob>>>{
-	//								left_top, ::std::valarray<double>{ 0., 0. },
-	//								*pInputTracker,
-	//								*pInputTracker, *pFocusTracker, compositionTimer,
-	//								*pDirtyTracker, pKnobGlyph, pKnobStateChangePolicy, pKnobStatePromotionPolicy, pKnobGlyphUpdatePolicy
-	//				} ));
-	//	}
-
-
-	//	UI::D2D::Controls::Knob& knob{ *pKnob };
-	//	input.on_Gain([&knob](double gain)->void {
-	//		UI::States::Knob state{ knob.get_State() };
-	//		state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
-	//		knob.Set(state, false);
-	//	});
-	//	input.on_Mute([&knob](bool mute)->void {
-	//		UI::States::Knob state{ knob.get_State() };
-	//		state.toggle = mute;
-	//		knob.Set(state, false);
-	//	});
-	//	for (::Voicemeeter::Remote::Channel& channel : input.get_Channels()) {
-	//		UI::States::Knob state{ knob.get_State() };
-	//		size_t i{ state.level.size() };
-	//		state.level.resize(state.level.size() + 1);
-	//		knob.Set(state, false);
-
-	//		channel.on_Level([&knob, i](double level)->void {
-	//			UI::States::Knob state{ knob.get_State() };
-	//			state.level[i] = static_cast<int>(level * 10000.);
-	//			knob.Set(state, false);
-	//		});
-	//	}
-
-	//	cpComponent.push_back(::std::move(pKnob));
-
-	//	::std::vector<::std::unique_ptr<UI::IComponent>> cpPlug{};
-
-	//	for (::Voicemeeter::Remote::Output& output : mixer.get_Outputs()) {
-	//		::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Plug, int>> pPlugGlyph{
-	//			(animations
-	//				? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Plug, int>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Plug{
-	//					*pDirtyTracker, *pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
-	//				}) : new UI::D2D::Adapters::Glyph::Updates::Plug{
-	//					*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
-	//		}) };
-
-	//		::std::unique_ptr<UI::Policies::State::IPromotion<int>> pPlugStatePromotionPolicy{
-	//			new PlugStatePromotion<
-	//				::Voicemeeter::Remote::Input, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Input>,
-	//				::Voicemeeter::Remote::Output, ::Voicemeeter::Remote::RangeIterator<::Voicemeeter::Remote::Output>,
-	//				decltype(checkboxMap)>{ mixer, input, output, checkboxMap }
-	//		};
-
-	//		::std::unique_ptr<UI::D2D::Controls::Plug> pPlug{
-	//			(cpPlug.size()
-	//				? ::std::make_unique<UI::Decorators::Margin<
-	//					UI::Decorators::RegionCheck<
-	//						UI::D2D::Decorators::Interactivity::Plug<
-	//							UI::D2D::Controls::Plug>>>>(
-	//								::std::valarray<double>{ 0., 2. },
-	//								::std::valarray<double>{ 0., 0. },
-	//								*pInputTracker,
-	//								*pFocusTracker,
-	//								*pDirtyTracker, pPlugGlyph, pCheckboxStateChangePolicy, pPlugStatePromotionPolicy, pPlugGlyphUpdatePolicy
-	//				) : ::std::make_unique<UI::Decorators::RegionCheck<
-	//					UI::D2D::Decorators::Interactivity::Plug<
-	//						UI::D2D::Controls::Plug>>>(
-	//							*pInputTracker,
-	//							*pFocusTracker,
-	//							*pDirtyTracker, pPlugGlyph, pCheckboxStateChangePolicy, pPlugStatePromotionPolicy, pPlugGlyphUpdatePolicy
-	//				))
-	//		};
-
-	//		UI::D2D::Controls::Plug& checkbox{ *pPlug };
-	//		mixer.on_Plug(input, output, [&checkbox](bool plug)->void {
-	//			int value{ plug };
-	//			checkbox.Set(value, false);
-	//		});
-
-	//		cpPlug.push_back(::std::move(pPlug));
-
-	//		if (cpPlug.size() == 2) {
-	//			cpComponent.push_back(
-	//				::std::make_unique<UI::Decorators::Margin<
-	//					UI::Decorators::RegionCheck<
-	//						UI::Panels::Stack<UI::Direction::Down>>>>(
-	//							left_top, ::std::valarray<double>{ 0., 0. },
-	//							*pInputTracker,
-	//							cpPlug.begin(), cpPlug.end()
-	//						)
-	//			);
-	//			cpPlug.clear();
-	//		}
-	//	}
-	//}
-
-	//for (::Voicemeeter::Remote::Output& output : mixer.get_Outputs()) {
-	//	::std::unique_ptr<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>> pKnobGlyph{
-	//		(animations
-	//			? static_cast<UI::D2D::Adapters::Glyph::IUpdate<UI::D2D::Graphics::Glyphs::Knob, UI::States::Knob>*>(new UI::D2D::Adapters::Glyph::Updates::Animations::Knob{
-	//				*pDirtyTracker, *pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
-	//			}) : new UI::D2D::Adapters::Glyph::Updates::Knob{
-	//				*pCanvas, ::std::wstring_convert<::std::codecvt_utf8<wchar_t>>().from_bytes(output.get_Label())
-	//	}) };
-
-	//	::std::unique_ptr<UI::Policies::State::IPromotion<UI::States::Knob>> pKnobStatePromotionPolicy{
-	//		new KnobStatePromotion<decltype(gainerMap), decltype(checkboxMap)>{ output, gainerMap, checkboxMap }
-	//	};
-
-	//	::std::unique_ptr<UI::D2D::Controls::Knob> pKnob{
-	//		(direction == UI::Direction::Right
-	//			? static_cast<UI::D2D::Controls::Knob*>(new UI::Decorators::Margin<
-	//				UI::Decorators::RegionCheck<
-	//					UI::D2D::Decorators::Interactivity::Knob<
-	//						UI::Direction::Right, UI::D2D::Controls::Knob>>>{
-	//							left_top, ::std::valarray<double>{ 0., 0. },
-	//							*pInputTracker,
-	//							*pInputTracker, *pFocusTracker, compositionTimer,
-	//							*pDirtyTracker, pKnobGlyph, pKnobStateChangePolicy, pKnobStatePromotionPolicy, pKnobGlyphUpdatePolicy
-	//			}) : new UI::Decorators::Margin<
-	//				UI::Decorators::RegionCheck<
-	//					UI::D2D::Decorators::Interactivity::Knob<
-	//						UI::Direction::Down, UI::D2D::Controls::Knob>>>{
-	//							left_top, ::std::valarray<double>{ 0., 0. },
-	//							*pInputTracker,
-	//							*pInputTracker, *pFocusTracker, compositionTimer,
-	//							*pDirtyTracker, pKnobGlyph, pKnobStateChangePolicy, pKnobStatePromotionPolicy, pKnobGlyphUpdatePolicy
-	//			} )};
-
-	//	UI::D2D::Controls::Knob& knob{ *pKnob };
-	//	output.on_Gain([&knob](double gain)->void {
-	//		UI::States::Knob state{ knob.get_State() };
-	//		state.gain = static_cast<int>((gain * 3.75 + 90.) * 100.);
-	//		knob.Set(state, false);
-	//	});
-	//	output.on_Mute([&knob](bool mute)->void {
-	//		UI::States::Knob state{ knob.get_State() };
-	//		state.toggle = mute;
-	//		knob.Set(state, false);
-	//	});
-	//	for (::Voicemeeter::Remote::Channel& channel : output.get_Channels()) {
-	//		UI::States::Knob state{ knob.get_State() };
-	//		size_t i{ state.level.size() };
-	//		state.level.resize(state.level.size() + 1);
-	//		knob.Set(state, false);
-
-	//		channel.on_Level([&knob, i](double level)->void {
-	//			UI::States::Knob state{ knob.get_State() };
-	//			state.level[i] = static_cast<int>(level * 10000.);
-	//			knob.Set(state, false);
-	//		});
-	//	}
-
-	//	cpComponent.push_back(::std::move(pKnob));
-	//}
-
-	::std::unique_ptr<::Voicemeeter::UI::IComponent> pComposition{
-		(m_direction == ::Voicemeeter::UI::Direction::Right
-			? static_cast<::Voicemeeter::UI::IComponent*>(new ::Voicemeeter::UI::Panels::Stack<::Voicemeeter::UI::Direction::Right, ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio>{
-				cpComponent.begin(), cpComponent.end()
-			}) : new ::Voicemeeter::UI::Panels::Stack<::Voicemeeter::UI::Direction::Down, ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio>{
-				cpComponent.begin(), cpComponent.end()
-			})
-	};
-
-	return new ::Voicemeeter::UI::D2D::Scene{
-		pDirtyTracker, pInputTracker, pFocusTracker, pCanvas, pComposition
-	};
+	cpComponent.push_back(::std::move(
+		ComposePanel(
+			m_direction, m_direction,
+			cpComponent.empty(),
+			cpBusComponent)));
+	cpBusComponent.clear();
+	for (auto& input : m_mixer.get_VirtualInput()) {
+		if (m_cIgnoredStrip.find(input.get_Id()) != m_cIgnoredStrip.end()) {
+			continue;
+		}
+		cpBusComponent.push_back(::std::move(
+			ComposeKnob(
+				animations,
+				m_direction, m_direction,
+				cpBusComponent.empty(),
+				dirtyTracker, focusTracker, inputTracker,
+				m_compositionTimer, canvas,
+				input, m_mixer, subscription)));
+		::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpPlugComponent{};
+		for (auto& output : m_mixer.get_PhysicalOutput()) {
+			if (m_cIgnoredStrip.find(output.get_Id()) != m_cIgnoredStrip.end()) {
+				continue;
+			}
+			cpPlugComponent.push_back(::std::move(
+				ComposePlug(
+					animations,
+					::Voicemeeter::UI::Direction::Down,
+					cpPlugComponent.empty(),
+					dirtyTracker, focusTracker, inputTracker,
+					canvas,
+					input, output, m_mixer, subscription)));
+			if (cpPlugComponent.size() == 2) {
+				cpBusComponent.push_back(::std::move(
+					ComposePanel(
+						::Voicemeeter::UI::Direction::Down, m_direction,
+						cpBusComponent.empty(),
+						cpPlugComponent)));
+				cpPlugComponent.clear();
+			}
+		}
+		for (auto& output : m_mixer.get_VirtualOutput()) {
+			if (m_cIgnoredStrip.find(output.get_Id()) != m_cIgnoredStrip.end()) {
+				continue;
+			}
+			cpPlugComponent.push_back(::std::move(
+				ComposePlug(
+					animations,
+					::Voicemeeter::UI::Direction::Down,
+					cpPlugComponent.empty(),
+					dirtyTracker, focusTracker, inputTracker,
+					canvas,
+					input, output, m_mixer, subscription)));
+			if (cpPlugComponent.size() == 2) {
+				cpBusComponent.push_back(::std::move(
+					ComposePanel(
+						::Voicemeeter::UI::Direction::Down, m_direction,
+						cpBusComponent.empty(),
+						cpPlugComponent)));
+				cpPlugComponent.clear();
+			}
+		}
+		if (cpPlugComponent.size()) {
+			throw ::std::exception{ "Invalid layout" };
+		}
+	}
+	cpComponent.push_back(::std::move(
+		ComposePanel(
+			m_direction, m_direction,
+			cpComponent.empty(),
+			cpBusComponent)));
+	cpBusComponent.clear();
+	for (auto& input : m_mixer.get_PhysicalOutput()) {
+		if (m_cIgnoredStrip.find(input.get_Id()) != m_cIgnoredStrip.end()) {
+			continue;
+		}
+		cpBusComponent.push_back(::std::move(
+			ComposeKnob(
+				animations,
+				m_direction, m_direction,
+				cpBusComponent.empty(),
+				dirtyTracker, focusTracker, inputTracker,
+				m_compositionTimer, canvas,
+				input, m_mixer, subscription)));
+	}
+	for (auto& input : m_mixer.get_VirtualOutput()) {
+		if (m_cIgnoredStrip.find(input.get_Id()) != m_cIgnoredStrip.end()) {
+			continue;
+		}
+		cpBusComponent.push_back(::std::move(
+			ComposeKnob(
+				animations,
+				m_direction, m_direction,
+				cpBusComponent.empty(),
+				dirtyTracker, focusTracker, inputTracker,
+				m_compositionTimer, canvas,
+				input, m_mixer, subscription)));
+	}
+	cpComponent.push_back(::std::move(
+		ComposePanel(
+			m_direction, m_direction,
+			cpComponent.empty(),
+			cpBusComponent)));
+	cpBusComponent.clear();
+	return ComposePanel(
+		m_direction, m_direction,
+		true,
+		cpComponent);
 }

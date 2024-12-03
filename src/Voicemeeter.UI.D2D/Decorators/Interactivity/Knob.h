@@ -21,8 +21,8 @@ namespace Voicemeeter {
 					using Knob = UI::Decorators::Interactivity::Knob<
 						Direction,
 						Policies::State::Changes::Knob::DEFAULT, Policies::State::Changes::Knob::MIN, Policies::State::Changes::Knob::MAX, Policies::State::Changes::Knob::DELTA,
-						Policies::State::Changes::Knob::Set,
 						TGlyph,
+						Policies::State::Changes::Knob::Set,
 						TChangeNotify,
 						Policies::Glyph::Updates::Knob<TGlyph>,
 						Controls::Knob<

@@ -60,12 +60,12 @@ namespace Voicemeeter {
 				m_vbanCallback = callback;
 			};
 			inline const ::std::function<void(bool)>& on_Plug(size_t inputId, size_t outputId) const {
-				return m_cPlugCallback[(Specification::Input::Physical::Width + Specification::Input::Virtual::Width) * inputId
-					+ outputId];
+				return m_cPlugCallback[(Specification::Output::Physical::Width + Specification::Output::Virtual::Width) * inputId
+					+ outputId - (Specification::Input::Physical::Width + Specification::Input::Virtual::Width)];
 			};
 			inline void on_Plug(size_t inputId, size_t outputId, const ::std::function<void(bool)>& callback) {
-				m_cPlugCallback[(Specification::Input::Physical::Width + Specification::Input::Virtual::Width) * inputId
-					+ outputId] = callback;
+				m_cPlugCallback[(Specification::Output::Physical::Width + Specification::Output::Virtual::Width) * inputId
+					+ outputId - (Specification::Input::Physical::Width + Specification::Input::Virtual::Width)] = callback;
 			};
 
 		private:

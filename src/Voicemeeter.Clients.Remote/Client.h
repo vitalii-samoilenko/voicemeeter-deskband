@@ -50,7 +50,12 @@ namespace Voicemeeter {
 						m_remote.VBVMR_Logout();
 						throw ::std::exception{ "Cannot get Voicemeeter type" };
 					}
-					Subscribe(timer);
+					Subscribe();
+					timer.Set(::std::chrono::milliseconds{ 100 },
+						[this]()->bool {
+							Update();
+							return true;
+						});
 				};
 				Client() = delete;
 				Client(const Client&) = delete;
@@ -72,38 +77,8 @@ namespace Voicemeeter {
 				T_VBVMR_INTERFACE m_remote;
 				Type m_type;
 
-				void Subscribe(::Environment::ITimer& timer) const;
-
-				template<Type Remote>
-				static ::std::string ToBusKey(size_t id);
-				static ::std::string ToBusSubKey(size_t id);
-				template<Type Remote>
-				static long ToChannelKey(size_t id);
-
-				inline ::std::string ToBusKey(size_t id) const {
-					switch (m_type) {
-					case Type::Voicemeeter:
-						return ToBusKey<Type::Voicemeeter>(id);
-					case Type::Banana:
-						return ToBusKey<Type::Banana>(id);
-					case Type::Potato:
-						return ToBusKey<Type::Potato>(id);
-					default:
-						throw ::std::exception{ "Remote type is not supported" };
-					}
-				};
-				inline long ToChannelKey(size_t id) const {
-					switch (m_type) {
-					case Type::Voicemeeter:
-						return ToChannelKey<Type::Voicemeeter>(id);
-					case Type::Banana:
-						return ToChannelKey<Type::Banana>(id);
-					case Type::Potato:
-						return ToChannelKey<Type::Potato>(id);
-					default:
-						throw ::std::exception{ "Remote type is not supported" };
-					}
-				};
+				inline void Subscribe() const;
+				inline void Update() const;
 			};
 		}
 	}

@@ -1,10 +1,16 @@
-#include "Client.h"
+#include <chrono>
+
+#include "Cherry.h"
 
 using namespace ::Voicemeeter::Clients::Remote;
 
+static bool g_dirty{};
+static ::std::chrono::high_resolution_clock::time_point g_restart{};
+
+template<Type Remote>
+inline static ::std::string ToBusKey(size_t id);
 template<>
-template<>
-::std::string Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToBusKey<Type::Voicemeeter>(size_t id) {
+inline static ::std::string ToBusKey<Type::Voicemeeter>(size_t id) {
 	switch (id) {
 	case 0:
 		return "Strip[0]";
@@ -23,8 +29,7 @@ template<>
 	}
 }
 template<>
-template<>
-::std::string Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToBusKey<Type::Banana>(size_t id) {
+inline static ::std::string ToBusKey<Type::Banana>(size_t id) {
 	switch (id) {
 	case 0:
 		return "Strip[0]";
@@ -43,8 +48,7 @@ template<>
 	}
 }
 template<>
-template<>
-::std::string Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToBusKey<Type::Potato>(size_t id) {
+inline static ::std::string ToBusKey<Type::Potato>(size_t id) {
 	switch (id) {
 	case 0:
 		return "Strip[0]";
@@ -62,10 +66,25 @@ template<>
 		throw ::std::exception{ "Strip is not supported" };
 	}
 }
+inline static ::std::string ToBusKey(Type type, size_t id) {
+	switch (type)
+	{
+	case ::Voicemeeter::Clients::Remote::Type::Voicemeeter:
+		return ToBusKey<::Voicemeeter::Clients::Remote::Type::Voicemeeter>(id);
+		break;
+	case ::Voicemeeter::Clients::Remote::Type::Banana:
+		return ToBusKey<::Voicemeeter::Clients::Remote::Type::Banana>(id);
+		break;
+	case ::Voicemeeter::Clients::Remote::Type::Potato:
+		return ToBusKey<::Voicemeeter::Clients::Remote::Type::Potato>(id);
+		break;
+	default:
+		throw ::std::exception{ "Remote is not supported" };
+		break;
+	}
+}
 
-
-template<>
-::std::string Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToBusSubKey(size_t id) {
+inline static ::std::string ToBusSubKey(size_t id) {
 	switch (id) {
 	case 0:
 		throw ::std::exception{ "Strip 0 sub key is not supported" };
@@ -84,9 +103,10 @@ template<>
 	}
 }
 
+template<Type Remote>
+inline static long ToChannelKey(size_t id);
 template<>
-template<>
-long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Voicemeeter>(size_t id) {
+inline static long ToChannelKey<Type::Voicemeeter>(size_t id) {
 	if (id < 2) {
 		return static_cast<long>(id);
 	} else if (id < 10) {
@@ -102,8 +122,7 @@ long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Vo
 	}
 }
 template<>
-template<>
-long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Banana>(size_t id) {
+inline static long ToChannelKey<Type::Banana>(size_t id) {
 	if (id < 2) {
 		return static_cast<long>(id);
 	} else if (id < 10) {
@@ -115,8 +134,7 @@ long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Ba
 	}
 }
 template<>
-template<>
-long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Potato>(size_t id) {
+inline static long ToChannelKey<Type::Potato>(size_t id) {
 	if (id < 2) {
 		return static_cast<long>(id);
 	} else if (id < 10) {
@@ -127,186 +145,218 @@ long Client<::Voicemeeter::Adapters::Multiclient::Cherry>::ToChannelKey<Type::Po
 		return static_cast<long>(id) + 14L;
 	}
 }
+inline static long ToChannelKey(Type type, size_t id) {
+	switch (type)
+	{
+	case ::Voicemeeter::Clients::Remote::Type::Voicemeeter:
+		return ToChannelKey<::Voicemeeter::Clients::Remote::Type::Voicemeeter>(id);
+		break;
+	case ::Voicemeeter::Clients::Remote::Type::Banana:
+		return ToChannelKey<::Voicemeeter::Clients::Remote::Type::Banana>(id);
+		break;
+	case ::Voicemeeter::Clients::Remote::Type::Potato:
+		return ToChannelKey<::Voicemeeter::Clients::Remote::Type::Potato>(id);
+		break;
+	default:
+		throw ::std::exception{ "Remote is not supported" };
+		break;
+	}
+}
 
-void Client<::Voicemeeter::Adapters::Multiclient::Cherry>::Subscribe(::Environment::ITimer& timer) const {
-	auto& subscription = m_mixer.get_Subscription<Client>();
+template<typename TStrip>
+inline static void StripSubscribe(::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription, TStrip& strip, const T_VBVMR_INTERFACE& remote, Type type) {
+	::std::string busKey{ ToBusKey(type, strip.get_Id()) };
+	subscription.on_Gain(strip.get_Id(),
+		[&remote, key = busKey + ".Gain"](double value)->void {
+			if (remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value))) {
+				throw ::std::exception{ ("Could not set " + key).c_str() };
+			}
+			g_dirty = true;
+		});
+	subscription.on_Mute(strip.get_Id(),
+		[&remote, key = busKey + ".Mute"](bool value)->void {
+			if (remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value))) {
+				throw ::std::exception{ ("Could not set " + key).c_str() };
+			}
+			g_dirty = true;
+		});
+}
+template<typename TInput, typename TOutput>
+inline static void PlugSubscribe(::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription, TInput& input, TOutput& output, const T_VBVMR_INTERFACE& remote, Type type) {
+	subscription.on_Plug(input.get_Id(), output.get_Id(),
+		[&remote, key = ToBusKey(type, input.get_Id()) + "." + ToBusSubKey(output.get_Id())](bool value)->void {
+			if (remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value))) {
+				throw ::std::exception{ ("Could not set " + key).c_str() };
+			}
+			g_dirty = true;
+		});
+}
+
+template<typename TStrip>
+inline static void StripUpdate(TStrip& strip, const T_VBVMR_INTERFACE& remote, Type type) {
+	::std::string key{ ToBusKey(type, strip.get_Id()) };
+	float value{ 0.F };
+	if (remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Gain").c_str()), &value)) {
+		throw ::std::exception{ ("Could not get " + key + ".Gain").c_str() };
+	}
+	strip.set_Gain<Cherry>(value);
+	if (remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Mute").c_str()), &value)) {
+		throw ::std::exception{ ("Could not get " + key + ".Mute").c_str() };
+	}
+	strip.set_Mute<Cherry>(0.01F < value);
+}
+template<typename TLine>
+inline static void LineUpdate(TLine& line, LevelType levelType, const T_VBVMR_INTERFACE& remote, Type type) {
+	long key{ ToChannelKey(type, line.get_Id()) };
+	float value{ 0.F };
+	if (remote.VBVMR_GetLevel(static_cast<long>(levelType), key, &value)) {
+		throw ::std::exception{ ("Could not get " + ::std::to_string(key) + " level").c_str() };
+	}
+	line.set_Level<Cherry>(value);
+}
+template<typename TInput, typename TOutput>
+inline static void PlugUpdate(TInput& input, TOutput& output, const T_VBVMR_INTERFACE& remote, Type type, ::Voicemeeter::Adapters::Multiclient::Cherry& mixer) {
+	::std::string key{ ToBusKey(type, input.get_Id()) + "." + ToBusSubKey(output.get_Id()) };
+	float value{ 0.F };
+	if (remote.VBVMR_GetParameterFloat(const_cast<char*>(key.c_str()), &value)) {
+		throw ::std::exception{ ("Could not get " + key).c_str() };
+	}
+	mixer.set_Plug<Cherry>(input, output, 0.01 < value);
+}
+
+void Cherry::Subscribe() const {
+	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription = m_mixer.get_Subscription<Cherry>();
 	if (Type::Voicemeeter < m_type) {
 		subscription.on_Vban(
-			[this](bool value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>("vban.Enable"), static_cast<float>(value));
+			[&remote = m_remote](bool value)->void {
+				if (remote.VBVMR_SetParameterFloat(const_cast<char*>("vban.Enable"), static_cast<float>(value))) {
+					throw ::std::exception{ "Could not set VBAN" };
+				}
+				g_dirty = true;
+				g_restart = ::std::chrono::high_resolution_clock::now();
 			});
 	}
 	for (auto& input : m_mixer.get_PhysicalInput()) {
-		size_t inputId{ input.get_Id() };
-		::std::string inputKey{ ToBusKey(inputId) };
-		subscription.on_Gain(inputId,
-			[this, key = inputKey + ".Gain"](double value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
-		subscription.on_Mute(inputId,
-			[this, key = inputKey + ".Mute"](bool value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
+		StripSubscribe(subscription, input, m_remote, m_type);
 		for (auto& output : m_mixer.get_PhysicalOutput()) {
-			size_t outputId{ output.get_Id() };
-			::std::string outputKey{ ToBusSubKey(outputId) };
-			subscription.on_Plug(inputId, outputId,
-				[this, key = inputKey + "." + outputKey](bool value)->void {
-					m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-				});
+			PlugSubscribe(subscription, input, output, m_remote, m_type);
 			if (m_type == Type::Voicemeeter) {
 				break;
 			}
 		}
 		for (auto& output : m_mixer.get_VirtualOutput()) {
-			size_t outputId{ output.get_Id() };
-			::std::string outputKey{ ToBusSubKey(outputId) };
-			subscription.on_Plug(inputId, outputId,
-				[this, key = inputKey + "." + outputKey](bool value)->void {
-					m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-				});
+			PlugSubscribe(subscription, input, output, m_remote, m_type);
 			if (m_type == Type::Voicemeeter) {
 				break;
 			}
 		}
 	}
 	for (auto& input : m_mixer.get_VirtualInput()) {
-		size_t inputId{ input.get_Id() };
-		::std::string inputKey{ ToBusKey(inputId) };
-		subscription.on_Gain(inputId,
-			[this, key = inputKey + ".Gain"](double value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
-		subscription.on_Mute(inputId,
-			[this, key = inputKey + ".Mute"](bool value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
+		StripSubscribe(subscription, input, m_remote, m_type);
 		for (auto& output : m_mixer.get_PhysicalOutput()) {
-			size_t outputId{ output.get_Id() };
-			::std::string outputKey{ ToBusSubKey(outputId) };
-			subscription.on_Plug(inputId, outputId,
-				[this, key = inputKey + "." + outputKey](bool value)->void {
-					m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-				});
+			PlugSubscribe(subscription, input, output, m_remote, m_type);
 			if (m_type == Type::Voicemeeter) {
 				break;
 			}
 		}
 		for (auto& output : m_mixer.get_VirtualOutput()) {
-			size_t outputId{ output.get_Id() };
-			::std::string outputKey{ ToBusSubKey(outputId) };
-			subscription.on_Plug(inputId, outputId,
-				[this, key = inputKey + "." + outputKey](bool value)->void {
-					m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-				});
+			PlugSubscribe(subscription, input, output, m_remote, m_type);
 			if (m_type == Type::Voicemeeter) {
 				break;
 			}
 		}
 	}
 	for (auto& output : m_mixer.get_PhysicalOutput()) {
-		size_t outputId{ output.get_Id() };
-		::std::string outputKey{ ToBusKey(outputId) };
-		subscription.on_Gain(outputId,
-			[this, key = outputKey + ".Gain"](double value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
-		subscription.on_Mute(outputId,
-			[this, key = outputKey + ".Mute"](bool value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
+		StripSubscribe(subscription, output, m_remote, m_type);
 		if (m_type == Type::Voicemeeter) {
 			break;
 		}
 	}
 	for (auto& output : m_mixer.get_VirtualOutput()) {
-		size_t outputId{ output.get_Id() };
-		::std::string outputKey{ ToBusKey(outputId) };
-		subscription.on_Gain(outputId,
-			[this, key = outputKey + ".Gain"](double value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
-		subscription.on_Mute(outputId,
-			[this, key = outputKey + ".Mute"](bool value)->void {
-				m_remote.VBVMR_SetParameterFloat(const_cast<char*>(key.c_str()), static_cast<float>(value));
-			});
+		StripSubscribe(subscription, output, m_remote, m_type);
 		if (m_type == Type::Voicemeeter) {
 			break;
 		}
 	}
-	timer.Set(::std::chrono::milliseconds{ 100 },
-		[this]()->bool {
-			long dirty{ m_remote.VBVMR_IsParametersDirty() };
-			if (dirty < 0) {
-				throw ::std::exception{ "Cannot check Voicemeeter" };
-			}
-			float value{ 0.F };
-			if (Type::Voicemeeter < m_type && dirty) {
-				m_remote.VBVMR_GetParameterFloat(const_cast<char*>("vban.Enable"), &value);
-				m_mixer.set_Vban<Client>(0.01F < value);
-			}
-			for (auto& strip : m_mixer.get_PhysicalInput()) {
-				if (dirty) {
-					::std::string key{ ToBusKey(strip.get_Id()) };
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Gain").c_str()), &value);
-					strip.set_Gain<Client>(value);
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Mute").c_str()), &value);
-					strip.set_Mute<Client>(0.01F < value);
-				}
-				for (auto& line : strip) {
-					long key{ ToChannelKey(line.get_Id()) };
-					m_remote.VBVMR_GetLevel(static_cast<long>(LevelType::PostFaderInput), key, &value);
-					line.set_Level<Client>(value);
-				}
-			}
-			for (auto& strip : m_mixer.get_VirtualInput()) {
-				if (dirty) {
-					::std::string key{ ToBusKey(strip.get_Id()) };
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Gain").c_str()), &value);
-					strip.set_Gain<Client>(value);
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Mute").c_str()), &value);
-					strip.set_Mute<Client>(0.01F < value);
-				}
-				for (auto& line : strip) {
-					long key{ ToChannelKey(line.get_Id()) };
-					m_remote.VBVMR_GetLevel(static_cast<long>(LevelType::PostFaderInput), key, &value);
-					line.set_Level<Client>(value);
-				}
-			}
-			for (auto& strip : m_mixer.get_PhysicalOutput()) {
-				if (dirty) {
-					::std::string key{ ToBusKey(strip.get_Id()) };
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Gain").c_str()), &value);
-					strip.set_Gain<Client>(value);
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Mute").c_str()), &value);
-					strip.set_Mute<Client>(0.01F < value);
-				}
-				for (auto& line : strip) {
-					long key{ ToChannelKey(line.get_Id()) };
-					m_remote.VBVMR_GetLevel(static_cast<long>(LevelType::Output), key, &value);
-					line.set_Level<Client>(value);
-				}
+}
+void Cherry::Update() const {
+	long remoteDirty{ m_remote.VBVMR_IsParametersDirty() };
+	if (remoteDirty < 0) {
+		throw ::std::exception{ "Cannot check Voicemeeter" };
+	}
+	bool dirty{
+		remoteDirty
+		&& !g_dirty
+		&& ::std::chrono::milliseconds{ 2000 } < ::std::chrono::duration_cast<::std::chrono::milliseconds>(::std::chrono::high_resolution_clock::now() - g_restart)
+	};
+	g_dirty = false;
+	float value{ 0.F };
+	if (Type::Voicemeeter < m_type && dirty) {
+		if (m_remote.VBVMR_GetParameterFloat(const_cast<char*>("vban.Enable"), &value)) {
+			throw ::std::exception{ "Could not get VBAN" };
+		}
+		m_mixer.set_Vban<Cherry>(0.01F < value);
+	}
+	for (auto& input : m_mixer.get_PhysicalInput()) {
+		if (dirty) {
+			StripUpdate(input, m_remote, m_type);
+			for (auto& output : m_mixer.get_PhysicalOutput()) {
+				PlugUpdate(input, output, m_remote, m_type, m_mixer);
 				if (m_type == Type::Voicemeeter) {
 					break;
 				}
 			}
-			for (auto& strip : m_mixer.get_VirtualOutput()) {
-				if (dirty) {
-					::std::string key{ ToBusKey(strip.get_Id()) };
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Gain").c_str()), &value);
-					strip.set_Gain<Client>(value);
-					m_remote.VBVMR_GetParameterFloat(const_cast<char*>((key + ".Mute").c_str()), &value);
-					strip.set_Mute<Client>(0.01F < value);
-				}
-				for (auto& line : strip) {
-					long key{ ToChannelKey(line.get_Id()) };
-					m_remote.VBVMR_GetLevel(static_cast<long>(LevelType::Output), key, &value);
-					line.set_Level<Client>(value);
-				}
+			for (auto& output : m_mixer.get_VirtualOutput()) {
+				PlugUpdate(input, output, m_remote, m_type, m_mixer);
 				if (m_type == Type::Voicemeeter) {
 					break;
 				}
 			}
-			return true;
-		});
+		}
+		for (auto& line : input) {
+			LineUpdate(line, LevelType::PostFaderInput, m_remote, m_type);
+		}
+	}
+	for (auto& input : m_mixer.get_VirtualInput()) {
+		if (dirty) {
+			StripUpdate(input, m_remote, m_type);
+			for (auto& output : m_mixer.get_PhysicalOutput()) {
+				PlugUpdate(input, output, m_remote, m_type, m_mixer);
+				if (m_type == Type::Voicemeeter) {
+					break;
+				}
+			}
+			for (auto& output : m_mixer.get_VirtualOutput()) {
+				PlugUpdate(input, output, m_remote, m_type, m_mixer);
+				if (m_type == Type::Voicemeeter) {
+					break;
+				}
+			}
+		}
+		for (auto& line : input) {
+			LineUpdate(line, LevelType::PostFaderInput, m_remote, m_type);
+		}
+	}
+	for (auto& output : m_mixer.get_PhysicalOutput()) {
+		if (dirty) {
+			StripUpdate(output, m_remote, m_type);
+		}
+		for (auto& line : output) {
+			LineUpdate(line, LevelType::Output, m_remote, m_type);
+		}
+		if (m_type == Type::Voicemeeter) {
+			break;
+		}
+	}
+	for (auto& output : m_mixer.get_VirtualOutput()) {
+		if (dirty) {
+			StripUpdate(output, m_remote, m_type);
+		}
+		for (auto& line : output) {
+			LineUpdate(line, LevelType::Output, m_remote, m_type);
+		}
+		if (m_type == Type::Voicemeeter) {
+			break;
+		}
+	}
 }

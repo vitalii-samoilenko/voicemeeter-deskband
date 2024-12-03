@@ -16,12 +16,12 @@ namespace Voicemeeter {
 						typename TGlyph,
 						typename TChangeNotify>
 					using Plug = UI::Decorators::Interactivity::Checkbox<
-						Controls::Plug<
-							TGlyph,
-							TChangeNotify>,
 						TGlyph,
 						TChangeNotify,
-						Policies::Glyph::Updates::Plug<TGlyph>>;
+						Policies::Glyph::Updates::Plug<TGlyph>,
+						Controls::Plug<
+							TGlyph,
+							TChangeNotify>>;
 				}
 			}
 		}

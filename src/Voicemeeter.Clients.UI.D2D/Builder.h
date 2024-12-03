@@ -5,17 +5,19 @@
 
 #include "windows.h"
 
-#include "Environment/IDirtyTracker.h"
-#include "Environment/IInputTracker.h"
-#include "Environment/ITimer.h"
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
-#include "Voicemeeter.UI.D2D/Scene.h"
 #include "Voicemeeter.UI/Direction.h"
+#include "Voicemeeter.UI/Trackers/Dirty.h"
+#include "Voicemeeter.UI/Trackers/Focus.h"
+#include "Voicemeeter.UI/Trackers/Input.h"
+#include "Voicemeeter.UI.D2D/Scene.h"
 
 namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			namespace D2D {
+				::Voicemeeter::UI::D2D::Graphics::Theme LoadTheme();
+
 				template<typename TMixer>
 				class Builder {
 					static_assert(
@@ -62,7 +64,30 @@ namespace Voicemeeter {
 						m_network = network;
 						return *this;
 					}
-					::Voicemeeter::UI::D2D::Scene* Build();
+					::Voicemeeter::UI::D2D::Scene* Build() {
+						::std::unique_ptr<::Voicemeeter::UI::Trackers::IDirty> pDirtyTracker{
+							new ::Voicemeeter::UI::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
+						};
+						::std::unique_ptr<::Voicemeeter::UI::Trackers::IFocus> pFocusTracker{
+							new ::Voicemeeter::UI::Trackers::Focus{}
+						};
+						::std::unique_ptr<::Voicemeeter::UI::Trackers::IInput> pInputTracker{
+							new ::Voicemeeter::UI::Trackers::Input{ m_inputTracker }
+						};
+						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Canvas> pCanvas{
+							new ::Voicemeeter::UI::D2D::Graphics::Canvas{ m_hWnd, LoadTheme() }
+						};
+						::std::unique_ptr<::Voicemeeter::UI::IComponent> pComposition{
+							Compose(
+								*pDirtyTracker, *pFocusTracker, *pInputTracker,
+								*pCanvas
+							)
+						};
+						return new ::Voicemeeter::UI::D2D::Scene{
+							pDirtyTracker, pInputTracker, pFocusTracker,
+							pCanvas, pComposition
+						};
+					};
 
 				private:
 					HWND m_hWnd;
@@ -74,6 +99,13 @@ namespace Voicemeeter {
 					::Voicemeeter::UI::Direction m_direction;
 					::std::unordered_set<size_t> m_cIgnoredStrip;
 					bool m_network;
+
+					::std::unique_ptr<::Voicemeeter::UI::IComponent> Compose(
+						::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
+						::Voicemeeter::UI::Trackers::IFocus& focusTracker,
+						::Voicemeeter::UI::Trackers::IInput& inputTracker,
+						::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
+					);
 				};
 			}
 		}

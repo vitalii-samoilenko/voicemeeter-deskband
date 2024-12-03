@@ -85,7 +85,8 @@ namespace Voicemeeter {
 
 				static inline bool is_inside(
 					const ::std::valarray<double>& point,
-					const ::std::valarray<double>& vertex) {
+					const ::std::valarray<double>& vertex
+				) {
 					return !(point.min() < 0)
 						&& (point - vertex).max() < 0;
 				};
@@ -93,12 +94,14 @@ namespace Voicemeeter {
 					const ::std::valarray<double>& lhs_point,
 					const ::std::valarray<double>& lhs_vertex,
 					const ::std::valarray<double>& rhs_point,
-					const ::std::valarray<double>& rhs_vertex) {
+					const ::std::valarray<double>& rhs_vertex
+				) {
 					return is_inside(rhs_point, lhs_point + lhs_vertex)
 						&& is_inside(lhs_point, rhs_point + rhs_vertex);
 				};
 				inline bool IsInside(
-					const ::std::valarray<double>& point) const {
+					const ::std::valarray<double>& point
+				) const {
 					return is_inside(
 						point - TComponent::get_Position(),
 						TComponent::get_Size());

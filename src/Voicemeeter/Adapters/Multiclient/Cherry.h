@@ -45,6 +45,8 @@ namespace Voicemeeter {
 					Mixer>;
 			};
 
+			using CherrySubscription = ::Voicemeeter::Multiclient::Subscription<CherrySpecification>;
+
 			class Cherry
 				: public ::Voicemeeter::Multiclient::Manager<CherrySpecification>
 				, private CherryDeclaration::Cherry {
@@ -62,18 +64,22 @@ namespace Voicemeeter {
 				Cherry& operator=(Cherry&&) = delete;
 
 				using BaseMixer::get_Plug;
-				template<typename TInput, typename TOutput, typename TClient>
-				inline void set_Plug(decltype(TInput::begin()) input, decltype(TOutput::begin()) output, bool value) {
-					if (BaseMixer::get_Plug<TInput, TOutput>(input, output) == value) {
+				template<typename TClient, typename TInput, typename TOutput,
+					::std::enable_if_t<
+						(::std::is_same_v<CherryDeclaration::Input::Physical::Strip, TInput> || ::std::is_same_v<CherryDeclaration::Input::Virtual::Strip, TInput>)
+						&& (::std::is_same_v<CherryDeclaration::Output::Physical::Strip, TOutput> || ::std::is_same_v<CherryDeclaration::Output::Virtual::Strip, TOutput>),
+						bool> = true>
+				inline void set_Plug(TInput& input, TOutput& output, bool value) {
+					if (BaseMixer::get_Plug(input, output) == value) {
 						return;
 					}
-					BaseMixer::set_Plug<TInput, TOutput>(input, output, value);
+					BaseMixer::set_Plug(input, output, value);
 					for (const auto& client_subscription : *this) {
-						if (client_subscription->first == &typeid(TClient)) {
+						if (client_subscription.first == &typeid(TClient)) {
 							continue;
 						}
-						client_subscription->second
-							.on_Plug(input->get_Id(), output->get_Id())
+						client_subscription.second
+							.on_Plug(input.get_Id(), output.get_Id())
 								(value);
 					}
 				};

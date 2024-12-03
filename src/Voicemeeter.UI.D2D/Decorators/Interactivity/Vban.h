@@ -16,12 +16,12 @@ namespace Voicemeeter {
 						typename TGlyph,
 						typename TChangeNotify>
 					using Vban = UI::Decorators::Interactivity::Checkbox<
-						Controls::Vban<
-							TGlyph,
-							TChangeNotify>,
 						TGlyph,
 						TChangeNotify,
-						Policies::Glyph::Updates::Vban<TGlyph>>;
+						Policies::Glyph::Updates::Vban<TGlyph>,
+						Controls::Vban<
+							TGlyph,
+							TChangeNotify>>;
 				}
 			}
 		}
