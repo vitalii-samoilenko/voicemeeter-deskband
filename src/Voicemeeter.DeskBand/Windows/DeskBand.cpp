@@ -417,6 +417,10 @@ LRESULT CALLBACK DeskBand::WndProcW(
 					.WithIgnoredStrip(3)
 					.WithIgnoredStrip(5);
 			}
+			RECT taskbar{};
+			if (GetClientRect(pWnd->m_hWndParent, &taskbar) && taskbar.right < taskbar.bottom) {
+				builder.WithDirection(::Voicemeeter::UI::Direction::Down);
+			}
 			pWnd->m_pScene.reset(builder.Build());
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
