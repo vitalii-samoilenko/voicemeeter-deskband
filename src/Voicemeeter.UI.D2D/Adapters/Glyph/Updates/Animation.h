@@ -28,7 +28,9 @@ namespace Voicemeeter {
 							Animation& operator=(Animation&&) = delete;
 
 							void Update(const TState& state) {
-								m_point = ::std::chrono::high_resolution_clock::now();
+								if (Finished()) {
+									m_point = ::std::chrono::high_resolution_clock::now();
+								}
 
 								OnUpdate(state);
 							};
