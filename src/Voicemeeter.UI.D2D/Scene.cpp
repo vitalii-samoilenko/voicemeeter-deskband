@@ -72,8 +72,8 @@ void Scene::Redraw() {
 			cRect.push_back({
 				static_cast<LONG>(::std::floor(dirtyPoint[i])),
 				static_cast<LONG>(::std::floor(dirtyPoint[i + 1])),
-				static_cast<LONG>(::std::ceil(::std::min(canvasVertex[0], dirtyPoint[i] + dirtyVertex[i + 1]))),
-				static_cast<LONG>(::std::ceil(::std::min(canvasVertex[1], dirtyPoint[i] + dirtyVertex[i + 1])))
+				static_cast<LONG>(::std::ceil(::std::min(canvasVertex[0], dirtyPoint[i] + dirtyVertex[i]))),
+				static_cast<LONG>(::std::ceil(::std::min(canvasVertex[1], dirtyPoint[i + 1] + dirtyVertex[i + 1])))
 			});
 		}
 	}
