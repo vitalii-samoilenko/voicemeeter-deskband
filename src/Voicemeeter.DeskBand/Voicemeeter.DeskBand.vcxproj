@@ -215,10 +215,10 @@
     <ClInclude Include="Windows\DeskBand.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Voicemeeter.Remote\Voicemeeter.Remote.vcxproj">
+    <ProjectReference Include="..\Voicemeeter.Clients.Remote\Voicemeeter.Clients.Remote.vcxproj">
       <Project>{a8201ccc-d675-42d9-947a-b6a27450275a}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Voicemeeter.Scene.D2D.Remote\Voicemeeter.Scene.D2D.Remote.vcxproj">
+    <ProjectReference Include="..\Voicemeeter.Clients.UI.D2D\Voicemeeter.Clients.UI.D2D.vcxproj">
       <Project>{9d994208-264d-4b90-8ba7-30fc62304d9b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.UI.D2D\Voicemeeter.UI.D2D.vcxproj">
@@ -226,6 +226,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.UI\Voicemeeter.UI.vcxproj">
       <Project>{8ebf00e4-20be-4230-97ba-8dd20f2f35cb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Voicemeeter\Voicemeeter.vcxproj">
+      <Project>{20f519be-036e-4a91-81d9-51c5ad1661db}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Windows\Windows.vcxproj">
       <Project>{8d41daa9-b6b7-4f80-832a-f5ae62e1502d}</Project>

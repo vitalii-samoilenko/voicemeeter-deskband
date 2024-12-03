@@ -2,10 +2,8 @@
 #include <fstream>
 #include <string>
 
-#include "Voicemeeter.UI/Direction.h"
-#include "Voicemeeter.Scene.D2D.Remote/Build.h"
-#include "Windows/Wrappers.h"
 #include "Windows/ErrorMessageBox.h"
+#include "Windows/Wrappers.h"
 
 #include "DeskBand.h"
 
@@ -40,9 +38,10 @@ DeskBand::DeskBand(
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
   , m_pCompositionTimer{ nullptr }
   , m_pDirtyTimer{ nullptr }
-  , m_pMixerTimer{ nullptr }
+  , m_pRemoteTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
+  , m_pRemote{ nullptr }
   , m_pScene{ nullptr } {
 	InterlockedIncrement(&g_cDllRef);
 }
@@ -160,16 +159,16 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi) {
 	m_dwBandID = dwBandID;
 
 	if (pdbi->dwMask & DBIM_MINSIZE) {
-		switch (m_pMixer->get_Type()) {
-		case Type::Voicemeeter: {
+		switch (m_pRemote->get_Type()) {
+		case ::Voicemeeter::Clients::Remote::Type::Voicemeeter: {
 			pdbi->ptMinSize.x = 189;
 			pdbi->ptMinSize.y = 30;
 		} break;
-		case Type::Banana: {
+		case ::Voicemeeter::Clients::Remote::Type::Banana: {
 			pdbi->ptMinSize.x = 370;
 			pdbi->ptMinSize.y = 30;
 		} break;
-		case Type::Potato: {
+		case ::Voicemeeter::Clients::Remote::Type::Potato: {
 			pdbi->ptMinSize.x = 370;
 			pdbi->ptMinSize.y = 30;
 		} break;
@@ -400,22 +399,25 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pMixerTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pDirtyTimer->get_Id(), pWnd->m_pDirtyTimer.get());
-			pWnd->m_lpTimer.emplace(pWnd->m_pMixerTimer->get_Id(), pWnd->m_pMixerTimer.get());
-			pWnd->m_pMixer.reset(new ::Voicemeeter::Remote::Mixer(*pWnd->m_pMixerTimer));
-			RECT taskbar{};
-			UI::Direction direction{
-				(GetClientRect(pWnd->m_hWndParent, &taskbar)
-					&& taskbar.right < taskbar.bottom
-					? UI::Direction::Down
-					: UI::Direction::Right)
-			};
-			pWnd->m_pScene.reset(::Voicemeeter::Scene::D2D::Remote::Build(
-				hWnd, direction, *pWnd, *pWnd,
+			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
+			pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
+			pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
+			::Voicemeeter::Clients::UI::D2D::Cherry builder{
+				hWnd,
+				*pWnd, *pWnd,
 				*pWnd->m_pCompositionTimer, *pWnd->m_pDirtyTimer,
-				*pWnd->m_pMixer));
+				*pWnd->m_pMixer
+			};
+			if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
+				builder
+					.WithNetwork(false)
+					.WithIgnoredStrip(3)
+					.WithIgnoredStrip(5);
+			}
+			pWnd->m_pScene.reset(builder.Build());
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_SETFOCUS: {

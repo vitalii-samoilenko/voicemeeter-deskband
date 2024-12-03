@@ -1,10 +1,8 @@
 #include <cmath>
 #include <fstream>
 #include <string>
-#include <utility>
 
 #include "Windows/ErrorMessageBox.h"
-#include "Windows/Registry.h"
 #include "Windows/Wrappers.h"
 
 #include "Window.h"
