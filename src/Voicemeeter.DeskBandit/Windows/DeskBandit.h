@@ -14,21 +14,21 @@
 
 namespace Voicemeeter {
 	namespace Windows {
-		class Window final
+		class DeskBandit final
 			: public ::Environment::IDirtyTracker
 			, public ::Environment::IInputTracker {
 		public:
-			explicit Window(
+			explicit DeskBandit(
 				HINSTANCE hInstance
 			);
-			Window() = delete;
-			Window(const Window&) = delete;
-			Window(Window&&) = delete;
+			DeskBandit() = delete;
+			DeskBandit(const DeskBandit&) = delete;
+			DeskBandit(DeskBandit&&) = delete;
 
-			~Window() = default;
+			~DeskBandit() = default;
 
-			Window& operator=(const Window&) = delete;
-			Window& operator=(Window&&) = delete;
+			DeskBandit& operator=(const DeskBandit&) = delete;
+			DeskBandit& operator=(DeskBandit&&) = delete;
 
 			void Show(int nCmdShow) const;
 

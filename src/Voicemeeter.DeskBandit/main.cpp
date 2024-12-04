@@ -3,7 +3,7 @@
 #include "Windows/Wrappers.h"
 #include "Windows/ErrorMessageBox.h"
 
-#include "Windows/Window.h"
+#include "Windows/DeskBandit.h"
 
 int WINAPI wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -11,9 +11,9 @@ int WINAPI wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 ) {
-	::std::unique_ptr<::Voicemeeter::Windows::Window> pWnd{ nullptr };
+	::std::unique_ptr<::Voicemeeter::Windows::DeskBandit> pWnd{ nullptr };
 	try {
-		pWnd.reset(new ::Voicemeeter::Windows::Window{ hInstance });
+		pWnd.reset(new ::Voicemeeter::Windows::DeskBandit{ hInstance });
 
 		pWnd->Show(nShowCmd);
 	}

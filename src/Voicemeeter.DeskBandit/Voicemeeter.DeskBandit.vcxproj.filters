@@ -21,12 +21,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Windows\Window.h">
+    <ClInclude Include="Windows\DeskBandit.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Windows\Window.cpp">
+    <ClCompile Include="Windows\DeskBandit.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">

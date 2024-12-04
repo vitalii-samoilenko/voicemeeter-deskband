@@ -5,7 +5,7 @@
 #include "Windows/ErrorMessageBox.h"
 #include "Windows/Wrappers.h"
 
-#include "Window.h"
+#include "DeskBandit.h"
 
 using namespace ::Voicemeeter::Windows;
 
@@ -15,7 +15,7 @@ static constexpr UINT WM_DIRTY{ WM_USER + 0U };
 
 static constexpr LRESULT OK{ 0 };
 
-Window::Window(
+DeskBandit::DeskBandit(
 	HINSTANCE hInstance
 ) : m_hWnd{ NULL }
   , m_dpi{ USER_DEFAULT_SCREEN_DPI }
@@ -54,24 +54,24 @@ Window::Window(
 	);
 }
 
-void Window::Show(int nCmdShow) const {
+void DeskBandit::Show(int nCmdShow) const {
 	ShowWindow(
 		m_hWnd,
 		nCmdShow
 	);
 }
 
-void Window::SetDirty() {
+void DeskBandit::SetDirty() {
 	::Windows::wPostMessageW(m_hWnd, WM_DIRTY, 0, 0);
 }
-void Window::EnableInputTrack() {
+void DeskBandit::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
-void Window::DisableInputTrack() {
+void DeskBandit::DisableInputTrack() {
 	::Windows::wReleaseCapture();
 }
 
-LRESULT CALLBACK Window::WndProcW(
+LRESULT CALLBACK DeskBandit::WndProcW(
 	HWND hWnd,
 	UINT uMsg,
 	WPARAM wParam,
@@ -98,10 +98,10 @@ LRESULT CALLBACK Window::WndProcW(
 		}
 	};
 	try {
-		Window* pWnd{ ::Windows::wGetWindowLongPtrW<Window>(hWnd, GWLP_USERDATA) };
+		DeskBandit* pWnd{ ::Windows::wGetWindowLongPtrW<DeskBandit>(hWnd, GWLP_USERDATA) };
 		switch (uMsg) {
 		case WM_NCCREATE: {
-			pWnd = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
+			pWnd = reinterpret_cast<DeskBandit*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
 			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
