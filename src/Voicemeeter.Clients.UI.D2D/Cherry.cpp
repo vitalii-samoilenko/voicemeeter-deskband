@@ -338,7 +338,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 			dirtyTracker, focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
-		);
+				);
 	default:
 		throw ::std::exception{ "Direction is not supported" };
 	}
@@ -393,9 +393,9 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
 			? new ::Voicemeeter::UI::Panels::Stack<Direction, Scale>{
 				cpComponent.begin(), cpComponent.end()
 			} : new ::Voicemeeter::UI::Decorators::Margin<
-				::Voicemeeter::UI::Panels::Stack<Direction, Scale>, Scale>{
-					MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
-					cpComponent.begin(), cpComponent.end()
+			::Voicemeeter::UI::Panels::Stack<Direction, Scale>, Scale>{
+				MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
+				cpComponent.begin(), cpComponent.end()
 			})
 	};
 }
@@ -437,13 +437,11 @@ template<>
 	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
 ) {
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription = m_mixer.get_Subscription<Cherry>();
-	DWORD animations{ 1UL };
-	::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Animations", animations);
 	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpComponent{};
 	if (m_network) {
 		cpComponent.push_back(::std::move(
 			ComposeVban(
-				animations,
+				m_animations,
 				dirtyTracker, focusTracker, inputTracker,
 				canvas,
 				m_mixer, subscription)));
@@ -455,7 +453,7 @@ template<>
 		}
 		cpBusComponent.push_back(::std::move(
 			ComposeKnob(
-				animations,
+				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
 				dirtyTracker, focusTracker, inputTracker,
@@ -468,7 +466,7 @@ template<>
 			}
 			cpPlugComponent.push_back(::std::move(
 				ComposePlug(
-					animations,
+					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
 					dirtyTracker, focusTracker, inputTracker,
@@ -489,7 +487,7 @@ template<>
 			}
 			cpPlugComponent.push_back(::std::move(
 				ComposePlug(
-					animations,
+					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
 					dirtyTracker, focusTracker, inputTracker,
@@ -508,19 +506,21 @@ template<>
 			throw ::std::exception{ "Invalid layout" };
 		}
 	}
-	cpComponent.push_back(::std::move(
-		ComposePanel(
-			m_direction, m_direction,
-			cpComponent.empty(),
-			cpBusComponent)));
-	cpBusComponent.clear();
+	if (cpBusComponent.size()) {
+		cpComponent.push_back(::std::move(
+			ComposePanel(
+				m_direction, m_direction,
+				cpComponent.empty(),
+				cpBusComponent)));
+		cpBusComponent.clear();
+	}
 	for (auto& input : m_mixer.get_VirtualInput()) {
 		if (m_cIgnoredStrip.find(input.get_Id()) != m_cIgnoredStrip.end()) {
 			continue;
 		}
 		cpBusComponent.push_back(::std::move(
 			ComposeKnob(
-				animations,
+				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
 				dirtyTracker, focusTracker, inputTracker,
@@ -533,7 +533,7 @@ template<>
 			}
 			cpPlugComponent.push_back(::std::move(
 				ComposePlug(
-					animations,
+					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
 					dirtyTracker, focusTracker, inputTracker,
@@ -554,7 +554,7 @@ template<>
 			}
 			cpPlugComponent.push_back(::std::move(
 				ComposePlug(
-					animations,
+					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
 					dirtyTracker, focusTracker, inputTracker,
@@ -573,19 +573,21 @@ template<>
 			throw ::std::exception{ "Invalid layout" };
 		}
 	}
-	cpComponent.push_back(::std::move(
-		ComposePanel(
-			m_direction, m_direction,
-			cpComponent.empty(),
-			cpBusComponent)));
-	cpBusComponent.clear();
+	if (cpBusComponent.size()) {
+		cpComponent.push_back(::std::move(
+			ComposePanel(
+				m_direction, m_direction,
+				cpComponent.empty(),
+				cpBusComponent)));
+		cpBusComponent.clear();
+	}
 	for (auto& input : m_mixer.get_PhysicalOutput()) {
 		if (m_cIgnoredStrip.find(input.get_Id()) != m_cIgnoredStrip.end()) {
 			continue;
 		}
 		cpBusComponent.push_back(::std::move(
 			ComposeKnob(
-				animations,
+				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
 				dirtyTracker, focusTracker, inputTracker,
@@ -598,19 +600,21 @@ template<>
 		}
 		cpBusComponent.push_back(::std::move(
 			ComposeKnob(
-				animations,
+				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
 				dirtyTracker, focusTracker, inputTracker,
 				m_compositionTimer, canvas,
 				input, m_mixer, subscription)));
 	}
-	cpComponent.push_back(::std::move(
-		ComposePanel(
-			m_direction, m_direction,
-			cpComponent.empty(),
-			cpBusComponent)));
-	cpBusComponent.clear();
+	if (cpBusComponent.size()) {
+		cpComponent.push_back(::std::move(
+			ComposePanel(
+				m_direction, m_direction,
+				cpComponent.empty(),
+				cpBusComponent)));
+		cpBusComponent.clear();
+	}
 	return ComposePanel(
 		m_direction, m_direction,
 		true,

@@ -208,7 +208,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cherry.cpp" />
-    <ClCompile Include="LoadTheme.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

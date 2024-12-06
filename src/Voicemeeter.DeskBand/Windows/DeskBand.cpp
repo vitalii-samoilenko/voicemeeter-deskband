@@ -421,7 +421,7 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			if (GetClientRect(pWnd->m_hWndParent, &taskbar) && taskbar.right < taskbar.bottom) {
 				builder.WithDirection(::Voicemeeter::UI::Direction::Down);
 			}
-			pWnd->m_pScene.reset(builder.Build());
+			pWnd->m_pScene = builder.Build();
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_SETFOCUS: {

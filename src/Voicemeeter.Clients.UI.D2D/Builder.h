@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include <unordered_set>
+#include <vector>
 
 #include "windows.h"
 
@@ -11,13 +12,12 @@
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
+#include "Windows/Registry.h"
 
 namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			namespace D2D {
-				::Voicemeeter::UI::D2D::Graphics::Theme LoadTheme();
-
 				template<typename TMixer>
 				class Builder {
 					static_assert(
@@ -40,7 +40,9 @@ namespace Voicemeeter {
 					  , m_mixer{ mixer }
 					  , m_direction{ ::Voicemeeter::UI::Direction::Right }
 					  , m_cIgnoredStrip{}
-					  , m_network{ true } {
+					  , m_network{ true }
+					  , m_theme{ ::Voicemeeter::UI::D2D::Graphics::Theme::Default() }
+					  , m_animations{ true } {
 
 					};
 					Builder() = delete;
@@ -64,7 +66,12 @@ namespace Voicemeeter {
 						m_network = network;
 						return *this;
 					}
-					::Voicemeeter::UI::D2D::Scene* Build() {
+					inline Builder& WithTheme(const ::Voicemeeter::UI::D2D::Graphics::Theme& theme) {
+						m_theme = theme;
+						return *this;
+					}
+					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
+						LoadOverrides();
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::IDirty> pDirtyTracker{
 							new ::Voicemeeter::UI::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
 						};
@@ -75,7 +82,7 @@ namespace Voicemeeter {
 							new ::Voicemeeter::UI::Trackers::Input{ m_inputTracker }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Canvas> pCanvas{
-							new ::Voicemeeter::UI::D2D::Graphics::Canvas{ m_hWnd, LoadTheme() }
+							new ::Voicemeeter::UI::D2D::Graphics::Canvas{ m_hWnd, m_theme }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::IComponent> pComposition{
 							Compose(
@@ -83,9 +90,11 @@ namespace Voicemeeter {
 								*pCanvas
 							)
 						};
-						return new ::Voicemeeter::UI::D2D::Scene{
-							pDirtyTracker, pInputTracker, pFocusTracker,
-							pCanvas, pComposition
+						return ::std::unique_ptr<::Voicemeeter::UI::D2D::Scene>{
+							new ::Voicemeeter::UI::D2D::Scene{
+								pDirtyTracker, pInputTracker, pFocusTracker,
+								pCanvas, pComposition
+							}
 						};
 					};
 
@@ -99,7 +108,62 @@ namespace Voicemeeter {
 					::Voicemeeter::UI::Direction m_direction;
 					::std::unordered_set<size_t> m_cIgnoredStrip;
 					bool m_network;
+					::Voicemeeter::UI::D2D::Graphics::Theme m_theme;
+					bool m_animations;
 
+					inline void LoadOverrides() {
+						HKEY hKey{ HKEY_CURRENT_USER };
+						::std::wstring subKey{ LR"(SOFTWARE\VoicemeeterDeskBand)" };
+						::std::wstring themeSubKey{ subKey + LR"(\Theme)" };
+						::Windows::Registry::TryGetValue(hKey, themeSubKey, L"FontFamily", m_theme.FontFamily);
+						DWORD color{};
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Warning", color)) {
+							m_theme.Warning = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Danger", color)) {
+							m_theme.Danger = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"DarkGlass", color)) {
+							m_theme.DarkGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"LightGlass", color)) {
+							m_theme.LightGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"PrimaryActive", color)) {
+							m_theme.PrimaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"SecondaryActive", color)) {
+							m_theme.SecondaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Inactive", color)) {
+							m_theme.Inactive = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Indicator", color)) {
+							m_theme.Indicator = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"EqualizerLow", color)) {
+							m_theme.EqualizerLow = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"EqualizerMedium", color)) {
+							m_theme.EqualizerMedium = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"EqualizerHigh", color)) {
+							m_theme.EqualizerHigh = ::D2D1::ColorF(static_cast<UINT32>(color));
+						}
+						::std::wstring mixerSubKey{ subKey + LR"(\Mixer)" };
+						DWORD network{ 0UL };
+						if (::Windows::Registry::TryGetValue(hKey, mixerSubKey, L"Network", network)) {
+							m_network = static_cast<bool>(network);
+						}
+						::std::vector<size_t> cIgnoredStrip{};
+						if (::Windows::Registry::TryGetValue(hKey, mixerSubKey, L"IgnoredStrip", cIgnoredStrip)) {
+							m_cIgnoredStrip.insert(cIgnoredStrip.begin(), cIgnoredStrip.end());
+						}
+						DWORD animations{ 0UL };
+						if (::Windows::Registry::TryGetValue(hKey, subKey, L"Animations", animations)) {
+							m_animations = static_cast<bool>(animations);
+						}
+					};
 					::std::unique_ptr<::Voicemeeter::UI::IComponent> Compose(
 						::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
 						::Voicemeeter::UI::Trackers::IFocus& focusTracker,

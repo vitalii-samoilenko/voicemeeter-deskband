@@ -124,7 +124,7 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					.WithIgnoredStrip(3)
 					.WithIgnoredStrip(5);
 			}
-			pWnd->m_pScene.reset(builder.Build());
+			pWnd->m_pScene = builder.Build();
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_DESTROY: {
