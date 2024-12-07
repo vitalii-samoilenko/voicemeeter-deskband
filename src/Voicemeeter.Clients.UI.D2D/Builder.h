@@ -41,7 +41,7 @@ namespace Voicemeeter {
 					  , m_direction{ ::Voicemeeter::UI::Direction::Right }
 					  , m_cIgnoredStrip{}
 					  , m_network{ true }
-					  , m_theme{ ::Voicemeeter::UI::D2D::Graphics::Theme::Default() }
+					  , m_theme{ ::Voicemeeter::UI::D2D::Graphics::Theme::Dark() }
 					  , m_animations{ true }
 					  , m_marginPoint{ 0., 0. }
 					  , m_marginVertex{ 0., 0. } {
