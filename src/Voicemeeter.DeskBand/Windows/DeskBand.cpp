@@ -35,7 +35,6 @@ DeskBand::DeskBand(
   , m_dwBandID{ 0 }
   ,	m_hWnd{ NULL }
   , m_hWndParent{ NULL }
-  , m_dpi{ USER_DEFAULT_SCREEN_DPI }
   , m_pCompositionTimer{ nullptr }
   , m_pDirtyTimer{ nullptr }
   , m_pRemoteTimer{ nullptr }
@@ -396,7 +395,6 @@ LRESULT CALLBACK DeskBand::WndProcW(
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<DeskBand*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
-			pWnd->m_dpi = GetDpiForWindow(hWnd);
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });

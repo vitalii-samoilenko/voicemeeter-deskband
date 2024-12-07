@@ -393,9 +393,9 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
 			? new ::Voicemeeter::UI::Panels::Stack<Direction, Scale>{
 				cpComponent.begin(), cpComponent.end()
 			} : new ::Voicemeeter::UI::Decorators::Margin<
-			::Voicemeeter::UI::Panels::Stack<Direction, Scale>, Scale>{
-				MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
-				cpComponent.begin(), cpComponent.end()
+				::Voicemeeter::UI::Panels::Stack<Direction, Scale>, Scale>{
+					MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
+					cpComponent.begin(), cpComponent.end()
 			})
 	};
 }
@@ -424,6 +424,34 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
 		return ComposePanel<::Voicemeeter::UI::Direction::Right>(marginDirection, first, cpComponent);
 	case ::Voicemeeter::UI::Direction::Down:
 		return ComposePanel<::Voicemeeter::UI::Direction::Down>(marginDirection, first, cpComponent);
+	default:
+		throw ::std::exception{ "Direction is not supported" };
+	}
+}
+template<::Voicemeeter::UI::Direction Direction>
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
+	const ::std::valarray<double>& marginPoint, const ::std::valarray<double>& marginVertex,
+	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>>& cpComponent
+) {
+	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
+	return ::std::unique_ptr<::Voicemeeter::UI::IComponent>{
+		new ::Voicemeeter::UI::Decorators::Margin<
+			::Voicemeeter::UI::Panels::Stack<Direction, Scale>, Scale>{
+				marginPoint, marginVertex, Scale{},
+				cpComponent.begin(), cpComponent.end()
+			}
+	};
+}
+inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
+	::Voicemeeter::UI::Direction direction,
+	const ::std::valarray<double>& marginPoint, const ::std::valarray<double>& marginVertex,
+	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>>& cpComponent
+) {
+	switch (direction) {
+	case ::Voicemeeter::UI::Direction::Right:
+		return ComposePanel<::Voicemeeter::UI::Direction::Right>(marginPoint, marginVertex, cpComponent);
+	case ::Voicemeeter::UI::Direction::Down:
+		return ComposePanel<::Voicemeeter::UI::Direction::Down>(marginPoint, marginVertex, cpComponent);
 	default:
 		throw ::std::exception{ "Direction is not supported" };
 	}
@@ -615,8 +643,13 @@ template<>
 				cpBusComponent)));
 		cpBusComponent.clear();
 	}
-	return ComposePanel(
-		m_direction, m_direction,
-		true,
-		cpComponent);
+	return (0. < m_marginPoint).max() || (0. < m_marginVertex).max()
+		? ComposePanel(
+			m_direction,
+			m_marginPoint, m_marginVertex,
+			cpComponent)
+		: ComposePanel(
+			m_direction, m_direction,
+			true,
+			cpComponent);
 }

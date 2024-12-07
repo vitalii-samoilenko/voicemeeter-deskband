@@ -42,7 +42,9 @@ namespace Voicemeeter {
 					  , m_cIgnoredStrip{}
 					  , m_network{ true }
 					  , m_theme{ ::Voicemeeter::UI::D2D::Graphics::Theme::Default() }
-					  , m_animations{ true } {
+					  , m_animations{ true }
+					  , m_marginPoint{ 0., 0. }
+					  , m_marginVertex{ 0., 0. } {
 
 					};
 					Builder() = delete;
@@ -65,11 +67,19 @@ namespace Voicemeeter {
 					inline Builder& WithNetwork(bool network) {
 						m_network = network;
 						return *this;
-					}
+					};
 					inline Builder& WithTheme(const ::Voicemeeter::UI::D2D::Graphics::Theme& theme) {
 						m_theme = theme;
 						return *this;
-					}
+					};
+					inline Builder& WithMarginPosition(const ::std::valarray<double>& point) {
+						m_marginPoint = point;
+						return *this;
+					};
+					inline Builder& WithMarginSize(const ::std::valarray<double>& vertex) {
+						m_marginVertex = vertex;
+						return *this;
+					};
 					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
 						LoadOverrides();
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::IDirty> pDirtyTracker{
@@ -110,6 +120,8 @@ namespace Voicemeeter {
 					bool m_network;
 					::Voicemeeter::UI::D2D::Graphics::Theme m_theme;
 					bool m_animations;
+					::std::valarray<double> m_marginPoint;
+					::std::valarray<double> m_marginVertex;
 
 					inline void LoadOverrides() {
 						HKEY hKey{ HKEY_CURRENT_USER };

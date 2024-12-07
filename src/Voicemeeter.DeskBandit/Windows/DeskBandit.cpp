@@ -19,13 +19,10 @@ static constexpr LRESULT OK{ 0 };
 DeskBandit::DeskBandit(
 	HINSTANCE hInstance
 ) : m_hWndParent{ ::Windows::wFindWindowExW(NULL, NULL, L"Shell_TrayWnd", NULL) }
-  , m_hWndStart{ ::Windows::wFindWindowExW(m_hWndParent, NULL, L"Start", NULL) }
-  , m_hWndBar{ ::Windows::wFindWindowExW(m_hWndParent, NULL, L"ReBarWindow32", NULL) }
   , m_hWndTray{ ::Windows::wFindWindowExW(m_hWndParent, NULL, L"TrayNotifyWnd", NULL) }
-  , m_dock{ Dock::Right }
+  , m_dock{ Dock::Left }
   , m_hWnd{ NULL }
-  , m_dpi{ USER_DEFAULT_SCREEN_DPI }
-  , m_rc{ 0L, 4L, 592L, 40L }
+  , m_rc{}
   , m_pTrackTimer{ nullptr }
   , m_pCompositionTimer{ nullptr }
   , m_pDirtyTimer{ nullptr }
@@ -36,11 +33,16 @@ DeskBandit::DeskBandit(
   , m_pScene{ nullptr } {
 	DWORD dock{ 0UL };
 	if (::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock", dock)
-			&& -1L < dock && dock < 4L ) {
+			&& dock == static_cast<DWORD>(Dock::Right)) {
 		m_dock = static_cast<Dock>(dock);
 	}
 
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
+	RECT parent{};
+	::Windows::wGetWindowRect(m_hWndParent, &parent);
+	m_rc.bottom = parent.bottom - parent.top;
+	m_rc.right = parent.right - parent.left;
 
 	WNDCLASSW wndClass{};
 	wndClass.hInstance = hInstance;
@@ -61,7 +63,6 @@ DeskBandit::DeskBandit(
 		hInstance,
 		this
 	);
-	SetParent(m_hWnd, m_hWndParent);
 }
 
 void DeskBandit::Show(int nCmdShow) const {
@@ -113,45 +114,29 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 		case WM_NCCREATE: {
 			pWnd = reinterpret_cast<DeskBandit*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
-			pWnd->m_dpi = GetDpiForWindow(hWnd);
-			::Windows::wAdjustWindowRectExForDpi(&pWnd->m_rc, STYLE, FALSE, NULL, pWnd->m_dpi);
+			::Windows::wSetParent(hWnd, pWnd->m_hWndParent);
 			pWnd->m_pTrackTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pTrackTimer->Set(::std::chrono::milliseconds{ 100 },
 				[pWnd]()->bool {
-					RECT left{};
-					RECT right{};
 					switch (pWnd->m_dock) {
-					case Dock::Left:
-					case Dock::MidLeft:
-						::Windows::wGetWindowRect(pWnd->m_hWndParent, &left);
-						left.right = left.left;
-						::Windows::wGetWindowRect(pWnd->m_hWndStart, &right);
-						break;
-					case Dock::MidRight:
-					case Dock::Right:
-						::Windows::wGetWindowRect(pWnd->m_hWndBar, &left);
-						::Windows::wGetWindowRect(pWnd->m_hWndTray, &right);
-						break;
+					case Dock::Right: {
+						RECT tray{};
+						::Windows::wGetWindowRect(pWnd->m_hWndTray, &tray);
+						LONG diff{ tray.left - pWnd->m_rc.right };
+						if (!diff) {
+							return true;
+						}
+						pWnd->m_rc.right += diff;
+						pWnd->m_rc.left += diff;
+					} break;
+					default:
+						return false;
 					}
-
-					RECT rc{ left.left, pWnd->m_rc.top, right.left - 4L, pWnd->m_rc.bottom };
-					switch (pWnd->m_dock) {
-					case Dock::MidLeft:
-					case Dock::Right:
-						rc.left = ::std::max(rc.left, rc.right - static_cast<LONG>(::std::ceil(pWnd->m_pScene->get_Size()[0])));
-						break;
-					}
-
-					if (pWnd->m_rc.left == rc.left && pWnd->m_rc.right == rc.right
-							&& pWnd->m_rc.top == rc.top && pWnd->m_rc.bottom == rc.bottom) {
-						return true;
-					}
-					pWnd->m_rc = rc;
 
 					::Windows::wSetWindowPos(
 						pWnd->m_hWnd, NULL,
-						rc.left, rc.top,
-						rc.right - rc.left, rc.bottom - rc.top,
+						pWnd->m_rc.left, pWnd->m_rc.top,
+						pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
 						0U
 					);
 
@@ -178,11 +163,21 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					.WithIgnoredStrip(3)
 					.WithIgnoredStrip(5);
 			}
-			pWnd->m_pScene = builder.Build();
+			pWnd->m_pScene = builder
+				.WithMarginPosition({ 4., 4. })
+				.WithMarginSize({ 4., 4. })
+				.Build();
 			pWnd->m_pScene->Rescale({
 				static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
 				static_cast<double>(pWnd->m_rc.bottom - pWnd->m_rc.top)
 			});
+			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(pWnd->m_pScene->get_Size()[0]);
+			::Windows::wSetWindowPos(
+				pWnd->m_hWnd, NULL,
+				pWnd->m_rc.left, pWnd->m_rc.top,
+				pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
+				0U
+			);
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_DESTROY: {
@@ -192,12 +187,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			pWnd->m_lpTimer[static_cast<UINT_PTR>(wParam)]
 				->Elapse();
 		} return OK;
-		/*case WM_SIZE: {
-			pWnd->m_pScene->Resize({
-				static_cast<double>(LOWORD(lParam)),
-				static_cast<double>(HIWORD(lParam))
-			});
-		} return OK;*/
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			HDC hdc = ::Windows::wBeginPaint(hWnd, &ps);
@@ -273,31 +262,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 				static_cast<double>(GET_X_LPARAM(lParam)),
 				static_cast<double>(GET_Y_LPARAM(lParam))
 			});
-		} return OK;
-		case WM_GETDPISCALEDSIZE: {
-			const FLOAT scale{ static_cast<FLOAT>(wParam) / pWnd->m_dpi };
-
-			RECT rc{};
-			::Windows::wGetClientRect(hWnd, &rc);
-			rc.right = static_cast<LONG>(::std::ceil(rc.right * scale));
-			rc.bottom = static_cast<LONG>(::std::ceil(rc.bottom * scale));
-			::Windows::wAdjustWindowRectExForDpi(&rc, STYLE, FALSE, NULL, static_cast<UINT>(wParam));
-
-			LPSIZE pSize{ reinterpret_cast<LPSIZE>(lParam) };
-			pSize->cx = rc.right - rc.left;
-			pSize->cy = rc.bottom - rc.top;
-
-			pWnd->m_dpi = static_cast<UINT>(wParam);
-		} return TRUE;
-		case WM_DPICHANGED: {
-			const LPRECT pRc{ reinterpret_cast<LPRECT>(lParam) };
-
-			::Windows::wSetWindowPos(
-				hWnd, NULL,
-				pRc->left, pRc->top,
-				pRc->right - pRc->left, pRc->bottom - pRc->top,
-				0U
-			);
 		} return OK;
 		}
 	}

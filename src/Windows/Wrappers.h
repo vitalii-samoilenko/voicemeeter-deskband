@@ -104,6 +104,21 @@ namespace Windows {
 		}
 	}
 
+	inline HWND wSetParent(
+		_In_ HWND hWndChild,
+		_In_opt_ HWND hWndNewParent
+	) {
+		HWND hWndParent{
+			SetParent(
+				hWndChild,
+				hWndNewParent)
+		};
+		if (hWndParent == NULL) {
+			throw new Error{ "Set parent failed" };
+		}
+		return hWndParent;
+	}
+
 	inline void wGetClientRect(
 		_In_ HWND hWnd,
 		_Out_ LPRECT lpRect

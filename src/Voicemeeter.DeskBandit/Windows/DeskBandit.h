@@ -45,12 +45,9 @@ namespace Voicemeeter {
 
 		private:
 			HWND m_hWndParent;
-			HWND m_hWndStart;
-			HWND m_hWndBar;
 			HWND m_hWndTray;
 			Dock m_dock;
 			HWND m_hWnd;
-			UINT m_dpi;
 			RECT m_rc;
 			::std::unique_ptr<::Windows::Timer> m_pTrackTimer;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;

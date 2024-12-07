@@ -84,7 +84,6 @@ namespace Voicemeeter {
 			DWORD               m_dwBandID;             // ID of deskband
 			HWND                m_hWnd;                 // main window of deskband
 			HWND                m_hWndParent;           // parent window of deskband
-			UINT m_dpi;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
 			::std::unique_ptr<::Windows::Timer> m_pDirtyTimer;
 			::std::unique_ptr<::Windows::Timer> m_pRemoteTimer;
