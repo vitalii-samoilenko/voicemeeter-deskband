@@ -2,6 +2,7 @@
 
 #include "Traits/IInteractive.h"
 #include "Traits/IResizable.h"
+#include "Traits/IScalable.h"
 #include "Traits/IVisible.h"
 
 namespace Voicemeeter {
@@ -9,6 +10,7 @@ namespace Voicemeeter {
 		class IScene
 			: public Traits::IVisible
 			, public Traits::IResizable
+			, public Traits::IScalable
 			, public Traits::IInteractive {
 		public:
 			IScene(const IScene&) = delete;

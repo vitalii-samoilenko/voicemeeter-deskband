@@ -157,7 +157,7 @@ namespace Voicemeeter {
 						}
 						::std::vector<size_t> cIgnoredStrip{};
 						if (::Windows::Registry::TryGetValue(hKey, mixerSubKey, L"IgnoredStrip", cIgnoredStrip)) {
-							m_cIgnoredStrip.insert(cIgnoredStrip.begin(), cIgnoredStrip.end());
+							m_cIgnoredStrip = ::std::unordered_set<size_t>{ cIgnoredStrip.begin(), cIgnoredStrip.end() };
 						}
 						DWORD animations{ 0UL };
 						if (::Windows::Registry::TryGetValue(hKey, subKey, L"Animations", animations)) {

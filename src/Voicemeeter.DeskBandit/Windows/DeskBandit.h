@@ -14,6 +14,13 @@
 
 namespace Voicemeeter {
 	namespace Windows {
+		enum class Dock {
+			Left = 0,
+			MidLeft = 1,
+			MidRight = 2,
+			Right = 3
+		};
+
 		class DeskBandit final
 			: public ::Environment::IDirtyTracker
 			, public ::Environment::IInputTracker {
@@ -37,8 +44,15 @@ namespace Voicemeeter {
 			virtual void DisableInputTrack() override;
 
 		private:
+			HWND m_hWndParent;
+			HWND m_hWndStart;
+			HWND m_hWndBar;
+			HWND m_hWndTray;
+			Dock m_dock;
 			HWND m_hWnd;
 			UINT m_dpi;
+			RECT m_rc;
+			::std::unique_ptr<::Windows::Timer> m_pTrackTimer;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
 			::std::unique_ptr<::Windows::Timer> m_pDirtyTimer;
 			::std::unique_ptr<::Windows::Timer> m_pRemoteTimer;

@@ -52,6 +52,9 @@ namespace Voicemeeter {
 			virtual const ::std::valarray<double>& get_Size() const override {
 				return m_pCanvas->get_Size();
 			};
+			virtual const ::std::valarray<double>& get_BaseSize() const override {
+				return m_pComposition->get_BaseSize();
+			};
 
 			virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
 				m_pComposition->Redraw(point, vertex);
@@ -59,6 +62,10 @@ namespace Voicemeeter {
 			virtual void Resize(const ::std::valarray<double>& vertex) override {
 				m_pCanvas->Resize(vertex);
 				m_pComposition->Rescale(vertex);
+			};
+			virtual void Rescale(const ::std::valarray<double>& vertex) override {
+				m_pComposition->Rescale(vertex);
+				m_pCanvas->Resize(m_pComposition->get_Size());
 			};
 			virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 				return m_pInputTracker->MouseLDown(point)

@@ -68,6 +68,26 @@ namespace Windows {
 		}
 	}
 
+	inline HWND wFindWindowExW(
+		_In_opt_ HWND   hWndParent,
+		_In_opt_ HWND   hWndChildAfter,
+		_In_opt_ LPCWSTR lpClassName,
+		_In_opt_ LPCWSTR lpWindowName
+	) {
+		HWND hWnd{
+			FindWindowExW(
+				hWndParent,
+				hWndChildAfter,
+				lpClassName,
+				lpWindowName
+			)
+		};
+		if (hWnd == NULL) {
+			throw Error{ "Could not find window" };
+		}
+		return hWnd;
+	}
+
 	inline void wPostMessageW(
 		_In_opt_ HWND hWnd,
 		_In_ UINT Msg,

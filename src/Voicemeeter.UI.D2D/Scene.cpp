@@ -17,7 +17,7 @@ Scene::Scene(
 	::std::unique_ptr<Graphics::Canvas>& pCanvas,
 	::std::unique_ptr<IComponent>& pComposition
 ) : UI::Scene<Graphics::Canvas>{ pDirtyTracker, pInputTracker, pFocusTracker, pCanvas, pComposition }
-  , m_first{ false } {
+  , m_first{ true } {
 
 }
 
@@ -28,11 +28,12 @@ void Scene::Redraw(const ::std::valarray<double>& point, const ::std::valarray<d
 	::Windows::ThrowIfFailed(m_pCanvas->get_pD2dDeviceContext()
 		->EndDraw(
 	), "Render failed");
+	const ::std::valarray<double>& canvasVertex{ m_pCanvas->get_Size() };
 	RECT rect{
 		static_cast<LONG>(::std::floor(point[0])),
 		static_cast<LONG>(::std::floor(point[1])),
-		static_cast<LONG>(::std::ceil(point[0] + vertex[0])),
-		static_cast<LONG>(::std::ceil(point[1] + vertex[1]))
+		static_cast<LONG>(::std::ceil(::std::min(canvasVertex[0], point[0] + vertex[0]))),
+		static_cast<LONG>(::std::ceil(::std::min(canvasVertex[1], point[1] + vertex[1])))
 	};
 	DXGI_PRESENT_PARAMETERS params{
 		1U, &rect,
