@@ -27,6 +27,7 @@ namespace Voicemeeter {
 
 				void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
 				void Resize(const ::std::valarray<double>& vertex) override;
+				void Rescale(const ::std::valarray<double>& vertex) override;
 				void Redraw() override;
 
 			private:

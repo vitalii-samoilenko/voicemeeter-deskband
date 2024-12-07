@@ -35,6 +35,7 @@ DeskBand::DeskBand(
   , m_dwBandID{ 0 }
   ,	m_hWnd{ NULL }
   , m_hWndParent{ NULL }
+  , m_rc{ 0L, 0L, 370L, 30L }
   , m_pCompositionTimer{ nullptr }
   , m_pDirtyTimer{ nullptr }
   , m_pRemoteTimer{ nullptr }
@@ -158,20 +159,8 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi) {
 	m_dwBandID = dwBandID;
 
 	if (pdbi->dwMask & DBIM_MINSIZE) {
-		switch (m_pRemote->get_Type()) {
-		case ::Voicemeeter::Clients::Remote::Type::Voicemeeter: {
-			pdbi->ptMinSize.x = 189;
-			pdbi->ptMinSize.y = 30;
-		} break;
-		case ::Voicemeeter::Clients::Remote::Type::Banana: {
-			pdbi->ptMinSize.x = 370;
-			pdbi->ptMinSize.y = 30;
-		} break;
-		case ::Voicemeeter::Clients::Remote::Type::Potato: {
-			pdbi->ptMinSize.x = 370;
-			pdbi->ptMinSize.y = 30;
-		} break;
-		}
+		pdbi->ptMinSize.x = m_rc.right - m_rc.left;
+		pdbi->ptMinSize.y = m_rc.bottom - m_rc.top;
 	}
 
 	if (pdbi->dwMask & DBIM_MAXSIZE) {
@@ -184,7 +173,6 @@ STDMETHODIMP DeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO* pdbi) {
 
 	if (pdbi->dwMask & DBIM_ACTUAL) {
 		const ::std::valarray<double>& vertex{ m_pScene->get_Size() };
-
 		pdbi->ptActual.x = static_cast<LONG>(::std::ceil(vertex[0]));
 		pdbi->ptActual.y = static_cast<LONG>(::std::ceil(vertex[1]));
 	}
@@ -420,6 +408,13 @@ LRESULT CALLBACK DeskBand::WndProcW(
 				builder.WithDirection(::Voicemeeter::UI::Direction::Down);
 			}
 			pWnd->m_pScene = builder.Build();
+			pWnd->m_pScene->Rescale({
+				static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
+				static_cast<double>(pWnd->m_rc.bottom - pWnd->m_rc.top)
+			});
+			const ::std::valarray<double>& vertex{ pWnd->m_pScene->get_Size() };
+			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(::std::ceil(vertex[0]));
+			pWnd->m_rc.bottom = pWnd->m_rc.top + static_cast<LONG>(::std::ceil(vertex[1]));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_SETFOCUS: {
@@ -467,7 +462,7 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd->m_pScene->Redraw();
 		} return OK;
 		case WM_SIZE: {
-			pWnd->m_pScene->Resize({
+			pWnd->m_pScene->Rescale({
 				static_cast<double>(LOWORD(lParam)),
 				static_cast<double>(HIWORD(lParam))
 			});
@@ -511,7 +506,6 @@ LRESULT CALLBACK DeskBand::WndProcW(
 		case WM_MOUSEWHEEL: {
 			POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 			::Windows::wScreenToClient(hWnd, &point);
-
 			pWnd->m_pScene->MouseWheel({
 				static_cast<double>(point.x),
 				static_cast<double>(point.y)

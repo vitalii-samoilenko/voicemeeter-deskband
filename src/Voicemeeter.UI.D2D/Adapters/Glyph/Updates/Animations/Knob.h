@@ -18,7 +18,7 @@ namespace Voicemeeter {
 					namespace Updates {
 						namespace Animations {
 							template<typename TKnob>
-							class Knob : public Animation<7, UI::Policies::Size::Scales::Stretch, TKnob, States::Knob> {
+							class Knob : public Animation<UI::Policies::Size::Scales::Stretch, TKnob, States::Knob> {
 								static_assert(
 									::std::is_base_of_v<Graphics::Glyphs::Knob, TKnob>,
 									"TKnob must be derived from Knob");
@@ -30,20 +30,19 @@ namespace Voicemeeter {
 									label = 6
 								};
 
-								using Animation = Animation<label + 1, UI::Policies::Size::Scales::Stretch, TKnob, States::Knob>;
+								using Animation = Animation<UI::Policies::Size::Scales::Stretch, TKnob, States::Knob>;
 
 							public:
 								template<typename... Args>
 								explicit Knob(
 									const ::std::wstring& label,
 									Args&& ...args
-								) : Animation{ ::std::forward<Args>(args)... }
-								  , m_baseVertex{
-									200LL * 1000LL, 200LL * 1000LL, 200LL * 1000LL,
-									200LL * 1000LL,
-									200LL * 1000LL, 200LL * 1000LL,
-									200LL * 1000LL
-								  }
+								) : Animation{{
+										200LL * 1000LL, 200LL * 1000LL, 200LL * 1000LL,
+										200LL * 1000LL,
+										200LL * 1000LL, 200LL * 1000LL,
+										200LL * 1000LL
+									}, ::std::forward<Args>(args)... }
 								  , m_label{ label }
 								  , m_gain{} {
 									TKnob::set_Label(m_label);
@@ -67,10 +66,6 @@ namespace Voicemeeter {
 								Knob& operator=(Knob&&) = delete;
 
 							protected:
-								virtual const ::std::valarray<long long>& get_AnimationBaseSize() const override {
-									return m_baseVertex;
-								};
-
 								virtual void OnUpdate(const States::Knob& state) override {
 									::std::valarray<long long>& vertex{ Animation::get_Velocity() };
 									if (state.hold) {
@@ -119,7 +114,8 @@ namespace Voicemeeter {
 										dst.g = dst.g * (1.F - alpha) + src.g * alpha;
 										dst.b = dst.b * (1.F - alpha) + src.b * alpha;
 									};
-									const ::std::valarray<long long> vertex{ Animation::get_AnimationSize() };
+									const ::std::valarray<long long>& vertex{ Animation::get_AnimationSize() };
+									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };
 									::D2D1::ColorF result{
 										TKnob::get_Canvas()
 											.get_Palette()
@@ -131,19 +127,19 @@ namespace Voicemeeter {
 											.get_Palette()
 												.get_Theme()
 													.EqualizerLow,
-										static_cast<FLOAT>(vertex[level_low]) / m_baseVertex[level_low]);
+										static_cast<FLOAT>(vertex[level_low]) / baseVertex[level_low]);
 									blend(result,
 										TKnob::get_Canvas()
 											.get_Palette()
 												.get_Theme()
 													.EqualizerMedium,
-										static_cast<FLOAT>(vertex[level_medium]) / m_baseVertex[level_medium]);
+										static_cast<FLOAT>(vertex[level_medium]) / baseVertex[level_medium]);
 									blend(result,
 										TKnob::get_Canvas()
 											.get_Palette()
 												.get_Theme()
 													.EqualizerHigh,
-										static_cast<FLOAT>(vertex[level_high]) / m_baseVertex[level_high]);
+										static_cast<FLOAT>(vertex[level_high]) / baseVertex[level_high]);
 									::D2D1::ColorF gain{
 										TKnob::get_Canvas()
 											.get_Palette()
@@ -155,17 +151,17 @@ namespace Voicemeeter {
 											.get_Palette()
 												.get_Theme()
 													.Danger,
-										static_cast<FLOAT>(vertex[gain_danger]) / m_baseVertex[gain_danger]);
+										static_cast<FLOAT>(vertex[gain_danger]) / baseVertex[gain_danger]);
 									blend(result, gain,
-										static_cast<FLOAT>(vertex[hold]) / m_baseVertex[hold]);
+										static_cast<FLOAT>(vertex[hold]) / baseVertex[hold]);
 									blend(result,
 										TKnob::get_Canvas()
 											.get_Palette()
 												.get_Theme()
 													.Warning,
-										static_cast<FLOAT>(vertex[toggle]) / m_baseVertex[toggle]);
+										static_cast<FLOAT>(vertex[toggle]) / baseVertex[toggle]);
 									TKnob::set_FrameColor(result);
-									long long mid{ m_baseVertex[label] / 2 };
+									long long mid{ baseVertex[label] / 2 };
 									result.a = ::std::abs(static_cast<FLOAT>(vertex[label] - mid) / mid);
 									TKnob::set_LabelColor(result);
 									TKnob::set_Label((vertex[label] < mid
@@ -174,7 +170,6 @@ namespace Voicemeeter {
 								};
 
 							private:
-								const ::std::valarray<long long> m_baseVertex;
 								const ::std::wstring m_label;
 								::std::wstring m_gain;
 							};

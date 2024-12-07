@@ -20,10 +20,10 @@ DeskBandit::DeskBandit(
 	HINSTANCE hInstance
 ) : m_hWndParent{ ::Windows::wFindWindowExW(NULL, NULL, L"Shell_TrayWnd", NULL) }
   , m_hWndTray{ ::Windows::wFindWindowExW(m_hWndParent, NULL, L"TrayNotifyWnd", NULL) }
+  , m_rc{}
   , m_dock{ Dock::Left }
   , m_hWnd{ NULL }
-  , m_rc{}
-  , m_pTrackTimer{ nullptr }
+  , m_pDockTimer{ nullptr }
   , m_pCompositionTimer{ nullptr }
   , m_pDirtyTimer{ nullptr }
   , m_pRemoteTimer{ nullptr }
@@ -31,18 +31,18 @@ DeskBandit::DeskBandit(
   , m_pMixer{ nullptr }
   , m_pRemote{ nullptr }
   , m_pScene{ nullptr } {
-	DWORD dock{ 0UL };
-	if (::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock", dock)
-			&& dock == static_cast<DWORD>(Dock::Right)) {
-		m_dock = static_cast<Dock>(dock);
-	}
-
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 	RECT parent{};
 	::Windows::wGetWindowRect(m_hWndParent, &parent);
 	m_rc.bottom = parent.bottom - parent.top;
 	m_rc.right = parent.right - parent.left;
+
+	DWORD dock{ 0UL };
+	if (::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock", dock)
+			&& dock == static_cast<DWORD>(Dock::Right)) {
+		m_dock = static_cast<Dock>(dock);
+	}
 
 	WNDCLASSW wndClass{};
 	wndClass.hInstance = hInstance;
@@ -115,8 +115,8 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			pWnd = reinterpret_cast<DeskBandit*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
 			::Windows::wSetParent(hWnd, pWnd->m_hWndParent);
-			pWnd->m_pTrackTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pTrackTimer->Set(::std::chrono::milliseconds{ 100 },
+			pWnd->m_pDockTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pDockTimer->Set(::std::chrono::milliseconds{ 100 },
 				[pWnd]()->bool {
 					switch (pWnd->m_dock) {
 					case Dock::Right: {
@@ -145,7 +145,7 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_lpTimer.emplace(pWnd->m_pTrackTimer->get_Id(), pWnd->m_pTrackTimer.get());
+			pWnd->m_lpTimer.emplace(pWnd->m_pDockTimer->get_Id(), pWnd->m_pDockTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pDirtyTimer->get_Id(), pWnd->m_pDirtyTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
@@ -172,7 +172,8 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 				static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
 				static_cast<double>(pWnd->m_rc.bottom - pWnd->m_rc.top)
 			});
-			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(pWnd->m_pScene->get_Size()[0]);
+			const ::std::valarray<double>& vertex{ pWnd->m_pScene->get_Size() };
+			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(::std::ceil(vertex[0]));
 			::Windows::wSetWindowPos(
 				pWnd->m_hWnd, NULL,
 				pWnd->m_rc.left, pWnd->m_rc.top,
@@ -246,7 +247,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 		case WM_MOUSEWHEEL: {
 			POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 			::Windows::wScreenToClient(hWnd, &point);
-
 			pWnd->m_pScene->MouseWheel({
 				static_cast<double>(point.x),
 				static_cast<double>(point.y)

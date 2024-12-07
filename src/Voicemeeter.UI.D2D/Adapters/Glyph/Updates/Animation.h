@@ -13,7 +13,7 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						template<size_t Dimension, typename TScale, typename TGlyph, typename TState>
+						template<typename TScale, typename TGlyph, typename TState>
 						class Animation : public TGlyph {
 							static_assert(
 								::std::is_base_of_v<Graphics::Glyph<TScale>, TGlyph>,
@@ -39,10 +39,9 @@ namespace Voicemeeter {
 									::std::chrono::high_resolution_clock::time_point now{ ::std::chrono::high_resolution_clock::now() };
 									m_vertex += (::std::chrono::duration_cast<::std::chrono::microseconds>(now - m_point).count() * m_velocity);
 									m_vertex[m_vertex < 0LL] = 0LL;
-									const ::std::valarray<long long>& animationBaseVertex{ get_AnimationBaseSize() };
-									auto maxVertex = animationBaseVertex < m_vertex;
-									m_vertex[maxVertex] = animationBaseVertex[maxVertex];
-									m_velocity[m_vertex == 0LL || m_vertex == animationBaseVertex] = 0LL;
+									auto maxVertex = m_baseVertex < m_vertex;
+									m_vertex[maxVertex] = m_baseVertex[maxVertex];
+									m_velocity[m_vertex == 0LL || m_vertex == m_baseVertex] = 0LL;
 									m_point = now;
 
 									OnFrame();
@@ -56,26 +55,30 @@ namespace Voicemeeter {
 						protected:
 							template<typename... Args>
 							explicit Animation(
+								const ::std::valarray<long long>& baseVertex,
 								Trackers::IDirty& dirtyTracker,
 								Args&&... args
 							) : TGlyph{ ::std::forward<Args>(args)... }
 							  , m_dirtyTracker{ dirtyTracker }
 							  , m_point{}
 							  , m_vertex{}
+							  , m_baseVertex{ baseVertex }
 							  , m_velocity{} {
-								m_vertex.resize(Dimension);
-								m_velocity.resize(Dimension);
+								m_vertex.resize(m_baseVertex.size());
+								m_velocity.resize(m_baseVertex.size());
 							}
 
 							~Animation() = default;
 
 							inline ::std::valarray<long long>& get_Velocity() {
 								return m_velocity;
-							}
+							};
 							inline const ::std::valarray<long long>& get_AnimationSize() const {
 								return m_vertex;
-							}
-							virtual const ::std::valarray<long long>& get_AnimationBaseSize() const = 0;
+							};
+							inline const ::std::valarray<long long>& get_AnimationBaseSize() const {
+								return m_baseVertex;
+							};
 
 							virtual void OnUpdate(const TState& state) = 0;
 							virtual void OnFrame() = 0;
@@ -84,6 +87,7 @@ namespace Voicemeeter {
 							Trackers::IDirty& m_dirtyTracker;
 							::std::chrono::high_resolution_clock::time_point m_point;
 							::std::valarray<long long> m_vertex;
+							const ::std::valarray<long long> m_baseVertex;
 							::std::valarray<long long> m_velocity;
 
 							inline bool Finished() const {

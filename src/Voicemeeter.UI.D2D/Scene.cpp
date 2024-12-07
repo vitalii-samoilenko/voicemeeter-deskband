@@ -63,6 +63,14 @@ void Scene::Resize(const ::std::valarray<double>& vertex) {
 	UI::Scene<Graphics::Canvas>::Resize(patched);
 	m_first = true;
 }
+void Scene::Rescale(const ::std::valarray<double>& vertex) {
+	::std::valarray<double> patched{
+		::std::max(8., vertex[0]),
+		::std::max(8., vertex[1])
+	};
+	UI::Scene<Graphics::Canvas>::Rescale(patched);
+	m_first = true;
+}
 void Scene::Redraw() {
 	::std::vector<RECT> cRect{};
 	if (!m_first) {

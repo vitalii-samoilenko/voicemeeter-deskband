@@ -26,10 +26,11 @@ Plenty of space always available in the taskbar
 
 ### Limitations
 
-- No Windows 11 support (yet)
 - Bugs (by using this software you are doing so at your own risk)
 
 ### Install
+
+#### Windows 10
 
 Build solution/download release, place Voicemeeter.DeskBand.dll into separate folder and run following command from elevated command prompt:
 
@@ -43,7 +44,13 @@ Right click on taskbar empty space and check Toolbars->Voicemeeter.DeskBand
 
 Unlock taskbar, adjust deskband size and lock it back
 
+#### Windows 11
+
+Build solution/download release, run Voicemeeter.DeskBandit.exe
+
 ### Uninstall
+
+#### Windows 10
 
 Right click on taskbar empty space and uncheck Toolbars->Voicemeeter.DeskBand, run following command from elevated command prompt:
 
@@ -60,10 +67,12 @@ Explorer.exe &
 
 ### Features
 
-- Resizable (lock/unlock taskbar to adjust)
-- Interactive (left click/right click/middle click/wheel/left hold and move)
+- Windows 10: Resizable (lock/unlock taskbar to adjust)
+- Windows 11: Scalable
+- Interactive (left click/middle click/right click/wheel/left hold and move)
+- Customizable
 
-#### Customization
+### Customization
 
 By default UI is animated with target ~120 FPS (will be capped by monitor refresh rate if less and Windows message dispatch workload)
 
@@ -86,3 +95,34 @@ Value names could be taken from [Theme.h](src/Voicemeeter.UI.D2D/Graphics/Theme.
 Font family is REG_SZ
 
 Color type is DWORD in hexadecimal format RRGGBB
+
+Controls could be disabled via registry key:
+
+```
+HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Mixer
+```
+
+Add DWORD value Network and set it to 0 to disable VBAN button
+
+Add REG_BINARY value IgnoredStrip and add 8 byte hex ID per each strip you wish to disable:
+
+P = 0, V = 1, A1 = 2, A2 = 3, B1 = 4, B2 = 5
+
+For example, to disable virtual input and both virtual output strips use following value:
+
+![IgnoredStrip sample](ignored_strip_sample.png)
+
+> [!CAUTION]
+> For any input strip to allign properly leave 0, 2 or 4 output strips
+
+#### Windows 11
+
+Docking position could be changed via registry key:
+
+```
+HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand
+```
+
+Add DWORD value Dock and set it either to 0 or to 3:
+
+Left = 0, Right = 3

@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					namespace Updates {
 						namespace Animations {
 							template<typename TVban>
-							class Vban : public Animation<1, UI::Policies::Size::Scales::Stretch, TVban, int> {
+							class Vban : public Animation<UI::Policies::Size::Scales::Stretch, TVban, int> {
 								static_assert(
 									::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
 									"TVban must be derived from Vban");
@@ -24,16 +24,15 @@ namespace Voicemeeter {
 									active = 0
 								};
 
-								using Animation = Animation<active + 1, UI::Policies::Size::Scales::Stretch, TVban, int>;
+								using Animation = Animation<UI::Policies::Size::Scales::Stretch, TVban, int>;
 
 							public:
 								template<typename... Args>
 								explicit Vban(
 									Args&& ...args
-								) : Animation{ ::std::forward<Args>(args)... }
-								  , m_baseVertex{
-									  200LL * 1000LL
-								  } {
+								) : Animation{{
+										200LL * 1000LL
+									}, ::std::forward<Args>(args)... } {
 									TVban::set_Color(TVban::get_Canvas()
 										.get_Palette()
 											.get_Theme()
@@ -49,17 +48,15 @@ namespace Voicemeeter {
 								Vban& operator=(Vban&&) = delete;
 
 							protected:
-								virtual const ::std::valarray<long long>& get_AnimationBaseSize() const override {
-									return m_baseVertex;
-								};
-
 								virtual void OnUpdate(const int& state) override {
 									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
 								};
 								virtual void OnFrame() override {
-									FLOAT alpha{ static_cast<FLOAT>(Animation::get_AnimationSize()[active]) / m_baseVertex[active] };
+									const ::std::valarray<long long>& vertex{ Animation::get_AnimationSize() };
+									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };
+									FLOAT alpha{ static_cast<FLOAT>(vertex[active]) / baseVertex[active] };
 									const ::D2D1::ColorF& from{
 										TVban::get_Canvas()
 											.get_Palette()
@@ -78,9 +75,6 @@ namespace Voicemeeter {
 										from.b * (1.F - alpha) + to.b * alpha
 									));
 								};
-
-							private:
-								const ::std::valarray<long long> m_baseVertex;
 							};
 						}
 					}

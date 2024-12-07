@@ -14,16 +14,16 @@
 
 namespace Voicemeeter {
 	namespace Windows {
-		enum class Dock {
-			Left = 0,
-			MidLeft = 1,
-			MidRight = 2,
-			Right = 3
-		};
-
 		class DeskBandit final
 			: public ::Environment::IDirtyTracker
 			, public ::Environment::IInputTracker {
+			enum class Dock {
+				Left = 0,
+				MidLeft = 1,
+				MidRight = 2,
+				Right = 3
+			};
+
 		public:
 			explicit DeskBandit(
 				HINSTANCE hInstance
@@ -46,10 +46,10 @@ namespace Voicemeeter {
 		private:
 			HWND m_hWndParent;
 			HWND m_hWndTray;
+			RECT m_rc;
 			Dock m_dock;
 			HWND m_hWnd;
-			RECT m_rc;
-			::std::unique_ptr<::Windows::Timer> m_pTrackTimer;
+			::std::unique_ptr<::Windows::Timer> m_pDockTimer;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
 			::std::unique_ptr<::Windows::Timer> m_pDirtyTimer;
 			::std::unique_ptr<::Windows::Timer> m_pRemoteTimer;

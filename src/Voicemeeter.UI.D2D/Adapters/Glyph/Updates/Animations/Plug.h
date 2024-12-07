@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					namespace Updates {
 						namespace Animations {
 							template<typename TPlug>
-							class Plug : public Animation<1, UI::Policies::Size::Scales::Stretch, TPlug, int> {
+							class Plug : public Animation<UI::Policies::Size::Scales::Stretch, TPlug, int> {
 								static_assert(
 									::std::is_base_of_v<Graphics::Glyphs::Plug, TPlug>,
 									"TPlug must be derived from Plug");
@@ -24,17 +24,16 @@ namespace Voicemeeter {
 									active = 0
 								};
 
-								using Animation = Animation<active + 1, UI::Policies::Size::Scales::Stretch, TPlug, int>;
+								using Animation = Animation<UI::Policies::Size::Scales::Stretch, TPlug, int>;
 
 							public:
 								template<typename... Args>
 								explicit Plug(
 									const ::std::wstring& label,
 									Args&& ...args
-								) : Animation{ ::std::forward<Args>(args)... }
-								  , m_baseVertex{
-									  200LL * 1000LL
-								  } {
+								) : Animation{{
+										200LL * 1000LL
+									}, ::std::forward<Args>(args)... } {
 									TPlug::set_Label(label);
 									TPlug::set_Color(TPlug::get_Canvas()
 										.get_Palette()
@@ -51,17 +50,15 @@ namespace Voicemeeter {
 								Plug& operator=(Plug&&) = delete;
 
 							protected:
-								virtual const ::std::valarray<long long>& get_AnimationBaseSize() const override {
-									return m_baseVertex;
-								};
-
 								virtual void OnUpdate(const int& state) override {
 									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
 								};
 								virtual void OnFrame() override {
-									FLOAT alpha{ static_cast<FLOAT>(Animation::get_AnimationSize()[active]) / m_baseVertex[active] };
+									const ::std::valarray<long long>& vertex{ Animation::get_AnimationSize() };
+									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };
+									FLOAT alpha{ static_cast<FLOAT>(vertex[active]) / baseVertex[active] };
 									const ::D2D1::ColorF& from{
 										TPlug::get_Canvas()
 											.get_Palette()
@@ -80,9 +77,6 @@ namespace Voicemeeter {
 										from.b * (1.F - alpha) + to.b * alpha
 									));
 								};
-
-							private:
-								const ::std::valarray<long long> m_baseVertex;
 							};
 						}
 					}
