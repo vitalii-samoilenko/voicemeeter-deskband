@@ -47,7 +47,7 @@ namespace Voicemeeter {
 							Knob& operator=(const Knob&) = delete;
 							Knob& operator=(Knob&&) = delete;
 
-							void Update(const States::Knob& state) {
+							inline void Update(const States::Knob& state) {
 								TKnob::set_Label((state.hold
 									? ::std::to_wstring(::std::abs(
 										static_cast<int>(

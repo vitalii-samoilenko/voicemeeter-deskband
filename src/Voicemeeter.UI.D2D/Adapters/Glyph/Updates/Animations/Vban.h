@@ -47,12 +47,13 @@ namespace Voicemeeter {
 								Vban& operator=(const Vban&) = delete;
 								Vban& operator=(Vban&&) = delete;
 
-							protected:
-								virtual void OnUpdate(const int& state) override {
+								inline void Update(const int& state) {
 									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
 								};
+
+							protected:
 								virtual void OnFrame() override {
 									const ::std::valarray<long long>& vertex{ Animation::get_AnimationSize() };
 									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };

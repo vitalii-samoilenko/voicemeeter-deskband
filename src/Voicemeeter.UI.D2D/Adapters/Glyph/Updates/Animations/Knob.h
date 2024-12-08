@@ -65,8 +65,7 @@ namespace Voicemeeter {
 								Knob& operator=(const Knob&) = delete;
 								Knob& operator=(Knob&&) = delete;
 
-							protected:
-								virtual void OnUpdate(const States::Knob& state) override {
+								inline void Update(const States::Knob& state) {
 									::std::valarray<long long>& vertex{ Animation::get_Velocity() };
 									if (state.hold) {
 										vertex[hold] = 1;
@@ -108,6 +107,8 @@ namespace Voicemeeter {
 											::std::floor((state.gain - 9000) / 375.))));
 									TKnob::set_Angle(state.gain / 100.F);
 								};
+
+							protected:
 								virtual void OnFrame() override {
 									auto blend = [](::D2D1::ColorF& dst, const ::D2D1::ColorF& src, FLOAT alpha)->void {
 										dst.r = dst.r * (1.F - alpha) + src.r * alpha;

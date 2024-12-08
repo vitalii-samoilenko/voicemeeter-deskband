@@ -36,7 +36,7 @@ namespace Voicemeeter {
 							Vban& operator=(const Vban&) = delete;
 							Vban& operator=(Vban&&) = delete;
 
-							void Update(const int& state) {
+							inline void Update(const int& state) {
 								TVban::set_Color((state
 									? TVban::get_Canvas()
 										.get_Palette()

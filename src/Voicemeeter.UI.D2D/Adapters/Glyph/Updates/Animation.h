@@ -27,27 +27,19 @@ namespace Voicemeeter {
 							Animation& operator=(const Animation&) = delete;
 							Animation& operator=(Animation&&) = delete;
 
-							void Update(const TState& state) {
-								if (Finished()) {
-									m_point = ::std::chrono::high_resolution_clock::now();
-								}
-
-								OnUpdate(state);
-							};
 							virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
-								if (!Finished()) {
-									::std::chrono::high_resolution_clock::time_point now{ ::std::chrono::high_resolution_clock::now() };
+								::std::chrono::high_resolution_clock::time_point now{ ::std::chrono::high_resolution_clock::now() };
+								if (m_transition) {
 									m_vertex += (::std::chrono::duration_cast<::std::chrono::microseconds>(now - m_point).count() * m_velocity);
 									m_vertex[m_vertex < 0LL] = 0LL;
 									auto maxVertex = m_baseVertex < m_vertex;
 									m_vertex[maxVertex] = m_baseVertex[maxVertex];
 									m_velocity[m_vertex == 0LL || m_vertex == m_baseVertex] = 0LL;
-									m_point = now;
-
 									OnFrame();
 								}
+								m_point = now;
 								TGlyph::Redraw(point, vertex);
-								if (!Finished()) {
+								if (m_transition = !Finished()) {
 									m_dirtyTracker.set_Dirty(*this, true);
 								}
 							}
@@ -63,7 +55,8 @@ namespace Voicemeeter {
 							  , m_point{}
 							  , m_vertex{}
 							  , m_baseVertex{ baseVertex }
-							  , m_velocity{} {
+							  , m_velocity{}
+							  , m_transition{} {
 								m_vertex.resize(m_baseVertex.size());
 								m_velocity.resize(m_baseVertex.size());
 							}
@@ -80,7 +73,6 @@ namespace Voicemeeter {
 								return m_baseVertex;
 							};
 
-							virtual void OnUpdate(const TState& state) = 0;
 							virtual void OnFrame() = 0;
 
 						private:
@@ -89,6 +81,7 @@ namespace Voicemeeter {
 							::std::valarray<long long> m_vertex;
 							const ::std::valarray<long long> m_baseVertex;
 							::std::valarray<long long> m_velocity;
+							bool m_transition;
 
 							inline bool Finished() const {
 								return (m_velocity == 0LL)

@@ -39,7 +39,7 @@ namespace Voicemeeter {
 							Plug& operator=(const Plug&) = delete;
 							Plug& operator=(Plug&&) = delete;
 
-							void Update(const int& state) {
+							inline void Update(const int& state) {
 								TPlug::set_Color((state
 									? TPlug::get_Canvas()
 										.get_Palette()
