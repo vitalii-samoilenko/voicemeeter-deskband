@@ -49,7 +49,6 @@ void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<
 	m_palette.get_pD2dDeviceContext()
 		->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 }
-
 void Canvas::Resize(const ::std::valarray<double>& vertex) {
 	m_vertex = vertex;
 	m_vertex[0] = ::std::max(8., vertex[0]);

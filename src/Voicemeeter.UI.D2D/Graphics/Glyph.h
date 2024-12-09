@@ -42,31 +42,6 @@ namespace Voicemeeter {
 
 					virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
 						m_palette.get_pD2dDeviceContext()
-							->SetTransform(::D2D1::IdentityMatrix());
-						m_palette.get_pD2dDeviceContext()
-							->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
-						m_palette.get_pD2dDeviceContext()
-							->FillRectangle(
-								::D2D1::RectF(
-									static_cast<FLOAT>(m_point[0]),
-									static_cast<FLOAT>(m_point[1]),
-									static_cast<FLOAT>(m_point[0] + m_vertex[0]),
-									static_cast<FLOAT>(m_point[1] + m_vertex[1])
-								),
-								m_palette.get_pBrush<Palette>(
-									[this](ID2D1Brush** ppBrush)->void {
-										ID2D1SolidColorBrush* pBrush{ nullptr };
-										::Windows::ThrowIfFailed(m_palette.get_pD2dDeviceContext()
-											->CreateSolidColorBrush(
-												m_palette.get_Theme()
-												.Background,
-												&pBrush
-											), "Brush creation failed");
-										*ppBrush = pBrush;
-									}));
-						m_palette.get_pD2dDeviceContext()
-							->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
-						m_palette.get_pD2dDeviceContext()
 							->SetTransform(
 								::D2D1::Matrix3x2F::Scale(
 									static_cast<FLOAT>(m_vertex[0] / m_baseVertex[0]),
@@ -74,6 +49,29 @@ namespace Voicemeeter {
 								* ::D2D1::Matrix3x2F::Translation(
 									static_cast<FLOAT>(m_point[0]),
 									static_cast<FLOAT>(m_point[1])));
+						m_palette.get_pD2dDeviceContext()
+							->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+						m_palette.get_pD2dDeviceContext()
+							->FillRectangle(
+								::D2D1::RectF(
+									0.F,
+									0.F,
+									static_cast<FLOAT>(m_baseVertex[0]),
+									static_cast<FLOAT>(m_baseVertex[1])
+								),
+								m_palette.get_pBrush<Palette>(
+									[this](ID2D1Brush** ppBrush)->void {
+										ID2D1SolidColorBrush* pBrush{ nullptr };
+										::Windows::ThrowIfFailed(m_palette.get_pD2dDeviceContext()
+											->CreateSolidColorBrush(
+												m_palette.get_Theme()
+													.Background,
+												&pBrush
+											), "Brush creation failed");
+										*ppBrush = pBrush;
+									}));
+						m_palette.get_pD2dDeviceContext()
+							->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 					};
 					virtual void Move(const ::std::valarray<double>& point) override {
 						m_point = point;
