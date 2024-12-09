@@ -8,10 +8,10 @@
 
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
 #include "Voicemeeter.UI/Direction.h"
-#include "Voicemeeter.UI/Trackers/Dirty.h"
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
+#include "Voicemeeter.UI.D2D/Trackers/Dirty.h"
 #include "Windows/Registry.h"
 
 namespace Voicemeeter {
@@ -82,13 +82,13 @@ namespace Voicemeeter {
 					};
 					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
 						LoadOverrides();
-						::std::unique_ptr<::Voicemeeter::UI::Trackers::IDirty> pDirtyTracker{
-							new ::Voicemeeter::UI::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
+						::std::unique_ptr<::Voicemeeter::UI::D2D::Trackers::Dirty> pDirtyTracker{
+							new ::Voicemeeter::UI::D2D::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
 						};
-						::std::unique_ptr<::Voicemeeter::UI::Trackers::IFocus> pFocusTracker{
+						::std::unique_ptr<::Voicemeeter::UI::Trackers::Focus> pFocusTracker{
 							new ::Voicemeeter::UI::Trackers::Focus{}
 						};
-						::std::unique_ptr<::Voicemeeter::UI::Trackers::IInput> pInputTracker{
+						::std::unique_ptr<::Voicemeeter::UI::Trackers::Input> pInputTracker{
 							new ::Voicemeeter::UI::Trackers::Input{ m_inputTracker }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Canvas> pCanvas{
@@ -177,9 +177,9 @@ namespace Voicemeeter {
 						}
 					};
 					::std::unique_ptr<::Voicemeeter::UI::IComponent> Compose(
-						::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-						::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-						::Voicemeeter::UI::Trackers::IInput& inputTracker,
+						::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
+						::Voicemeeter::UI::Trackers::Focus& focusTracker,
+						::Voicemeeter::UI::Trackers::Input& inputTracker,
 						::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
 					);
 				};

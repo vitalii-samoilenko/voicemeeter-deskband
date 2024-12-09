@@ -10,8 +10,9 @@
 using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
 
 Vban::Vban(
-	Graphics::Canvas& canvas
-) : Glyph{ canvas, { 39., 22. } }
+	Graphics::Canvas& canvas,
+	Trackers::Dirty& dirtyTracker
+) : Glyph{ canvas, dirtyTracker, { 39., 22. } }
   , m_color{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) } {
 
 }

@@ -7,9 +7,8 @@
 #include "Graphics/ICanvas.h"
 #include "IComponent.h"
 #include "IScene.h"
-#include "Trackers/IDirty.h"
-#include "Trackers/IFocus.h"
-#include "Trackers/IInput.h"
+#include "Trackers/Focus.h"
+#include "Trackers/Input.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -21,13 +20,11 @@ namespace Voicemeeter {
 
 		public:
 			Scene(
-				::std::unique_ptr<Trackers::IDirty>& pDirtyTracker,
-				::std::unique_ptr<Trackers::IInput>& pInputTracker,
-				::std::unique_ptr<Trackers::IFocus>& pFocusTracker,
+				::std::unique_ptr<Trackers::Input>& pInputTracker,
+				::std::unique_ptr<Trackers::Focus>& pFocusTracker,
 				::std::unique_ptr<TCanvas>& pCanvas,
 				::std::unique_ptr<IComponent>& pComposition
-			) : m_pDirtyTracker{ ::std::move(pDirtyTracker) }
-			  , m_pInputTracker{ ::std::move(pInputTracker) }
+			) : m_pInputTracker{ ::std::move(pInputTracker) }
 			  , m_pFocusTracker{ ::std::move(pFocusTracker) }
 			  , m_pCanvas{ ::std::move(pCanvas) }
 			  , m_pComposition{ ::std::move(pComposition) } {
@@ -112,20 +109,16 @@ namespace Voicemeeter {
 					|| m_pFocusTracker->MouseLUp(point)
 					|| m_pComposition->MouseLUp(point);
 			};
-			virtual void Redraw() {
-				m_pDirtyTracker->Redraw(
-					m_pDirtyTracker->get_Position(),
-					m_pDirtyTracker->get_Size()
-				);
-			}
 
 		protected:
-			const ::std::unique_ptr<TCanvas> m_pCanvas;
-			const ::std::unique_ptr<Trackers::IDirty> m_pDirtyTracker;
+			inline TCanvas& get_Canvas() {
+				return *m_pCanvas;
+			};
 
 		private:
-			const ::std::unique_ptr<Trackers::IInput> m_pInputTracker;
-			const ::std::unique_ptr<Trackers::IFocus> m_pFocusTracker;
+			const ::std::unique_ptr<TCanvas> m_pCanvas;
+			const ::std::unique_ptr<Trackers::Input> m_pInputTracker;
+			const ::std::unique_ptr<Trackers::Focus> m_pFocusTracker;
 			const ::std::unique_ptr<IComponent> m_pComposition;
 		};
 	}

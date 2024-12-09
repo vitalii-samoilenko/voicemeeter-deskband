@@ -38,10 +38,10 @@ namespace Voicemeeter {
 									const ::std::wstring& label,
 									Args&& ...args
 								) : Animation{{
-										200LL * 1000LL, 200LL * 1000LL, 200LL * 1000LL,
-										200LL * 1000LL,
-										200LL * 1000LL, 200LL * 1000LL,
-										200LL * 1000LL
+										200LL * 1000LL * 1000LL, 200LL * 1000LL * 1000LL, 200LL * 1000LL * 1000LL,
+										200LL * 1000LL * 1000LL,
+										200LL * 1000LL * 1000LL, 200LL * 1000LL * 1000LL,
+										200LL * 1000LL * 1000LL
 									}, ::std::forward<Args>(args)... }
 								  , m_label{ label }
 								  , m_gain{} {
@@ -106,6 +106,8 @@ namespace Voicemeeter {
 										static_cast<int>(
 											::std::floor((state.gain - 9000) / 375.))));
 									TKnob::set_Angle(state.gain / 100.F);
+									TKnob::get_DirtyTracker()
+										.set_Dirty(*this, true);
 								};
 
 							protected:

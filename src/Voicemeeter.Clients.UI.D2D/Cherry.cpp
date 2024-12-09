@@ -61,9 +61,8 @@ inline static ::std::wstring ToLabel(size_t id) {
 
 template<typename TGlyph>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::std::unique_ptr<TGlyph>& pGlyph,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
@@ -77,7 +76,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 		new Control{
 			inputTracker,
 			focusTracker,
-			pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+			pGlyph->get_BaseSize(), pGlyph, changeNotify
 		}
 	};
 	subscription.on_Vban(
@@ -89,9 +88,9 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 }
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 	bool animations,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
@@ -99,17 +98,17 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 	if (animations) {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Vban<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ dirtyTracker, canvas } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ canvas, dirtyTracker } };
 		return ComposeVban(
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			pGlyph,
 			mixer, subscription);
 	} else {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Vban<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ canvas } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ canvas, dirtyTracker } };
 		return ComposeVban(
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			pGlyph,
 			mixer, subscription);
 	}
@@ -118,9 +117,8 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 template<::Voicemeeter::UI::Direction Direction, ::Voicemeeter::UI::Direction MarginDirection, typename TGlyph, typename TStrip>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Environment::ITimer& timer,
 	::std::unique_ptr<TGlyph>& pGlyph,
 	TStrip& strip,
@@ -139,12 +137,12 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 			? new Control{
 				inputTracker,
 				inputTracker, focusTracker, timer,
-				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+				pGlyph->get_BaseSize(), pGlyph, changeNotify
 			} : new ::Voicemeeter::UI::Decorators::Margin<Control, Scale>{
 				MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
 				inputTracker,
 				inputTracker, focusTracker, timer,
-				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+				pGlyph->get_BaseSize(), pGlyph, changeNotify
 			})
 	};
 	subscription.on_Gain(strip.get_Id(),
@@ -176,9 +174,8 @@ template<::Voicemeeter::UI::Direction Direction, typename TGlyph, typename TStri
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::UI::Direction marginDirection,
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Environment::ITimer& timer,
 	::std::unique_ptr<TGlyph>& pGlyph,
 	TStrip& strip,
@@ -189,14 +186,14 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	case ::Voicemeeter::UI::Direction::Right:
 		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right>(
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription
 		);
 	case ::Voicemeeter::UI::Direction::Down:
 		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right>(
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription
 		);
@@ -208,9 +205,8 @@ template<typename TGlyph, typename TStrip>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Environment::ITimer& timer,
 	::std::unique_ptr<TGlyph>& pGlyph,
 	TStrip& strip,
@@ -222,7 +218,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 		return ComposeKnob<::Voicemeeter::UI::Direction::Right>(
 			marginDirection,
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription
 		);
@@ -230,7 +226,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 		return ComposeKnob<::Voicemeeter::UI::Direction::Down>(
 			marginDirection,
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription
 		);
@@ -243,9 +239,9 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	bool animations, 
 	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Environment::ITimer& timer,
 	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
 	TStrip& strip,
@@ -255,21 +251,21 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	if (animations) {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Knob<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Knob>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), dirtyTracker, canvas } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), canvas, dirtyTracker } };
 		return ComposeKnob(
 			direction, marginDirection,
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription);
 	} else {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Knob<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Knob>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), canvas } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), canvas, dirtyTracker } };
 		return ComposeKnob(
 			direction, marginDirection,
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription);
 	}
@@ -278,9 +274,8 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 template<::Voicemeeter::UI::Direction MarginDirection, typename TGlyph, typename TInput, typename TOutput>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::std::unique_ptr<TGlyph>& pGlyph,
 	TInput& input, TOutput& output,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
@@ -297,12 +292,12 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 			? new Control{
 				inputTracker,
 				focusTracker,
-				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+				pGlyph->get_BaseSize(), pGlyph, changeNotify
 			} : new ::Voicemeeter::UI::Decorators::Margin<Control, Scale>{
 				MarginPosition<MarginDirection>(), ::std::valarray<double>{ 0., 0. }, Scale{},
 				inputTracker,
 				focusTracker,
-				pGlyph->get_BaseSize(), dirtyTracker, pGlyph, changeNotify
+				pGlyph->get_BaseSize(), pGlyph, changeNotify
 			})
 	};
 	subscription.on_Plug(input.get_Id(), output.get_Id(),
@@ -316,9 +311,8 @@ template<typename TGlyph, typename TInput, typename TOutput>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	::Voicemeeter::UI::Direction marginDirection,
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::std::unique_ptr<TGlyph>& pGlyph,
 	TInput& input, TOutput& output,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
@@ -328,14 +322,14 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	case ::Voicemeeter::UI::Direction::Right:
 		return ComposePlug<::Voicemeeter::UI::Direction::Right>(
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
 		);
 	case ::Voicemeeter::UI::Direction::Down:
 		return ComposePlug<::Voicemeeter::UI::Direction::Down>(
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
 				);
@@ -348,9 +342,9 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	bool animations,
 	::Voicemeeter::UI::Direction marginDirection,
 	bool first,
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
 	TInput& input, TOutput& output,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
@@ -359,23 +353,22 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	if (animations) {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Plug<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Plug>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), dirtyTracker, canvas } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), canvas, dirtyTracker } };
 		return ComposePlug(
 			marginDirection,
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
 		);
-	}
-	else {
+	} else {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Plug<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Plug>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), canvas } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), canvas, dirtyTracker } };
 		return ComposePlug(
 			marginDirection,
 			first,
-			dirtyTracker, focusTracker, inputTracker,
+			focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
 		);
@@ -459,9 +452,9 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
 
 template<>
 ::std::unique_ptr<::Voicemeeter::UI::IComponent> Cherry::Compose(
-	::Voicemeeter::UI::Trackers::IDirty& dirtyTracker,
-	::Voicemeeter::UI::Trackers::IFocus& focusTracker,
-	::Voicemeeter::UI::Trackers::IInput& inputTracker,
+	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
+	::Voicemeeter::UI::Trackers::Focus& focusTracker,
+	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
 ) {
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription = m_mixer.get_Subscription<Cherry>();

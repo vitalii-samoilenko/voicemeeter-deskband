@@ -16,8 +16,9 @@ namespace Voicemeeter {
 				namespace Glyphs {
 					class Plug : public Glyph<UI::Policies::Size::Scales::Stretch> {
 					public:
-						explicit Plug(
-							Graphics::Canvas& canvas
+						Plug(
+							Graphics::Canvas& canvas,
+							Trackers::Dirty& dirtyTracker
 						);
 						Plug() = delete;
 						Plug(const Plug&) = delete;

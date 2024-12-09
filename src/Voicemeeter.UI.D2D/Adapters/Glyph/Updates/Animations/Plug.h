@@ -32,7 +32,7 @@ namespace Voicemeeter {
 									const ::std::wstring& label,
 									Args&& ...args
 								) : Animation{{
-										200LL * 1000LL
+										200LL * 1000LL * 1000LL
 									}, ::std::forward<Args>(args)... } {
 									TPlug::set_Label(label);
 									TPlug::set_Color(TPlug::get_Canvas()
@@ -53,6 +53,8 @@ namespace Voicemeeter {
 									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
+									TPlug::get_DirtyTracker()
+										.set_Dirty(*this, true);
 								};
 
 							protected:

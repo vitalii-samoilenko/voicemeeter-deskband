@@ -14,8 +14,9 @@ namespace Voicemeeter {
 				namespace Glyphs {
 					class Vban : public Glyph<UI::Policies::Size::Scales::Stretch> {
 					public:
-						explicit Vban(
-							Graphics::Canvas& canvas
+						Vban(
+							Graphics::Canvas& canvas,
+							Trackers::Dirty& dirtyTracker
 						);
 						Vban() = delete;
 						Vban(const Vban&) = delete;

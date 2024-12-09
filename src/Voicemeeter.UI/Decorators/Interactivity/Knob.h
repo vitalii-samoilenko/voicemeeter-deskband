@@ -7,8 +7,8 @@
 
 #include "../../Direction.h"
 #include "../../Controls/Knob.h"
-#include "../../Trackers/IFocus.h"
-#include "../../Trackers/IInput.h"
+#include "../../Trackers/Focus.h"
+#include "../../Trackers/Input.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -30,8 +30,8 @@ namespace Voicemeeter {
 				public:
 					template<typename... Args>
 					explicit Knob(
-						Trackers::IInput& inputTracker,
-						Trackers::IFocus& focusTracker,
+						Trackers::Input& inputTracker,
+						Trackers::Focus& focusTracker,
 						::Environment::ITimer& timer,
 						Args&& ...args
 					) : TKnob{ ::std::forward<Args>(args)... }
@@ -126,8 +126,8 @@ namespace Voicemeeter {
 					};
 
 				private:
-					Trackers::IInput& m_inputTracker;
-					Trackers::IFocus& m_focusTracker;
+					Trackers::Input& m_inputTracker;
+					Trackers::Focus& m_focusTracker;
 					::Environment::ITimer& m_timer;
 
 					inline void ReleaseLater() {

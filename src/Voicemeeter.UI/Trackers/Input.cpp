@@ -11,31 +11,15 @@ Input::Input(
 }
 
 void Input::set_Focus(bool value) {
-	if (!value) {
-		m_envInputTracker.DisableInputTrack();
-		m_pTracked = nullptr;
-	}
-}
-const ::std::valarray<double>& Input::get_Position() const {
-	return m_point;
-}
-void Input::set_Position(const ::std::valarray<double>& value) {
-	m_point = value;
-}
-bool Input::get_Track(IComponent& component) const {
-	return m_pTracked == &component;
-}
-void Input::set_Track(IComponent& component, bool value) {
 	if (value) {
-		if (!m_pTracked) {
-			m_envInputTracker.EnableInputTrack();
-		}
-		m_pTracked = &component;
-	} else if (m_pTracked == &component) {
+		return;
+	}
+	if (m_pTracked) {
 		m_envInputTracker.DisableInputTrack();
 		m_pTracked = nullptr;
 	}
 }
+
 bool Input::MouseLDown(const ::std::valarray<double>& point) {
 	return m_pTracked
 		&& m_pTracked->MouseLDown(point);

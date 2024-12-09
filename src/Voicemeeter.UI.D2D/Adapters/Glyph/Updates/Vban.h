@@ -46,6 +46,8 @@ namespace Voicemeeter {
 										.get_Palette()
 											.get_Theme()
 												.Inactive));
+								TVban::get_DirtyTracker()
+									.set_Dirty(*this, true);
 							};
 						};
 					}

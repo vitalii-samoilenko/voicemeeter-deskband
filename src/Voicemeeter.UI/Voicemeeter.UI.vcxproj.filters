@@ -135,19 +135,7 @@
     <ClInclude Include="Trackers\Focus.h">
       <Filter>Header Files\Trackers</Filter>
     </ClInclude>
-    <ClInclude Include="Trackers\IFocus.h">
-      <Filter>Header Files\Trackers</Filter>
-    </ClInclude>
-    <ClInclude Include="Trackers\IInput.h">
-      <Filter>Header Files\Trackers</Filter>
-    </ClInclude>
     <ClInclude Include="Trackers\Input.h">
-      <Filter>Header Files\Trackers</Filter>
-    </ClInclude>
-    <ClInclude Include="Trackers\IDirty.h">
-      <Filter>Header Files\Trackers</Filter>
-    </ClInclude>
-    <ClInclude Include="Trackers\Dirty.h">
       <Filter>Header Files\Trackers</Filter>
     </ClInclude>
     <ClInclude Include="Policies\State\Changes\Basic.h">
@@ -168,9 +156,6 @@
       <Filter>Source Files\Trackers</Filter>
     </ClCompile>
     <ClCompile Include="Trackers\Input.cpp">
-      <Filter>Source Files\Trackers</Filter>
-    </ClCompile>
-    <ClCompile Include="Trackers\Dirty.cpp">
       <Filter>Source Files\Trackers</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "IFocus.h"
+#include "../IComponent.h"
+#include "../Traits/IInteractive.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Trackers {
-			class Focus final : public IFocus {
+			class Focus final : public Traits::IInteractive {
 			public:
 				Focus();
 				Focus(const Focus&) = delete;
@@ -17,8 +18,24 @@ namespace Voicemeeter {
 				Focus& operator=(Focus&&) = delete;
 
 				virtual void set_Focus(bool value) override;
-				virtual bool get_Track(IComponent& component) const override;
-				virtual void set_Track(IComponent& component, bool value) override;
+				inline bool get_Track(IComponent& component) const {
+					return m_pTracked == &component;
+				};
+				inline void set_Track(IComponent& component, bool value) {
+					if (value) {
+						if (m_pTracked == &component) {
+							return;
+						}
+						if (m_pTracked) {
+							m_pTracked->set_Focus(false);
+						}
+						m_pTracked = &component;
+						m_pTracked->set_Focus(true);
+					} else if (m_pTracked == &component) {
+						m_pTracked->set_Focus(false);
+						m_pTracked = nullptr;
+					}
+				};
 
 				virtual bool MouseLDown(const ::std::valarray<double>& point) override;
 				virtual bool MouseLDouble(const ::std::valarray<double>& point) override;

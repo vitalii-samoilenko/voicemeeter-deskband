@@ -61,6 +61,12 @@
     <Filter Include="Header Files\Adapters\Glyph\Updates\Animations">
       <UniqueIdentifier>{00ae0697-e28d-4c4a-9660-9ce036e8f5d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Trackers">
+      <UniqueIdentifier>{8193cafd-c60f-474e-91d5-fbb986693837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Trackers">
+      <UniqueIdentifier>{b4472a8f-1f24-4e3c-8e4e-08723168b115}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Canvas.h">
@@ -138,6 +144,9 @@
     <ClInclude Include="Policies\Glyph\Updates\Vban.h">
       <Filter>Header Files\Policies\Glyph\Updates</Filter>
     </ClInclude>
+    <ClInclude Include="Trackers\Dirty.h">
+      <Filter>Header Files\Trackers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">
@@ -157,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="Graphics\Glyphs\Vban.cpp">
       <Filter>Source Files\Graphics\Glyphs</Filter>
+    </ClCompile>
+    <ClCompile Include="Trackers\Dirty.cpp">
+      <Filter>Source Files\Trackers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

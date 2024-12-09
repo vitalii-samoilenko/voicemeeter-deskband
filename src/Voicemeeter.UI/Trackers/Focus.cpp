@@ -8,31 +8,15 @@ Focus::Focus(
 }
 
 void Focus::set_Focus(bool value) {
-	if (!value) {
-		if (m_pTracked) {
-			m_pTracked->set_Focus(false);
-			m_pTracked = nullptr;
-		}
-	}
-}
-bool Focus::get_Track(IComponent& component) const {
-	return m_pTracked == &component;
-}
-void Focus::set_Track(IComponent& component, bool value) {
 	if (value) {
-		if (m_pTracked == &component) {
-			return;
-		}
-		if (m_pTracked) {
-			m_pTracked->set_Focus(false);
-		}
-		m_pTracked = &component;
-		m_pTracked->set_Focus(true);
-	} else if (m_pTracked == &component) {
+		return;
+	}
+	if (m_pTracked) {
 		m_pTracked->set_Focus(false);
 		m_pTracked = nullptr;
 	}
 }
+
 bool Focus::MouseLDown(const ::std::valarray<double>& point) {
 	return false;
 }

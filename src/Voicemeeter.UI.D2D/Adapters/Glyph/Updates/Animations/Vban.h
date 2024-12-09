@@ -31,7 +31,7 @@ namespace Voicemeeter {
 								explicit Vban(
 									Args&& ...args
 								) : Animation{{
-										200LL * 1000LL
+										200LL * 1000LL * 1000LL
 									}, ::std::forward<Args>(args)... } {
 									TVban::set_Color(TVban::get_Canvas()
 										.get_Palette()
@@ -51,6 +51,8 @@ namespace Voicemeeter {
 									Animation::get_Velocity()[active] = state
 										? 1LL
 										: -1LL;
+									TVban::get_DirtyTracker()
+										.set_Dirty(*this, true);
 								};
 
 							protected:

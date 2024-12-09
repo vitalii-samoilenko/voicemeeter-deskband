@@ -13,8 +13,9 @@
 using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
 
 Knob::Knob(
-	Graphics::Canvas& canvas
-) : Glyph{ canvas, { 48., 48. } }
+	Graphics::Canvas& canvas,
+	Trackers::Dirty& dirtyTracker
+) : Glyph{ canvas, dirtyTracker, { 48., 48. } }
   , m_label{}
   , m_frameColor{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }
   , m_labelColor{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }

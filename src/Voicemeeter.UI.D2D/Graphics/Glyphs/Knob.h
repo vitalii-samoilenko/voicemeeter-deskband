@@ -16,8 +16,9 @@ namespace Voicemeeter {
 				namespace Glyphs {
 					class Knob : public Glyph<UI::Policies::Size::Scales::Stretch> {
 					public:
-						explicit Knob(
-							Graphics::Canvas& canvas
+						Knob(
+							Graphics::Canvas& canvas,
+							Trackers::Dirty& dirtyTracker
 						);
 						Knob() = delete;
 						Knob(const Knob&) = delete;

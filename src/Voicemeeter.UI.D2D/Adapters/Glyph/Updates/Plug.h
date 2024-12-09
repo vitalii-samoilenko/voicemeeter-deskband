@@ -49,6 +49,8 @@ namespace Voicemeeter {
 										.get_Palette()
 											.get_Theme()
 												.Inactive));
+								TPlug::get_DirtyTracker()
+									.set_Dirty(*this, true);
 							};
 						};
 					}

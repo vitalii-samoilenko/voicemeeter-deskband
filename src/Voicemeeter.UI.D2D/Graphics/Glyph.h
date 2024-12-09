@@ -6,6 +6,7 @@
 
 #include "Voicemeeter.UI/Graphics/IGlyph.h"
 
+#include "../Trackers/Dirty.h"
 #include "Canvas.h"
 
 using namespace ::Voicemeeter::UI::Graphics;
@@ -53,17 +54,21 @@ namespace Voicemeeter {
 					};
 					virtual void Move(const ::std::valarray<double>& point) override {
 						m_point = point;
+						m_dirtyTracker.set_Dirty(*this, true);
 					};
 					virtual void Rescale(const ::std::valarray<double>& vertex) override {
 						m_vertex = m_baseVertex * m_scale(m_baseVertex, vertex);
+						m_dirtyTracker.set_Dirty(*this, true);
 					};
 
 				protected:
 					Glyph(
 						Canvas& canvas,
+						Trackers::Dirty& dirtyTracker,
 						const ::std::valarray<double>& baseVertex,
 						const TScale& scale = {}
 					) : m_canvas{ canvas }
+					  , m_dirtyTracker{ dirtyTracker }
 					  , m_point{ 0., 0. }
 					  , m_vertex{ baseVertex }
 					  , m_baseVertex{ baseVertex }
@@ -73,10 +78,14 @@ namespace Voicemeeter {
 
 					inline const Canvas& get_Canvas() const {
 						return m_canvas;
-					}
+					};
+					inline Trackers::Dirty& get_DirtyTracker() {
+						return m_dirtyTracker;
+					};
 
 				private:
 					Canvas& m_canvas;
+					Trackers::Dirty& m_dirtyTracker;
 					::std::valarray<double> m_point;
 					::std::valarray<double> m_vertex;
 					const ::std::valarray<double> m_baseVertex;

@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "../../Controls/Checkbox.h"
-#include "../../Trackers/IFocus.h"
+#include "../../Trackers/Focus.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -23,7 +23,7 @@ namespace Voicemeeter {
 				public:
 					template<typename... Args>
 					explicit Checkbox(
-						Trackers::IFocus& focusTracker,
+						Trackers::Focus& focusTracker,
 						Args&& ...args
 					) : TCheckbox{ ::std::forward<Args>(args)... }
 					  , m_focusTracker{ focusTracker } {
@@ -52,7 +52,7 @@ namespace Voicemeeter {
 					}
 
 				private:
-					Trackers::IFocus& m_focusTracker;
+					Trackers::Focus& m_focusTracker;
 				};
 			}
 		}

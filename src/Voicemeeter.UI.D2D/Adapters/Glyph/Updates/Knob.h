@@ -97,6 +97,8 @@ namespace Voicemeeter {
 								TKnob::set_FrameColor(color);
 								TKnob::set_LabelColor(color);
 								TKnob::set_Angle(state.gain / 100.F);
+								TKnob::get_DirtyTracker()
+									.set_Dirty(*this, true);
 							};
 
 						private:

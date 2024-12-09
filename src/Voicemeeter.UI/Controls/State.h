@@ -7,7 +7,6 @@
 
 #include "../Graphics/IGlyph.h"
 #include "../IControl.h"
-#include "../Trackers/IDirty.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -51,7 +50,6 @@ namespace Voicemeeter {
 			public:
 				State(
 					const ::std::valarray<double>& baseVertex,
-					Trackers::IDirty& dirtyTracker,
 					::std::unique_ptr<TGlyph>& pGlyph,
 					const TChangeNotify& changeNotify,
 					const TStateDefault& stateDefault = {},
@@ -64,7 +62,6 @@ namespace Voicemeeter {
 				  , m_vertex{ baseVertex }
 				  , m_baseVertex{ baseVertex }
 				  , m_state{}
-				  , m_dirtyTracker{ dirtyTracker }
 				  , m_pGlyph{ ::std::move(pGlyph) }
 				  , m_stateDefault{ stateDefault }
 				  , m_stateNext{ stateNext }
@@ -75,8 +72,6 @@ namespace Voicemeeter {
 				  , m_scale{ scale } {
 					if (m_stateDefault(m_state)) {
 						m_glyphUpdate(*m_pGlyph, m_state);
-
-						m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 					}
 				};
 				State() = delete;
@@ -135,17 +130,11 @@ namespace Voicemeeter {
 				};
 				virtual void Rescale(const ::std::valarray<double>& vertex) override {
 					m_vertex = m_baseVertex * m_scale(m_baseVertex, vertex);
-
 					m_pGlyph->Rescale(m_vertex);
-
-					m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 				};
 				virtual void Move(const ::std::valarray<double>& point) override {
 					m_point = point;
-
 					m_pGlyph->Move(point);
-
-					m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 				};
 				virtual bool MouseLDown(const ::std::valarray<double>& point) override {
 					return true;
@@ -180,7 +169,6 @@ namespace Voicemeeter {
 				::std::valarray<double> m_vertex;
 				const ::std::valarray<double> m_baseVertex;
 				TState m_state;
-				Trackers::IDirty& m_dirtyTracker;
 				const ::std::unique_ptr<TGlyph> m_pGlyph;
 				const TStateDefault m_stateDefault;
 				const TStateNext m_stateNext;
@@ -195,8 +183,6 @@ namespace Voicemeeter {
 						m_changeNotify(m_state);
 					}
 					m_glyphUpdate(*m_pGlyph, m_state);
-
-					m_dirtyTracker.set_Dirty(*m_pGlyph, true);
 				}
 			};
 		}

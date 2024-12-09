@@ -227,6 +227,7 @@
     <ClInclude Include="Policies\Glyph\Updates\Vban.h" />
     <ClInclude Include="Policies\State\Changes\Knob.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Trackers\Dirty.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="Graphics\Glyphs\Vban.cpp" />
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Trackers\Dirty.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

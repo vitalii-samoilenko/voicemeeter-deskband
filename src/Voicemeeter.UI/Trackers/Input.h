@@ -2,12 +2,13 @@
 
 #include "Environment/IInputTracker.h"
 
-#include "IInput.h"
+#include "../IComponent.h"
+#include "../Traits/IInteractive.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Trackers {
-			class Input final : public IInput {
+			class Input final : public Traits::IInteractive {
 			public:
 				explicit Input(
 					::Environment::IInputTracker& envInputTracker
@@ -20,11 +21,27 @@ namespace Voicemeeter {
 				Input& operator=(const Input&) = delete;
 				Input& operator=(Input&&) = delete;
 
-				virtual void set_Focus(bool value) override;
-				virtual const ::std::valarray<double>& get_Position() const override;
-				virtual void set_Position(const ::std::valarray<double>& value) override;
-				virtual bool get_Track(IComponent& component) const override;
-				virtual void set_Track(IComponent& component, bool value) override;
+				void set_Focus(bool value) override;
+				inline const ::std::valarray<double>& get_Position() const {
+					return m_point;
+				};
+				inline void set_Position(const ::std::valarray<double>& value) {
+					m_point = value;
+				};
+				inline bool get_Track(IComponent& component) const {
+					return m_pTracked == &component;
+				};
+				inline void set_Track(IComponent& component, bool value) {
+					if (value) {
+						if (!m_pTracked) {
+							m_envInputTracker.EnableInputTrack();
+						}
+						m_pTracked = &component;
+					} else if (m_pTracked == &component) {
+						m_envInputTracker.DisableInputTrack();
+						m_pTracked = nullptr;
+					}
+				};
 
 				virtual bool MouseLDown(const ::std::valarray<double>& point) override;
 				virtual bool MouseLDouble(const ::std::valarray<double>& point) override;
