@@ -147,6 +147,9 @@
     <ClInclude Include="Trackers\Dirty.h">
       <Filter>Header Files\Trackers</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\Palette.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp">

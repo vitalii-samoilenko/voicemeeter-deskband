@@ -2,12 +2,11 @@
 
 #include "estd/type_traits.h"
 
-#include <d2d1_3.h>
-
 #include "Voicemeeter.UI/Graphics/IGlyph.h"
+#include "Windows/Wrappers.h"
 
 #include "../Trackers/Dirty.h"
-#include "Canvas.h"
+#include "Palette.h"
 
 using namespace ::Voicemeeter::UI::Graphics;
 
@@ -42,8 +41,32 @@ namespace Voicemeeter {
 					};
 
 					virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
-						m_canvas.Redraw(m_point, m_vertex);
-						m_canvas.get_pD2dDeviceContext()
+						m_palette.get_pD2dDeviceContext()
+							->SetTransform(::D2D1::IdentityMatrix());
+						m_palette.get_pD2dDeviceContext()
+							->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+						m_palette.get_pD2dDeviceContext()
+							->FillRectangle(
+								::D2D1::RectF(
+									static_cast<FLOAT>(point[0]),
+									static_cast<FLOAT>(point[1]),
+									static_cast<FLOAT>(point[0] + vertex[0]),
+									static_cast<FLOAT>(point[1] + vertex[1])
+								),
+								m_palette.get_pBrush<Palette>(
+									[this](ID2D1Brush** ppBrush)->void {
+										ID2D1SolidColorBrush* pBrush{ nullptr };
+										::Windows::ThrowIfFailed(m_palette.get_pD2dDeviceContext()
+											->CreateSolidColorBrush(
+												m_palette.get_Theme()
+												.Background,
+												&pBrush
+											), "Brush creation failed");
+										*ppBrush = pBrush;
+									}));
+						m_palette.get_pD2dDeviceContext()
+							->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+						m_palette.get_pD2dDeviceContext()
 							->SetTransform(
 								::D2D1::Matrix3x2F::Scale(
 									static_cast<FLOAT>(m_vertex[0] / m_baseVertex[0]),
@@ -63,11 +86,11 @@ namespace Voicemeeter {
 
 				protected:
 					Glyph(
-						Canvas& canvas,
+						const Palette& palette,
 						Trackers::Dirty& dirtyTracker,
 						const ::std::valarray<double>& baseVertex,
 						const TScale& scale = {}
-					) : m_canvas{ canvas }
+					) : m_palette{ palette }
 					  , m_dirtyTracker{ dirtyTracker }
 					  , m_point{ 0., 0. }
 					  , m_vertex{ baseVertex }
@@ -76,15 +99,15 @@ namespace Voicemeeter {
 
 					};
 
-					inline const Canvas& get_Canvas() const {
-						return m_canvas;
+					inline const Palette& get_Palette() const {
+						return m_palette;
 					};
 					inline Trackers::Dirty& get_DirtyTracker() {
 						return m_dirtyTracker;
 					};
 
 				private:
-					Canvas& m_canvas;
+					const Palette& m_palette;
 					Trackers::Dirty& m_dirtyTracker;
 					::std::valarray<double> m_point;
 					::std::valarray<double> m_vertex;

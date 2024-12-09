@@ -25,10 +25,9 @@ namespace Voicemeeter {
 								Args&& ...args
 							) : TPlug{ ::std::forward<Args>(args)... } {
 								TPlug::set_Label(label);
-								TPlug::set_Color(TPlug::get_Canvas()
-									.get_Palette()
-										.get_Theme()
-											.Inactive);
+								TPlug::set_Color(TPlug::get_Palette()
+									.get_Theme()
+										.Inactive);
 							};
 							Plug() = delete;
 							Plug(const Plug&) = delete;
@@ -41,14 +40,12 @@ namespace Voicemeeter {
 
 							inline void Update(const int& state) {
 								TPlug::set_Color((state
-									? TPlug::get_Canvas()
-										.get_Palette()
-											.get_Theme()
-												.PrimaryActive
-									: TPlug::get_Canvas()
-										.get_Palette()
-											.get_Theme()
-												.Inactive));
+									? TPlug::get_Palette()
+										.get_Theme()
+											.PrimaryActive
+									: TPlug::get_Palette()
+										.get_Theme()
+											.Inactive));
 								TPlug::get_DirtyTracker()
 									.set_Dirty(*this, true);
 							};

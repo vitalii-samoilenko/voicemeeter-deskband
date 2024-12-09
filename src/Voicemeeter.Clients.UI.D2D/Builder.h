@@ -82,6 +82,9 @@ namespace Voicemeeter {
 					};
 					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
 						LoadOverrides();
+						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Palette> pPalette{
+							new ::Voicemeeter::UI::D2D::Graphics::Palette{ m_hWnd, m_theme }
+						};
 						::std::unique_ptr<::Voicemeeter::UI::D2D::Trackers::Dirty> pDirtyTracker{
 							new ::Voicemeeter::UI::D2D::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
 						};
@@ -91,17 +94,18 @@ namespace Voicemeeter {
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::Input> pInputTracker{
 							new ::Voicemeeter::UI::Trackers::Input{ m_inputTracker }
 						};
-						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Canvas> pCanvas{
-							new ::Voicemeeter::UI::D2D::Graphics::Canvas{ m_hWnd, m_theme }
+						::std::unique_ptr<::Voicemeeter::UI::Graphics::ICanvas> pCanvas{
+							new ::Voicemeeter::UI::D2D::Graphics::Canvas{ *pPalette }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::IComponent> pComposition{
 							Compose(
-								*pDirtyTracker, *pFocusTracker, *pInputTracker,
-								*pCanvas
+								*pPalette,
+								*pDirtyTracker, *pFocusTracker, *pInputTracker
 							)
 						};
 						return ::std::unique_ptr<::Voicemeeter::UI::D2D::Scene>{
 							new ::Voicemeeter::UI::D2D::Scene{
+								pPalette,
 								pDirtyTracker, pInputTracker, pFocusTracker,
 								pCanvas, pComposition
 							}
@@ -177,10 +181,10 @@ namespace Voicemeeter {
 						}
 					};
 					::std::unique_ptr<::Voicemeeter::UI::IComponent> Compose(
+						::Voicemeeter::UI::D2D::Graphics::Palette& palette,
 						::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
 						::Voicemeeter::UI::Trackers::Focus& focusTracker,
-						::Voicemeeter::UI::Trackers::Input& inputTracker,
-						::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
+						::Voicemeeter::UI::Trackers::Input& inputTracker
 					);
 				};
 			}

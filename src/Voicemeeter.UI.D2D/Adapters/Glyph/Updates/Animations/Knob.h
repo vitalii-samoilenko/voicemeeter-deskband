@@ -47,10 +47,9 @@ namespace Voicemeeter {
 								  , m_gain{} {
 									TKnob::set_Label(m_label);
 									const ::D2D1::ColorF& color{
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.Inactive
+										TKnob::get_Palette()
+											.get_Theme()
+												.Inactive
 									};
 									TKnob::set_FrameColor(color);
 									TKnob::set_LabelColor(color);
@@ -120,48 +119,41 @@ namespace Voicemeeter {
 									const ::std::valarray<long long>& vertex{ Animation::get_AnimationSize() };
 									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };
 									::D2D1::ColorF result{
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.Inactive
+										TKnob::get_Palette()
+											.get_Theme()
+												.Inactive
 									};
 									blend(result,
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.EqualizerLow,
+										TKnob::get_Palette()
+											.get_Theme()
+												.EqualizerLow,
 										static_cast<FLOAT>(vertex[level_low]) / baseVertex[level_low]);
 									blend(result,
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.EqualizerMedium,
+										TKnob::get_Palette()
+											.get_Theme()
+												.EqualizerMedium,
 										static_cast<FLOAT>(vertex[level_medium]) / baseVertex[level_medium]);
 									blend(result,
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.EqualizerHigh,
+										TKnob::get_Palette()
+											.get_Theme()
+												.EqualizerHigh,
 										static_cast<FLOAT>(vertex[level_high]) / baseVertex[level_high]);
 									::D2D1::ColorF gain{
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.PrimaryActive
+										TKnob::get_Palette()
+											.get_Theme()
+												.PrimaryActive
 									};
 									blend(gain,
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.Danger,
+										TKnob::get_Palette()
+											.get_Theme()
+												.Danger,
 										static_cast<FLOAT>(vertex[gain_danger]) / baseVertex[gain_danger]);
 									blend(result, gain,
 										static_cast<FLOAT>(vertex[hold]) / baseVertex[hold]);
 									blend(result,
-										TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.Warning,
+										TKnob::get_Palette()
+											.get_Theme()
+												.Warning,
 										static_cast<FLOAT>(vertex[toggle]) / baseVertex[toggle]);
 									TKnob::set_FrameColor(result);
 									long long mid{ baseVertex[label] / 2 };

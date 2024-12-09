@@ -88,17 +88,17 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 }
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 	bool animations,
+	::Voicemeeter::UI::D2D::Graphics::Palette& palette,
 	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
 	::Voicemeeter::UI::Trackers::Input& inputTracker,
-	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
 	if (animations) {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Vban<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ canvas, dirtyTracker } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette, dirtyTracker } };
 		return ComposeVban(
 			focusTracker, inputTracker,
 			pGlyph,
@@ -106,7 +106,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 	} else {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Vban<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Vban>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ canvas, dirtyTracker } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette, dirtyTracker } };
 		return ComposeVban(
 			focusTracker, inputTracker,
 			pGlyph,
@@ -239,11 +239,11 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	bool animations, 
 	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
 	bool first,
+	::Voicemeeter::UI::D2D::Graphics::Palette& palette,
 	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
 	::Voicemeeter::UI::Trackers::Input& inputTracker,
 	::Environment::ITimer& timer,
-	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
 	TStrip& strip,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
@@ -251,7 +251,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	if (animations) {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Knob<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Knob>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), canvas, dirtyTracker } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), palette, dirtyTracker } };
 		return ComposeKnob(
 			direction, marginDirection,
 			first,
@@ -261,7 +261,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	} else {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Knob<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Knob>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), canvas, dirtyTracker } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(strip.get_Id()), palette, dirtyTracker } };
 		return ComposeKnob(
 			direction, marginDirection,
 			first,
@@ -342,10 +342,10 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	bool animations,
 	::Voicemeeter::UI::Direction marginDirection,
 	bool first,
+	::Voicemeeter::UI::D2D::Graphics::Palette& palette,
 	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
 	::Voicemeeter::UI::Trackers::Input& inputTracker,
-	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas,
 	TInput& input, TOutput& output,
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
@@ -353,7 +353,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	if (animations) {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Plug<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Plug>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), canvas, dirtyTracker } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), palette, dirtyTracker } };
 		return ComposePlug(
 			marginDirection,
 			first,
@@ -364,7 +364,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	} else {
 		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Plug<
 			::Voicemeeter::UI::D2D::Graphics::Glyphs::Plug>;
-		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), canvas, dirtyTracker } };
+		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ ToLabel(output.get_Id()), palette, dirtyTracker } };
 		return ComposePlug(
 			marginDirection,
 			first,
@@ -452,10 +452,10 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePanel(
 
 template<>
 ::std::unique_ptr<::Voicemeeter::UI::IComponent> Cherry::Compose(
+	::Voicemeeter::UI::D2D::Graphics::Palette& palette,
 	::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
-	::Voicemeeter::UI::Trackers::Input& inputTracker,
-	::Voicemeeter::UI::D2D::Graphics::Canvas& canvas
+	::Voicemeeter::UI::Trackers::Input& inputTracker
 ) {
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription = m_mixer.get_Subscription<Cherry>();
 	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpComponent{};
@@ -463,8 +463,8 @@ template<>
 		cpComponent.push_back(::std::move(
 			ComposeVban(
 				m_animations,
+				palette,
 				dirtyTracker, focusTracker, inputTracker,
-				canvas,
 				m_mixer, subscription)));
 	}
 	::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpBusComponent{};
@@ -477,8 +477,9 @@ template<>
 				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
+				palette,
 				dirtyTracker, focusTracker, inputTracker,
-				m_compositionTimer, canvas,
+				m_compositionTimer,
 				input, m_mixer, subscription)));
 		::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpPlugComponent{};
 		for (auto& output : m_mixer.get_PhysicalOutput()) {
@@ -490,8 +491,8 @@ template<>
 					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
+					palette,
 					dirtyTracker, focusTracker, inputTracker,
-					canvas,
 					input, output, m_mixer, subscription)));
 			if (cpPlugComponent.size() == 2) {
 				cpBusComponent.push_back(::std::move(
@@ -511,8 +512,8 @@ template<>
 					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
+					palette,
 					dirtyTracker, focusTracker, inputTracker,
-					canvas,
 					input, output, m_mixer, subscription)));
 			if (cpPlugComponent.size() == 2) {
 				cpBusComponent.push_back(::std::move(
@@ -544,8 +545,9 @@ template<>
 				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
+				palette,
 				dirtyTracker, focusTracker, inputTracker,
-				m_compositionTimer, canvas,
+				m_compositionTimer,
 				input, m_mixer, subscription)));
 		::std::vector<::std::unique_ptr<::Voicemeeter::UI::IComponent>> cpPlugComponent{};
 		for (auto& output : m_mixer.get_PhysicalOutput()) {
@@ -557,8 +559,8 @@ template<>
 					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
+					palette,
 					dirtyTracker, focusTracker, inputTracker,
-					canvas,
 					input, output, m_mixer, subscription)));
 			if (cpPlugComponent.size() == 2) {
 				cpBusComponent.push_back(::std::move(
@@ -578,8 +580,8 @@ template<>
 					m_animations,
 					::Voicemeeter::UI::Direction::Down,
 					cpPlugComponent.empty(),
+					palette,
 					dirtyTracker, focusTracker, inputTracker,
-					canvas,
 					input, output, m_mixer, subscription)));
 			if (cpPlugComponent.size() == 2) {
 				cpBusComponent.push_back(::std::move(
@@ -611,8 +613,9 @@ template<>
 				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
+				palette,
 				dirtyTracker, focusTracker, inputTracker,
-				m_compositionTimer, canvas,
+				m_compositionTimer,
 				input, m_mixer, subscription)));
 	}
 	for (auto& input : m_mixer.get_VirtualOutput()) {
@@ -624,8 +627,9 @@ template<>
 				m_animations,
 				m_direction, m_direction,
 				cpBusComponent.empty(),
+				palette,
 				dirtyTracker, focusTracker, inputTracker,
-				m_compositionTimer, canvas,
+				m_compositionTimer,
 				input, m_mixer, subscription)));
 	}
 	if (cpBusComponent.size()) {

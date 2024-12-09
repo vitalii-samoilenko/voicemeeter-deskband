@@ -22,10 +22,9 @@ namespace Voicemeeter {
 							explicit Vban(
 								Args&& ...args
 							) : TVban{ ::std::forward<Args>(args)... } {
-								TVban::set_Color(TVban::get_Canvas()
-									.get_Palette()
-										.get_Theme()
-											.Inactive);
+								TVban::set_Color(TVban::get_Palette()
+									.get_Theme()
+										.Inactive);
 							};
 							Vban() = delete;
 							Vban(const Vban&) = delete;
@@ -38,14 +37,12 @@ namespace Voicemeeter {
 
 							inline void Update(const int& state) {
 								TVban::set_Color((state
-									? TVban::get_Canvas()
-										.get_Palette()
-											.get_Theme()
-												.SecondaryActive
-									: TVban::get_Canvas()
-										.get_Palette()
-											.get_Theme()
-												.Inactive));
+									? TVban::get_Palette()
+										.get_Theme()
+											.SecondaryActive
+									: TVban::get_Palette()
+										.get_Theme()
+											.Inactive));
 								TVban::get_DirtyTracker()
 									.set_Dirty(*this, true);
 							};

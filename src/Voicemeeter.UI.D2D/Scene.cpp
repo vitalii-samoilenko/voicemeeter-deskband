@@ -11,38 +11,36 @@
 using namespace ::Voicemeeter::UI::D2D;
 
 Scene::Scene(
+	::std::unique_ptr<Graphics::Palette>& pPalette,
 	::std::unique_ptr<Trackers::Dirty>& pDirtyTracker,
 	::std::unique_ptr<UI::Trackers::Input>& pInputTracker,
 	::std::unique_ptr<UI::Trackers::Focus>& pFocusTracker,
-	::std::unique_ptr<Graphics::Canvas>& pCanvas,
+	::std::unique_ptr<UI::Graphics::ICanvas>& pCanvas,
 	::std::unique_ptr<IComponent>& pComposition
-) : Base{ pInputTracker, pFocusTracker, pCanvas, pComposition }
+) : UI::Scene{ pInputTracker, pFocusTracker, pCanvas, pComposition }
+  , m_pPalette{ ::std::move(pPalette) }
   , m_pDirtyTracker{ ::std::move(pDirtyTracker) }
   , m_first{ true } {
 
 }
 
 void Scene::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
-	get_Canvas()
-		.get_pD2dDeviceContext()
-			->BeginDraw();
-	Base::Redraw(point, vertex);
-	::Windows::ThrowIfFailed(get_Canvas()
-		.get_pD2dDeviceContext()
+	m_pPalette->get_pD2dDeviceContext()
+		->BeginDraw();
+	UI::Scene::Redraw(point, vertex);
+	::Windows::ThrowIfFailed(m_pPalette
+		->get_pD2dDeviceContext()
 			->EndDraw(
 	), "Render failed");
 	if (m_first) {
-		::Windows::ThrowIfFailed(get_Canvas()
-			.get_pDxgiSwapChain()
+		::Windows::ThrowIfFailed(m_pPalette
+			->get_pDxgiSwapChain()
 				->Present(
 					1, 0
 		), "Presentation failed");
 		m_first = false;
 	} else {
-		const ::std::valarray<double>& canvasVertex{
-			get_Canvas()
-				.get_Size()
-		};
+		const ::std::valarray<double>& canvasVertex{ get_Size() };
 		RECT rect{
 			static_cast<LONG>(::std::floor(point[0])),
 			static_cast<LONG>(::std::floor(point[1])),
@@ -54,8 +52,8 @@ void Scene::Redraw(const ::std::valarray<double>& point, const ::std::valarray<d
 			nullptr,
 			nullptr
 		};
-		::Windows::ThrowIfFailed(get_Canvas()
-			.get_pDxgiSwapChain()
+		::Windows::ThrowIfFailed(m_pPalette
+			->get_pDxgiSwapChain()
 				->Present1(
 					1, 0,
 					&params
@@ -63,31 +61,19 @@ void Scene::Redraw(const ::std::valarray<double>& point, const ::std::valarray<d
 	}
 }
 void Scene::Resize(const ::std::valarray<double>& vertex) {
-	::std::valarray<double> patched{
-		::std::max(8., vertex[0]),
-		::std::max(8., vertex[1])
-	};
-	Base::Resize(patched);
+	UI::Scene::Resize(vertex);
 	m_first = true;
 }
 void Scene::Rescale(const ::std::valarray<double>& vertex) {
-	::std::valarray<double> patched{
-		::std::max(8., vertex[0]),
-		::std::max(8., vertex[1])
-	};
-	Base::Rescale(patched);
+	UI::Scene::Rescale(vertex);
 	m_first = true;
 }
 void Scene::Redraw() {
 	Trackers::Dirty dirtyTracker{ ::std::move(*m_pDirtyTracker) };
 	::std::vector<RECT> cRect{};
-	const ::std::valarray<double>& canvasVertex{
-			get_Canvas()
-				.get_Size()
-	};
-	get_Canvas()
-		.get_pD2dDeviceContext()
-			->BeginDraw();
+	const ::std::valarray<double>& canvasVertex{ get_Size() };
+	m_pPalette->get_pD2dDeviceContext()
+		->BeginDraw();
 	for (UI::Graphics::IGlyph* pGlyph : dirtyTracker) {
 		const ::std::valarray<double>& dirtyPoint{ pGlyph->get_Position() };
 		const ::std::valarray<double>& dirtyVertex{ pGlyph->get_Size() };
@@ -99,13 +85,13 @@ void Scene::Redraw() {
 		});
 		pGlyph->Redraw(dirtyPoint, dirtyVertex);
 	}
-	::Windows::ThrowIfFailed(get_Canvas()
-		.get_pD2dDeviceContext()
+	::Windows::ThrowIfFailed(m_pPalette
+		->get_pD2dDeviceContext()
 			->EndDraw(
 	), "Render failed");
 	if (m_first) {
-		::Windows::ThrowIfFailed(get_Canvas()
-			.get_pDxgiSwapChain()
+		::Windows::ThrowIfFailed(m_pPalette
+			->get_pDxgiSwapChain()
 				->Present(
 					1, 0
 		), "Presentation failed");
@@ -116,8 +102,8 @@ void Scene::Redraw() {
 			nullptr,
 			nullptr
 		};
-		::Windows::ThrowIfFailed(get_Canvas()
-			.get_pDxgiSwapChain()
+		::Windows::ThrowIfFailed(m_pPalette
+			->get_pDxgiSwapChain()
 				->Present1(
 					1, 0,
 					&params

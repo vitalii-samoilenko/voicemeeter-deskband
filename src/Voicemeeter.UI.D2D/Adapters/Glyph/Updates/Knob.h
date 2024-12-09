@@ -29,10 +29,9 @@ namespace Voicemeeter {
 							  , m_label{ label } {
 								TKnob::set_Label(m_label);
 								const ::D2D1::ColorF& color{
-									TKnob::get_Canvas()
-										.get_Palette()
-											.get_Theme()
-												.Inactive
+									TKnob::get_Palette()
+										.get_Theme()
+											.Inactive
 								};
 								TKnob::set_FrameColor(color);
 								TKnob::set_LabelColor(color);
@@ -60,39 +59,32 @@ namespace Voicemeeter {
 								};
 								const ::D2D1::ColorF& color{
 									(state.toggle
-										? TKnob::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.Warning
+										? TKnob::get_Palette()
+											.get_Theme()
+												.Warning
 										: state.hold
 											? 9000 < state.gain
-												? TKnob::get_Canvas()
-													.get_Palette()
-														.get_Theme()
-															.Danger
-												: TKnob::get_Canvas()
-													.get_Palette()
-														.get_Theme()
-															.PrimaryActive
+												? TKnob::get_Palette()
+													.get_Theme()
+														.Danger
+												: TKnob::get_Palette()
+													.get_Theme()
+														.PrimaryActive
 											: level < 5
-												? TKnob::get_Canvas()
-													.get_Palette()
-														.get_Theme()
-															.Inactive
+												? TKnob::get_Palette()
+													.get_Theme()
+														.Inactive
 												: level < 700
-													? TKnob::get_Canvas()
-														.get_Palette()
-															.get_Theme()
-																.EqualizerLow
+													? TKnob::get_Palette()
+														.get_Theme()
+															.EqualizerLow
 													: level < 10000
-														? TKnob::get_Canvas()
-															.get_Palette()
-																.get_Theme()
-																	.EqualizerMedium
-														: TKnob::get_Canvas()
-															.get_Palette()
-																.get_Theme()
-																	.EqualizerHigh)
+														? TKnob::get_Palette()
+															.get_Theme()
+																.EqualizerMedium
+														: TKnob::get_Palette()
+															.get_Theme()
+																.EqualizerHigh)
 								};
 								TKnob::set_FrameColor(color);
 								TKnob::set_LabelColor(color);

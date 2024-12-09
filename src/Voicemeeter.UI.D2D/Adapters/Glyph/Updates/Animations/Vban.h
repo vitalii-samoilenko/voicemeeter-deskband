@@ -33,10 +33,9 @@ namespace Voicemeeter {
 								) : Animation{{
 										200LL * 1000LL * 1000LL
 									}, ::std::forward<Args>(args)... } {
-									TVban::set_Color(TVban::get_Canvas()
-										.get_Palette()
-											.get_Theme()
-												.Inactive);
+									TVban::set_Color(TVban::get_Palette()
+										.get_Theme()
+											.Inactive);
 								};
 								Vban() = delete;
 								Vban(const Vban&) = delete;
@@ -61,16 +60,14 @@ namespace Voicemeeter {
 									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };
 									FLOAT alpha{ static_cast<FLOAT>(vertex[active]) / baseVertex[active] };
 									const ::D2D1::ColorF& from{
-										TVban::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.Inactive
+										TVban::get_Palette()
+											.get_Theme()
+												.Inactive
 									};
 									const ::D2D1::ColorF& to{
-										TVban::get_Canvas()
-											.get_Palette()
-												.get_Theme()
-													.SecondaryActive
+										TVban::get_Palette()
+											.get_Theme()
+												.SecondaryActive
 									};
 									TVban::set_Color(::D2D1::ColorF(
 										from.r * (1.F - alpha) + to.r * alpha,

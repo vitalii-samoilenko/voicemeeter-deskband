@@ -1,12 +1,7 @@
 #pragma once
 
-#include <string>
-
-#include <d2d1_3.h>
-
 #include "Voicemeeter.UI/Policies/Size/Scales/Stretch.h"
 
-#include "../Canvas.h"
 #include "../Glyph.h"
 
 namespace Voicemeeter {
@@ -17,7 +12,7 @@ namespace Voicemeeter {
 					class Plug : public Glyph<UI::Policies::Size::Scales::Stretch> {
 					public:
 						Plug(
-							Graphics::Canvas& canvas,
+							Graphics::Palette& palette,
 							Trackers::Dirty& dirtyTracker
 						);
 						Plug() = delete;

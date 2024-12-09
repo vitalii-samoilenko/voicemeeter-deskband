@@ -231,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controls\State.h" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Trackers\Focus.cpp" />
     <ClCompile Include="Trackers\Input.cpp" />
   </ItemGroup>

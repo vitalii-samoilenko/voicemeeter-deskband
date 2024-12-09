@@ -158,5 +158,8 @@
     <ClCompile Include="Trackers\Input.cpp">
       <Filter>Source Files\Trackers</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

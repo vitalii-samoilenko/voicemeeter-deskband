@@ -220,6 +220,7 @@
     <ClInclude Include="Graphics\Glyphs\Knob.h" />
     <ClInclude Include="Graphics\Glyphs\Plug.h" />
     <ClInclude Include="Graphics\Glyphs\Vban.h" />
+    <ClInclude Include="Graphics\Palette.h" />
     <ClInclude Include="Graphics\Theme.h" />
     <ClInclude Include="Policies\Glyph\Updates\Knob.h" />
     <ClInclude Include="Policies\Glyph\Updates\Passthrough.h" />
