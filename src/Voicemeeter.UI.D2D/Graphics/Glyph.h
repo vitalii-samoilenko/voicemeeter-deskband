@@ -48,10 +48,10 @@ namespace Voicemeeter {
 						m_palette.get_pD2dDeviceContext()
 							->FillRectangle(
 								::D2D1::RectF(
-									static_cast<FLOAT>(point[0]),
-									static_cast<FLOAT>(point[1]),
-									static_cast<FLOAT>(point[0] + vertex[0]),
-									static_cast<FLOAT>(point[1] + vertex[1])
+									static_cast<FLOAT>(m_point[0]),
+									static_cast<FLOAT>(m_point[1]),
+									static_cast<FLOAT>(m_point[0] + m_vertex[0]),
+									static_cast<FLOAT>(m_point[1] + m_vertex[1])
 								),
 								m_palette.get_pBrush<Palette>(
 									[this](ID2D1Brush** ppBrush)->void {
