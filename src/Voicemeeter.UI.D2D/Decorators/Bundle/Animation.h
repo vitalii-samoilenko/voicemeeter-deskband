@@ -42,7 +42,6 @@ namespace Voicemeeter {
 								auto maxVertex = m_baseVertex < m_vertex;
 								m_vertex[maxVertex] = m_baseVertex[maxVertex];
 								OnFrame();
-								m_velocity[m_vertex == 0LL || m_vertex == m_baseVertex] = 0LL;
 							}
 							TBundle::Execute();
 							if (m_transition = (m_velocity != 0LL).max()) {

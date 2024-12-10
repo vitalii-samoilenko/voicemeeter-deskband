@@ -44,6 +44,7 @@ namespace Voicemeeter {
 
 						protected:
 							virtual void OnFrame() override {
+								::std::valarray<long long>& velocity{ Base::get_Velocity() };
 								const ::std::valarray<long long>& vertex{ Base::get_AnimationSize() };
 								const ::std::valarray<long long>& baseVertex{ Base::get_AnimationBaseSize() };
 								FLOAT alpha{ static_cast<FLOAT>(vertex[active]) / baseVertex[active] };
@@ -58,6 +59,7 @@ namespace Voicemeeter {
 											.PrimaryActive,
 									alpha);
 								TBundle::set_Color(result);
+								velocity[vertex == 0LL || vertex == baseVertex] = 0LL;
 							};
 						};
 					}

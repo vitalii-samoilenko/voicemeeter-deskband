@@ -55,7 +55,7 @@ namespace Voicemeeter {
 
 						protected:
 							virtual void OnFrame() override {
-								const ::std::valarray<long long>& velocity{ Base::get_Velocity() };
+								::std::valarray<long long>& velocity{ Base::get_Velocity() };
 								const ::std::valarray<long long>& vertex{ Base::get_AnimationSize() };
 								const ::std::valarray<long long>& baseVertex{ Base::get_AnimationBaseSize() };
 								::D2D1::ColorF result{
@@ -102,6 +102,7 @@ namespace Voicemeeter {
 								if (0 < velocity[label] * (vertex[label] - mid)) {
 									TBundle::set_Label(m_to);
 								}
+								velocity[vertex == 0LL || vertex == baseVertex] = 0LL;
 							};
 
 						private:
