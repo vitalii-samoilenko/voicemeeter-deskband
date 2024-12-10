@@ -29,7 +29,7 @@ namespace Voicemeeter {
 
 				public:
 					template<typename... Args>
-					explicit Knob(
+					Knob(
 						Trackers::Input& inputTracker,
 						Trackers::Focus& focusTracker,
 						::Environment::ITimer& timer,

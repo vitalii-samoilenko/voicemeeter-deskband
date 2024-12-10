@@ -21,7 +21,7 @@ namespace Windows {
 		};
 
 		virtual void Set(::std::chrono::milliseconds duration, const ::std::function<bool()>& callback) override;
-		virtual void Elapse();
+		virtual void Elapse() override;
 
 	private:
 		HWND m_hWnd;

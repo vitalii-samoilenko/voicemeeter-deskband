@@ -12,7 +12,7 @@ namespace Voicemeeter {
 							::std::valarray<double> result{ src / dst };
 							result = result.min();
 							return result;
-						}
+						};
 					};
 				}
 			}

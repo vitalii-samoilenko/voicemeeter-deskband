@@ -10,7 +10,7 @@ namespace Voicemeeter {
 					struct Stretch {
 						inline ::std::valarray<double> operator()(const ::std::valarray<double>& dst, const ::std::valarray<double>& src) const {
 							return src / dst;
-						}
+						};
 					};
 				}
 			}

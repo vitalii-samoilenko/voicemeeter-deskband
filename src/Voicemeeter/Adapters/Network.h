@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 
 #include "../Mixer.h"
 
@@ -22,8 +23,13 @@ namespace Voicemeeter {
 				"TMixer must be derived from Mixer");
 
 		public:
-			using TMixer::TMixer;
+			template<typename... Args>
+			inline explicit Network(
+				Args&& ...args
+			) : TMixer{ ::std::forward<Args>(args)... }
+			  , m_vban{ false } {
 
+			};
 			Network() = delete;
 			Network(const Network&) = delete;
 			Network(Network&&) = delete;

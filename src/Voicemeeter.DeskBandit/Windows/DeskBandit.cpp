@@ -163,9 +163,9 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					.WithIgnoredStrip(5);
 			}
 			pWnd->m_pScene = builder
-				.WithTheme(::Voicemeeter::UI::D2D::Graphics::Theme::Light())
-				.WithMarginPosition({ 4., 4. })
-				.WithMarginSize({ 4., 4. })
+				//.WithTheme(::Voicemeeter::UI::D2D::Graphics::Theme::Light())
+				//.WithMarginPosition({ 4., 4. })
+				//.WithMarginSize({ 4., 4. })
 				.Build();
 			pWnd->m_pScene->Rescale({
 				static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
@@ -173,12 +173,12 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			});
 			const ::std::valarray<double>& vertex{ pWnd->m_pScene->get_Size() };
 			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(::std::ceil(vertex[0]));
-			::Windows::wSetWindowPos(
-				pWnd->m_hWnd, NULL,
-				pWnd->m_rc.left, pWnd->m_rc.top,
-				pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
-				0U
-			);
+			//::Windows::wSetWindowPos(
+			//	pWnd->m_hWnd, NULL,
+			//	pWnd->m_rc.left, pWnd->m_rc.top,
+			//	pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
+			//	0U
+			//);
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_DESTROY: {

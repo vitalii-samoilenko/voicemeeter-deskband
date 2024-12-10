@@ -9,7 +9,7 @@ namespace Voicemeeter {
 				namespace Bundles {
 					class Knob : public Bundle {
 					public:
-						explicit Knob(
+						Knob(
 							Graphics::Palette& palette,
 							const ::std::wstring& label
 						);

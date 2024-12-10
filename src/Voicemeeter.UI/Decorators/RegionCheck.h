@@ -17,7 +17,7 @@ namespace Voicemeeter {
 
 			public:
 				template<typename... Args>
-				RegionCheck(
+				explicit RegionCheck(
 					Trackers::Input& inputTracker,
 					Args&&... args
 				) : TComponent{ ::std::forward<Args>(args)... }

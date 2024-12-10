@@ -8,6 +8,8 @@ Bundle::Bundle(
 	Palette& palette,
 	const ::std::valarray<double>& baseVertex
 ) : m_palette{ palette }
+  , m_point{ 0., 0. }
+  , m_vertex{ baseVertex }
   , m_baseVertex{ baseVertex } {
 
 }

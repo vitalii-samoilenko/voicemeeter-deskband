@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 
 #include "../Channel.h"
 
@@ -17,8 +18,13 @@ namespace Voicemeeter {
 				"TChannel must be move constructible");
 
 		public:
-			using TChannel::TChannel;
+			template<typename... Args>
+			inline explicit Mute(
+				Args&& ...args
+			) : TChannel{ ::std::forward<Args>(args)... }
+			  , m_mute{ false } {
 
+			};
 			Mute() = delete;
 			Mute(const Mute&) = delete;
 			inline Mute(Mute&&) = default;

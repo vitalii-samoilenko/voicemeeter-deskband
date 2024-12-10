@@ -28,7 +28,10 @@ Palette::Palette(
   , m_cpTextFormat{}
   , m_cpTextLayout{}
   , m_cpBrush{}
-  , m_cpGeometry{} {
+  , m_cpGeometry{}
+  , m_now{}
+  , m_past{}
+  , m_queue{} {
 	::Windows::ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");

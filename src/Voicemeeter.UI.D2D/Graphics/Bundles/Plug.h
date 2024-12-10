@@ -9,7 +9,7 @@ namespace Voicemeeter {
 				namespace Bundles {
 					class Plug : public Bundle {
 					public:
-						explicit Plug(
+						Plug(
 							Graphics::Palette& palette,
 							const ::std::wstring& label
 						);

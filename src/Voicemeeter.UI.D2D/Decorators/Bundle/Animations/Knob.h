@@ -38,7 +38,7 @@ namespace Voicemeeter {
 									200LL * 1000LL * 1000LL
 								}, ::std::forward<Args>(args)... }
 							  , m_to{}
-							  , m_flip{} {
+							  , m_flip{ false } {
 
 							};
 							Knob() = delete;
