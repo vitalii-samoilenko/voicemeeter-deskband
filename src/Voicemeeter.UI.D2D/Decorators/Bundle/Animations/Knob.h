@@ -37,8 +37,7 @@ namespace Voicemeeter {
 									200LL * 1000LL * 1000LL, 200LL * 1000LL * 1000LL,
 									200LL * 1000LL * 1000LL
 								}, ::std::forward<Args>(args)... }
-							  , m_to{}
-							  , m_flip{ false } {
+							  , m_to{} {
 
 							};
 							Knob() = delete;
@@ -52,7 +51,6 @@ namespace Voicemeeter {
 
 							inline void set_To(const ::std::wstring& value) {
 								m_to = value;
-								m_flip = true;
 							};
 
 						protected:
@@ -101,15 +99,13 @@ namespace Voicemeeter {
 								long long mid{ baseVertex[label] / 2 };
 								result.a = ::std::abs(static_cast<FLOAT>(vertex[label] - mid) / mid);
 								TBundle::set_LabelColor(result);
-								if (m_flip && 0 < velocity[label] * (vertex[label] - mid)) {
+								if (0 < velocity[label] * (vertex[label] - mid)) {
 									TBundle::set_Label(m_to);
-									m_flip = false;
 								}
 							};
 
 						private:
 							::std::wstring m_to;
-							bool m_flip;
 						};
 					}
 				}
