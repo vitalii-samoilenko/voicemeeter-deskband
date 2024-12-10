@@ -1,11 +1,9 @@
 #pragma once
 
-#include <chrono>
 #include <type_traits>
-#include <utility>
 
-#include "../../../../Graphics/Glyphs/Vban.h"
-#include "../Animation.h"
+#include "../../../../Decorators/Bundle/Animations/Vban.h"
+#include "../../../../Graphics/Glyph.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -14,29 +12,22 @@ namespace Voicemeeter {
 				namespace Glyph {
 					namespace Updates {
 						namespace Animations {
-							template<typename TVban>
-							class Vban : public Animation<UI::Policies::Size::Scales::Stretch, TVban, int> {
+							template<typename TBundle, typename TAnimation, typename TGlyph>
+							class Vban : public TGlyph {
 								static_assert(
-									::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
-									"TVban must be derived from Vban");
+									::std::is_base_of_v<Decorators::Bundle::Animations::Vban<TBundle>, TAnimation>,
+									"TAnimation must be derived from Vban");
+								static_assert(
+									::std::is_base_of_v<Graphics::Glyph<TAnimation>, TGlyph>,
+									"TGlyph must be derived from Glyph");
 
 								enum animation_vector : size_t {
 									active = 0
 								};
 
-								using Animation = Animation<UI::Policies::Size::Scales::Stretch, TVban, int>;
-
 							public:
-								template<typename... Args>
-								explicit Vban(
-									Args&& ...args
-								) : Animation{{
-										200LL * 1000LL * 1000LL
-									}, ::std::forward<Args>(args)... } {
-									TVban::set_Color(TVban::get_Palette()
-										.get_Theme()
-											.Inactive);
-								};
+								using TGlyph::TGlyph;
+
 								Vban() = delete;
 								Vban(const Vban&) = delete;
 								Vban(Vban&&) = delete;
@@ -47,33 +38,14 @@ namespace Voicemeeter {
 								Vban& operator=(Vban&&) = delete;
 
 								inline void Update(const int& state) {
-									Animation::get_Velocity()[active] = state
-										? 1LL
-										: -1LL;
-									TVban::get_DirtyTracker()
-										.set_Dirty(*this, true);
-								};
-
-							protected:
-								virtual void OnFrame() override {
-									const ::std::valarray<long long>& vertex{ Animation::get_AnimationSize() };
-									const ::std::valarray<long long>& baseVertex{ Animation::get_AnimationBaseSize() };
-									FLOAT alpha{ static_cast<FLOAT>(vertex[active]) / baseVertex[active] };
-									const ::D2D1::ColorF& from{
-										TVban::get_Palette()
-											.get_Theme()
-												.Inactive
-									};
-									const ::D2D1::ColorF& to{
-										TVban::get_Palette()
-											.get_Theme()
-												.SecondaryActive
-									};
-									TVban::set_Color(::D2D1::ColorF(
-										from.r * (1.F - alpha) + to.r * alpha,
-										from.g * (1.F - alpha) + to.g * alpha,
-										from.b * (1.F - alpha) + to.b * alpha
-									));
+									TGlyph::get_Bundle()
+										.get_Velocity()
+											[active] = state
+												? 1LL
+												: -1LL;
+									TGlyph::get_Bundle()
+										.get_Palette()
+											.Queue(TGlyph::get_Bundle());
 								};
 							};
 						}

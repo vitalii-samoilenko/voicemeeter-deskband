@@ -1,20 +1,30 @@
+#include "Windows/Wrappers.h"
+
 #include "Knob.h"
 
-using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
+using namespace Voicemeeter::UI::D2D::Graphics::Bundles;
 
 Knob::Knob(
 	Graphics::Palette& palette,
-	Trackers::Dirty& dirtyTracker
-) : Glyph{ palette, dirtyTracker, { 48., 48. } }
-  , m_label{}
-  , m_frameColor{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }
-  , m_labelColor{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) }
-  , m_angle{} {
+	const ::std::wstring& label
+) : Bundle{ palette, { 48., 48. } }
+  , m_label{ label }
+  , m_frameColor{
+		get_Palette()
+			.get_Theme()
+				.Inactive
+	}
+  , m_labelColor{
+		get_Palette()
+			.get_Theme()
+				.Inactive
+	}
+  , m_angle{ 90.F } {
 
 }
 
-void Knob::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
-	Glyph::Redraw(point, vertex);
+void Knob::Execute() {
+	Bundle::Execute();
 
 	struct Frame {};
 	struct Label {};

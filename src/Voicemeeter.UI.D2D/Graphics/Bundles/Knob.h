@@ -1,19 +1,17 @@
 #pragma once
 
-#include "Voicemeeter.UI/Policies/Size/Scales/Stretch.h"
-
-#include "../Glyph.h"
+#include "../Palette.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Graphics {
-				namespace Glyphs {
-					class Knob : public Glyph<UI::Policies::Size::Scales::Stretch> {
+				namespace Bundles {
+					class Knob : public Bundle {
 					public:
-						Knob(
+						explicit Knob(
 							Graphics::Palette& palette,
-							Trackers::Dirty& dirtyTracker
+							const ::std::wstring& label
 						);
 						Knob() = delete;
 						Knob(const Knob&) = delete;
@@ -37,7 +35,7 @@ namespace Voicemeeter {
 							m_angle = value;
 						};
 
-						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
+						virtual void Execute() override;
 
 					private:
 						::std::wstring m_label;

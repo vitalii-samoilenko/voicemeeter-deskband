@@ -25,12 +25,6 @@
     <Filter Include="Header Files\Policies">
       <UniqueIdentifier>{6901b58c-e543-4994-8652-080a1b9ae71e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphics\Glyphs">
-      <UniqueIdentifier>{c5ebd6cb-4e98-4010-826b-d36b56b4ab5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\Glyphs">
-      <UniqueIdentifier>{b214bcc1-530c-42c5-be27-07a6fcbda411}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Controls">
       <UniqueIdentifier>{445440fa-063e-4340-a0ae-b39512f87398}</UniqueIdentifier>
     </Filter>
@@ -61,11 +55,17 @@
     <Filter Include="Header Files\Adapters\Glyph\Updates\Animations">
       <UniqueIdentifier>{00ae0697-e28d-4c4a-9660-9ce036e8f5d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Trackers">
-      <UniqueIdentifier>{8193cafd-c60f-474e-91d5-fbb986693837}</UniqueIdentifier>
+    <Filter Include="Header Files\Graphics\Bundles">
+      <UniqueIdentifier>{25b59aef-f412-4919-9f12-7b03c3764661}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Trackers">
-      <UniqueIdentifier>{b4472a8f-1f24-4e3c-8e4e-08723168b115}</UniqueIdentifier>
+    <Filter Include="Source Files\Graphics\Bundles">
+      <UniqueIdentifier>{5e4bd19b-7630-4f0f-a2ff-f9fe0e785c46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Decorators\Bundle">
+      <UniqueIdentifier>{adee7fca-53f0-4fbf-b7b5-8ab294d0495a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Decorators\Bundle\Animations">
+      <UniqueIdentifier>{0db5eefe-df7b-4891-ae8b-2c26f49905a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,20 +75,11 @@
     <ClInclude Include="Graphics\Glyph.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Plug.h">
-      <Filter>Header Files\Graphics\Glyphs</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Vban.h">
-      <Filter>Header Files\Graphics\Glyphs</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Theme.h">
       <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Glyphs\Knob.h">
-      <Filter>Header Files\Graphics\Glyphs</Filter>
     </ClInclude>
     <ClInclude Include="Controls\Knob.h">
       <Filter>Header Files\Controls</Filter>
@@ -108,14 +99,8 @@
     <ClInclude Include="Decorators\Interactivity\Vban.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Passthrough.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\State\Changes\Knob.h">
       <Filter>Header Files\Policies\State\Changes</Filter>
-    </ClInclude>
-    <ClInclude Include="Adapters\Glyph\Updates\Animation.h">
-      <Filter>Header Files\Adapters\Glyph\Updates</Filter>
     </ClInclude>
     <ClInclude Include="Adapters\Glyph\Updates\Animations\Plug.h">
       <Filter>Header Files\Adapters\Glyph\Updates\Animations</Filter>
@@ -144,11 +129,32 @@
     <ClInclude Include="Policies\Glyph\Updates\Vban.h">
       <Filter>Header Files\Policies\Glyph\Updates</Filter>
     </ClInclude>
-    <ClInclude Include="Trackers\Dirty.h">
-      <Filter>Header Files\Trackers</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Palette.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Bundles\Knob.h">
+      <Filter>Header Files\Graphics\Bundles</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Bundles\Plug.h">
+      <Filter>Header Files\Graphics\Bundles</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Bundles\Vban.h">
+      <Filter>Header Files\Graphics\Bundles</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Bundle\Animation.h">
+      <Filter>Header Files\Decorators\Bundle</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Bundle\Animations\Knob.h">
+      <Filter>Header Files\Decorators\Bundle\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Policies\Glyph\Updates\Passthrough.h">
+      <Filter>Header Files\Policies\Glyph\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Bundle\Animations\Plug.h">
+      <Filter>Header Files\Decorators\Bundle\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Decorators\Bundle\Animations\Vban.h">
+      <Filter>Header Files\Decorators\Bundle\Animations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,17 +167,17 @@
     <ClCompile Include="Graphics\Palette.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Glyphs\Knob.cpp">
-      <Filter>Source Files\Graphics\Glyphs</Filter>
+    <ClCompile Include="Graphics\Bundle.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Glyphs\Plug.cpp">
-      <Filter>Source Files\Graphics\Glyphs</Filter>
+    <ClCompile Include="Graphics\Bundles\Knob.cpp">
+      <Filter>Source Files\Graphics\Bundles</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Glyphs\Vban.cpp">
-      <Filter>Source Files\Graphics\Glyphs</Filter>
+    <ClCompile Include="Graphics\Bundles\Plug.cpp">
+      <Filter>Source Files\Graphics\Bundles</Filter>
     </ClCompile>
-    <ClCompile Include="Trackers\Dirty.cpp">
-      <Filter>Source Files\Trackers</Filter>
+    <ClCompile Include="Graphics\Bundles\Vban.cpp">
+      <Filter>Source Files\Graphics\Bundles</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

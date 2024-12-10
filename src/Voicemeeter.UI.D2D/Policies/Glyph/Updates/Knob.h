@@ -4,7 +4,7 @@
 
 #include "Voicemeeter.UI/States/Knob.h"
 
-#include "../../../Graphics/Glyphs/Knob.h"
+#include "../../../Graphics/Bundles/Knob.h"
 #include "Passthrough.h"
 
 namespace Voicemeeter {
@@ -13,11 +13,11 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TKnob,
+						template<typename TBundle, typename TGlyph,
 							::std::enable_if_t<
-								::std::is_base_of_v<Graphics::Glyphs::Knob, TKnob>,
+								::std::is_base_of_v<Graphics::Bundles::Knob, TBundle>,
 								bool> = true>
-						using Knob = Passthrough<UI::Policies::Size::Scales::Stretch, TKnob, States::Knob>;
+						using Knob = Passthrough<TBundle, TGlyph, States::Knob>;
 					}
 				}
 			}

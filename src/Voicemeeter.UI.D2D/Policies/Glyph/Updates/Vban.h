@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "../../../Graphics/Glyphs/Vban.h"
+#include "../../../Graphics/Bundles/Vban.h"
 #include "Passthrough.h"
 
 namespace Voicemeeter {
@@ -11,11 +11,11 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TVban,
+						template<typename TBundle, typename TGlyph,
 							::std::enable_if_t<
-								::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
+								::std::is_base_of_v<Graphics::Bundles::Vban, TBundle>,
 								bool> = true>
-						using Vban = Passthrough<UI::Policies::Size::Scales::Stretch, TVban, int>;
+						using Vban = Passthrough<TBundle, TGlyph, int>;
 					}
 				}
 			}

@@ -1,20 +1,27 @@
-#include "Vban.h"
+#include "Windows/Wrappers.h"
 
-using namespace Voicemeeter::UI::D2D::Graphics::Glyphs;
+#include "Plug.h"
 
-Vban::Vban(
+using namespace Voicemeeter::UI::D2D::Graphics::Bundles;
+
+Plug::Plug(
 	Graphics::Palette& palette,
-	Trackers::Dirty& dirtyTracker
-) : Glyph{ palette, dirtyTracker, { 39., 22. } }
-  , m_color{ ::D2D1::ColorF(0.F, 0.F, 0.F, 0.F) } {
+	const ::std::wstring& label
+) : Bundle{ palette, { 41., 19. } }
+  , m_label{ label }
+  , m_color{
+		get_Palette()
+			.get_Theme()
+				.Inactive
+  } {
 
 }
 
-void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
-	Glyph::Redraw(point, vertex);
+void Plug::Execute() {
+	Bundle::Execute();
 
 	struct Frame {};
-	struct FrameSide {};
+	struct Triangle {};
 
 	ID2D1SolidColorBrush* pBrush{
 		static_cast<ID2D1SolidColorBrush*>(
@@ -36,38 +43,58 @@ void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 		get_Palette()
 			.get_pGeometry<Frame>(
 				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-					::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
+					::Microsoft::WRL::ComPtr<ID2D1RoundedRectangleGeometry> pRectangle{ nullptr };
 					::Windows::ThrowIfFailed(get_Palette()
 						.get_pD2dFactory()
-							->CreateRectangleGeometry(
-								::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),
+							->CreateRoundedRectangleGeometry(
+								::D2D1::RoundedRect(::D2D1::RectF(0.75F, 0.75F, 40.25F, 18.25F), 6.25F, 6.25F),
 								&pRectangle
 					), "Rectangle creation failed");
 
 					::Windows::ThrowIfFailed(get_Palette()
 						.get_pD2dDeviceContext()
 							->CreateStrokedGeometryRealization(
-								pRectangle.Get(), flatteringTolerance, 1.F, nullptr,
+								pRectangle.Get(), flatteringTolerance, 1.5F, nullptr,
 								ppGeometry
 					), "Geometry creation failed");
 				})
 	};
-	ID2D1GeometryRealization* pFrameSide{
+	ID2D1GeometryRealization* pTriangle{
 		get_Palette()
-			.get_pGeometry<FrameSide>(
+			.get_pGeometry<Triangle>(
 				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-					::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
+					::Microsoft::WRL::ComPtr<ID2D1PathGeometry> pPath{ nullptr };
 					::Windows::ThrowIfFailed(get_Palette()
 						.get_pD2dFactory()
-							->CreateRectangleGeometry(
-								::D2D1::RectF(0.F, 0.F, 7.5F, 22.F),
-								&pRectangle
-					), "Rectangle creation failed");
+							->CreatePathGeometry(
+								&pPath
+					), "Path creation failed");
+					::Microsoft::WRL::ComPtr<ID2D1GeometrySink> pSink{ nullptr };
+					::Windows::ThrowIfFailed(pPath->Open(
+						&pSink
+					), "Path initialization failed");
+
+					pSink->BeginFigure(
+						::D2D1::Point2F(7.F, 3.5F),
+						D2D1_FIGURE_BEGIN_FILLED
+					);
+					pSink->AddLine(
+						::D2D1::Point2F(13.F, 9.F)
+					);
+					pSink->AddLine(
+						::D2D1::Point2F(7.F, 15.5F)
+					);
+					pSink->EndFigure(
+						D2D1_FIGURE_END_CLOSED
+					);
+
+					::Windows::ThrowIfFailed(pSink->Close(
+					), "Path finalization failed");
 
 					::Windows::ThrowIfFailed(get_Palette()
 						.get_pD2dDeviceContext()
 							->CreateFilledGeometryRealization(
-								pRectangle.Get(), flatteringTolerance,
+								pPath.Get(), flatteringTolerance,
 								ppGeometry
 					), "Geometry creation failed");
 				})
@@ -75,7 +102,7 @@ void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 	IDWriteTextLayout* pLayout{
 		get_Palette()
 			.get_pTextLayout(
-				L"V",
+				m_label,
 				get_Palette()
 					.get_Theme()
 						.FontFamily)
@@ -92,30 +119,13 @@ void Vban::Redraw(const ::std::valarray<double>& point, const ::std::valarray<do
 				pBrush);
 	get_Palette()
 		.get_pD2dDeviceContext()
+			->DrawGeometryRealization(
+				pTriangle,
+				pBrush);
+	get_Palette()
+		.get_pD2dDeviceContext()
 			->DrawTextLayout(
-				::D2D1::Point2F((39.F - metrics.width) / 2, (22.F - metrics.height) / 2),
+				::D2D1::Point2F(34.F - metrics.width, (19.F - metrics.height) / 2),
 				pLayout,
 				pBrush);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pFrameSide,
-				pBrush);
-	D2D1_MATRIX_3X2_F base{};
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->GetTransform(&base);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->SetTransform(
-				::D2D1::Matrix3x2F::Translation(31.5F, 0.F)
-				* base);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pFrameSide,
-				pBrush);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->SetTransform(base);
-};
+}

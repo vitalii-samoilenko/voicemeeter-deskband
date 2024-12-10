@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
 #include <type_traits>
-#include <utility>
 
 #include "Voicemeeter.UI/States/Knob.h"
 
-#include "../../../Graphics/Glyphs/Knob.h"
+#include "../../../Graphics/Bundles/Knob.h"
+#include "../../../Graphics/Glyph.h"
+#include "../../../Policies/State/Changes/Knob.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -14,29 +14,18 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TKnob>
-						class Knob : public TKnob {
+						template<typename TBundle, typename TGlyph>
+						class Knob : public TGlyph {
 							static_assert(
-								::std::is_base_of_v<Graphics::Glyphs::Knob, TKnob>,
-								"TKnob must be derived from Knob");
+								::std::is_base_of_v<Graphics::Bundles::Knob, TBundle>,
+								"TBundle must be derived from Knob");
+							static_assert(
+								::std::is_base_of_v<Graphics::Glyph<TBundle>, TGlyph>,
+								"TGlyph must be derived from Glyph");
 
 						public:
-							template<typename... Args>
-							explicit Knob(
-								const ::std::wstring& label,
-								Args&& ...args
-							) : TKnob{ ::std::forward<Args>(args)... }
-							  , m_label{ label } {
-								TKnob::set_Label(m_label);
-								const ::D2D1::ColorF& color{
-									TKnob::get_Palette()
-										.get_Theme()
-											.Inactive
-								};
-								TKnob::set_FrameColor(color);
-								TKnob::set_LabelColor(color);
-								TKnob::set_Angle(90.F);
-							};
+							using TGlyph::TGlyph;
+
 							Knob() = delete;
 							Knob(const Knob&) = delete;
 							Knob(Knob&&) = delete;
@@ -47,11 +36,10 @@ namespace Voicemeeter {
 							Knob& operator=(Knob&&) = delete;
 
 							inline void Update(const States::Knob& state) {
-								TKnob::set_Label((state.hold
-									? ::std::to_wstring(::std::abs(
-										static_cast<int>(
-											::std::floor((state.gain - 9000) / 375.))))
-									: m_label));
+								TGlyph::get_Bundle()
+									.set_Label(state.hold
+										? Policies::State::Changes::Knob::ToLabel(state.gain)
+										: Policies::State::Changes::Knob::ToLabel(state.id));
 								int level{
 									(state.level.size()
 										? state.level.max()
@@ -59,42 +47,50 @@ namespace Voicemeeter {
 								};
 								const ::D2D1::ColorF& color{
 									(state.toggle
-										? TKnob::get_Palette()
-											.get_Theme()
-												.Warning
+										? TGlyph::get_Bundle()
+											.get_Palette()
+												.get_Theme()
+													.Warning
 										: state.hold
 											? 9000 < state.gain
-												? TKnob::get_Palette()
-													.get_Theme()
-														.Danger
-												: TKnob::get_Palette()
-													.get_Theme()
-														.PrimaryActive
-											: level < 5
-												? TKnob::get_Palette()
-													.get_Theme()
-														.Inactive
-												: level < 700
-													? TKnob::get_Palette()
+												? TGlyph::get_Bundle()
+													.get_Palette()
 														.get_Theme()
-															.EqualizerLow
+															.Danger
+												: TGlyph::get_Bundle()
+													.get_Palette()
+														.get_Theme()
+															.PrimaryActive
+											: level < 5
+												? TGlyph::get_Bundle()
+													.get_Palette()
+														.get_Theme()
+															.Inactive
+												: level < 700
+													? TGlyph::get_Bundle()
+														.get_Palette()
+															.get_Theme()
+																.EqualizerLow
 													: level < 10000
-														? TKnob::get_Palette()
-															.get_Theme()
-																.EqualizerMedium
-														: TKnob::get_Palette()
-															.get_Theme()
-																.EqualizerHigh)
+														? TGlyph::get_Bundle()
+															.get_Palette()
+																.get_Theme()
+																	.EqualizerMedium
+														: TGlyph::get_Bundle()
+															.get_Palette()
+																.get_Theme()
+																	.EqualizerHigh)
 								};
-								TKnob::set_FrameColor(color);
-								TKnob::set_LabelColor(color);
-								TKnob::set_Angle(state.gain / 100.F);
-								TKnob::get_DirtyTracker()
-									.set_Dirty(*this, true);
+								TGlyph::get_Bundle()
+									.set_FrameColor(color);
+								TGlyph::get_Bundle()
+									.set_LabelColor(color);
+								TGlyph::get_Bundle()
+									.set_Angle(state.gain / 100.F);
+								TGlyph::get_Bundle()
+									.get_Palette()
+										.Queue(TGlyph::get_Bundle());
 							};
-
-						private:
-							const ::std::wstring m_label;
 						};
 					}
 				}

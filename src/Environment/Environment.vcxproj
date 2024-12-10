@@ -189,7 +189,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="IDirtyTracker.h" />
     <ClInclude Include="IInputTracker.h" />
     <ClInclude Include="ITimer.h" />
   </ItemGroup>

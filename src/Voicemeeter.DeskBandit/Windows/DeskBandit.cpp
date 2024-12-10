@@ -12,7 +12,6 @@ using namespace ::Voicemeeter::Windows;
 
 static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter" };
 static constexpr DWORD STYLE{ WS_POPUP };
-static constexpr UINT WM_DIRTY{ WM_USER + 0U };
 
 static constexpr LRESULT OK{ 0 };
 
@@ -25,7 +24,7 @@ DeskBandit::DeskBandit(
   , m_hWnd{ NULL }
   , m_pDockTimer{ nullptr }
   , m_pCompositionTimer{ nullptr }
-  , m_pDirtyTimer{ nullptr }
+  , m_pRenderTimer{ nullptr }
   , m_pRemoteTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
@@ -72,9 +71,6 @@ void DeskBandit::Show(int nCmdShow) const {
 	);
 }
 
-void DeskBandit::SetDirty() {
-	::Windows::wPostMessageW(m_hWnd, WM_DIRTY, 0, 0);
-}
 void DeskBandit::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
@@ -132,29 +128,32 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					default:
 						return false;
 					}
-
 					::Windows::wSetWindowPos(
 						pWnd->m_hWnd, NULL,
 						pWnd->m_rc.left, pWnd->m_rc.top,
 						pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
 						0U
 					);
-
 					return true;
 				});
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pRenderTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ 1000 / 120 },
+				[pWnd]()->bool {
+					pWnd->m_pScene->Render();
+					return true;
+				});
 			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pDockTimer->get_Id(), pWnd->m_pDockTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
-			pWnd->m_lpTimer.emplace(pWnd->m_pDirtyTimer->get_Id(), pWnd->m_pDirtyTimer.get());
+			pWnd->m_lpTimer.emplace(pWnd->m_pRenderTimer->get_Id(), pWnd->m_pRenderTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
 			pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
 			::Voicemeeter::Clients::UI::D2D::Cherry builder{
 				hWnd,
-				*pWnd, *pWnd,
-				*pWnd->m_pCompositionTimer, *pWnd->m_pDirtyTimer,
+				*pWnd,
+				*pWnd->m_pCompositionTimer,
 				*pWnd->m_pMixer
 			};
 			if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
@@ -204,9 +203,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					} : pWnd->m_pScene->get_Size())
 			);
 			EndPaint(hWnd, &ps);
-		} return OK;
-		case WM_DIRTY: {
-			pWnd->m_pScene->Redraw();
 		} return OK;
 		case WM_LBUTTONDOWN: {
 			pWnd->m_pScene->MouseLDown({

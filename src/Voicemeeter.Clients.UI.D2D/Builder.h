@@ -11,7 +11,6 @@
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
-#include "Voicemeeter.UI.D2D/Trackers/Dirty.h"
 #include "Windows/Registry.h"
 
 namespace Voicemeeter {
@@ -27,16 +26,12 @@ namespace Voicemeeter {
 				public:
 					inline Builder(
 						HWND hWnd,
-						::Environment::IDirtyTracker& dirtyTracker,
 						::Environment::IInputTracker& inputTracker,
 						::Environment::ITimer& compositionTimer,
-						::Environment::ITimer& dirtyTimer,
 						TMixer& mixer
 					) : m_hWnd{ hWnd }
-					  , m_dirtyTracker{ dirtyTracker }
 					  , m_inputTracker{ inputTracker }
 					  , m_compositionTimer{ compositionTimer }
-					  , m_dirtyTimer{ dirtyTimer }
 					  , m_mixer{ mixer }
 					  , m_direction{ ::Voicemeeter::UI::Direction::Right }
 					  , m_cIgnoredStrip{}
@@ -85,9 +80,6 @@ namespace Voicemeeter {
 						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Palette> pPalette{
 							new ::Voicemeeter::UI::D2D::Graphics::Palette{ m_hWnd, m_theme }
 						};
-						::std::unique_ptr<::Voicemeeter::UI::D2D::Trackers::Dirty> pDirtyTracker{
-							new ::Voicemeeter::UI::D2D::Trackers::Dirty{ m_dirtyTracker, m_dirtyTimer }
-						};
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::Focus> pFocusTracker{
 							new ::Voicemeeter::UI::Trackers::Focus{}
 						};
@@ -100,13 +92,13 @@ namespace Voicemeeter {
 						::std::unique_ptr<::Voicemeeter::UI::IComponent> pComposition{
 							Compose(
 								*pPalette,
-								*pDirtyTracker, *pFocusTracker, *pInputTracker
+								*pFocusTracker, *pInputTracker
 							)
 						};
 						return ::std::unique_ptr<::Voicemeeter::UI::D2D::Scene>{
 							new ::Voicemeeter::UI::D2D::Scene{
 								pPalette,
-								pDirtyTracker, pInputTracker, pFocusTracker,
+								pInputTracker, pFocusTracker,
 								pCanvas, pComposition
 							}
 						};
@@ -114,10 +106,8 @@ namespace Voicemeeter {
 
 				private:
 					HWND m_hWnd;
-					::Environment::IDirtyTracker& m_dirtyTracker;
 					::Environment::IInputTracker& m_inputTracker;
 					::Environment::ITimer& m_compositionTimer;
-					::Environment::ITimer& m_dirtyTimer;
 					TMixer& m_mixer;
 					::Voicemeeter::UI::Direction m_direction;
 					::std::unordered_set<size_t> m_cIgnoredStrip;
@@ -182,7 +172,6 @@ namespace Voicemeeter {
 					};
 					::std::unique_ptr<::Voicemeeter::UI::IComponent> Compose(
 						::Voicemeeter::UI::D2D::Graphics::Palette& palette,
-						::Voicemeeter::UI::D2D::Trackers::Dirty& dirtyTracker,
 						::Voicemeeter::UI::Trackers::Focus& focusTracker,
 						::Voicemeeter::UI::Trackers::Input& inputTracker
 					);

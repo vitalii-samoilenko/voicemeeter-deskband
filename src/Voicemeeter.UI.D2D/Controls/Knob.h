@@ -2,17 +2,15 @@
 
 #include "Voicemeeter.UI/Controls/Knob.h"
 
-#include "../Graphics/Glyphs/Knob.h"
 #include "../Policies/Glyph/Updates/Knob.h"
 #include "../Policies/State/Changes/Knob.h"
-
-using namespace ::Voicemeeter::UI::Controls;
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Controls {
 				template<
+					typename TBundle,
 					typename TGlyph,
 					typename TChangeNotify>
 				using Knob = UI::Controls::Knob<
@@ -20,7 +18,7 @@ namespace Voicemeeter {
 					TGlyph,
 					Policies::State::Changes::Knob::Set,
 					TChangeNotify,
-					Policies::Glyph::Updates::Knob<TGlyph>>;
+					Policies::Glyph::Updates::Knob<TBundle, TGlyph>>;
 			}
 		}
 	}

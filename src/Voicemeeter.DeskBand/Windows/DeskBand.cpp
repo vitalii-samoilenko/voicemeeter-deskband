@@ -21,7 +21,6 @@ static bool g_shutdown{ false };
 
 static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
 static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
-static constexpr UINT WM_DIRTY{ WM_USER + 0U };
 
 static constexpr LRESULT OK{ 0 };
 
@@ -37,7 +36,7 @@ DeskBand::DeskBand(
   , m_hWndParent{ NULL }
   , m_rc{ 0L, 0L, 370L, 30L }
   , m_pCompositionTimer{ nullptr }
-  , m_pDirtyTimer{ nullptr }
+  , m_pRenderTimer{ nullptr }
   , m_pRemoteTimer{ nullptr }
   , m_lpTimer{}
   , m_pMixer{ nullptr }
@@ -56,9 +55,6 @@ DeskBand::~DeskBand() {
 	InterlockedDecrement(&g_cDllRef);
 }
 
-void DeskBand::SetDirty() {
-	::Windows::wPostMessageW(m_hWnd, WM_DIRTY, 0, 0);
-}
 void DeskBand::EnableInputTrack() {
 	SetCapture(m_hWnd);
 }
@@ -384,17 +380,22 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd = reinterpret_cast<DeskBand*>(reinterpret_cast<LPCREATESTRUCTW>(lParam)->lpCreateParams);
 			pWnd->m_hWnd = hWnd;
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pDirtyTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pRenderTimer.reset(new ::Windows::Timer{ hWnd });
+			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ 1000 / 120 },
+				[pWnd]()->bool {
+					pWnd->m_pScene->Render();
+					return true;
+				});
 			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
-			pWnd->m_lpTimer.emplace(pWnd->m_pDirtyTimer->get_Id(), pWnd->m_pDirtyTimer.get());
+			pWnd->m_lpTimer.emplace(pWnd->m_pRenderTimer->get_Id(), pWnd->m_pRenderTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
 			pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
 			::Voicemeeter::Clients::UI::D2D::Cherry builder{
 				hWnd,
-				*pWnd, *pWnd,
-				*pWnd->m_pCompositionTimer, *pWnd->m_pDirtyTimer,
+				*pWnd,
+				*pWnd->m_pCompositionTimer,
 				*pWnd->m_pMixer
 			};
 			if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
@@ -457,9 +458,6 @@ LRESULT CALLBACK DeskBand::WndProcW(
 				pWnd->m_pScene->get_Position(),
 				pWnd->m_pScene->get_Size()
 			);
-		} return OK;
-		case WM_DIRTY: {
-			pWnd->m_pScene->Redraw();
 		} return OK;
 		case WM_SIZE: {
 			pWnd->m_pScene->Rescale({

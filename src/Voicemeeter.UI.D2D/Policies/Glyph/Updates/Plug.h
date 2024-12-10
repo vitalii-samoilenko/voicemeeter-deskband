@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "../../../Graphics/Glyphs/Plug.h"
+#include "../../../Graphics/Bundles/Plug.h"
 #include "Passthrough.h"
 
 namespace Voicemeeter {
@@ -11,11 +11,11 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TPlug,
+						template<typename TBundle, typename TGlyph,
 							::std::enable_if_t<
-								::std::is_base_of_v<Graphics::Glyphs::Plug, TPlug>,
+								::std::is_base_of_v<Graphics::Bundles::Plug, TBundle>,
 								bool> = true>
-						using Plug = Passthrough<UI::Policies::Size::Scales::Stretch, TPlug, int>;
+						using Plug = Passthrough<TBundle, TGlyph, int>;
 					}
 				}
 			}

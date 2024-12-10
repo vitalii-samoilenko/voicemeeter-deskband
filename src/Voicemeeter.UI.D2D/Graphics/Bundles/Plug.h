@@ -1,19 +1,17 @@
 #pragma once
 
-#include "Voicemeeter.UI/Policies/Size/Scales/Stretch.h"
-
-#include "../Glyph.h"
+#include "../Palette.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Graphics {
-				namespace Glyphs {
-					class Plug : public Glyph<UI::Policies::Size::Scales::Stretch> {
+				namespace Bundles {
+					class Plug : public Bundle {
 					public:
-						Plug(
+						explicit Plug(
 							Graphics::Palette& palette,
-							Trackers::Dirty& dirtyTracker
+							const ::std::wstring& label
 						);
 						Plug() = delete;
 						Plug(const Plug&) = delete;
@@ -31,7 +29,7 @@ namespace Voicemeeter {
 							m_color = value;
 						};
 
-						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
+						virtual void Execute() override;
 
 					private:
 						::std::wstring m_label;

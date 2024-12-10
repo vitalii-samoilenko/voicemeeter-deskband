@@ -5,7 +5,6 @@
 using namespace ::Voicemeeter::Clients::Remote;
 
 static bool g_dirty{};
-static ::std::chrono::high_resolution_clock::time_point g_restart{};
 
 template<Type Remote>
 inline static ::std::string ToBusKey(size_t id);
@@ -233,7 +232,6 @@ void Cherry::Subscribe() const {
 					throw ::std::exception{ "Could not set VBAN" };
 				}
 				g_dirty = true;
-				g_restart = ::std::chrono::high_resolution_clock::now();
 			});
 	}
 	for (auto& input : m_mixer.get_PhysicalInput()) {
@@ -287,7 +285,6 @@ void Cherry::Update() const {
 	bool dirty{
 		remoteDirty
 		&& !g_dirty
-		&& ::std::chrono::milliseconds{ 2000 } < ::std::chrono::duration_cast<::std::chrono::milliseconds>(::std::chrono::high_resolution_clock::now() - g_restart)
 	};
 	g_dirty = false;
 	float value{ 0.F };

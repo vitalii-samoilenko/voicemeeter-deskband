@@ -1,10 +1,9 @@
 #pragma once
 
-#include <string>
 #include <type_traits>
-#include <utility>
 
-#include "../../../Graphics/Glyphs/Plug.h"
+#include "../../../Graphics/Bundles/Plug.h"
+#include "../../../Graphics/Glyph.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -12,23 +11,18 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TPlug>
-						class Plug : public TPlug {
+						template<typename TBundle, typename TGlyph>
+						class Plug : public TGlyph {
 							static_assert(
-								::std::is_base_of_v<Graphics::Glyphs::Plug, TPlug>,
-								"TPlug must be derived from Plug");
+								::std::is_base_of_v<Graphics::Bundles::Plug, TBundle>,
+								"TBundle must be derived from Plug");
+							static_assert(
+								::std::is_base_of_v<Graphics::Glyph<TBundle>, TGlyph>,
+								"TGlyph must be derived from Glyph");
 
 						public:
-							template<typename... Args>
-							explicit Plug(
-								const ::std::wstring& label,
-								Args&& ...args
-							) : TPlug{ ::std::forward<Args>(args)... } {
-								TPlug::set_Label(label);
-								TPlug::set_Color(TPlug::get_Palette()
-									.get_Theme()
-										.Inactive);
-							};
+							using TGlyph::TGlyph;
+
 							Plug() = delete;
 							Plug(const Plug&) = delete;
 							Plug(Plug&&) = delete;
@@ -39,15 +33,19 @@ namespace Voicemeeter {
 							Plug& operator=(Plug&&) = delete;
 
 							inline void Update(const int& state) {
-								TPlug::set_Color((state
-									? TPlug::get_Palette()
-										.get_Theme()
-											.PrimaryActive
-									: TPlug::get_Palette()
-										.get_Theme()
-											.Inactive));
-								TPlug::get_DirtyTracker()
-									.set_Dirty(*this, true);
+								TGlyph::get_Bundle()
+									.set_Color((state
+										? TGlyph::get_Bundle()
+											.get_Palette()
+												.get_Theme()
+													.PrimaryActive
+										: TGlyph::get_Bundle()
+											.get_Palette()
+												.get_Theme()
+													.Inactive));
+								TGlyph::get_Bundle()
+									.get_Palette()
+										.Queue(TGlyph::get_Bundle());
 							};
 						};
 					}

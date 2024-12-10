@@ -3,11 +3,8 @@
 #include "Voicemeeter.UI/Decorators/Interactivity/Knob.h"
 
 #include "../../Controls/Knob.h"
-#include "../../Graphics/Glyphs/Knob.h"
 #include "../../Policies/Glyph/Updates/Knob.h"
 #include "../../Policies/State/Changes/Knob.h"
-
-using namespace Voicemeeter::UI::Decorators::Interactivity;
 
 namespace Voicemeeter {
 	namespace UI {
@@ -16,6 +13,7 @@ namespace Voicemeeter {
 				namespace Interactivity {
 					template<
 						UI::Direction Direction,
+						typename TBundle,
 						typename TGlyph,
 						typename TChangeNotify>
 					using Knob = UI::Decorators::Interactivity::Knob<
@@ -24,8 +22,9 @@ namespace Voicemeeter {
 						TGlyph,
 						Policies::State::Changes::Knob::Set,
 						TChangeNotify,
-						Policies::Glyph::Updates::Knob<TGlyph>,
+						Policies::Glyph::Updates::Knob<TBundle, TGlyph>,
 						Controls::Knob<
+							TBundle,
 							TGlyph,
 							TChangeNotify>>;
 				}

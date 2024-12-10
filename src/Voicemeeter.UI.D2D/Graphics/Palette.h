@@ -1,9 +1,12 @@
 #pragma once
 
+#include <chrono>
 #include <string>
 #include <typeinfo>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <valarray>
 
 #include <d2d1_3.h>
 #include <dcomp.h>
@@ -19,6 +22,8 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Graphics {
+				class Bundle;
+
 				class Palette final {
 				public:
 					Palette(
@@ -77,6 +82,26 @@ namespace Voicemeeter {
 						}
 						return pGeometry.Get();
 					};
+					inline ::std::chrono::nanoseconds get_Elapsed() const {
+						return ::std::chrono::duration_cast<::std::chrono::nanoseconds>(m_now - m_past);
+					};
+
+					inline void Tick() {
+						m_past = m_now;
+						m_now = ::std::chrono::high_resolution_clock::now();
+					};
+					inline void Queue(Bundle& bundle) {
+						m_queue.insert(&bundle);
+					};
+					inline ::std::unordered_set<Bundle*> Dequeue() {
+						return ::std::move(m_queue);
+					};
+
+					static inline void Blend(::D2D1::ColorF& dst, const ::D2D1::ColorF& src, FLOAT alpha) {
+						dst.r = dst.r * (1.F - alpha) + src.r * alpha;
+						dst.g = dst.g * (1.F - alpha) + src.g * alpha;
+						dst.b = dst.b * (1.F - alpha) + src.b * alpha;
+					};
 
 				private:
 					const Theme m_theme;
@@ -90,6 +115,54 @@ namespace Voicemeeter {
 					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
 					mutable ::std::unordered_map<const type_info*, ::Microsoft::WRL::ComPtr<ID2D1Brush>> m_cpBrush;
 					mutable ::std::unordered_map<const type_info*, ::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>> m_cpGeometry;
+					::std::chrono::high_resolution_clock::time_point m_now;
+					::std::chrono::high_resolution_clock::time_point m_past;
+					::std::unordered_set<Bundle*> m_queue;
+				};
+
+				class Bundle {
+				public:
+					Bundle() = delete;
+					Bundle(const Bundle&) = delete;
+					Bundle(Bundle&&) = delete;
+
+					~Bundle() = default;
+
+					Bundle& operator=(const Bundle&) = delete;
+					Bundle& operator=(Bundle&&) = delete;
+
+					inline Palette& get_Palette() {
+						return m_palette;
+					};
+					inline const ::std::valarray<double>& get_Position() const {
+						return m_point;
+					};
+					inline void set_Position(const ::std::valarray<double>& value) {
+						m_point = value;
+					};
+					inline const ::std::valarray<double>& get_Size() const {
+						return m_vertex;
+					};
+					inline void set_Size(const ::std::valarray<double>& value) {
+						m_vertex = value;
+					};
+					inline const ::std::valarray<double>& get_BaseSize() const {
+						return m_baseVertex;
+					};
+
+					virtual void Execute();
+
+				protected:
+					Bundle(
+						Palette& palette,
+						const ::std::valarray<double>& baseVertex
+					);
+
+				private:
+					Palette& m_palette;
+					::std::valarray<double> m_point;
+					::std::valarray<double> m_vertex;
+					const ::std::valarray<double> m_baseVertex;
 				};
 			}
 		}

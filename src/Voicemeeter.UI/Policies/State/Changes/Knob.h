@@ -61,6 +61,10 @@ namespace Voicemeeter {
 						struct Set {
 							inline bool operator()(States::Knob& dst, States::Knob& src) const {
 								bool result{ false };
+								if (dst.id != src.id) {
+									dst.id = src.id;
+									result = true;
+								}
 								if (dst.gain != src.gain) {
 									if (Max < src.gain) {
 										if (Max != dst.gain) {

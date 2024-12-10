@@ -202,7 +202,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Adapters\Glyph\Updates\Animation.h" />
     <ClInclude Include="Adapters\Glyph\Updates\Animations\Knob.h" />
     <ClInclude Include="Adapters\Glyph\Updates\Animations\Plug.h" />
     <ClInclude Include="Adapters\Glyph\Updates\Animations\Vban.h" />
@@ -212,14 +211,18 @@
     <ClInclude Include="Controls\Knob.h" />
     <ClInclude Include="Controls\Plug.h" />
     <ClInclude Include="Controls\Vban.h" />
+    <ClInclude Include="Decorators\Bundle\Animation.h" />
+    <ClInclude Include="Decorators\Bundle\Animations\Knob.h" />
+    <ClInclude Include="Decorators\Bundle\Animations\Plug.h" />
+    <ClInclude Include="Decorators\Bundle\Animations\Vban.h" />
     <ClInclude Include="Decorators\Interactivity\Knob.h" />
     <ClInclude Include="Decorators\Interactivity\Plug.h" />
     <ClInclude Include="Decorators\Interactivity\Vban.h" />
+    <ClInclude Include="Graphics\Bundles\Knob.h" />
+    <ClInclude Include="Graphics\Bundles\Plug.h" />
+    <ClInclude Include="Graphics\Bundles\Vban.h" />
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
-    <ClInclude Include="Graphics\Glyphs\Knob.h" />
-    <ClInclude Include="Graphics\Glyphs\Plug.h" />
-    <ClInclude Include="Graphics\Glyphs\Vban.h" />
     <ClInclude Include="Graphics\Palette.h" />
     <ClInclude Include="Graphics\Theme.h" />
     <ClInclude Include="Policies\Glyph\Updates\Knob.h" />
@@ -228,16 +231,15 @@
     <ClInclude Include="Policies\Glyph\Updates\Vban.h" />
     <ClInclude Include="Policies\State\Changes\Knob.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Trackers\Dirty.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Graphics\Bundle.cpp" />
+    <ClCompile Include="Graphics\Bundles\Knob.cpp" />
+    <ClCompile Include="Graphics\Bundles\Plug.cpp" />
+    <ClCompile Include="Graphics\Bundles\Vban.cpp" />
     <ClCompile Include="Graphics\Canvas.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Knob.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Plug.cpp" />
-    <ClCompile Include="Graphics\Glyphs\Vban.cpp" />
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Trackers\Dirty.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

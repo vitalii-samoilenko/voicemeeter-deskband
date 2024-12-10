@@ -5,7 +5,6 @@
 
 #include <windows.h>
 
-#include "Environment/IDirtyTracker.h"
 #include "Environment/IInputTracker.h"
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
 #include "Voicemeeter.Clients.Remote/Cherry.h"
@@ -15,8 +14,7 @@
 namespace Voicemeeter {
 	namespace Windows {
 		class DeskBandit final
-			: public ::Environment::IDirtyTracker
-			, public ::Environment::IInputTracker {
+			: public ::Environment::IInputTracker {
 			enum class Dock {
 				Left = 0,
 				MidLeft = 1,
@@ -39,7 +37,6 @@ namespace Voicemeeter {
 
 			void Show(int nCmdShow) const;
 
-			virtual void SetDirty() override;
 			virtual void EnableInputTrack() override;
 			virtual void DisableInputTrack() override;
 
@@ -51,7 +48,7 @@ namespace Voicemeeter {
 			HWND m_hWnd;
 			::std::unique_ptr<::Windows::Timer> m_pDockTimer;
 			::std::unique_ptr<::Windows::Timer> m_pCompositionTimer;
-			::std::unique_ptr<::Windows::Timer> m_pDirtyTimer;
+			::std::unique_ptr<::Windows::Timer> m_pRenderTimer;
 			::std::unique_ptr<::Windows::Timer> m_pRemoteTimer;
 			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
 			::std::unique_ptr<::Voicemeeter::Adapters::Multiclient::Cherry> m_pMixer;

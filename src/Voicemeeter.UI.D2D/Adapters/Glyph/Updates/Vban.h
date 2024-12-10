@@ -1,9 +1,9 @@
 #pragma once
 
 #include <type_traits>
-#include <utility>
 
-#include "../../../Graphics/Glyphs/Vban.h"
+#include "../../../Graphics/Bundles/Vban.h"
+#include "../../../Graphics/Glyph.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -11,21 +11,18 @@ namespace Voicemeeter {
 			namespace Adapters {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TVban>
-						class Vban : public TVban {
+						template<typename TBundle, typename TGlyph>
+						class Vban : public TGlyph {
 							static_assert(
-								::std::is_base_of_v<Graphics::Glyphs::Vban, TVban>,
-								"TVban must be derived from VBan");
+								::std::is_base_of_v<Graphics::Bundles::Vban, TBundle>,
+								"TBundle must be derived from VBan");
+							static_assert(
+								::std::is_base_of_v<Graphics::Glyph<TBundle>, TGlyph>,
+								"TGlyph must be derived from Glyph");
 
 						public:
-							template<typename... Args>
-							explicit Vban(
-								Args&& ...args
-							) : TVban{ ::std::forward<Args>(args)... } {
-								TVban::set_Color(TVban::get_Palette()
-									.get_Theme()
-										.Inactive);
-							};
+							using TGlyph::TGlyph;
+
 							Vban() = delete;
 							Vban(const Vban&) = delete;
 							Vban(Vban&&) = delete;
@@ -36,15 +33,19 @@ namespace Voicemeeter {
 							Vban& operator=(Vban&&) = delete;
 
 							inline void Update(const int& state) {
-								TVban::set_Color((state
-									? TVban::get_Palette()
-										.get_Theme()
-											.SecondaryActive
-									: TVban::get_Palette()
-										.get_Theme()
-											.Inactive));
-								TVban::get_DirtyTracker()
-									.set_Dirty(*this, true);
+								TGlyph::get_Bundle()
+									.set_Color((state
+										? TGlyph::get_Bundle()
+											.get_Palette()
+												.get_Theme()
+													.SecondaryActive
+										: TGlyph::get_Bundle()
+											.get_Palette()
+												.get_Theme()
+													.Inactive));
+								TGlyph::get_Bundle()
+									.get_Palette()
+										.Queue(TGlyph::get_Bundle());
 							};
 						};
 					}

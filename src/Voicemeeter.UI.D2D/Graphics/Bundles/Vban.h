@@ -1,19 +1,16 @@
 #pragma once
 
-#include "Voicemeeter.UI/Policies/Size/Scales/Stretch.h"
-
-#include "../Glyph.h"
+#include "../Palette.h"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace D2D {
 			namespace Graphics {
-				namespace Glyphs {
-					class Vban : public Glyph<UI::Policies::Size::Scales::Stretch> {
+				namespace Bundles {
+					class Vban : public Bundle {
 					public:
-						Vban(
-							Graphics::Palette& palette,
-							Trackers::Dirty& dirtyTracker
+						explicit Vban(
+							Graphics::Palette& palette
 						);
 						Vban() = delete;
 						Vban(const Vban&) = delete;
@@ -28,7 +25,7 @@ namespace Voicemeeter {
 							m_color = value;
 						};
 
-						virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override;
+						virtual void Execute() override;
 
 					private:
 						::D2D1::ColorF m_color;
