@@ -177,7 +177,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 			strip, mixer, subscription
 		);
 	case ::Voicemeeter::UI::Direction::Down:
-		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right, TBundle>(
+		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Down, TBundle>(
 			first,
 			focusTracker, inputTracker,
 			timer, pGlyph,

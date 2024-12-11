@@ -1,6 +1,7 @@
 #include <cmath>
 #include <fstream>
 #include <string>
+#include <utility>
 
 #include "Windows/ErrorMessageBox.h"
 #include "Windows/Wrappers.h"
@@ -404,16 +405,24 @@ LRESULT CALLBACK DeskBand::WndProcW(
 					.WithIgnoredStrip(3)
 					.WithIgnoredStrip(5);
 			}
-			RECT taskbar{};
-			if (GetClientRect(pWnd->m_hWndParent, &taskbar) && taskbar.right < taskbar.bottom) {
-				builder.WithDirection(::Voicemeeter::UI::Direction::Down);
-			}
-			pWnd->m_pScene = builder.Build();
-			pWnd->m_pScene->Rescale({
+			::Voicemeeter::UI::Direction direction{ ::Voicemeeter::UI::Direction::Right };
+			::std::valarray<double> vertex{
 				static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
 				static_cast<double>(pWnd->m_rc.bottom - pWnd->m_rc.top)
-			});
-			const ::std::valarray<double>& vertex{ pWnd->m_pScene->get_Size() };
+			};
+			RECT taskbar{};
+			if (GetClientRect(pWnd->m_hWndParent, &taskbar) && taskbar.right < taskbar.bottom) {
+				direction = ::Voicemeeter::UI::Direction::Down;
+				::std::swap(vertex[0], vertex[1]);
+			}
+			pWnd->m_pScene = builder
+				.WithDirection(direction)
+				.Build();
+			pWnd->m_pScene->Rescale(vertex);
+			vertex = pWnd->m_pScene->get_Size();
+			if (direction == ::Voicemeeter::UI::Direction::Down) {
+				::std::swap(vertex[0], vertex[1]);
+			}
 			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(::std::ceil(vertex[0]));
 			pWnd->m_rc.bottom = pWnd->m_rc.top + static_cast<LONG>(::std::ceil(vertex[1]));
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
