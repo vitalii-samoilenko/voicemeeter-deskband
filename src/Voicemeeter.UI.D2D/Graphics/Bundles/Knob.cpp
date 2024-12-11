@@ -26,6 +26,11 @@ Knob::Knob(
 void Knob::Execute() {
 	Bundle::Execute();
 
+	D2D1_MATRIX_3X2_F base{};
+	get_Palette()
+		.get_pD2dDeviceContext()
+			->GetTransform(&base);
+
 	struct Frame {};
 	struct Label {};
 	struct Indicator {};
@@ -79,46 +84,46 @@ void Knob::Execute() {
 						*ppBrush = pBrush;
 					}))
 	};
-	ID2D1GeometryRealization* pFrame{
-		get_Palette()
-			.get_pGeometry<Frame>(
-				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-					::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dFactory()
-							->CreateEllipseGeometry(
-								::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
-								&pEllipse
-					), "Ellipse creation failed");
+	//ID2D1GeometryRealization* pFrame{
+	//	get_Palette()
+	//		.get_pGeometryRealization<Frame>(
+	//			[this, &base](ID2D1GeometryRealization** ppGeometry)->void {
+	//				::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dFactory()
+	//						->CreateEllipseGeometry(
+	//							::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
+	//							&pEllipse
+	//				), "Ellipse creation failed");
 
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dDeviceContext()
-							->CreateStrokedGeometryRealization(
-								pEllipse.Get(), flatteringTolerance, 3.F, nullptr,
-								ppGeometry
-					), "Geometry creation failed");
-				})
-	};
-	ID2D1GeometryRealization* pIndicator{
-		get_Palette()
-			.get_pGeometry<Indicator>(
-				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-					::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dFactory()
-							->CreateEllipseGeometry(
-								::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
-								&pEllipse
-					), "Ellipse creation failed");
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dDeviceContext()
+	//						->CreateStrokedGeometryRealization(
+	//							pEllipse.Get(), ::D2D1::ComputeFlatteningTolerance(base), 3.F, nullptr,
+	//							ppGeometry
+	//				), "Geometry creation failed");
+	//			})
+	//};
+	//ID2D1GeometryRealization* pIndicator{
+	//	get_Palette()
+	//		.get_pGeometryRealization<Indicator>(
+	//			[this, &base](ID2D1GeometryRealization** ppGeometry)->void {
+	//				::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dFactory()
+	//						->CreateEllipseGeometry(
+	//							::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
+	//							&pEllipse
+	//				), "Ellipse creation failed");
 
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dDeviceContext()
-							->CreateFilledGeometryRealization(
-								pEllipse.Get(), flatteringTolerance,
-								ppGeometry
-					), "Geometry creation failed");
-				})
-	};
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dDeviceContext()
+	//						->CreateFilledGeometryRealization(
+	//							pEllipse.Get(), ::D2D1::ComputeFlatteningTolerance(base),
+	//							ppGeometry
+	//				), "Geometry creation failed");
+	//			})
+	//};
 	IDWriteTextLayout* pLayout{
 		get_Palette()
 			.get_pTextLayout(
@@ -140,14 +145,9 @@ void Knob::Execute() {
 				pLabelBrush);
 	get_Palette()
 		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pFrame,
-				pFrameBrush);
-	D2D1_MATRIX_3X2_F base{};
-	double scale{ get_Size()[0] / get_BaseSize()[0] };
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->GetTransform(&base);
+			->DrawEllipse(
+				::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
+				pFrameBrush, 3.F);
 	get_Palette()
 		.get_pD2dDeviceContext()
 			->SetTransform(
@@ -156,8 +156,8 @@ void Knob::Execute() {
 				* base);
 	get_Palette()
 		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pIndicator,
+			->FillEllipse(
+				::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
 				pIndicatorBrush);
 	get_Palette()
 		.get_pD2dDeviceContext()

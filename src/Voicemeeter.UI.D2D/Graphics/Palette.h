@@ -71,16 +71,29 @@ namespace Voicemeeter {
 					};
 					template<typename TGeometry, typename Func,
 						::std::enable_if_t<
-						::estd::is_invocable_r<void, Func, ID2D1GeometryRealization**, FLOAT>::value,
-						bool> = true>
-					ID2D1GeometryRealization* get_pGeometry(const Func& factory) const {
-						::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>& pGeometry{
+							::estd::is_invocable_r<void, Func, ID2D1Geometry**>::value,
+							bool> = true>
+					ID2D1Geometry* get_pGeometry(const Func& factory) const {
+						::Microsoft::WRL::ComPtr<ID2D1Geometry>& pGeometry{
 							m_cpGeometry[&typeid(TGeometry)]
 						};
 						if (!pGeometry) {
-							factory(&pGeometry, m_flatteringTolerance);
+							factory(&pGeometry);
 						}
 						return pGeometry.Get();
+					};
+					template<typename TGeometry, typename Func,
+						::std::enable_if_t<
+							::estd::is_invocable_r<void, Func, ID2D1GeometryRealization**>::value,
+						bool> = true>
+					ID2D1GeometryRealization* get_pGeometryRealization(const Func& factory) const {
+						::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>& pGeometryRealization{
+							m_cpGeometryRealization[&typeid(TGeometry)]
+						};
+						if (!pGeometryRealization) {
+							factory(&pGeometryRealization);
+						}
+						return pGeometryRealization.Get();
 					};
 					inline ::std::chrono::nanoseconds get_Elapsed() const {
 						return ::std::chrono::duration_cast<::std::chrono::nanoseconds>(m_now - m_past);
@@ -105,7 +118,6 @@ namespace Voicemeeter {
 
 				private:
 					const Theme m_theme;
-					const FLOAT m_flatteringTolerance;
 					::Microsoft::WRL::ComPtr<IDWriteFactory7> m_pDwFactory;
 					::Microsoft::WRL::ComPtr<ID2D1Factory7> m_pD2dFactory;
 					::Microsoft::WRL::ComPtr<ID2D1DeviceContext5> m_pD2dDeviceContext;
@@ -114,7 +126,8 @@ namespace Voicemeeter {
 					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_cpTextFormat;
 					mutable ::std::unordered_map<::std::wstring, ::Microsoft::WRL::ComPtr<IDWriteTextLayout>> m_cpTextLayout;
 					mutable ::std::unordered_map<const type_info*, ::Microsoft::WRL::ComPtr<ID2D1Brush>> m_cpBrush;
-					mutable ::std::unordered_map<const type_info*, ::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>> m_cpGeometry;
+					mutable ::std::unordered_map<const type_info*, ::Microsoft::WRL::ComPtr<ID2D1Geometry>> m_cpGeometry;
+					mutable ::std::unordered_map<const type_info*, ::Microsoft::WRL::ComPtr<ID2D1GeometryRealization>> m_cpGeometryRealization;
 					::std::chrono::high_resolution_clock::time_point m_now;
 					::std::chrono::high_resolution_clock::time_point m_past;
 					::std::unordered_set<Bundle*> m_queue;

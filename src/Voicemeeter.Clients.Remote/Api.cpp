@@ -73,7 +73,7 @@ long InitializeDLLInterfaces(T_VBVMR_INTERFACE& iVMR)
 	else wcscat_s(szDllName, L"\\VoicemeeterRemote.dll");
 
 	// Load Dll
-	G_H_Module = LoadLibrary(szDllName);
+	G_H_Module = LoadLibraryW(szDllName);
 	if (G_H_Module == NULL) return -101;
 
 	// Get function pointers

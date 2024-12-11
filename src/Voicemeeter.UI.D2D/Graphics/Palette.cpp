@@ -19,7 +19,6 @@ Palette::Palette(
 	HWND hWnd,
 	const Theme& theme
 ) : m_theme{ theme }
-  , m_flatteringTolerance{ ::D2D1::ComputeFlatteningTolerance(::D2D1::IdentityMatrix(), 96.F, 96.F, 4.F) }
   , m_pDwFactory{ nullptr }
   , m_pD2dFactory{ nullptr }
   , m_pD2dDeviceContext{ nullptr }

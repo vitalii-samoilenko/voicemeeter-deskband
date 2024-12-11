@@ -18,6 +18,11 @@ Vban::Vban(
 void Vban::Execute() {
 	Bundle::Execute();
 
+	D2D1_MATRIX_3X2_F base{};
+	get_Palette()
+		.get_pD2dDeviceContext()
+			->GetTransform(&base);
+
 	struct Frame {};
 	struct FrameSide {};
 
@@ -37,46 +42,46 @@ void Vban::Execute() {
 					}))
 	};
 	pBrush->SetColor(m_color);
-	ID2D1GeometryRealization* pFrame{
-		get_Palette()
-			.get_pGeometry<Frame>(
-				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-					::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dFactory()
-							->CreateRectangleGeometry(
-								::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),
-								&pRectangle
-					), "Rectangle creation failed");
+	//ID2D1GeometryRealization* pFrame{
+	//	get_Palette()
+	//		.get_pGeometryRealization<Frame>(
+	//			[this, &base](ID2D1GeometryRealization** ppGeometry)->void {
+	//				::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dFactory()
+	//						->CreateRectangleGeometry(
+	//							::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),
+	//							&pRectangle
+	//				), "Rectangle creation failed");
 
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dDeviceContext()
-							->CreateStrokedGeometryRealization(
-								pRectangle.Get(), flatteringTolerance, 1.F, nullptr,
-								ppGeometry
-					), "Geometry creation failed");
-				})
-	};
-	ID2D1GeometryRealization* pFrameSide{
-		get_Palette()
-			.get_pGeometry<FrameSide>(
-				[this](ID2D1GeometryRealization** ppGeometry, FLOAT flatteringTolerance)->void {
-					::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dFactory()
-							->CreateRectangleGeometry(
-								::D2D1::RectF(0.F, 0.F, 7.5F, 22.F),
-								&pRectangle
-					), "Rectangle creation failed");
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dDeviceContext()
+	//						->CreateStrokedGeometryRealization(
+	//							pRectangle.Get(), ::D2D1::ComputeFlatteningTolerance(base), 1.F, nullptr,
+	//							ppGeometry
+	//				), "Geometry creation failed");
+	//			})
+	//};
+	//ID2D1GeometryRealization* pFrameSide{
+	//	get_Palette()
+	//		.get_pGeometryRealization<FrameSide>(
+	//			[this, &base](ID2D1GeometryRealization** ppGeometry)->void {
+	//				::Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> pRectangle{ nullptr };
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dFactory()
+	//						->CreateRectangleGeometry(
+	//							::D2D1::RectF(0.F, 0.F, 7.5F, 22.F),
+	//							&pRectangle
+	//				), "Rectangle creation failed");
 
-					::Windows::ThrowIfFailed(get_Palette()
-						.get_pD2dDeviceContext()
-							->CreateFilledGeometryRealization(
-								pRectangle.Get(), flatteringTolerance,
-								ppGeometry
-					), "Geometry creation failed");
-				})
-	};
+	//				::Windows::ThrowIfFailed(get_Palette()
+	//					.get_pD2dDeviceContext()
+	//						->CreateFilledGeometryRealization(
+	//							pRectangle.Get(), ::D2D1::ComputeFlatteningTolerance(base),
+	//							ppGeometry
+	//				), "Geometry creation failed");
+	//			})
+	//};
 	IDWriteTextLayout* pLayout{
 		get_Palette()
 			.get_pTextLayout(
@@ -92,9 +97,9 @@ void Vban::Execute() {
 
 	get_Palette()
 		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pFrame,
-				pBrush);
+			->DrawRectangle(
+				::D2D1::RectF(7.5F, 0.5F, 31.5F, 21.5F),
+				pBrush, 1.F);
 	get_Palette()
 		.get_pD2dDeviceContext()
 			->DrawTextLayout(
@@ -103,13 +108,9 @@ void Vban::Execute() {
 				pBrush);
 	get_Palette()
 		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pFrameSide,
+			->FillRectangle(
+				::D2D1::RectF(0.F, 0.F, 7.5F, 22.F),
 				pBrush);
-	D2D1_MATRIX_3X2_F base{};
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->GetTransform(&base);
 	get_Palette()
 		.get_pD2dDeviceContext()
 			->SetTransform(
@@ -117,8 +118,8 @@ void Vban::Execute() {
 				* base);
 	get_Palette()
 		.get_pD2dDeviceContext()
-			->DrawGeometryRealization(
-				pFrameSide,
+			->FillRectangle(
+				::D2D1::RectF(0.F, 0.F, 7.5F, 22.F),
 				pBrush);
 	get_Palette()
 		.get_pD2dDeviceContext()
