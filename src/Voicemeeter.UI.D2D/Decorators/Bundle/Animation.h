@@ -36,8 +36,9 @@ namespace Voicemeeter {
 						virtual void Execute() override {
 							if (m_transition) {
 								m_vertex += TBundle::get_Palette()
-									.get_Elapsed()
-										.count() * m_velocity;
+									.get_Timer()
+										.get_Elapsed()
+											.count() * m_velocity;
 								m_vertex[m_vertex < 0LL] = 0LL;
 								auto maxVertex = m_baseVertex < m_vertex;
 								m_vertex[maxVertex] = m_baseVertex[maxVertex];
@@ -46,7 +47,7 @@ namespace Voicemeeter {
 							TBundle::Execute();
 							if (m_transition = (m_velocity != 0LL).max()) {
 								TBundle::get_Palette()
-									.Queue(*this);
+									.get_Queue() += *this;
 							}
 						};
 

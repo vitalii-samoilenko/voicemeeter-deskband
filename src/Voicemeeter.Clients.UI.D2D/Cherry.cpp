@@ -1,6 +1,7 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif // !NOMINMAX
+#define _USE_MATH_DEFINES
 
 #include <codecvt>
 #include <exception>
@@ -111,7 +112,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
 	auto changeNotify = [&strip](const ::Voicemeeter::UI::States::Knob& state)->void {
-		strip.set_Gain<Cherry>((state.gain / 100. - 90.) / 3.75);
+		strip.set_Gain<Cherry>(state.gain / 375.);
 		strip.set_Mute<Cherry>(state.toggle);
 	};
 	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
@@ -133,7 +134,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	subscription.on_Gain(strip.get_Id(),
 		[&control = *pControl](double value)->void {
 			::Voicemeeter::UI::States::Knob state{ control.get_State() };
-			state.gain = static_cast<int>((value * 3.75 + 90.) * 100.);
+			state.gain = static_cast<int>(value * 375.);
 			control.Set(state, false);
 		});
 	subscription.on_Mute(strip.get_Id(),
@@ -233,7 +234,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
-	::std::wstring label{ ::Voicemeeter::UI::D2D::Policies::State::Changes::Knob::ToLabel(strip.get_Id()) };
+	size_t label{ ::Voicemeeter::UI::D2D::Policies::State::Changes::Knob::ToLabel(strip.get_Id()) };
 	using Bundle = ::Voicemeeter::UI::D2D::Graphics::Bundles::Knob;
 	if (animations) {
 		using Animation = ::Voicemeeter::UI::D2D::Decorators::Bundle::Animations::Knob<
@@ -338,7 +339,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
-	::std::wstring label{ ::Voicemeeter::UI::D2D::Policies::State::Changes::Knob::ToLabel(output.get_Id()) };
+	size_t label{ ::Voicemeeter::UI::D2D::Policies::State::Changes::Knob::ToLabel(output.get_Id()) };
 	using Bundle = ::Voicemeeter::UI::D2D::Graphics::Bundles::Plug;
 	if (animations) {
 		using Animation = ::Voicemeeter::UI::D2D::Decorators::Bundle::Animations::Plug<

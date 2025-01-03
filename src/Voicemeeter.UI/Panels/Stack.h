@@ -46,7 +46,15 @@ namespace Voicemeeter {
 
 					Stack::Rescale(m_baseVertex);
 
-					m_baseVertex[static_cast<size_t>(Direction)] = m_vertex[static_cast<size_t>(Direction)];
+					m_baseVertex[static_cast<size_t>(Direction)] = 0.;
+
+					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
+						const ::std::valarray<double>& componentVertex{ pComponent->get_Size() };
+
+						m_baseVertex[static_cast<size_t>(Direction)] += componentVertex[static_cast<size_t>(Direction)];
+					}
+
+					m_vertex[static_cast<size_t>(Direction)] = m_baseVertex[static_cast<size_t>(Direction)];
 				};
 				Stack() = delete;
 				Stack(const Stack&) = delete;
@@ -77,7 +85,9 @@ namespace Voicemeeter {
 					}
 				};
 				virtual void Rescale(const ::std::valarray<double>& vertex) override {
-					::std::valarray<double> availableVertex{ m_baseVertex * m_scale(m_baseVertex, vertex) };
+					m_vertex = m_baseVertex * m_scale(m_baseVertex, vertex);
+
+					::std::valarray<double> availableVertex{ m_vertex };
 					::std::valarray<double> componentPoint{ Stack::get_Position() };
 
 					for (const ::std::unique_ptr<IComponent>& pComponent : m_cpComponent) {
@@ -89,10 +99,6 @@ namespace Voicemeeter {
 						componentPoint[static_cast<size_t>(Direction)] += componentVertex[static_cast<size_t>(Direction)];
 						availableVertex[static_cast<size_t>(Direction)] -= componentVertex[static_cast<size_t>(Direction)];
 					}
-
-					m_vertex = availableVertex;
-					m_vertex[static_cast<size_t>(Direction)] = componentPoint[static_cast<size_t>(Direction)]
-						- Stack::get_Position()[static_cast<size_t>(Direction)];
 				}
 				virtual void Move(const ::std::valarray<double>& point) override {
 					::std::valarray<double> componentPoint{ point };

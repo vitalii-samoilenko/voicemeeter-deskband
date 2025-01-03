@@ -88,6 +88,18 @@ namespace Windows {
 		return hWnd;
 	}
 
+	inline void wGetTempPathW(
+		_In_ DWORD nBufferLength,
+		_Out_ LPWSTR lpBuffer
+	) {
+		if (!GetTempPathW(
+			nBufferLength,
+			lpBuffer
+		)) {
+			throw Error{ "Could not get temp path" };
+		}
+	}
+
 	inline void wPostMessageW(
 		_In_opt_ HWND hWnd,
 		_In_ UINT Msg,

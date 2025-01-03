@@ -1,45 +1,67 @@
-#include <array>
-#include <cmath>
-
 #include <d3d11_4.h>
-
-#include "Windows/Wrappers.h"
 
 #include "Palette.h"
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "dcomp")
-#pragma comment(lib, "dwrite")
-#pragma comment(lib, "uxtheme")
 
 using namespace ::Voicemeeter::UI::D2D::Graphics;
 
+void Atlas::Rescale(const ::std::valarray<double>& scale) {
+	m_pAtlas.reset(new ::Voicemeeter::Atlas::Cherry{ m_horizontal, scale });
+
+	::Windows::ThrowIfFailed(m_palette.get_pDeviceContext()
+		->CreateBitmapFromWicBitmap(
+			m_pAtlas->get_pBitmap(),
+			&m_pBitmap
+	), "Bitmap creation failed");
+}
+
+void Bundle::FillOpacityMask(
+	const ::D2D1::ColorF& color,
+	const ::std::valarray<double>& point,
+	const ::std::valarray<double>& vertex,
+	const ::std::valarray<double>& maskPoint) {
+	get_Palette()
+		.get_pBrush()
+			->SetColor(color);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				::D2D1::RectF(
+					static_cast<FLOAT>(point[0]),
+					static_cast<FLOAT>(point[1]),
+					static_cast<FLOAT>(point[0] + vertex[0] + Atlas::AAEPS),
+					static_cast<FLOAT>(point[1] + vertex[1] + Atlas::AAEPS)),
+				::D2D1::RectF(
+					static_cast<FLOAT>(maskPoint[0]),
+					static_cast<FLOAT>(maskPoint[1]),
+					static_cast<FLOAT>(maskPoint[0] + vertex[0] + Atlas::AAEPS),
+					static_cast<FLOAT>(maskPoint[1] + vertex[1] + Atlas::AAEPS)));
+}
+
 Palette::Palette(
 	HWND hWnd,
-	const Theme& theme
+	const Theme& theme,
+	Direction direction
 ) : m_theme{ theme }
-  , m_pDwFactory{ nullptr }
+  , m_atlas{ *this, direction }
+  , m_timer{}
+  , m_queue{}
   , m_pD2dFactory{ nullptr }
-  , m_pD2dDeviceContext{ nullptr }
-  , m_pDxgiSwapChain{ nullptr }
+  , m_pDeviceContext{ nullptr }
+  , m_pSwapChain{ nullptr }
   , m_pCompositionTarget{ nullptr }
-  , m_cpTextFormat{}
-  , m_cpTextLayout{}
-  , m_cpBrush{}
-  , m_cpGeometry{}
-  , m_now{}
-  , m_past{}
-  , m_queue{} {
+  , m_pBrush{ nullptr } {
 	::Windows::ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");
-
-	::Windows::ThrowIfFailed(DWriteCreateFactory(
-		DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(m_pDwFactory),
-		reinterpret_cast<IUnknown**>(m_pDwFactory.ReleaseAndGetAddressOf())
-	), "DirectWrite factory creation failed");
 
 	::Windows::ThrowIfFailed(D2D1CreateFactory(
 		D2D1_FACTORY_TYPE_SINGLE_THREADED,
@@ -71,7 +93,7 @@ Palette::Palette(
 #else
 		,
 #endif // NDEBUG
-		pFeatureLevel, static_cast<UINT>(::std::size(pFeatureLevel)), D3D11_SDK_VERSION,
+		pFeatureLevel, ARRAYSIZE(pFeatureLevel), D3D11_SDK_VERSION,
 		&pD3dDevice, nullptr, &pD3dContext
 	), "Direct3D device creation failed");
 
@@ -88,8 +110,9 @@ Palette::Palette(
 
 	::Windows::ThrowIfFailed(pD2dDevice->CreateDeviceContext(
 		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-		&m_pD2dDeviceContext
+		&m_pDeviceContext
 	), "Direct2D device context creation failed");
+	m_pDeviceContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 
 	::Microsoft::WRL::ComPtr<IDXGIAdapter> pDxgiAdapter{ nullptr };
 	::Windows::ThrowIfFailed(pDxgiDevice->GetAdapter(
@@ -118,7 +141,7 @@ Palette::Palette(
 		pD3dDevice.Get(),
 		&swapChainDesc,
 		nullptr,
-		&m_pDxgiSwapChain
+		&m_pSwapChain
 	), "DXGI swap chain creation failed");
 
 	::Windows::ThrowIfFailed(pDxgiDevice->SetMaximumFrameLatency(
@@ -142,7 +165,7 @@ Palette::Palette(
 	), "Composition visual creation failed");
 
 	::Windows::ThrowIfFailed(pCompositionVisual->SetContent(
-		m_pDxgiSwapChain.Get()
+		m_pSwapChain.Get()
 	), "Could not set swap chain content");
 
 	::Windows::ThrowIfFailed(m_pCompositionTarget->SetRoot(
@@ -151,41 +174,9 @@ Palette::Palette(
 
 	::Windows::ThrowIfFailed(pCompositionDevice->Commit(
 	), "Could not commit composition device");
-}
 
-IDWriteTextFormat* Palette::get_pTextFormat(const ::std::wstring& fontFamily) const {
-	::Microsoft::WRL::ComPtr<IDWriteTextFormat>& pTextFormat{
-		m_cpTextFormat[fontFamily]
-	};
-	if (!pTextFormat) {
-		::Windows::ThrowIfFailed(m_pDwFactory
-			->CreateTextFormat(
-				fontFamily.c_str(),
-				NULL,
-				DWRITE_FONT_WEIGHT_NORMAL,
-				DWRITE_FONT_STYLE_NORMAL,
-				DWRITE_FONT_STRETCH_NORMAL,
-				16,
-				L"", //locale
-				&pTextFormat
-		), "Text format creation failed");
-	}
-	return pTextFormat.Get();
-}
-IDWriteTextLayout* Palette::get_pTextLayout(const ::std::wstring& text, const ::std::wstring& fontFamily) const {
-	::Microsoft::WRL::ComPtr<IDWriteTextLayout>& pTextLayout{
-		m_cpTextLayout[text]
-	};
-	if (!pTextLayout) {
-		::Windows::ThrowIfFailed(m_pDwFactory
-			->CreateTextLayout(
-				text.c_str(),
-				static_cast<UINT32>(text.length()),
-				get_pTextFormat(fontFamily),
-				::std::numeric_limits<FLOAT>::max(),
-				::std::numeric_limits<FLOAT>::max(),
-				&pTextLayout
-		), "Text layout creation failed");
-	}
-	return pTextLayout.Get();
+	::Windows::ThrowIfFailed(m_pDeviceContext->CreateSolidColorBrush(
+		::D2D1::ColorF(1.F, 1.F, 1.F, 1.F),
+		&m_pBrush
+	), "Brush creation failed");
 }

@@ -45,7 +45,7 @@ namespace Voicemeeter {
 												: -1LL;
 									TGlyph::get_Bundle()
 										.get_Palette()
-											.Queue(TGlyph::get_Bundle());
+											.get_Queue() += TGlyph::get_Bundle();
 								};
 							};
 						}

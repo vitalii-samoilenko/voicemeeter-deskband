@@ -7,7 +7,6 @@
 #include "windows.h"
 
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
-#include "Voicemeeter.UI/Direction.h"
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
@@ -78,7 +77,7 @@ namespace Voicemeeter {
 					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
 						LoadOverrides();
 						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Palette> pPalette{
-							new ::Voicemeeter::UI::D2D::Graphics::Palette{ m_hWnd, m_theme }
+							new ::Voicemeeter::UI::D2D::Graphics::Palette{ m_hWnd, m_theme, m_direction }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::Focus> pFocusTracker{
 							new ::Voicemeeter::UI::Trackers::Focus{}
@@ -121,7 +120,6 @@ namespace Voicemeeter {
 						HKEY hKey{ HKEY_CURRENT_USER };
 						::std::wstring subKey{ LR"(SOFTWARE\VoicemeeterDeskBand)" };
 						::std::wstring themeSubKey{ subKey + LR"(\Theme)" };
-						::Windows::Registry::TryGetValue(hKey, themeSubKey, L"FontFamily", m_theme.FontFamily);
 						DWORD color{};
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Warning", color)) {
 							m_theme.Warning = ::D2D1::ColorF(static_cast<UINT32>(color));

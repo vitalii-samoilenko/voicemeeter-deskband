@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.Remote"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.D2D", "src\Voicemeeter.Clients.UI.D2D\Voicemeeter.Clients.UI.D2D.vcxproj", "{9D994208-264D-4B90-8BA7-30FC62304D9B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Atlas", "src\Voicemeeter.Atlas\Voicemeeter.Atlas.vcxproj", "{77B08162-A8D9-4F43-9297-41CC35F508F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -160,6 +162,18 @@ Global
 		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x64.Build.0 = Remote|x64
 		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x86.ActiveCfg = Remote|Win32
 		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x86.Build.0 = Remote|Win32
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x64.ActiveCfg = Debug|x64
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x64.Build.0 = Debug|x64
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x86.ActiveCfg = Debug|Win32
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x86.Build.0 = Debug|Win32
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Release|x64.ActiveCfg = Release|x64
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Release|x64.Build.0 = Release|x64
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Release|x86.ActiveCfg = Release|Win32
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Release|x86.Build.0 = Release|Win32
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x64.ActiveCfg = Remote|x64
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x64.Build.0 = Remote|x64
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x86.ActiveCfg = Release|Win32
+		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

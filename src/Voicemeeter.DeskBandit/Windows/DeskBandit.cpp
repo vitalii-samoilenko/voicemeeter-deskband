@@ -10,9 +10,6 @@
 
 using namespace ::Voicemeeter::Windows;
 
-static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter" };
-static constexpr DWORD STYLE{ WS_POPUP };
-
 static constexpr LRESULT OK{ 0 };
 
 DeskBandit::DeskBandit(
@@ -45,7 +42,7 @@ DeskBandit::DeskBandit(
 
 	WNDCLASSW wndClass{};
 	wndClass.hInstance = hInstance;
-	wndClass.lpszClassName = LPSZ_CLASS_NAME;
+	wndClass.lpszClassName = L"Voicemeeter";
 	wndClass.style = CS_DBLCLKS;
 	wndClass.lpfnWndProc = WndProcW;
 	wndClass.hCursor = ::Windows::wLoadCursorW(NULL, IDC_ARROW);
@@ -53,9 +50,9 @@ DeskBandit::DeskBandit(
 	::Windows::wRegisterClassW(&wndClass);
 	::Windows::wCreateWindowExW(
 		WS_EX_NOREDIRECTIONBITMAP,
-		LPSZ_CLASS_NAME,
+		wndClass.lpszClassName,
 		NULL,
-		STYLE,
+		WS_POPUP,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		NULL,
 		NULL,
@@ -138,7 +135,7 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 				});
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pRenderTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ 1000 / 120 },
+			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
 				[pWnd]()->bool {
 					pWnd->m_pScene->Render();
 					return true;

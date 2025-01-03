@@ -11,7 +11,7 @@ namespace Voicemeeter {
 					public:
 						Plug(
 							Graphics::Palette& palette,
-							const ::std::wstring& label
+							size_t label
 						);
 						Plug() = delete;
 						Plug(const Plug&) = delete;
@@ -22,7 +22,7 @@ namespace Voicemeeter {
 						Plug& operator=(const Plug&) = delete;
 						Plug& operator=(Plug&&) = delete;
 
-						inline void set_Label(const ::std::wstring& value) {
+						inline void set_Label(size_t value) {
 							m_label = value;
 						}
 						inline void set_Color(const ::D2D1::ColorF& value) {
@@ -32,7 +32,7 @@ namespace Voicemeeter {
 						virtual void Execute() override;
 
 					private:
-						::std::wstring m_label;
+						size_t m_label;
 						::D2D1::ColorF m_color;
 					};
 				}

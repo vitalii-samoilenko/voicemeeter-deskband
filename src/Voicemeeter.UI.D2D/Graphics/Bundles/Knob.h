@@ -11,7 +11,7 @@ namespace Voicemeeter {
 					public:
 						Knob(
 							Graphics::Palette& palette,
-							const ::std::wstring& label
+							size_t label
 						);
 						Knob() = delete;
 						Knob(const Knob&) = delete;
@@ -22,7 +22,7 @@ namespace Voicemeeter {
 						Knob& operator=(const Knob&) = delete;
 						Knob& operator=(Knob&&) = delete;
 
-						inline void set_Label(const ::std::wstring& value) {
+						inline void set_Label(size_t value) {
 							m_label = value;
 						};
 						inline void set_FrameColor(const ::D2D1::ColorF& value) {
@@ -31,17 +31,17 @@ namespace Voicemeeter {
 						inline void set_LabelColor(const ::D2D1::ColorF& value) {
 							m_labelColor = value;
 						};
-						inline void set_Angle(FLOAT value) {
+						inline void set_Angle(double value) {
 							m_angle = value;
 						};
 
 						virtual void Execute() override;
 
 					private:
-						::std::wstring m_label;
+						size_t m_label;
 						::D2D1::ColorF m_frameColor;
 						::D2D1::ColorF m_labelColor;
-						FLOAT m_angle;
+						double m_angle;
 					};
 				}
 			}

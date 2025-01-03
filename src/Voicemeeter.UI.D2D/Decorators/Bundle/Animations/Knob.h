@@ -49,7 +49,7 @@ namespace Voicemeeter {
 							Knob& operator=(const Knob&) = delete;
 							Knob& operator=(Knob&&) = delete;
 
-							inline void set_To(const ::std::wstring& value) {
+							inline void set_To(size_t value) {
 								m_to = value;
 							};
 
@@ -106,7 +106,7 @@ namespace Voicemeeter {
 							};
 
 						private:
-							::std::wstring m_to;
+							size_t m_to;
 						};
 					}
 				}

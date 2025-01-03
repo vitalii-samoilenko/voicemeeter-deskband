@@ -45,6 +45,11 @@ namespace Voicemeeter {
 			virtual bool MouseMove(const ::std::valarray<double>& point) override;
 			virtual bool MouseLUp(const ::std::valarray<double>& point) override;
 
+		protected:
+			inline IComponent* get_pComposition() const {
+				return m_pComposition.get();
+			};
+
 		private:
 			const ::std::unique_ptr<Graphics::ICanvas> m_pCanvas;
 			const ::std::unique_ptr<Trackers::Input> m_pInputTracker;

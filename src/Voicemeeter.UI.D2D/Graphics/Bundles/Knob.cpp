@@ -1,13 +1,13 @@
-#include "Windows/Wrappers.h"
+#include <cmath>
 
 #include "Knob.h"
 
-using namespace Voicemeeter::UI::D2D::Graphics::Bundles;
+using namespace ::Voicemeeter::UI::D2D::Graphics::Bundles;
 
 Knob::Knob(
 	Graphics::Palette& palette,
-	const ::std::wstring& label
-) : Bundle{ palette, { 48., 48. } }
+	size_t label
+) : Bundle{ palette, { 2. * Atlas::Specification::Knob::Frame::Radius, 2. * Atlas::Specification::Knob::Frame::Radius } }
   , m_label{ label }
   , m_frameColor{
 		get_Palette()
@@ -19,147 +19,71 @@ Knob::Knob(
 			.get_Theme()
 				.Inactive
 	}
-  , m_angle{ 90.F } {
+  , m_angle{ 0. } {
 
 }
 
 void Knob::Execute() {
-	Bundle::Execute();
-
-	D2D1_MATRIX_3X2_F base{};
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->GetTransform(&base);
-
-	struct Frame {};
-	struct Label {};
-	struct Indicator {};
-
-	ID2D1SolidColorBrush* pFrameBrush{
-		static_cast<ID2D1SolidColorBrush*>(
-			get_Palette()
-				.get_pBrush<Frame>(
-					[this](ID2D1Brush** ppBrush)->void {
-						ID2D1SolidColorBrush* pBrush{ nullptr };
-						::Windows::ThrowIfFailed(get_Palette()
-							.get_pD2dDeviceContext()
-								->CreateSolidColorBrush(
-									m_frameColor,
-									&pBrush
-						), "Brush creation failed");
-						*ppBrush = pBrush;
-					}))
-	};
-	pFrameBrush->SetColor(m_frameColor);
-	ID2D1SolidColorBrush* pLabelBrush{
-		static_cast<ID2D1SolidColorBrush*>(
-			get_Palette()
-				.get_pBrush<Label>(
-					[this](ID2D1Brush** ppBrush)->void {
-						ID2D1SolidColorBrush* pBrush{ nullptr };
-						::Windows::ThrowIfFailed(get_Palette()
-							.get_pD2dDeviceContext()
-								->CreateSolidColorBrush(
-									m_labelColor,
-									&pBrush
-						), "Brush creation failed");
-						*ppBrush = pBrush;
-					}))
-	};
-	pLabelBrush->SetColor(m_labelColor);
-	ID2D1SolidColorBrush* pIndicatorBrush{
-		static_cast<ID2D1SolidColorBrush*>(
-			get_Palette()
-				.get_pBrush<Indicator>(
-					[this](ID2D1Brush** ppBrush)->void {
-						ID2D1SolidColorBrush* pBrush{ nullptr };
-						::Windows::ThrowIfFailed(get_Palette()
-							.get_pD2dDeviceContext()
-								->CreateSolidColorBrush(
-									get_Palette()
-										.get_Theme()
-											.Indicator,
-									&pBrush
-						), "Brush creation failed");
-						*ppBrush = pBrush;
-					}))
-	};
-	//ID2D1GeometryRealization* pFrame{
-	//	get_Palette()
-	//		.get_pGeometryRealization<Frame>(
-	//			[this, &base](ID2D1GeometryRealization** ppGeometry)->void {
-	//				::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
-	//				::Windows::ThrowIfFailed(get_Palette()
-	//					.get_pD2dFactory()
-	//						->CreateEllipseGeometry(
-	//							::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
-	//							&pEllipse
-	//				), "Ellipse creation failed");
-
-	//				::Windows::ThrowIfFailed(get_Palette()
-	//					.get_pD2dDeviceContext()
-	//						->CreateStrokedGeometryRealization(
-	//							pEllipse.Get(), ::D2D1::ComputeFlatteningTolerance(base), 3.F, nullptr,
-	//							ppGeometry
-	//				), "Geometry creation failed");
-	//			})
-	//};
-	//ID2D1GeometryRealization* pIndicator{
-	//	get_Palette()
-	//		.get_pGeometryRealization<Indicator>(
-	//			[this, &base](ID2D1GeometryRealization** ppGeometry)->void {
-	//				::Microsoft::WRL::ComPtr<ID2D1EllipseGeometry> pEllipse{ nullptr };
-	//				::Windows::ThrowIfFailed(get_Palette()
-	//					.get_pD2dFactory()
-	//						->CreateEllipseGeometry(
-	//							::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
-	//							&pEllipse
-	//				), "Ellipse creation failed");
-
-	//				::Windows::ThrowIfFailed(get_Palette()
-	//					.get_pD2dDeviceContext()
-	//						->CreateFilledGeometryRealization(
-	//							pEllipse.Get(), ::D2D1::ComputeFlatteningTolerance(base),
-	//							ppGeometry
-	//				), "Geometry creation failed");
-	//			})
-	//};
-	IDWriteTextLayout* pLayout{
+	::std::valarray<double> vertex{ get_Size() };
+	::std::valarray<double> point{ get_Position() };
+	::std::valarray<double> maskPoint{
 		get_Palette()
-			.get_pTextLayout(
-				m_label,
-				get_Palette()
-					.get_Theme()
-						.FontFamily)
+			.get_Atlas()
+				.MapPosition(
+					Atlas::Specification::Knob::Frame::Point::X,
+					Atlas::Specification::Knob::Frame::Point::Y)
 	};
-	DWRITE_TEXT_METRICS metrics{};
-	::Windows::ThrowIfFailed(pLayout->GetMetrics(
-		&metrics
-	), "Text measurement failed");
+	get_Palette()
+		.get_pDeviceContext()
+			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+	FillOpacityMask(
+		m_frameColor,
+		point,
+		vertex,
+		maskPoint);
+	get_Palette()
+		.get_pDeviceContext()
+			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->DrawTextLayout(
-				::D2D1::Point2F((48.F - metrics.width) / 2, (48.F - metrics.height) / 2),
-				pLayout,
-				pLabelBrush);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->DrawEllipse(
-				::D2D1::Ellipse(::D2D1::Point2F(24.F, 24.F), 22.5F, 22.5F),
-				pFrameBrush, 3.F);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->SetTransform(
-				::D2D1::Matrix3x2F::Translation(24.F, 9.F)
-				* ::D2D1::Matrix3x2F::Rotation(m_angle, ::D2D1::Point2F(24.F, 24.F))
-				* base);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->FillEllipse(
-				::D2D1::Ellipse(::D2D1::Point2F(0.F, 0.F), 2.75F, 2.75F),
-				pIndicatorBrush);
-	get_Palette()
-		.get_pD2dDeviceContext()
-			->SetTransform(base);
+	vertex = get_Palette()
+		.get_Atlas()
+			.MapSize(Atlas::Specification::Block::Width, Atlas::Specification::Block::Height);
+	point = get_Position() + (get_Size() - vertex) / 2.;
+	maskPoint = get_Palette()
+		.get_Atlas()
+			.MapPosition(
+				Atlas::Specification::Knob::Label::Strip::Point::X + m_label % Atlas::Specification::Width,
+				Atlas::Specification::Knob::Label::Strip::Point::Y + m_label / Atlas::Specification::Width);
+	FillOpacityMask(
+		m_labelColor,
+		point,
+		vertex,
+		maskPoint);
+
+	::std::valarray<double> scale{ get_Size() / get_BaseSize() };
+	point = get_Position() + scale * Atlas::Specification::Knob::Frame::Radius;
+	vertex = get_Palette()
+		.get_Atlas()
+			.MapSize(
+				2.F * Atlas::Specification::Knob::Indicator::Radius,
+				2.F * Atlas::Specification::Knob::Indicator::Radius);
+	constexpr double R{
+		Atlas::Specification::Knob::Frame::Radius
+		- Atlas::Specification::Knob::Frame::Stroke
+		- 2. * Atlas::Specification::Knob::Indicator::Radius
+	};
+	point[0] += scale[0] * (R * ::std::cos(m_angle) - Atlas::Specification::Knob::Indicator::Radius);
+	point[1] += scale[1] * (R * ::std::sin(m_angle) - Atlas::Specification::Knob::Indicator::Radius);
+	maskPoint = get_Palette()
+		.get_Atlas()
+			.MapPosition(
+				Atlas::Specification::Knob::Indicator::Point::X,
+				Atlas::Specification::Knob::Indicator::Point::Y);
+	FillOpacityMask(
+		get_Palette()
+			.get_Theme()
+				.Indicator,
+		point,
+		vertex,
+		maskPoint);
 };

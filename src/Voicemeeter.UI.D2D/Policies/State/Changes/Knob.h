@@ -13,34 +13,19 @@ namespace Voicemeeter {
 				namespace State {
 					namespace Changes {
 						namespace Knob {
-							static constexpr int DEFAULT{ 9000 };
-							static constexpr int MIN{ -13500 };
-							static constexpr int MAX{ 13500 };
+							static constexpr int DEFAULT{ 0 };
+							static constexpr int MIN{ -22500 };
+							static constexpr int MAX{ 4500 };
 							static constexpr int DELTA{ 1 };
 							static constexpr int BREAKPOINTS[]{ 700, 10000, 5 };
 
-							inline static ::std::wstring ToLabel(size_t id) {
-								switch (id) {
-								case 0:
-									return L"P";
-								case 1:
-									return L"V";
-								case 2:
-									return L"A1";
-								case 3:
-									return L"A2";
-								case 4:
-									return L"B1";
-								case 5:
-									return L"B2";
-								default:
-									return L"";
-								}
+							inline static size_t ToLabel(size_t id) {
+								return id;
 							};
-							inline static ::std::wstring ToLabel(int gain) {
-								return ::std::to_wstring(::std::abs(
-									static_cast<int>(
-										::std::floor((gain - DEFAULT) / ((MAX - MIN) / 72.)))));
+							inline static size_t ToLabel(int gain) {
+								return 8 + static_cast<size_t>(
+										::std::abs(
+											::std::floor((gain - DEFAULT) / ((MAX - MIN) / 72.))));
 							};
 
 							struct Set {

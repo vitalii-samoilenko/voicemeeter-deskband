@@ -8,6 +8,8 @@
 
 #include "DeskBand.h"
 
+#pragma comment(lib, "uxtheme")
+
 #define RECTWIDTH(x)   ((x).right - (x).left)
 #define RECTHEIGHT(x)  ((x).bottom - (x).top)
 
@@ -19,9 +21,6 @@ extern HINSTANCE    g_hInst;
 extern CLSID CLSID_DeskBand;
 
 static bool g_shutdown{ false };
-
-static constexpr LPCWSTR LPSZ_CLASS_NAME{ L"Voicemeeter.DeskBand" };
-static constexpr DWORD STYLE{ WS_OVERLAPPEDWINDOW };
 
 static constexpr LRESULT OK{ 0 };
 
@@ -280,7 +279,7 @@ STDMETHODIMP DeskBand::SetSite(IUnknown* pUnkSite) {
 				wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 				wc.hInstance = g_hInst;
 				wc.lpfnWndProc = WndProcW;
-				wc.lpszClassName = LPSZ_CLASS_NAME;
+				wc.lpszClassName = L"Voicemeeter.DeskBand";
 
 				RegisterClassW(&wc);
 
@@ -288,7 +287,7 @@ STDMETHODIMP DeskBand::SetSite(IUnknown* pUnkSite) {
 
 				if (CreateWindowExW(
 						WS_EX_NOREDIRECTIONBITMAP,
-						LPSZ_CLASS_NAME,
+						wc.lpszClassName,
 						NULL,
 						WS_CHILD,
 						0,
@@ -382,7 +381,7 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd->m_hWnd = hWnd;
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pRenderTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ 1000 / 120 },
+			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
 				[pWnd]()->bool {
 					pWnd->m_pScene->Render();
 					return true;

@@ -1,12 +1,8 @@
-#include <algorithm>
 #include <cmath>
+#include <utility>
 #include <vector>
 
-#include "Windows/Wrappers.h"
-
 #include "Scene.h"
-
-#pragma comment(lib, "d2d1")
 
 using namespace ::Voicemeeter::UI::D2D;
 
@@ -25,21 +21,34 @@ Scene::Scene(
 void Scene::Resize(const ::std::valarray<double>& vertex) {
 	UI::Scene::Resize(vertex);
 	m_first = true;
+	m_pPalette->get_Atlas()
+		.Rescale(
+			get_pComposition()
+				->get_Size()
+			/ get_pComposition()
+				->get_BaseSize());
 }
 void Scene::Rescale(const ::std::valarray<double>& vertex) {
 	UI::Scene::Rescale(vertex);
 	m_first = true;
+	m_pPalette->get_Atlas()
+		.Rescale(
+			get_pComposition()
+				->get_Size()
+			/ get_pComposition()
+				->get_BaseSize());
 }
 
 void Scene::Render() {
-	::std::unordered_set<Graphics::Bundle*> queue{ m_pPalette->Dequeue() };
-	if (queue.empty()) {
+	Graphics::Queue queue{ ::std::move(m_pPalette->get_Queue()) };
+	if (queue.Empty()) {
 		return;
 	}
-	m_pPalette->Tick();
+	m_pPalette->get_Timer()
+		.Tick();
 	::std::vector<RECT> cRect{};
 	const ::std::valarray<double>& canvasVertex{ get_Size() };
-	m_pPalette->get_pD2dDeviceContext()
+	m_pPalette->get_pDeviceContext()
 		->BeginDraw();
 	for (Graphics::Bundle* pBundle : queue) {
 		const ::std::valarray<double>& dirtyPoint{ pBundle->get_Position() };
@@ -53,14 +62,14 @@ void Scene::Render() {
 		pBundle->Execute();
 	}
 	::Windows::ThrowIfFailed(m_pPalette
-		->get_pD2dDeviceContext()
+		->get_pDeviceContext()
 			->EndDraw(
 	), "Render failed");
 	if (m_first) {
 		::Windows::ThrowIfFailed(m_pPalette
-			->get_pDxgiSwapChain()
+			->get_pSwapChain()
 				->Present(
-					1, 0
+					0U, 0U
 		), "Presentation failed");
 		m_first = false;
 	} else {
@@ -70,9 +79,9 @@ void Scene::Render() {
 			nullptr
 		};
 		::Windows::ThrowIfFailed(m_pPalette
-			->get_pDxgiSwapChain()
+			->get_pSwapChain()
 				->Present1(
-					1, 0,
+					0U, 0U,
 					&params
 		), "Presentation failed");
 	}

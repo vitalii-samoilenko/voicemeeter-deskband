@@ -48,17 +48,17 @@ namespace Voicemeeter {
 
 					virtual void Redraw(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) override {
 						m_bundle.get_Palette()
-							.Queue(m_bundle);
+							.get_Queue() += m_bundle;
 					};
 					virtual void Move(const ::std::valarray<double>& point) override {
 						m_bundle.set_Position(point);
 						m_bundle.get_Palette()
-							.Queue(m_bundle);
+							.get_Queue() += m_bundle;
 					};
 					virtual void Rescale(const ::std::valarray<double>& vertex) override {
 						m_bundle.set_Size(vertex);
 						m_bundle.get_Palette()
-							.Queue(m_bundle);
+							.get_Queue() += m_bundle;
 					};
 
 				private:
