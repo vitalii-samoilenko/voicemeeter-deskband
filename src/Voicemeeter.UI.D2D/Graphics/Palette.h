@@ -19,7 +19,7 @@ namespace Voicemeeter {
 			namespace Graphics {
 				class Palette;
 
-				struct Theme {
+				struct Theme final {
 					::D2D1::ColorF Background;
 					::D2D1::ColorF Warning;
 					::D2D1::ColorF Danger;
@@ -203,7 +203,7 @@ namespace Voicemeeter {
 					Queue& operator=(Queue&&) = delete;
 					inline Queue& operator+=(Bundle& bundle) {
 						m_queue.insert(&bundle);
-						return* this;
+						return *this;
 					};
 
 					inline bool Empty() const {

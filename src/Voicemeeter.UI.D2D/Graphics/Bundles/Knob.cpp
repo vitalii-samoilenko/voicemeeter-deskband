@@ -60,8 +60,6 @@ void Knob::Execute() {
 		vertex,
 		maskPoint);
 
-	::std::valarray<double> scale{ get_Size() / get_BaseSize() };
-	point = get_Position() + scale * Atlas::Specification::Knob::Frame::Radius;
 	vertex = get_Palette()
 		.get_Atlas()
 			.MapSize(
@@ -72,8 +70,9 @@ void Knob::Execute() {
 		- Atlas::Specification::Knob::Frame::Stroke
 		- 2. * Atlas::Specification::Knob::Indicator::Radius
 	};
-	point[0] += scale[0] * (R * ::std::cos(m_angle) - Atlas::Specification::Knob::Indicator::Radius);
-	point[1] += scale[1] * (R * ::std::sin(m_angle) - Atlas::Specification::Knob::Indicator::Radius);
+	point = get_Position() + get_Size() / get_BaseSize()
+		* (::std::valarray<double>{ R * ::std::cos(m_angle), R * ::std::sin(m_angle) }
+			+ Atlas::Specification::Knob::Frame::Radius - Atlas::Specification::Knob::Indicator::Radius);
 	maskPoint = get_Palette()
 		.get_Atlas()
 			.MapPosition(

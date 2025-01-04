@@ -1,7 +1,5 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-
 #include <cmath>
 #include <type_traits>
 
@@ -89,7 +87,7 @@ namespace Voicemeeter {
 								TGlyph::get_Bundle()
 									.set_LabelColor(color);
 								TGlyph::get_Bundle()
-									.set_Angle(state.gain / 18000. * M_PI);
+									.set_Angle(state.gain);
 								TGlyph::get_Bundle()
 									.get_Palette()
 										.get_Queue() += TGlyph::get_Bundle();

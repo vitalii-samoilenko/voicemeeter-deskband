@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <string>
 #include <utility>
 
 #include "Voicemeeter.UI/States/Knob.h"
