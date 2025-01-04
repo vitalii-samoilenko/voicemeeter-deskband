@@ -72,8 +72,6 @@ namespace Voicemeeter {
 				public:
 					using Specification = ::Voicemeeter::Atlas::CherrySpecification;
 
-					static constexpr double AAEPS{ 0.5 - ::std::numeric_limits<double>::epsilon() };
-
 					inline Atlas(
 						Palette& palette,
 						Direction direction
@@ -92,6 +90,14 @@ namespace Voicemeeter {
 					Atlas& operator=(Atlas&&) = delete;
 					Atlas& operator=(const Atlas&) = delete;
 
+					inline static D2D1_RECT_F RectF(const ::std::valarray<double>& point, const ::std::valarray<double>& vertex) {
+						return ::D2D1::RectF(
+							static_cast<FLOAT>(point[0]),
+							static_cast<FLOAT>(point[1]),
+							static_cast<FLOAT>(point[0] + vertex[0] + AAEPS),
+							static_cast<FLOAT>(point[1] + vertex[1] + AAEPS));
+					};
+
 					inline ID2D1Bitmap1* get_pBitmap() const {
 						return m_pBitmap.Get();
 					};
@@ -105,6 +111,8 @@ namespace Voicemeeter {
 					void Rescale(const ::std::valarray<double>& scale);
 
 				private:
+					static constexpr double AAEPS{ 0.5 - ::std::numeric_limits<double>::epsilon() };
+
 					Palette& m_palette;
 					bool m_horizontal;
 					::std::unique_ptr<::Voicemeeter::Atlas::Cherry> m_pAtlas;
@@ -163,12 +171,6 @@ namespace Voicemeeter {
 					  , m_baseVertex{ baseVertex } {
 
 					};
-
-					void FillOpacityMask(
-						const ::D2D1::ColorF& color,
-						const ::std::valarray<double>& point,
-						const ::std::valarray<double>& vertex,
-						const ::std::valarray<double>& maskPoint);
 
 				private:
 					Palette& m_palette;

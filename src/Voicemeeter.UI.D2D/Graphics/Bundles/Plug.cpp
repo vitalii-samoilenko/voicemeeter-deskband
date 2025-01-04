@@ -11,7 +11,7 @@ Plug::Plug(
 		get_Palette()
 			.get_Theme()
 				.Inactive
-  }
+	}
   , m_maskPoint{ 0., 0. }
   , m_labelPoint{ 0., 0. }
   , m_labelVertex{ 0., 0. }
@@ -55,18 +55,31 @@ void Plug::Execute() {
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
-	FillOpacityMask(
-		m_color,
-		get_Position(),
-		get_Size(),
-		m_maskPoint);
+	get_Palette()
+		.get_pBrush()
+			->SetColor(m_color);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				Atlas::RectF(get_Position(), get_Size()),
+				Atlas::RectF(m_maskPoint, get_Size()));
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 
-	FillOpacityMask(
-		m_color,
-		m_labelPoint,
-		m_labelVertex,
-		m_labelMaskPoint);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				Atlas::RectF(m_labelPoint, m_labelVertex),
+				Atlas::RectF(m_labelMaskPoint, m_labelVertex));
 }

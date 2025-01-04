@@ -18,34 +18,6 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	), "Bitmap creation failed");
 }
 
-void Bundle::FillOpacityMask(
-	const ::D2D1::ColorF& color,
-	const ::std::valarray<double>& point,
-	const ::std::valarray<double>& vertex,
-	const ::std::valarray<double>& maskPoint) {
-	get_Palette()
-		.get_pBrush()
-			->SetColor(color);
-	get_Palette()
-		.get_pDeviceContext()
-			->FillOpacityMask(
-				get_Palette()
-					.get_Atlas()
-						.get_pBitmap(),
-				get_Palette()
-					.get_pBrush(),
-				::D2D1::RectF(
-					static_cast<FLOAT>(point[0]),
-					static_cast<FLOAT>(point[1]),
-					static_cast<FLOAT>(point[0] + vertex[0] + Atlas::AAEPS),
-					static_cast<FLOAT>(point[1] + vertex[1] + Atlas::AAEPS)),
-				::D2D1::RectF(
-					static_cast<FLOAT>(maskPoint[0]),
-					static_cast<FLOAT>(maskPoint[1]),
-					static_cast<FLOAT>(maskPoint[0] + vertex[0] + Atlas::AAEPS),
-					static_cast<FLOAT>(maskPoint[1] + vertex[1] + Atlas::AAEPS)));
-}
-
 Palette::Palette(
 	HWND hWnd,
 	const Theme& theme,

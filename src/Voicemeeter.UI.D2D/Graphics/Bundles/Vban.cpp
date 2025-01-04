@@ -27,11 +27,19 @@ void Vban::Execute() {
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
-	FillOpacityMask(
-		m_color,
-		get_Position(),
-		get_Size(),
-		m_maskPoint);
+	get_Palette()
+		.get_pBrush()
+			->SetColor(m_color);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				Atlas::RectF(get_Position(), get_Size()),
+				Atlas::RectF(m_maskPoint, get_Size()));
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);

@@ -87,26 +87,50 @@ void Knob::Execute() {
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
-	FillOpacityMask(
-		m_frameColor,
-		get_Position(),
-		get_Size(),
-		m_maskPoint);
+	get_Palette()
+		.get_pBrush()
+			->SetColor(m_frameColor);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				Atlas::RectF(get_Position(), get_Size()),
+				Atlas::RectF(m_maskPoint, get_Size()));
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 
-	FillOpacityMask(
-		m_labelColor,
-		m_labelPoint,
-		m_labelVertex,
-		m_labelMaskPoint);
+	get_Palette()
+		.get_pBrush()
+			->SetColor(m_labelColor);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				Atlas::RectF(m_labelPoint, m_labelVertex),
+				Atlas::RectF(m_labelMaskPoint, m_labelVertex));
 
-	FillOpacityMask(
-		get_Palette()
-			.get_Theme()
-				.Indicator,
-		m_indicatorPoint,
-		m_indicatorVertex,
-		m_indicatorMaskPoint);
+	get_Palette()
+		.get_pBrush()
+			->SetColor(get_Palette()
+				.get_Theme()
+					.Indicator);
+	get_Palette()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				get_Palette()
+					.get_Atlas()
+						.get_pBitmap(),
+				get_Palette()
+					.get_pBrush(),
+				Atlas::RectF(m_indicatorPoint, m_indicatorVertex),
+				Atlas::RectF(m_indicatorMaskPoint, m_indicatorVertex));
 };
