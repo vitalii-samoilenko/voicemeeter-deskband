@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cmath>
 #include <type_traits>
 
 #include "Voicemeeter.UI/States/Knob.h"
@@ -53,7 +52,7 @@ namespace Voicemeeter {
 												.get_Theme()
 													.Warning
 										: state.hold
-											? 9000 < state.gain
+											? Policies::State::Changes::Knob::DEFAULT < state.gain
 												? TGlyph::get_Bundle()
 													.get_Palette()
 														.get_Theme()

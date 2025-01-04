@@ -29,6 +29,7 @@ namespace Voicemeeter {
 
 					private:
 						::D2D1::ColorF m_color;
+						::std::valarray<double> m_maskPoint;
 					};
 				}
 			}

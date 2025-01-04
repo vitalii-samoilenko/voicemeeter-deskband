@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitset>
 #include <chrono>
 #include <memory>
 #include <unordered_set>
@@ -129,12 +130,14 @@ namespace Voicemeeter {
 					};
 					inline void set_Position(const ::std::valarray<double>& value) {
 						m_point = value;
+						m_changed.set(position);
 					};
 					inline const ::std::valarray<double>& get_Size() const {
 						return m_vertex;
 					};
 					inline void set_Size(const ::std::valarray<double>& value) {
 						m_vertex = value;
+						m_changed.set(size);
 					};
 					inline const ::std::valarray<double>& get_BaseSize() const {
 						return m_baseVertex;
@@ -143,10 +146,18 @@ namespace Voicemeeter {
 					virtual void Execute() = 0;
 
 				protected:
+					enum flags : size_t {
+						position = 0,
+						size = 1
+					};
+
+					::std::bitset<sizeof(size_t)> m_changed;
+
 					inline Bundle(
 						Palette& palette,
 						const ::std::valarray<double>& baseVertex
-					) : m_palette{ palette }
+					) : m_changed{}
+					  , m_palette{ palette }
 					  , m_point{ 0., 0. }
 					  , m_vertex{ baseVertex }
 					  , m_baseVertex{ baseVertex } {

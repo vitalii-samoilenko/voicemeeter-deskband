@@ -23,7 +23,11 @@ namespace Voicemeeter {
 						Plug& operator=(Plug&&) = delete;
 
 						inline void set_Label(size_t value) {
+							if (m_label == value) {
+								return;
+							}
 							m_label = value;
+							m_changed.set(label);
 						}
 						inline void set_Color(const ::D2D1::ColorF& value) {
 							m_color = value;
@@ -32,8 +36,16 @@ namespace Voicemeeter {
 						virtual void Execute() override;
 
 					private:
+						enum plug_flags : size_t {
+							label = size + 1
+						};
+
 						size_t m_label;
 						::D2D1::ColorF m_color;
+						::std::valarray<double> m_maskPoint;
+						::std::valarray<double> m_labelPoint;
+						::std::valarray<double> m_labelVertex;
+						::std::valarray<double> m_labelMaskPoint;
 					};
 				}
 			}

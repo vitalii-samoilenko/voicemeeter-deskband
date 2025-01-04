@@ -11,49 +11,62 @@ Plug::Plug(
 		get_Palette()
 			.get_Theme()
 				.Inactive
-  } {
+  }
+  , m_maskPoint{ 0., 0. }
+  , m_labelPoint{ 0., 0. }
+  , m_labelVertex{ 0., 0. }
+  , m_labelMaskPoint{ 0., 0. } {
 
 }
 
 void Plug::Execute() {
-	::std::valarray<double> vertex{ get_Size() };
-	::std::valarray<double> point{ get_Position() };
-	::std::valarray<double> maskPoint{
-		get_Palette()
+	if (m_changed.test(size)) {
+		m_changed.reset(size);
+		m_maskPoint = get_Palette()
 			.get_Atlas()
 				.MapPosition(
 					Atlas::Specification::Plug::Frame::Point::X,
-					Atlas::Specification::Plug::Frame::Point::Y)
-	};
+					Atlas::Specification::Plug::Frame::Point::Y);
+		m_labelVertex = get_Palette()
+			.get_Atlas()
+				.MapSize(Atlas::Specification::Block::Width, Atlas::Specification::Block::Height);
+		m_changed.set(position);
+		m_changed.set(label);
+	}
+	if (m_changed.test(position)) {
+		m_changed.reset(position);
+		m_labelPoint = get_Position()
+			+ (get_Size() - m_labelVertex) / 2.
+			+ 0.7 * get_Palette()
+				.get_Atlas()
+					.MapSize(
+						Atlas::Specification::Plug::Indicator::Tip::X - Atlas::Specification::Plug::Indicator::Start::X,
+						0.F);
+	}
+	if (m_changed.test(label)) {
+		m_changed.reset(label);
+		m_labelMaskPoint = get_Palette()
+			.get_Atlas()
+				.MapPosition(
+					Atlas::Specification::Plug::Label::Strip::Point::X + m_label % Atlas::Specification::Width,
+					Atlas::Specification::Plug::Label::Strip::Point::Y + m_label / Atlas::Specification::Width);
+	}
+
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
 	FillOpacityMask(
 		m_color,
-		point,
-		vertex,
-		maskPoint);
+		get_Position(),
+		get_Size(),
+		m_maskPoint);
 	get_Palette()
 		.get_pDeviceContext()
 			->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
 
-	vertex = get_Palette()
-		.get_Atlas()
-			.MapSize(Atlas::Specification::Block::Width, Atlas::Specification::Block::Height);
-	point = get_Position() + (get_Size() - vertex) / 2.;
-	point[0] += get_Palette()
-		.get_Atlas()
-			.MapSize(
-				Atlas::Specification::Plug::Indicator::Tip::X - Atlas::Specification::Plug::Indicator::Start::X,
-				0.F)[0] * 0.7;
-	maskPoint = get_Palette()
-		.get_Atlas()
-			.MapPosition(
-				Atlas::Specification::Plug::Label::Strip::Point::X + m_label % Atlas::Specification::Width,
-				Atlas::Specification::Plug::Label::Strip::Point::Y + m_label / Atlas::Specification::Width);
 	FillOpacityMask(
 		m_color,
-		point,
-		vertex,
-		maskPoint);
+		m_labelPoint,
+		m_labelVertex,
+		m_labelMaskPoint);
 }

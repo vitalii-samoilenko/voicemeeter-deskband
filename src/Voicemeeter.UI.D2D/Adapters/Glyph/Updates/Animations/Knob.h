@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cmath>
 #include <type_traits>
 
 #include "Voicemeeter.UI/States/Knob.h"
@@ -59,7 +58,7 @@ namespace Voicemeeter {
 									vertex[toggle] = state.toggle
 										? 1
 										: -1;
-									vertex[gain_danger] = 9000 < state.gain
+									vertex[gain_danger] = Policies::State::Changes::Knob::DEFAULT < state.gain
 										? 1
 										: -1;
 									int level{
@@ -89,7 +88,7 @@ namespace Voicemeeter {
 											? Policies::State::Changes::Knob::ToLabel(state.gain)
 											: Policies::State::Changes::Knob::ToLabel(state.id));
 									TGlyph::get_Bundle()
-										.set_Angle(state.gain / 18000. * M_PI);
+										.set_Angle(state.gain);
 									TGlyph::get_Bundle()
 										.get_Palette()
 											.get_Queue() += TGlyph::get_Bundle();
