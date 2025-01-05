@@ -74,7 +74,7 @@ Explorer.exe &
 
 ### Customization
 
-By default UI is animated with target 100 FPS (will be capped by monitor refresh rate if less and Windows message dispatch workload)
+By default UI is animated with target 100 FPS
 
 In case if you experience any issues or seek performance boost/power safety you can disable animations via registry key:
 
