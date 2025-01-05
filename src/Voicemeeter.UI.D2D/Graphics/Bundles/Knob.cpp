@@ -72,16 +72,18 @@ void Knob::Execute() {
 	}
 	if (m_changed.test(angle)) {
 		m_changed.reset(angle);
-		constexpr double R{
+		constexpr FLOAT R{
 			Atlas::Specification::Knob::Frame::Radius
 			- Atlas::Specification::Knob::Frame::Stroke
-			- 2. * Atlas::Specification::Knob::Indicator::Radius
+			- 2.F * Atlas::Specification::Knob::Indicator::Radius
 		};
-		double phi{ m_angle / 18000. * M_PI };
+		FLOAT phi{ m_angle / 18000.F * static_cast<FLOAT>(M_PI) };
 		m_indicatorPoint = get_Position()
-			+ get_Size() / get_BaseSize()
-				* (::std::valarray<double>{ R * ::std::cos(phi), R * ::std::sin(phi) }
-					+ Atlas::Specification::Knob::Frame::Radius - Atlas::Specification::Knob::Indicator::Radius);
+			+ get_Palette()
+				.get_Atlas()
+					.MapSize(
+						R * ::std::cos(phi) + Atlas::Specification::Knob::Frame::Radius - Atlas::Specification::Knob::Indicator::Radius,
+						R * ::std::sin(phi) + Atlas::Specification::Knob::Frame::Radius - Atlas::Specification::Knob::Indicator::Radius);
 	}
 
 	get_Palette()
