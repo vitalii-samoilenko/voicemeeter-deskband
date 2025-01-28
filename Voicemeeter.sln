@@ -31,6 +31,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.D2D"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Atlas", "src\Voicemeeter.Atlas\Voicemeeter.Atlas.vcxproj", "{77B08162-A8D9-4F43-9297-41CC35F508F9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.D3D12", "src\Voicemeeter.UI.D3D12\Voicemeeter.UI.D3D12.vcxproj", "{A9688E57-00FB-485C-947D-1F8EBCB51564}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.Cherry", "src\Voicemeeter.UI.Cherry\Voicemeeter.UI.Cherry.vcxproj", "{3D402B49-3499-4717-A44E-5318FDB37943}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -174,6 +178,30 @@ Global
 		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x64.Build.0 = Remote|x64
 		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x86.ActiveCfg = Release|Win32
 		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Remote|x86.Build.0 = Release|Win32
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Debug|x64.ActiveCfg = Debug|x64
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Debug|x64.Build.0 = Debug|x64
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Debug|x86.ActiveCfg = Debug|Win32
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Debug|x86.Build.0 = Debug|Win32
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Release|x64.ActiveCfg = Release|x64
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Release|x64.Build.0 = Release|x64
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Release|x86.ActiveCfg = Release|Win32
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Release|x86.Build.0 = Release|Win32
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Remote|x64.ActiveCfg = Remote|x64
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Remote|x64.Build.0 = Remote|x64
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Remote|x86.ActiveCfg = Release|Win32
+		{A9688E57-00FB-485C-947D-1F8EBCB51564}.Remote|x86.Build.0 = Release|Win32
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Debug|x64.ActiveCfg = Debug|x64
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Debug|x64.Build.0 = Debug|x64
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Debug|x86.ActiveCfg = Debug|Win32
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Debug|x86.Build.0 = Debug|Win32
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Release|x64.ActiveCfg = Release|x64
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Release|x64.Build.0 = Release|x64
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Release|x86.ActiveCfg = Release|Win32
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Release|x86.Build.0 = Release|Win32
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x64.ActiveCfg = Remote|x64
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x64.Build.0 = Remote|x64
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x86.ActiveCfg = Release|Win32
+		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

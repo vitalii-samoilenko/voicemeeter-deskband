@@ -1,3 +1,7 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif // !NOMINMAX
+
 #include <cmath>
 #include <utility>
 #include <vector>
@@ -48,8 +52,9 @@ void Scene::Render() {
 		.Tick();
 	::std::vector<RECT> cRect{};
 	const ::std::valarray<double>& canvasVertex{ get_Size() };
-	m_pPalette->get_pDeviceContext()
-		->BeginDraw();
+	m_pPalette->get_Instrumentation()
+		.get_pDeviceContext()
+			->BeginDraw();
 	for (Graphics::Bundle* pBundle : queue) {
 		const ::std::valarray<double>& dirtyPoint{ pBundle->get_Position() };
 		const ::std::valarray<double>& dirtyVertex{ pBundle->get_Size() };
@@ -61,13 +66,13 @@ void Scene::Render() {
 		});
 		pBundle->Execute();
 	}
-	::Windows::ThrowIfFailed(m_pPalette
-		->get_pDeviceContext()
+	::Windows::ThrowIfFailed(m_pPalette->get_Instrumentation()
+		.get_pDeviceContext()
 			->EndDraw(
 	), "Render failed");
 	if (m_first) {
-		::Windows::ThrowIfFailed(m_pPalette
-			->get_pSwapChain()
+		::Windows::ThrowIfFailed(m_pPalette->get_Instrumentation()
+			.get_pSwapChain()
 				->Present(
 					0U, 0U
 		), "Presentation failed");
@@ -78,8 +83,8 @@ void Scene::Render() {
 			nullptr,
 			nullptr
 		};
-		::Windows::ThrowIfFailed(m_pPalette
-			->get_pSwapChain()
+		::Windows::ThrowIfFailed(m_pPalette->get_Instrumentation()
+			.get_pSwapChain()
 				->Present1(
 					0U, 0U,
 					&params

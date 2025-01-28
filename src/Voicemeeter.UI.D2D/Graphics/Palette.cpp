@@ -11,26 +11,68 @@ using namespace ::Voicemeeter::UI::D2D::Graphics;
 void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	m_pAtlas.reset(new ::Voicemeeter::Atlas::Cherry{ m_horizontal, scale });
 
-	::Windows::ThrowIfFailed(m_palette.get_pDeviceContext()
-		->CreateBitmapFromWicBitmap(
-			m_pAtlas->get_pBitmap(),
-			&m_pBitmap
+	::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
+		.get_pDeviceContext()
+			->CreateBitmapFromWicBitmap(
+				m_pAtlas->get_pBitmap(),
+				m_palette.get_Instrumentation()
+					.get_ppBitmap()
 	), "Bitmap creation failed");
 }
+void Atlas::Fill(
+	const ::std::valarray<double>& point,
+	const ::std::valarray<double>& vertex,
+	const ::std::valarray<double>& maskPoint,
+	const ::std::valarray<double>& color,
+	bool blend) {
+	using RGBA = ::Voicemeeter::UI::Cherry::Graphics::Theme::RGBA;
 
-Palette::Palette(
-	HWND hWnd,
-	const Theme& theme,
-	Direction direction
-) : m_theme{ theme }
-  , m_atlas{ *this, direction }
-  , m_timer{}
-  , m_queue{}
-  , m_pD2dFactory{ nullptr }
+	constexpr double AAEPS{ 0.5 - ::std::numeric_limits<double>::epsilon() };
+
+	if (blend) {
+		m_palette.get_Instrumentation()
+			.get_pDeviceContext()
+				->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+	}
+	m_palette.get_Instrumentation()
+		.get_pBrush()
+			->SetColor(::D2D1::ColorF(
+				static_cast<FLOAT>(color[RGBA::red]),
+				static_cast<FLOAT>(color[RGBA::green]),
+				static_cast<FLOAT>(color[RGBA::blue]),
+				static_cast<FLOAT>(color[RGBA::alpha])));
+	m_palette.get_Instrumentation()
+		.get_pDeviceContext()
+			->FillOpacityMask(
+				m_palette.get_Instrumentation()
+					.get_pBitmap(),
+				m_palette.get_Instrumentation()
+					.get_pBrush(),
+				::D2D1::RectF(
+					static_cast<FLOAT>(point[0]),
+					static_cast<FLOAT>(point[1]),
+					static_cast<FLOAT>(point[0] + vertex[0] + AAEPS),
+					static_cast<FLOAT>(point[1] + vertex[1] + AAEPS)),
+				::D2D1::RectF(
+					static_cast<FLOAT>(maskPoint[0]),
+					static_cast<FLOAT>(maskPoint[1]),
+					static_cast<FLOAT>(maskPoint[0] + vertex[0] + AAEPS),
+					static_cast<FLOAT>(maskPoint[1] + vertex[1] + AAEPS)));
+	if (blend) {
+		m_palette.get_Instrumentation()
+			.get_pDeviceContext()
+				->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
+	}
+}
+
+Instrumentation::Instrumentation(
+	HWND hWnd
+) : m_pD2dFactory{ nullptr }
   , m_pDeviceContext{ nullptr }
   , m_pSwapChain{ nullptr }
   , m_pCompositionTarget{ nullptr }
-  , m_pBrush{ nullptr } {
+  , m_pBrush{ nullptr }
+  , m_pBitmap{ nullptr } {
 	::Windows::ThrowIfFailed(CoInitialize(
 		NULL
 	), "COM initialization failed");
@@ -85,6 +127,7 @@ Palette::Palette(
 		&m_pDeviceContext
 	), "Direct2D device context creation failed");
 	m_pDeviceContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+	m_pDeviceContext->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_COPY);
 
 	::Microsoft::WRL::ComPtr<IDXGIAdapter> pDxgiAdapter{ nullptr };
 	::Windows::ThrowIfFailed(pDxgiDevice->GetAdapter(

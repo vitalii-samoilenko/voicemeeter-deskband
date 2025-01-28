@@ -7,14 +7,14 @@
 namespace Windows {
 	class Error : public ::std::runtime_error {
 	public:
-		inline Error(DWORD code_arg, const char* what_arg) noexcept
+		inline Error(HRESULT code_arg, const char* what_arg) noexcept
 			: runtime_error{ what_arg }
 			, m_errCode{ code_arg } {
 
 		};
-		inline Error(HRESULT code_arg, const char* what_arg) noexcept
+		inline Error(DWORD code_arg, const char* what_arg) noexcept
 			: runtime_error{ what_arg }
-			, m_errCode{ code_arg } {
+			, m_errCode{ HRESULT_FROM_WIN32(code_arg) } {
 
 		};
 		inline explicit Error(const char* what_arg) noexcept
@@ -22,11 +22,11 @@ namespace Windows {
 
 		};
 
-		inline long long code() const noexcept {
+		inline HRESULT code() const noexcept {
 			return m_errCode;
 		};
 
 	private:
-		const long long m_errCode;
+		const HRESULT m_errCode;
 	};
 }

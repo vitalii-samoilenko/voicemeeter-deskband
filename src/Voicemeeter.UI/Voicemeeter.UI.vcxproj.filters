@@ -31,9 +31,6 @@
     <Filter Include="Header Files\Decorators">
       <UniqueIdentifier>{f6263b99-fc37-4061-986f-ac84587d12d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\States">
-      <UniqueIdentifier>{6c7a9c28-1944-4024-9109-f7846a15d4c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Decorators\Interactivity">
       <UniqueIdentifier>{75c08ab8-cc71-49d5-881e-e09e0771a70f}</UniqueIdentifier>
     </Filter>
@@ -102,12 +99,6 @@
     <ClInclude Include="Decorators\RegionCheck.h">
       <Filter>Header Files\Decorators</Filter>
     </ClInclude>
-    <ClInclude Include="Controls\Knob.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="States\Knob.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="Controls\Checkbox.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
@@ -117,16 +108,10 @@
     <ClInclude Include="Decorators\Interactivity\Checkbox.h">
       <Filter>Header Files\Decorators\Interactivity</Filter>
     </ClInclude>
-    <ClInclude Include="Decorators\Interactivity\Knob.h">
-      <Filter>Header Files\Decorators\Interactivity</Filter>
-    </ClInclude>
     <ClInclude Include="Policies\State\Changes\Checkbox.h">
       <Filter>Header Files\Policies\State\Changes</Filter>
     </ClInclude>
     <ClInclude Include="Policies\State\Changes\Circular.h">
-      <Filter>Header Files\Policies\State\Changes</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\State\Changes\Knob.h">
       <Filter>Header Files\Policies\State\Changes</Filter>
     </ClInclude>
     <ClInclude Include="Policies\State\Changes\Range.h">

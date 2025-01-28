@@ -152,7 +152,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -167,7 +167,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -184,7 +184,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_LIB;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src\;</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -197,8 +197,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Voicemeeter.Atlas\Voicemeeter.Atlas.vcxproj">
-      <Project>{77b08162-a8d9-4f43-9297-41cc35f508f9}</Project>
+    <ProjectReference Include="..\Voicemeeter.UI.Cherry\Voicemeeter.UI.Cherry.vcxproj">
+      <Project>{3d402b49-3499-4717-a44e-5318fdb37943}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.UI\Voicemeeter.UI.vcxproj">
       <Project>{8ebf00e4-20be-4230-97ba-8dd20f2f35cb}</Project>
@@ -208,39 +208,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Adapters\Glyph\Updates\Animations\Knob.h" />
-    <ClInclude Include="Adapters\Glyph\Updates\Animations\Plug.h" />
-    <ClInclude Include="Adapters\Glyph\Updates\Animations\Vban.h" />
-    <ClInclude Include="Adapters\Glyph\Updates\Knob.h" />
-    <ClInclude Include="Adapters\Glyph\Updates\Plug.h" />
-    <ClInclude Include="Adapters\Glyph\Updates\Vban.h" />
-    <ClInclude Include="Controls\Knob.h" />
-    <ClInclude Include="Controls\Plug.h" />
-    <ClInclude Include="Controls\Vban.h" />
-    <ClInclude Include="Decorators\Bundle\Animation.h" />
     <ClInclude Include="Decorators\Bundle\Animations\Knob.h" />
     <ClInclude Include="Decorators\Bundle\Animations\Plug.h" />
     <ClInclude Include="Decorators\Bundle\Animations\Vban.h" />
-    <ClInclude Include="Decorators\Interactivity\Knob.h" />
-    <ClInclude Include="Decorators\Interactivity\Plug.h" />
-    <ClInclude Include="Decorators\Interactivity\Vban.h" />
     <ClInclude Include="Graphics\Bundles\Knob.h" />
     <ClInclude Include="Graphics\Bundles\Plug.h" />
     <ClInclude Include="Graphics\Bundles\Vban.h" />
     <ClInclude Include="Graphics\Canvas.h" />
     <ClInclude Include="Graphics\Glyph.h" />
     <ClInclude Include="Graphics\Palette.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Animations\Knob.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Animations\Plug.h" />
+    <ClInclude Include="Policies\Glyph\Updates\Animations\Vban.h" />
     <ClInclude Include="Policies\Glyph\Updates\Knob.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Passthrough.h" />
     <ClInclude Include="Policies\Glyph\Updates\Plug.h" />
     <ClInclude Include="Policies\Glyph\Updates\Vban.h" />
-    <ClInclude Include="Policies\State\Changes\Knob.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Graphics\Bundles\Knob.cpp" />
-    <ClCompile Include="Graphics\Bundles\Plug.cpp" />
-    <ClCompile Include="Graphics\Bundles\Vban.cpp" />
     <ClCompile Include="Graphics\Canvas.cpp" />
     <ClCompile Include="Graphics\Palette.cpp" />
     <ClCompile Include="Scene.cpp" />

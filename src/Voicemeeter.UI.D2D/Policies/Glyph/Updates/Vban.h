@@ -1,9 +1,8 @@
 #pragma once
 
-#include <type_traits>
+#include "Voicemeeter.UI.Cherry/Policies/Glyph/Updates/Vban.h"
 
-#include "../../../Graphics/Bundles/Vban.h"
-#include "Passthrough.h"
+#include "../../../Graphics/Palette.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -11,11 +10,11 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TBundle, typename TGlyph,
-							::std::enable_if_t<
-								::std::is_base_of_v<Graphics::Bundles::Vban, TBundle>,
-								bool> = true>
-						using Vban = Passthrough<TBundle, TGlyph, int>;
+						template<typename TBundle, typename TGlyph>
+						using Vban = Cherry::Policies::Glyph::Updates::Vban<
+							Graphics::Instrumentation,
+							TBundle,
+							TGlyph>;
 					}
 				}
 			}

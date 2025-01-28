@@ -143,6 +143,26 @@ namespace Windows {
 		}
 	}
 
+	inline HANDLE wCreateEventW(
+		_In_opt_ LPSECURITY_ATTRIBUTES lpEventAttributes,
+		_In_ BOOL bManualReset,
+		_In_ BOOL bInitialState,
+		_In_opt_ LPCWSTR lpName
+	) {
+		HANDLE hEvent{
+			CreateEventW(
+				lpEventAttributes,
+				bManualReset,
+				bInitialState,
+				lpName
+			)
+		};
+		if (hEvent == NULL) {
+			throw new Error{ "Event creation failed" };
+		}
+		return hEvent;
+	}
+
 	inline void wGetWindowRect(
 		_In_ HWND hWnd,
 		_Out_ LPRECT lpRect

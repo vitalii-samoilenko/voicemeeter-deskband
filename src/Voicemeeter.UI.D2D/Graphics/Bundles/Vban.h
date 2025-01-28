@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Voicemeeter.UI.Cherry/Graphics/Bundles/Vban.h"
+
 #include "../Palette.h"
 
 namespace Voicemeeter {
@@ -7,30 +9,7 @@ namespace Voicemeeter {
 		namespace D2D {
 			namespace Graphics {
 				namespace Bundles {
-					class Vban : public Bundle {
-					public:
-						explicit Vban(
-							Graphics::Palette& palette
-						);
-						Vban() = delete;
-						Vban(const Vban&) = delete;
-						Vban(Vban&&) = delete;
-
-						~Vban() = default;
-
-						Vban& operator=(const Vban&) = delete;
-						Vban& operator=(Vban&&) = delete;
-
-						inline void set_Color(const ::D2D1::ColorF& value) {
-							m_color = value;
-						};
-
-						virtual void Execute() override;
-
-					private:
-						::D2D1::ColorF m_color;
-						::std::valarray<double> m_maskPoint;
-					};
+					using Vban = Cherry::Graphics::Bundles::Vban<Instrumentation>;
 				}
 			}
 		}

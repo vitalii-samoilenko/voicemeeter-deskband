@@ -1,11 +1,8 @@
 #pragma once
 
-#include <type_traits>
+#include "Voicemeeter.UI.Cherry/Policies/Glyph/Updates/Knob.h"
 
-#include "Voicemeeter.UI/States/Knob.h"
-
-#include "../../../Graphics/Bundles/Knob.h"
-#include "Passthrough.h"
+#include "../../../Graphics/Palette.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -13,11 +10,11 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TBundle, typename TGlyph,
-							::std::enable_if_t<
-								::std::is_base_of_v<Graphics::Bundles::Knob, TBundle>,
-								bool> = true>
-						using Knob = Passthrough<TBundle, TGlyph, States::Knob>;
+						template<typename TBundle, typename TGlyph>
+						using Knob = Cherry::Policies::Glyph::Updates::Knob<
+							Graphics::Instrumentation,
+							TBundle,
+							TGlyph>;
 					}
 				}
 			}
