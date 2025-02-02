@@ -131,7 +131,9 @@ void Scene::Render() {
 	};
 	m_pPalette->get_Instrumentation()
 		.get_pCommandQueue()
-			->ExecuteCommandLists(cpCommandList.size(), cpCommandList.data());
+			->ExecuteCommandLists(
+				static_cast<UINT>(cpCommandList.size()),
+				cpCommandList.data());
 	if (m_first) {
 		::Windows::ThrowIfFailed(m_pPalette->get_Instrumentation()
 			.get_pSwapChain()

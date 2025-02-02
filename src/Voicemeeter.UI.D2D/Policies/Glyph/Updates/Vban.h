@@ -10,7 +10,9 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TBundle, typename TGlyph>
+						template<
+							typename TBundle,
+							typename TGlyph>
 						using Vban = Cherry::Policies::Glyph::Updates::Vban<
 							Graphics::Instrumentation,
 							TBundle,

@@ -26,11 +26,11 @@ namespace Voicemeeter {
 									"TGlyph must be derived from Glyph");
 
 								inline void operator()(TGlyph& glyph, const int& state) const {
-									using Decorators::Bundle::Animations::Vban<TInstrumentation, TBundle>;
+									using Animation = typename TAnimation::animation_vector;
 
 									glyph.get_Bundle()
 										.get_Velocity()
-											[active] = state
+											[Animation::active] = state
 												? 1LL
 												: -1LL;
 									glyph.get_Bundle()

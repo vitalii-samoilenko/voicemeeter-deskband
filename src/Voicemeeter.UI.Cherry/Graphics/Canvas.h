@@ -14,7 +14,7 @@ namespace Voicemeeter {
 
 				public:
 					inline explicit Canvas(
-						const Palette& palette
+						Palette& palette
 					) : m_point{ 0., 0. }
 					  , m_vertex{ 0., 0. }
 					  , m_palette{ palette } {

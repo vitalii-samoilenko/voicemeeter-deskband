@@ -284,7 +284,7 @@ namespace Voicemeeter {
 					static inline void Blend(::std::valarray<double>& dst, const ::std::valarray<double>& src, double alpha) {
 						using RGBA = Theme::RGBA;
 
-						dst[RGBA::red] = dst[RGBA::red] * (1. - alpha) + src[RGBA:W:red] * alpha;
+						dst[RGBA::red] = dst[RGBA::red] * (1. - alpha) + src[RGBA::red] * alpha;
 						dst[RGBA::green] = dst[RGBA::green] * (1. - alpha) + src[RGBA::green] * alpha;
 						dst[RGBA::blue] = dst[RGBA::blue] * (1. - alpha) + src[RGBA::blue] * alpha;
 					};

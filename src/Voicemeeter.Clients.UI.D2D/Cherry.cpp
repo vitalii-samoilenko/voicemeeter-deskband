@@ -14,16 +14,23 @@
 #include "Voicemeeter.UI/Decorators/RegionCheck.h"
 #include "Voicemeeter.UI/Panels/Stack.h"
 #include "Voicemeeter.UI/Policies/State/Changes/Checkbox.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Knob.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Plug.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Animations/Vban.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Knob.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Plug.h"
-#include "Voicemeeter.UI.D2D/Adapters/Glyph/Updates/Vban.h"
-#include "Voicemeeter.UI.D2D/Decorators/Interactivity/Knob.h"
-#include "Voicemeeter.UI.D2D/Decorators/Interactivity/Plug.h"
-#include "Voicemeeter.UI.D2D/Decorators/Interactivity/Vban.h"
-#include "Voicemeeter.UI.D2D/Policies/State/Changes/Knob.h"
+#include "Voicemeeter.UI.D2D/Decorators/Bundle/Animations/Knob.h"
+#include "Voicemeeter.UI.D2D/Decorators/Bundle/Animations/Plug.h"
+#include "Voicemeeter.UI.D2D/Decorators/Bundle/Animations/Vban.h"
+#include "Voicemeeter.UI.D2D/Graphics/Bundles/Knob.h"
+#include "Voicemeeter.UI.D2D/Graphics/Bundles/Plug.h"
+#include "Voicemeeter.UI.D2D/Graphics/Bundles/Vban.h"
+#include "Voicemeeter.UI.D2D/Graphics/Glyph.h"
+#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Animations/Knob.h"
+#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Animations/Plug.h"
+#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Animations/Vban.h"
+#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Knob.h"
+#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Plug.h"
+#include "Voicemeeter.UI.D2D/Policies/Glyph/Updates/Vban.h"
+#include "Voicemeeter.UI.Cherry/Decorators/Interactivity/Knob.h"
+#include "Voicemeeter.UI.Cherry/Decorators/Interactivity/Plug.h"
+#include "Voicemeeter.UI.Cherry/Decorators/Interactivity/Vban.h"
+#include "Voicemeeter.UI.Cherry/Policies/State/Changes/Knob.h"
 
 #include "Cherry.h"
 
@@ -40,7 +47,7 @@ inline static ::std::valarray<double> MarginPosition<::Voicemeeter::UI::Directio
 	return ::std::valarray<double>{ 0., 2. };
 }
 
-template<typename TBundle, typename TGlyph>
+template<typename TGlyph, typename TGlyphUpdate>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
 	::Voicemeeter::UI::Trackers::Input& inputTracker,
@@ -52,7 +59,10 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 		mixer.set_Vban<Cherry>(state);
 	};
 	using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
-		::Voicemeeter::UI::D2D::Decorators::Interactivity::Vban<TBundle, TGlyph, decltype(changeNotify)>>;
+		::Voicemeeter::UI::Cherry::Decorators::Interactivity::Vban<
+			TGlyph, decltype(changeNotify), TGlyphUpdate,
+			::Voicemeeter::UI::Cherry::Controls::Vban<
+				TGlyph, decltype(changeNotify), TGlyphUpdate>>>;
 	::std::unique_ptr<Control> pControl{
 		new Control{
 			inputTracker,
@@ -75,32 +85,33 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeVban(
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
-	auto changeNotify = [&mixer](const int& state)->void {
-		mixer.set_Vban<Cherry>(state);
-	};
 	using Bundle = ::Voicemeeter::UI::D2D::Graphics::Bundles::Vban;
 	if (animations) {
 		using Animation = ::Voicemeeter::UI::D2D::Decorators::Bundle::Animations::Vban<
 			Bundle>;
-		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Vban<
-			Bundle, Animation, ::Voicemeeter::UI::D2D::Graphics::Glyph<Animation>>;
+		using Glyph = ::Voicemeeter::UI::D2D::Graphics::Glyph<
+			Animation>;
+		using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Animations::Vban<
+			Bundle, Animation, Glyph>;
 		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette } };
-		return ComposeVban<Animation>(
+		return ComposeVban<Glyph, GlyphUpdate>(
 			focusTracker, inputTracker,
 			pGlyph,
 			mixer, subscription);
 	} else {
-		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Vban<
-			Bundle, ::Voicemeeter::UI::D2D::Graphics::Glyph<Bundle>>;
+		using Glyph = ::Voicemeeter::UI::D2D::Graphics::Glyph<
+			Bundle>;
+		using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Vban<
+			Bundle, Glyph>;
 		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette } };
-		return ComposeVban<Bundle>(
+		return ComposeVban<Glyph, GlyphUpdate>(
 			focusTracker, inputTracker,
 			pGlyph,
 			mixer, subscription);
 	}
 }
 
-template<::Voicemeeter::UI::Direction Direction, ::Voicemeeter::UI::Direction MarginDirection, typename TBundle, typename TGlyph, typename TStrip>
+template<::Voicemeeter::UI::Direction Direction, ::Voicemeeter::UI::Direction MarginDirection, typename TGlyph, typename TGlyphUpdate, typename TStrip>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	bool first,
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
@@ -111,13 +122,16 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
-	auto changeNotify = [&strip](const ::Voicemeeter::UI::States::Knob& state)->void {
+	auto changeNotify = [&strip](const ::Voicemeeter::UI::Cherry::States::Knob& state)->void {
 		strip.set_Gain<Cherry>(state.gain / 375.);
 		strip.set_Mute<Cherry>(state.toggle);
 	};
 	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
 	using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
-		::Voicemeeter::UI::D2D::Decorators::Interactivity::Knob<Direction, TBundle, TGlyph, decltype(changeNotify)>>;
+		::Voicemeeter::UI::Cherry::Decorators::Interactivity::Knob<
+			Direction, TGlyph, decltype(changeNotify), TGlyphUpdate,
+			::Voicemeeter::UI::Cherry::Controls::Knob<
+				TGlyph, decltype(changeNotify), TGlyphUpdate>>>;
 	::std::unique_ptr<Control> pControl{
 		(first
 			? new Control{
@@ -133,31 +147,31 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	};
 	subscription.on_Gain(strip.get_Id(),
 		[&control = *pControl](double value)->void {
-			::Voicemeeter::UI::States::Knob state{ control.get_State() };
+			::Voicemeeter::UI::Cherry::States::Knob state{ control.get_State() };
 			state.gain = static_cast<int>(value * 375.);
 			control.Set(state, false);
 		});
 	subscription.on_Mute(strip.get_Id(),
 		[&control = *pControl](bool value)->void {
-			::Voicemeeter::UI::States::Knob state{ control.get_State() };
+			::Voicemeeter::UI::Cherry::States::Knob state{ control.get_State() };
 			state.toggle = value;
 			control.Set(state, false);
 		});
-	::Voicemeeter::UI::States::Knob state{ pControl->get_State() };
+	::Voicemeeter::UI::Cherry::States::Knob state{ pControl->get_State() };
 	state.id = strip.get_Id();
 	state.level.resize(strip.end() - strip.begin());
 	pControl->Set(state, false);
 	for (auto line = strip.begin(); line != strip.end(); ++line) {
 		subscription.on_Level(line->get_Id(),
 			[&control = *pControl, i = line - strip.begin()](double value)->void {
-				::Voicemeeter::UI::States::Knob state{ control.get_State() };
+				::Voicemeeter::UI::Cherry::States::Knob state{ control.get_State() };
 				state.level[i] = static_cast<int>(value * 10000.);
 				control.Set(state, false);
 			});
 	}
 	return pControl;
 }
-template<::Voicemeeter::UI::Direction Direction, typename TBundle, typename TGlyph, typename TStrip>
+template<::Voicemeeter::UI::Direction Direction, typename TGlyph, typename TGlyphUpdate, typename TStrip>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::UI::Direction marginDirection,
 	bool first,
@@ -171,14 +185,14 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 ) {
 	switch (marginDirection) {
 	case ::Voicemeeter::UI::Direction::Right:
-		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right, TBundle>(
+		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Right, TGlyph, TGlyphUpdate, TStrip>(
 			first,
 			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription
 		);
 	case ::Voicemeeter::UI::Direction::Down:
-		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Down, TBundle>(
+		return ComposeKnob<Direction, ::Voicemeeter::UI::Direction::Down, TGlyph, TGlyphUpdate, TStrip>(
 			first,
 			focusTracker, inputTracker,
 			timer, pGlyph,
@@ -188,7 +202,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 		throw ::std::exception{ "Direction is not supported" };
 	}
 }
-template<typename TBundle, typename TGlyph, typename TStrip>
+template<typename TGlyph, typename TGlyphUpdate, typename TStrip>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::UI::Direction direction, ::Voicemeeter::UI::Direction marginDirection,
 	bool first,
@@ -202,7 +216,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 ) {
 	switch (direction) {
 	case ::Voicemeeter::UI::Direction::Right:
-		return ComposeKnob<::Voicemeeter::UI::Direction::Right, TBundle>(
+		return ComposeKnob<::Voicemeeter::UI::Direction::Right, TGlyph, TGlyphUpdate, TStrip>(
 			marginDirection,
 			first,
 			focusTracker, inputTracker,
@@ -210,7 +224,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 			strip, mixer, subscription
 		);
 	case ::Voicemeeter::UI::Direction::Down:
-		return ComposeKnob<::Voicemeeter::UI::Direction::Down, TBundle>(
+		return ComposeKnob<::Voicemeeter::UI::Direction::Down, TGlyph, TGlyphUpdate, TStrip>(
 			marginDirection,
 			first,
 			focusTracker, inputTracker,
@@ -234,25 +248,29 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
-	size_t label{ ::Voicemeeter::UI::D2D::Policies::State::Changes::Knob::ToLabel(strip.get_Id()) };
+	size_t label{ ::Voicemeeter::UI::Cherry::Policies::State::Changes::Knob::ToLabel(strip.get_Id()) };
 	using Bundle = ::Voicemeeter::UI::D2D::Graphics::Bundles::Knob;
 	if (animations) {
 		using Animation = ::Voicemeeter::UI::D2D::Decorators::Bundle::Animations::Knob<
 			Bundle>;
-		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Knob<
-			Bundle, Animation, ::Voicemeeter::UI::D2D::Graphics::Glyph<Animation>>;
+		using Glyph = ::Voicemeeter::UI::D2D::Graphics::Glyph<
+			Animation>;
+		using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Animations::Knob<
+			Bundle, Animation, Glyph>;
 		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette, label }};
-		return ComposeKnob<Animation>(
+		return ComposeKnob<Glyph, GlyphUpdate, TStrip>(
 			direction, marginDirection,
 			first,
 			focusTracker, inputTracker,
 			timer, pGlyph,
 			strip, mixer, subscription);
 	} else {
-		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Knob<
-			Bundle, ::Voicemeeter::UI::D2D::Graphics::Glyph<Bundle>>;
+		using Glyph = ::Voicemeeter::UI::D2D::Graphics::Glyph<
+			Bundle>;
+		using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Knob<
+			Bundle, Glyph>;
 		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette, label } };
-		return ComposeKnob<Bundle>(
+		return ComposeKnob<Glyph, GlyphUpdate, TStrip>(
 			direction, marginDirection,
 			first,
 			focusTracker, inputTracker,
@@ -261,7 +279,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposeKnob(
 	}
 }
 
-template<::Voicemeeter::UI::Direction MarginDirection, typename TBundle, typename TGlyph, typename TInput, typename TOutput>
+template<::Voicemeeter::UI::Direction MarginDirection, typename TGlyph, typename TGlyphUpdate, typename TInput, typename TOutput>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	bool first,
 	::Voicemeeter::UI::Trackers::Focus& focusTracker,
@@ -276,7 +294,10 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	};
 	using Scale = ::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio;
 	using Control = ::Voicemeeter::UI::Decorators::RegionCheck<
-		::Voicemeeter::UI::D2D::Decorators::Interactivity::Plug<TBundle, TGlyph, decltype(changeNotify)>>;
+		::Voicemeeter::UI::Cherry::Decorators::Interactivity::Plug<
+			TGlyph, decltype(changeNotify), TGlyphUpdate,
+			::Voicemeeter::UI::Cherry::Controls::Plug<
+				TGlyph, decltype(changeNotify), TGlyphUpdate>>>;
 	::std::unique_ptr<Control> pControl{
 		(first
 			? new Control{
@@ -297,7 +318,7 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 		});
 	return pControl;
 }
-template<typename TBundle, typename TGlyph, typename TInput, typename TOutput>
+template<typename TGlyph, typename TGlyphUpdate, typename TInput, typename TOutput>
 inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	::Voicemeeter::UI::Direction marginDirection,
 	bool first,
@@ -310,19 +331,19 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 ) {
 	switch (marginDirection) {
 	case ::Voicemeeter::UI::Direction::Right:
-		return ComposePlug<::Voicemeeter::UI::Direction::Right, TBundle>(
+		return ComposePlug<::Voicemeeter::UI::Direction::Right, TGlyph, TGlyphUpdate, TInput, TOutput>(
 			first,
 			focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
 		);
 	case ::Voicemeeter::UI::Direction::Down:
-		return ComposePlug<::Voicemeeter::UI::Direction::Down, TBundle>(
+		return ComposePlug<::Voicemeeter::UI::Direction::Down, TGlyph, TGlyphUpdate, TInput, TOutput>(
 			first,
 			focusTracker, inputTracker,
 			pGlyph,
 			input, output, mixer, subscription
-				);
+		);
 	default:
 		throw ::std::exception{ "Direction is not supported" };
 	}
@@ -339,15 +360,17 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 	::Voicemeeter::Adapters::Multiclient::Cherry& mixer,
 	::Voicemeeter::Adapters::Multiclient::CherrySubscription& subscription
 ) {
-	size_t label{ ::Voicemeeter::UI::D2D::Policies::State::Changes::Knob::ToLabel(output.get_Id()) };
+	size_t label{ ::Voicemeeter::UI::Cherry::Policies::State::Changes::Knob::ToLabel(output.get_Id()) };
 	using Bundle = ::Voicemeeter::UI::D2D::Graphics::Bundles::Plug;
 	if (animations) {
 		using Animation = ::Voicemeeter::UI::D2D::Decorators::Bundle::Animations::Plug<
 			Bundle>;
-		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Animations::Plug<
-			Bundle, Animation, ::Voicemeeter::UI::D2D::Graphics::Glyph<Animation>>;
+		using Glyph = ::Voicemeeter::UI::D2D::Graphics::Glyph<
+			Animation>;
+		using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Animations::Plug<
+			Bundle, Animation, Glyph>;
 		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette, label } };
-		return ComposePlug<Animation>(
+		return ComposePlug<Glyph, GlyphUpdate, TInput, TOutput>(
 			marginDirection,
 			first,
 			focusTracker, inputTracker,
@@ -355,10 +378,12 @@ inline static ::std::unique_ptr<::Voicemeeter::UI::IComponent> ComposePlug(
 			input, output, mixer, subscription
 		);
 	} else {
-		using Glyph = ::Voicemeeter::UI::D2D::Adapters::Glyph::Updates::Plug<
-			Bundle, ::Voicemeeter::UI::D2D::Graphics::Glyph<Bundle>>;
+		using Glyph = ::Voicemeeter::UI::D2D::Graphics::Glyph<
+			Bundle>;
+		using GlyphUpdate = ::Voicemeeter::UI::D2D::Policies::Glyph::Updates::Plug<
+			Bundle, Glyph>;
 		::std::unique_ptr<Glyph> pGlyph{ new Glyph{ palette, label } };
-		return ComposePlug<Bundle>(
+		return ComposePlug<Glyph, GlyphUpdate, TInput, TOutput>(
 			marginDirection,
 			first,
 			focusTracker, inputTracker,

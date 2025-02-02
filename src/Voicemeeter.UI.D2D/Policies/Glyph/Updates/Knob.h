@@ -10,7 +10,9 @@ namespace Voicemeeter {
 			namespace Policies {
 				namespace Glyph {
 					namespace Updates {
-						template<typename TBundle, typename TGlyph>
+						template<
+							typename TBundle,
+							typename TGlyph>
 						using Knob = Cherry::Policies::Glyph::Updates::Knob<
 							Graphics::Instrumentation,
 							TBundle,

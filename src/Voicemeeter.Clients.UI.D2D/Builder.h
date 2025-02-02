@@ -7,6 +7,7 @@
 #include "windows.h"
 
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
+#include "Voicemeeter.UI/Direction.h"
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
 #include "Voicemeeter.UI.D2D/Scene.h"
@@ -35,7 +36,7 @@ namespace Voicemeeter {
 					  , m_direction{ ::Voicemeeter::UI::Direction::Right }
 					  , m_cIgnoredStrip{}
 					  , m_network{ true }
-					  , m_theme{ ::Voicemeeter::UI::D2D::Graphics::Theme::Dark() }
+					  , m_theme{ ::Voicemeeter::UI::Cherry::Graphics::Theme::Dark() }
 					  , m_animations{ true }
 					  , m_marginPoint{ 0., 0. }
 					  , m_marginVertex{ 0., 0. } {
@@ -62,7 +63,7 @@ namespace Voicemeeter {
 						m_network = network;
 						return *this;
 					};
-					inline Builder& WithTheme(const ::Voicemeeter::UI::D2D::Graphics::Theme& theme) {
+					inline Builder& WithTheme(const ::Voicemeeter::UI::Cherry::Graphics::Theme& theme) {
 						m_theme = theme;
 						return *this;
 					};
@@ -77,7 +78,7 @@ namespace Voicemeeter {
 					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
 						LoadOverrides();
 						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Palette> pPalette{
-							new ::Voicemeeter::UI::D2D::Graphics::Palette{ m_hWnd, m_theme, m_direction }
+							new ::Voicemeeter::UI::D2D::Graphics::Palette{ m_theme, m_direction == ::Voicemeeter::UI::Direction::Right, m_hWnd }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::Focus> pFocusTracker{
 							new ::Voicemeeter::UI::Trackers::Focus{}
@@ -111,48 +112,72 @@ namespace Voicemeeter {
 					::Voicemeeter::UI::Direction m_direction;
 					::std::unordered_set<size_t> m_cIgnoredStrip;
 					bool m_network;
-					::Voicemeeter::UI::D2D::Graphics::Theme m_theme;
+					::Voicemeeter::UI::Cherry::Graphics::Theme m_theme;
 					bool m_animations;
 					::std::valarray<double> m_marginPoint;
 					::std::valarray<double> m_marginVertex;
 
 					inline void LoadOverrides() {
+						using RGBA = ::Voicemeeter::UI::Cherry::Graphics::Theme::RGBA;
+
 						HKEY hKey{ HKEY_CURRENT_USER };
 						::std::wstring subKey{ LR"(SOFTWARE\VoicemeeterDeskBand)" };
 						::std::wstring themeSubKey{ subKey + LR"(\Theme)" };
 						DWORD color{};
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Warning", color)) {
-							m_theme.Warning = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.Warning[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.Warning[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.Warning[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Danger", color)) {
-							m_theme.Danger = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.Danger[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.Danger[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.Danger[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"DarkGlass", color)) {
-							m_theme.DarkGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.DarkGlass[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.DarkGlass[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.DarkGlass[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"LightGlass", color)) {
-							m_theme.LightGlass = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.LightGlass[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.LightGlass[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.LightGlass[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"PrimaryActive", color)) {
-							m_theme.PrimaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.PrimaryActive[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.PrimaryActive[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.PrimaryActive[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"SecondaryActive", color)) {
-							m_theme.SecondaryActive = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.SecondaryActive[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.SecondaryActive[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.SecondaryActive[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Inactive", color)) {
-							m_theme.Inactive = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.Inactive[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.Inactive[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.Inactive[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"Indicator", color)) {
-							m_theme.Indicator = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.Indicator[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.Indicator[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.Indicator[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"EqualizerLow", color)) {
-							m_theme.EqualizerLow = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.EqualizerLow[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.EqualizerLow[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.EqualizerLow[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"EqualizerMedium", color)) {
-							m_theme.EqualizerMedium = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.EqualizerMedium[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.EqualizerMedium[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.EqualizerMedium[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						if (::Windows::Registry::TryGetValue(hKey, themeSubKey, L"EqualizerHigh", color)) {
-							m_theme.EqualizerHigh = ::D2D1::ColorF(static_cast<UINT32>(color));
+							m_theme.EqualizerHigh[RGBA::red] = (static_cast<UINT32>(color) >> (3 - RGBA::red) * 8) / 255.;
+							m_theme.EqualizerHigh[RGBA::green] = (static_cast<UINT32>(color) >> (3 - RGBA::green) * 8) / 255.;
+							m_theme.EqualizerHigh[RGBA::blue] = (static_cast<UINT32>(color) >> (3 - RGBA::blue) * 8) / 255.;
 						}
 						::std::wstring mixerSubKey{ subKey + LR"(\Mixer)" };
 						DWORD network{ 0UL };

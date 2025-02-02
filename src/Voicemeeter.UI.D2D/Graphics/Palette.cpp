@@ -1,3 +1,7 @@
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif // !NOMINMAX
+
 #include <d3d11_4.h>
 
 #include "Palette.h"

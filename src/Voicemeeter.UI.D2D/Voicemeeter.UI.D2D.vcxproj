@@ -197,11 +197,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Voicemeeter.UI.Cherry\Voicemeeter.UI.Cherry.vcxproj">
-      <Project>{3d402b49-3499-4717-a44e-5318fdb37943}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Voicemeeter.UI\Voicemeeter.UI.vcxproj">
-      <Project>{8ebf00e4-20be-4230-97ba-8dd20f2f35cb}</Project>
+    <ProjectReference Include="..\Voicemeeter.Atlas\Voicemeeter.Atlas.vcxproj">
+      <Project>{77b08162-a8d9-4f43-9297-41cc35f508f9}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Windows\Windows.vcxproj">
       <Project>{8d41daa9-b6b7-4f80-832a-f5ae62e1502d}</Project>

@@ -20,7 +20,7 @@ namespace Voicemeeter {
 						) : Bundle{ palette, { Atlas::Specification::Plug::Frame::Width, Atlas::Specification::Plug::Frame::Height } }
 						  , m_label{ label }
 						  , m_color{
-								get_Palette()
+								Bundle::get_Palette()
 									.get_Theme()
 										.Inactive
 						  }
@@ -44,55 +44,64 @@ namespace Voicemeeter {
 								return;
 							}
 							m_label = value;
-							m_changed.set(label);
+							Bundle::get_Changed()
+								.set(label);
 						}
 						inline void set_Color(const ::std::valarray<double>& value) {
 							m_color = value;
 						};
 
 						virtual void Execute() override {
-							if (m_changed.test(size)) {
-								m_changed.reset(size);
-								m_maskPoint = get_Palette()
+							if (Bundle::get_Changed()
+									.test(Bundle::size)) {
+								Bundle::get_Changed()
+									.reset(Bundle::size);
+								m_maskPoint = Bundle::get_Palette()
 									.get_Atlas()
 										.MapPosition(
 											Atlas::Specification::Plug::Frame::Point::X,
 											Atlas::Specification::Plug::Frame::Point::Y);
-								m_labelVertex = get_Palette()
+								m_labelVertex = Bundle::get_Palette()
 									.get_Atlas()
 										.MapSize(Atlas::Specification::Block::Width, Atlas::Specification::Block::Height);
-								m_changed.set(position);
-								m_changed.set(label);
+								Bundle::get_Changed()
+									.set(Bundle::position);
+								Bundle::get_Changed()
+									.set(label);
 							}
-							if (m_changed.test(position)) {
-								m_changed.reset(position);
-								m_labelPoint = get_Position()
-									+ (get_Size() - m_labelVertex) / 2.
-									+ 0.7 * get_Palette()
+							if (Bundle::get_Changed()
+									.test(Bundle::position)) {
+								Bundle::get_Changed()
+									.reset(Bundle::position);
+								m_labelPoint = Bundle::get_Position()
+									+ (Bundle::get_Size() - m_labelVertex) / 2.
+									+ 0.7 * Bundle::get_Palette()
 										.get_Atlas()
 											.MapSize(
 												Atlas::Specification::Plug::Indicator::Tip::X - Atlas::Specification::Plug::Indicator::Start::X,
 												0.F);
 							}
-							if (m_changed.test(label)) {
-								m_changed.reset(label);
-								m_labelMaskPoint = get_Palette()
+							if (Bundle::get_Changed()
+									.test(label)) {
+								Bundle::get_Changed()
+									.reset(label);
+								m_labelMaskPoint = Bundle::get_Palette()
 									.get_Atlas()
 										.MapPosition(
 											Atlas::Specification::Plug::Label::Strip::Point::X + m_label % Atlas::Specification::Width,
 											Atlas::Specification::Plug::Label::Strip::Point::Y + m_label / Atlas::Specification::Width);
 							}
 
-							get_Palette()
+							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
-										get_Position(),
-										get_Size(),
+										Bundle::get_Position(),
+										Bundle::get_Size(),
 										m_maskPoint,
 										m_color,
 										false
 									);
-							get_Palette()
+							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
 										m_labelPoint,
@@ -105,7 +114,7 @@ namespace Voicemeeter {
 
 					private:
 						enum plug_flags : size_t {
-							label = size + 1
+							label = Bundle::size + 1
 						};
 
 						size_t m_label;

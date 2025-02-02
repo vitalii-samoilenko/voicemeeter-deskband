@@ -156,7 +156,9 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	};
 	m_palette.get_Instrumentation()
 		.get_pCommandQueue()
-			->ExecuteCommandLists(cpCommandList.size(), cpCommandList.data());
+			->ExecuteCommandLists(
+				static_cast<UINT>(cpCommandList.size()),
+				cpCommandList.data());
 	m_palette.get_Instrumentation()
 		.get_pCommandQueue()
 			->Signal(
@@ -211,7 +213,9 @@ void Atlas::Fill(
 	};
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
-			->SetDescriptorHeaps(cpDescriptorHeap.size(), cpDescriptorHeap.data());
+			->SetDescriptorHeaps(
+				static_cast<UINT>(cpDescriptorHeap.size()),
+				cpDescriptorHeap.data());
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->SetGraphicsRootDescriptorTable(
@@ -393,7 +397,7 @@ Instrumentation::Instrumentation(
 	for (size_t frame{ 0 }; frame < FRAME_COUNT; ++frame) {
 		m_chvRenderTarget[frame].ptr = SIZE_T(INT64(hRtv.ptr) + INT64(frame * rtvDescriptorSize));
 		::Windows::ThrowIfFailed(m_pSwapChain->GetBuffer(
-			frame,
+			static_cast<UINT>(frame),
 			IID_PPV_ARGS(&m_cpRenderTarget[frame])
 		), "Failed to get swap chain buffer");
 		m_pD3dDevice->CreateRenderTargetView(m_cpRenderTarget[frame].Get(), nullptr, m_chvRenderTarget[frame]);
@@ -505,7 +509,9 @@ Instrumentation::Instrumentation(
 	::std::array<ID3D12CommandList*, 1> cpCommandList{
 		m_pCommandList.Get()
 	};
-	m_pCommandQueue->ExecuteCommandLists(cpCommandList.size(), cpCommandList.data());
+	m_pCommandQueue->ExecuteCommandLists(
+		static_cast<UINT>(cpCommandList.size()),
+		cpCommandList.data());
 	m_pCommandQueue->Signal(m_pFence.Get(), ++m_count);
 
 	m_vVertexBuffer.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
@@ -542,7 +548,7 @@ Instrumentation::Instrumentation(
 		D3D12_SHADER_VISIBILITY_PIXEL
 	};
 	D3D12_ROOT_SIGNATURE_DESC dRootSignature{
-		cParam.size(), cParam.data(),
+		static_cast<UINT>(cParam.size()), cParam.data(),
 		1U, &dSampler,
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
 	};

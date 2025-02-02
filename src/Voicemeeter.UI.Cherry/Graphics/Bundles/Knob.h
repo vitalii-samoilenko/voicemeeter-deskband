@@ -20,12 +20,12 @@ namespace Voicemeeter {
 						) : Bundle{ palette, { 2. * Atlas::Specification::Knob::Frame::Radius, 2. * Atlas::Specification::Knob::Frame::Radius } }
 						  , m_label{ label }
 						  , m_frameColor{
-								get_Palette()
+								Bundle::get_Palette()
 									.get_Theme()
 										.Inactive
 							}
 						  , m_labelColor{
-								get_Palette()
+								Bundle::get_Palette()
 									.get_Theme()
 										.Inactive
 							}
@@ -53,7 +53,7 @@ namespace Voicemeeter {
 								return;
 							}
 							m_label = value;
-							get_Changed()
+							Bundle::get_Changed()
 								.set(label);
 						};
 						inline void set_FrameColor(const ::std::valarray<double>& value) {
@@ -67,74 +67,85 @@ namespace Voicemeeter {
 								return;
 							}
 							m_angle = value;
-							get_Changed()
+							Bundle::get_Changed()
 								.set(angle);
 						};
 
 						virtual void Execute() override {
-							if (m_changed.test(size)) {
-								m_changed.reset(size);
-								m_maskPoint = get_Palette()
+							if (Bundle::get_Changed()
+									.test(Bundle::size)) {
+								Bundle::get_Changed()
+									.reset(Bundle::size);
+								m_maskPoint = Bundle::get_Palette()
 									.get_Atlas()
 										.MapPosition(
 											Atlas::Specification::Knob::Frame::Point::X,
 											Atlas::Specification::Knob::Frame::Point::Y);
-								m_labelVertex = get_Palette()
+								m_labelVertex = Bundle::get_Palette()
 									.get_Atlas()
 										.MapSize(Atlas::Specification::Block::Width, Atlas::Specification::Block::Height);
-								m_changed.set(position);
-								m_changed.set(label);
-								m_indicatorVertex = get_Palette()
+								Bundle::get_Changed()
+									.set(Bundle::position);
+								Bundle::get_Changed()
+									.set(label);
+								m_indicatorVertex = Bundle::get_Palette()
 									.get_Atlas()
 										.MapSize(
 											2.F * Atlas::Specification::Knob::Indicator::Radius,
 											2.F * Atlas::Specification::Knob::Indicator::Radius);
-								m_indicatorMaskPoint = get_Palette()
+								m_indicatorMaskPoint = Bundle::get_Palette()
 									.get_Atlas()
 										.MapPosition(
 											Atlas::Specification::Knob::Indicator::Point::X,
 											Atlas::Specification::Knob::Indicator::Point::Y);
 							}
-							if (m_changed.test(position)) {
-								m_changed.reset(position);
-								m_labelPoint = get_Position()
-									+ (get_Size() - m_labelVertex) / 2.;
-								m_changed.set(angle);
+							if (Bundle::get_Changed()
+									.test(Bundle::position)) {
+								Bundle::get_Changed()
+									.reset(Bundle::position);
+								m_labelPoint = Bundle::get_Position()
+									+ (Bundle::get_Size() - m_labelVertex) / 2.;
+								Bundle::get_Changed()
+									.set(angle);
 							}
-							if (m_changed.test(label)) {
-								m_changed.reset(label);
-								m_labelMaskPoint = get_Palette()
+							if (Bundle::get_Changed()
+									.test(label)) {
+								Bundle::get_Changed()
+									.reset(label);
+								m_labelMaskPoint = Bundle::get_Palette()
 									.get_Atlas()
 										.MapPosition(
 											Atlas::Specification::Knob::Label::Strip::Point::X + m_label % Atlas::Specification::Width,
 											Atlas::Specification::Knob::Label::Strip::Point::Y + m_label / Atlas::Specification::Width);
 							}
-							if (m_changed.test(angle)) {
-								m_changed.reset(angle);
+							if (Bundle::get_Changed()
+									.test(angle)) {
+								Bundle::get_Changed()
+									.reset(angle);
 								constexpr FLOAT R{
 									Atlas::Specification::Knob::Frame::Radius
 									- Atlas::Specification::Knob::Frame::Stroke
 									- 2.F * Atlas::Specification::Knob::Indicator::Radius
 								};
 								FLOAT phi{ m_angle / 18000.F * static_cast<FLOAT>(M_PI) };
-								m_indicatorPoint = get_Position()
-									+ get_Palette()
+								m_indicatorPoint = Bundle::get_Position()
+									+ Bundle::get_Palette()
 										.get_Atlas()
 											.MapSize(
 												R * ::std::cos(phi) + Atlas::Specification::Knob::Frame::Radius - Atlas::Specification::Knob::Indicator::Radius,
 												R * ::std::sin(phi) + Atlas::Specification::Knob::Frame::Radius - Atlas::Specification::Knob::Indicator::Radius);
 							}
 
-							get_Palette()
+							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
-										get_Position(),
-										get_Size(),
+										Bundle::get_Position(),
+										Bundle::get_Size(),
 										m_maskPoint,
 										m_frameColor,
 										false
 									);
-							get_Palette()
+							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
 										m_labelPoint,
@@ -143,13 +154,13 @@ namespace Voicemeeter {
 										m_labelColor,
 										true
 									);
-							get_Palette()
+							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
 										m_indicatorPoint,
 										m_indicatorVertex,
 										m_indicatorMaskPoint,
-										get_Palette()
+										Bundle::get_Palette()
 											.get_Theme()
 												.Indicator,
 										true
@@ -158,8 +169,8 @@ namespace Voicemeeter {
 
 					private:
 						enum knob_flags : size_t {
-							label = size + 1,
-							angle = size + 2
+							label = Bundle::size + 1,
+							angle = Bundle::size + 2
 						};
 
 						size_t m_label;

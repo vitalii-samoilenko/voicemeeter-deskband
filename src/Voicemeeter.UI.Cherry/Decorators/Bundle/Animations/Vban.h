@@ -17,7 +17,7 @@ namespace Voicemeeter {
 							typename TBundle>
 						class Vban : public Animation<TInstrumentation, TBundle> {
 							using Animation = Animation<TInstrumentation, TBundle>;
-							using Bundle = Graphics::Bundles::Plug<TInstrumentation>;
+							using Bundle = Graphics::Bundles::Vban<TInstrumentation>;
 							using Palette = Graphics::Palette<TInstrumentation>;
 
 							static_assert(

@@ -116,18 +116,6 @@ namespace Windows {
 		}
 	}
 
-	inline void wWaitForSingleObject(
-		_In_ HANDLE handle,
-		_In_ DWORD milliseconds
-	) {
-		if (WaitForSingleObject(
-			handle,
-			milliseconds
-		)) {
-			throw Error{ "Waiting failed" };
-		}
-	}
-
 	inline HWND wSetParent(
 		_In_ HWND hWndChild,
 		_In_opt_ HWND hWndNewParent
@@ -305,30 +293,12 @@ namespace Windows {
 		return hCursor;
 	}
 
-	inline HANDLE wCreateEventW(
-		_In_opt_ LPSECURITY_ATTRIBUTES lpEventAttributes,
-		_In_ BOOL bManualReset,
-		_In_ BOOL bInitialState,
-		_In_opt_ LPCWSTR lpName
-	) {
-		HANDLE event{ CreateEventW(
-			lpEventAttributes,
-			bManualReset,
-			bInitialState,
-			lpName
-		) };
-		if (event == NULL) {
-			throw Error{ "Event creation failed" };
-		}
-		return event;
-	}
-
 	inline void wWaitForSingleObject(
-		_In_ HANDLE hHandle,
+		_In_ HANDLE hObject,
 		_In_ DWORD dwMilliseconds
 	) {
 		if (WaitForSingleObject(
-			hHandle,
+			hObject,
 			dwMilliseconds
 		) != 0L) {
 			throw Error{ "Failed to wait for single object" };

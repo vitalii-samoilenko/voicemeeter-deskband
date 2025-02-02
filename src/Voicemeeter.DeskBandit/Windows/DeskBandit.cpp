@@ -160,7 +160,7 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					.WithIgnoredStrip(5);
 			}
 			pWnd->m_pScene = builder
-				.WithTheme(::Voicemeeter::UI::D2D::Graphics::Theme::Light())
+				.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
 				.WithMarginPosition({ 4., 4. })
 				.WithMarginSize({ 4., 4. })
 				.Build();

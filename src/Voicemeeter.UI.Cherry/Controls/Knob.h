@@ -23,7 +23,7 @@ namespace Voicemeeter {
 					Policies::State::Changes::Knob::Set,
 					TChangeNotify,
 					TGlyphUpdate,
-					Policies::Size::Scales::PreserveRatio>;
+					UI::Policies::Size::Scales::PreserveRatio>;
 			}
 		}
 	}

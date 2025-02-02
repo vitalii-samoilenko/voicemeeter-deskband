@@ -57,7 +57,7 @@ void Canvas::Resize(const ::std::valarray<double>& vertex) {
 		::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
 			.get_pSwapChain()
 				->GetBuffer(
-					frame,
+					static_cast<UINT>(frame),
 					IID_PPV_ARGS(m_palette.get_Instrumentation()
 						.get_ppRenderTarget(frame))
 		), "Failed to get swap chain buffer");

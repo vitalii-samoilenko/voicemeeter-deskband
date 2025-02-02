@@ -18,7 +18,7 @@ namespace Voicemeeter {
 							Palette& palette
 						) : Bundle{ palette, { Atlas::Specification::Vban::Frame::Width, Atlas::Specification::Vban::Frame::Height } }
 						  , m_color{
-								get_Palette()
+								Bundle::get_Palette()
 									.get_Theme()
 										.Inactive
 							}
@@ -39,20 +39,22 @@ namespace Voicemeeter {
 						};
 
 						virtual void Execute() override {
-							if (m_changed.test(size)) {
-								m_changed.reset(size);
-								m_maskPoint = get_Palette()
+							if (Bundle::get_Changed()
+									.test(Bundle::size)) {
+								Bundle::get_Changed()
+									.reset(Bundle::size);
+								m_maskPoint = Bundle::get_Palette()
 									.get_Atlas()
 										.MapPosition(
 											Atlas::Specification::Vban::Frame::Point::X,
 											Atlas::Specification::Vban::Frame::Point::Y);
 							}
 
-							get_Palette()
+							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
-										get_Position(),
-										get_Size(),
+										Bundle::get_Position(),
+										Bundle::get_Size(),
 										m_maskPoint,
 										m_color,
 										false
