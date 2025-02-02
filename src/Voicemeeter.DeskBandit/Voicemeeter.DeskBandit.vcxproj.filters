@@ -24,7 +24,7 @@
     <ClInclude Include="Windows\DeskBandit.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,6 +41,9 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
     <ResourceCompile Include="Version.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="..\Voicemeeter.UI.D3D12\Shaders.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

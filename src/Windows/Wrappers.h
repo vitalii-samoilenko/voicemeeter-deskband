@@ -116,6 +116,18 @@ namespace Windows {
 		}
 	}
 
+	inline void wWaitForSingleObject(
+		_In_ HANDLE handle,
+		_In_ DWORD milliseconds
+	) {
+		if (WaitForSingleObject(
+			handle,
+			milliseconds
+		)) {
+			throw Error{ "Waiting failed" };
+		}
+	}
+
 	inline HWND wSetParent(
 		_In_ HWND hWndChild,
 		_In_opt_ HWND hWndNewParent
@@ -416,6 +428,22 @@ namespace Windows {
 			throw Error{ "Failed to load resource" };
 		}
 		return hGlobal;
+	}
+
+	inline DWORD wSizeofResource(
+		_In_opt_ HMODULE hModule,
+		_In_ HRSRC hResInfo
+	) {
+		DWORD size{
+			SizeofResource(
+				hModule,
+				hResInfo
+			)
+		};
+		if (size == 0) {
+			throw Error{ "Failed to fetch resource size" };
+		}
+		return size;
 	}
 
 	inline LPVOID wLockResource(

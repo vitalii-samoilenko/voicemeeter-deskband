@@ -15,31 +15,33 @@ void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<
 		m_palette.get_Theme()
 			.Background
 	};
-	//m_palette.get_Instrumentation()
-	//	.get_pBrush()
-	//	->SetColor(::D2D1::ColorF(
-	//		static_cast<FLOAT>(color[RGBA::red]),
-	//		static_cast<FLOAT>(color[RGBA::green]),
-	//		static_cast<FLOAT>(color[RGBA::blue]),
-	//		static_cast<FLOAT>(color[RGBA::alpha])));
-	//m_palette.get_Instrumentation()
-	//	.get_pDeviceContext()
-	//	->FillRectangle(
-	//		::D2D1::RectF(
-	//			static_cast<FLOAT>(point[0]),
-	//			static_cast<FLOAT>(point[1]),
-	//			static_cast<FLOAT>(point[0] + vertex[0]),
-	//			static_cast<FLOAT>(point[1] + vertex[1])),
-	//		m_palette.get_Instrumentation()
-	//		.get_pBrush());
 }
 void Canvas::Resize(const ::std::valarray<double>& vertex) {
 	m_vertex[0] = ::std::max(8., vertex[0]);
 	m_vertex[1] = ::std::max(8., vertex[1]);
 
-	//m_palette.get_Instrumentation()
-	//	.get_pDeviceContext()
-	//	->SetTarget(nullptr);
+	for (size_t frame{ 0 }; frame < Instrumentation::FRAME_COUNT; ++frame) {
+		if (m_palette.get_Instrumentation()
+			.get_pFence(frame)
+				->GetCompletedValue() < m_palette.get_Instrumentation()
+					.get_Count(frame)) {
+			::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
+				.get_pFence(frame)
+					->SetEventOnCompletion(
+						m_palette.get_Instrumentation()
+							.get_Count(frame),
+						m_palette.get_Instrumentation()
+							.get_hEvent(frame)
+			), "Event signaling failed");
+			::Windows::wWaitForSingleObject(
+				m_palette.get_Instrumentation()
+					.get_hEvent(frame),
+				INFINITE
+			);
+		}
+		*m_palette.get_Instrumentation()
+			.get_ppRenderTarget(frame) = nullptr;
+	}
 
 	::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
 		.get_pSwapChain()
@@ -51,32 +53,21 @@ void Canvas::Resize(const ::std::valarray<double>& vertex) {
 				0U
 	), "Swap chain resize failed");
 
-	::Microsoft::WRL::ComPtr<IDXGISurface> pBackBuffer{ nullptr };
-	::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
-		.get_pSwapChain()
-			->GetBuffer(
-				0U,
-				IID_PPV_ARGS(&pBackBuffer)
-	), "Could not get back buffer");
-
-	//D2D1_BITMAP_PROPERTIES1 bitmapProperties{
-	//	D2D1_PIXEL_FORMAT{
-	//		DXGI_FORMAT_B8G8R8A8_UNORM,
-	//		D2D1_ALPHA_MODE_PREMULTIPLIED
-	//	},
-	//	0.F, 0.F,
-	//	D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-	//	nullptr
-	//};
-	//::Microsoft::WRL::ComPtr<ID2D1Bitmap1> pBitmap{ nullptr };
-	//::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
-	//	.get_pDeviceContext()
-	//	->CreateBitmapFromDxgiSurface(
-	//		pBackBuffer.Get(),
-	//		&bitmapProperties,
-	//		&pBitmap
-	//	), "Bitmap creation failed");
-	//m_palette.get_Instrumentation()
-	//	.get_pDeviceContext()
-	//	->SetTarget(pBitmap.Get());
+	for (size_t frame{ 0 }; frame < Instrumentation::FRAME_COUNT; ++frame) {
+		::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
+			.get_pSwapChain()
+				->GetBuffer(
+					frame,
+					IID_PPV_ARGS(m_palette.get_Instrumentation()
+						.get_ppRenderTarget(frame))
+		), "Failed to get swap chain buffer");
+		m_palette.get_Instrumentation()
+			.get_pD3dDevice()
+				->CreateRenderTargetView(
+					m_palette.get_Instrumentation()
+						.get_pRenderTarget(frame),
+					nullptr,
+					m_palette.get_Instrumentation()
+						.get_hvRenderTarget(frame));
+	}
 }

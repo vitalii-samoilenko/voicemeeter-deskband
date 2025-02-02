@@ -213,7 +213,7 @@
     <ClCompile Include="Windows\DeskBand.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="Version.h" />
     <ClInclude Include="Windows\ClassFactory.h" />
     <ClInclude Include="Windows\DeskBand.h" />
   </ItemGroup>
@@ -241,6 +241,7 @@
     <None Include="Voicemeeter.DeskBand.def" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="..\Voicemeeter.UI.D3D12\Shaders.rc" />
     <ResourceCompile Include="..\Windows\Messages.rc" />
     <ResourceCompile Include="Version.rc" />
   </ItemGroup>

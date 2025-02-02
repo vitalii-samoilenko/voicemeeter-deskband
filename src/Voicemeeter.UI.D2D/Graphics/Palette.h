@@ -34,6 +34,7 @@ namespace Voicemeeter {
 					inline IDXGISwapChain1* get_pSwapChain() const {
 						return m_pSwapChain.Get();
 					};
+
 					inline ID2D1SolidColorBrush* get_pBrush() const {
 						return m_pBrush.Get();
 					};
@@ -49,6 +50,7 @@ namespace Voicemeeter {
 					::Microsoft::WRL::ComPtr<ID2D1DeviceContext5> m_pDeviceContext;
 					::Microsoft::WRL::ComPtr<IDXGISwapChain1> m_pSwapChain;
 					::Microsoft::WRL::ComPtr<IDCompositionTarget> m_pCompositionTarget;
+
 					::Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBrush;
 					::Microsoft::WRL::ComPtr<ID2D1Bitmap1> m_pBitmap;
 				};

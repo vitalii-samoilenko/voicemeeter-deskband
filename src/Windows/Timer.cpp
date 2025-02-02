@@ -2,7 +2,7 @@
 
 #include "Timer.h"
 
-using namespace Windows;
+using namespace ::Windows;
 
 Timer::Timer(
 	HWND hWnd

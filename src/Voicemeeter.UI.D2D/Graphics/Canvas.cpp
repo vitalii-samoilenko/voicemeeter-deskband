@@ -15,23 +15,6 @@ void Canvas::Redraw(const ::std::valarray<double>& point, const ::std::valarray<
 		m_palette.get_Theme()
 			.Background
 	};
-	m_palette.get_Instrumentation()
-		.get_pBrush()
-			->SetColor(::D2D1::ColorF(
-				static_cast<FLOAT>(color[RGBA::red]),
-				static_cast<FLOAT>(color[RGBA::green]),
-				static_cast<FLOAT>(color[RGBA::blue]),
-				static_cast<FLOAT>(color[RGBA::alpha])));
-	m_palette.get_Instrumentation()
-		.get_pDeviceContext()
-			->FillRectangle(
-				::D2D1::RectF(
-					static_cast<FLOAT>(point[0]),
-					static_cast<FLOAT>(point[1]),
-					static_cast<FLOAT>(point[0] + vertex[0]),
-					static_cast<FLOAT>(point[1] + vertex[1])),
-				m_palette.get_Instrumentation()
-					.get_pBrush());
 }
 void Canvas::Resize(const ::std::valarray<double>& vertex) {
 	m_vertex[0] = ::std::max(8., vertex[0]);

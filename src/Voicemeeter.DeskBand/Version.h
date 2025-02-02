@@ -3,6 +3,7 @@
 // Used by Version.rc
 //
 #include <winres.h>
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

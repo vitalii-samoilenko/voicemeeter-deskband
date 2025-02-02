@@ -43,6 +43,7 @@
     <ClInclude Include="Policies\Glyph\Updates\Plug.h" />
     <ClInclude Include="Policies\Glyph\Updates\Vban.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Canvas.cpp" />
@@ -59,6 +60,13 @@
     <ProjectReference Include="..\Windows\Windows.vcxproj">
       <Project>{8d41daa9-b6b7-4f80-832a-f5ae62e1502d}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Pixel.hlsl" />
+    <FxCompile Include="Shaders\Vertex.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shaders.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
