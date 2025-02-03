@@ -33,7 +33,7 @@ namespace Voicemeeter {
 					Instrumentation& operator=(const Instrumentation&) = delete;
 					Instrumentation& operator=(Instrumentation&&) = delete;
 
-					inline ID3D12Device10* get_pD3dDevice() const {
+					inline ID3D12Device8* get_pD3dDevice() const {
 						return m_pD3dDevice.Get();
 					};
 					inline IDXGISwapChain4* get_pSwapChain() const {
@@ -108,7 +108,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					::Microsoft::WRL::ComPtr<ID3D12Device10> m_pD3dDevice;
+					::Microsoft::WRL::ComPtr<ID3D12Device8> m_pD3dDevice;
 					::Microsoft::WRL::ComPtr<IDXGISwapChain4> m_pSwapChain;
 					::Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_pCommandQueue;
 					::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_pvRenderTargetHeap;

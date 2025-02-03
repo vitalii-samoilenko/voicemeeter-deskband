@@ -26,24 +26,6 @@ enum Constants : UINT {
 };
 
 void Atlas::Rescale(const ::std::valarray<double>& scale) {
-	if (m_palette.get_Instrumentation()
-		.get_pFence()
-			->GetCompletedValue() < m_palette.get_Instrumentation()
-				.get_Count()) {
-		::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
-			.get_pFence()
-				->SetEventOnCompletion(
-					m_palette.get_Instrumentation()
-						.get_Count(),
-					m_palette.get_Instrumentation()
-						.get_hEvent()
-		), "Event signaling failed");
-		::Windows::wWaitForSingleObject(
-			m_palette.get_Instrumentation()
-				.get_hEvent(),
-			INFINITE
-		);
-	}
 	::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
 		.get_pCommandAllocator()
 			->Reset(
@@ -80,15 +62,19 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 
 	D3D12_HEAP_PROPERTIES pHeap{
 		D3D12_HEAP_TYPE_DEFAULT,
-		D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE,
-		D3D12_MEMORY_POOL_L1,
+		D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+		D3D12_MEMORY_POOL_UNKNOWN,
 		0U, 0U
 	};
 	D3D12_RESOURCE_DESC dResource{
 		D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 		0ULL,
 		width, height, 1U, 1U,
+#ifndef NDEBUG
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+#else
 		DXGI_FORMAT_A8_UNORM,
+#endif // !NDEBUG
 		DXGI_SAMPLE_DESC{
 			1U, 0U
 		},
@@ -105,8 +91,26 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 					.get_ppTexture())
 	), "Texture creation failed");
 
+#ifndef NDEBUG
+	static constexpr UINT64 PixelSize{ 4ULL };
+#else
+	static constexpr UINT64 PixelSize{ 1ULL };
+#endif // !NDEBUG
+
+	UINT rowSize{ width * PixelSize };
+	UINT remainder{ rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT };
+	UINT rowPitch{
+		(remainder
+			? rowSize - remainder + D3D12_TEXTURE_DATA_PITCH_ALIGNMENT
+			: rowSize)
+	};
+
 	pHeap.Type = D3D12_HEAP_TYPE_UPLOAD;
-	pHeap.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+	dResource.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	dResource.Width = rowPitch * height;
+	dResource.Height = 1U;
+	dResource.Format = DXGI_FORMAT_UNKNOWN;
+	dResource.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	::Microsoft::WRL::ComPtr<ID3D12Resource> pUploadBuffer{ nullptr };
 	::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
 		.get_pD3dDevice()
@@ -120,20 +124,46 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	D3D12_RANGE range{
 		0ULL, 0ULL
 	};
-	void* pData{ nullptr };
+	BYTE* pData{ nullptr };
 	::Windows::ThrowIfFailed(pUploadBuffer->Map(
 		0U, &range,
-		&pData
+		reinterpret_cast<void**>(&pData)
 	), "Upload buffer map failed");
-	memcpy(pData, pBmp, size);
+	for (UINT row{ 0U }; row < height; ++row) {
+		memcpy(pData + rowPitch * row, pBmp + rowSize * row, rowSize);
+	}
 	pUploadBuffer->Unmap(0U, nullptr);
+
+	D3D12_TEXTURE_COPY_LOCATION lSrc{
+		pUploadBuffer.Get(),
+		D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
+		D3D12_PLACED_SUBRESOURCE_FOOTPRINT{
+			0ULL,
+			D3D12_SUBRESOURCE_FOOTPRINT{
+#ifndef NDEBUG
+				DXGI_FORMAT_R8G8B8A8_UNORM,
+#else
+				DXGI_FORMAT_A8_UNORM,
+#endif // !NDEBUG
+				width, height, 1U,
+				rowPitch
+			}
+		}
+	};
+	D3D12_TEXTURE_COPY_LOCATION lDst{
+		m_palette.get_Instrumentation()
+			.get_pTexture(),
+		D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX
+	};
+	lDst.SubresourceIndex = 0U;
 
 	m_palette.get_Instrumentation()
 		.get_pCommandList()
-			->CopyResource(
-				m_palette.get_Instrumentation()
-					.get_pTexture(),
-				pUploadBuffer.Get());
+			->CopyTextureRegion(
+				&lDst,
+				0U, 0U, 0U,
+				&lSrc,
+				nullptr);
 	D3D12_RESOURCE_BARRIER barrier{
 		D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 		D3D12_RESOURCE_BARRIER_FLAG_NONE,
@@ -171,7 +201,11 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 					.get_Count());
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC dvShaderResource{
+#ifndef NDEBUG
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+#else
 		DXGI_FORMAT_A8_UNORM,
+#endif // !NDEBUG
 		D3D12_SRV_DIMENSION_TEXTURE2D,
 		D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING
 	};
@@ -185,6 +219,25 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 				m_palette.get_Instrumentation()
 					.get_pvShaderResourceHeap()
 						->GetCPUDescriptorHandleForHeapStart());
+
+	if (m_palette.get_Instrumentation()
+		.get_pFence()
+			->GetCompletedValue() < m_palette.get_Instrumentation()
+				.get_Count()) {
+		::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
+			.get_pFence()
+				->SetEventOnCompletion(
+					m_palette.get_Instrumentation()
+						.get_Count(),
+					m_palette.get_Instrumentation()
+						.get_hEvent()
+		), "Event signaling failed");
+		::Windows::wWaitForSingleObject(
+			m_palette.get_Instrumentation()
+				.get_hEvent(),
+			INFINITE
+		);
+	}
 }
 void Atlas::Fill(
 	const ::std::valarray<double>& point,
@@ -244,20 +297,20 @@ void Atlas::Fill(
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->RSSetScissorRects(1U, &scissor);
-	::std::array<double, 4> cConstant{
-		color[RGBA::red],
-		color[RGBA::green],
-		color[RGBA::blue],
-		color[RGBA::alpha]
+	::std::array<FLOAT, 4> cConstant{
+		static_cast<FLOAT>(color[RGBA::red]),
+		static_cast<FLOAT>(color[RGBA::green]),
+		static_cast<FLOAT>(color[RGBA::blue]),
+		static_cast<FLOAT>(color[RGBA::alpha])
 	};
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
-			->SetGraphicsRoot32BitConstants(Constants::color, 4U, cConstant.data(), 0U);
-	cConstant[0] = maskPoint[0];
-	cConstant[1] = maskPoint[1];
+			->SetGraphicsRoot32BitConstants(Constants::color + 1U, 4U, cConstant.data(), 0U);
+	cConstant[0] = static_cast<FLOAT>(maskPoint[0]);
+	cConstant[1] = static_cast<FLOAT>(maskPoint[1]);
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
-			->SetGraphicsRoot32BitConstants(Constants::offset, 2U, cConstant.data(), 0U);
+			->SetGraphicsRoot32BitConstants(Constants::offset + 1U, 2U, cConstant.data(), 0U);
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -332,19 +385,19 @@ Instrumentation::Instrumentation(
 	::Microsoft::WRL::ComPtr<IDXGIAdapter4> pDxgiAdapter{ nullptr };
 	::Windows::ThrowIfFailed(pDxgiFactory->EnumAdapterByGpuPreference(
 		0U,
-		DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+		DXGI_GPU_PREFERENCE_UNSPECIFIED,
 		IID_PPV_ARGS(&pDxgiAdapter)
 	), "Could not get DXGI adapter");
 
 	::Windows::ThrowIfFailed(D3D12CreateDevice(
 		pDxgiAdapter.Get(),
-		D3D_FEATURE_LEVEL_12_2,
+		D3D_FEATURE_LEVEL_12_1,
 		IID_PPV_ARGS(&m_pD3dDevice)
 	), "D3D12 device creation failed");
 
 	D3D12_COMMAND_QUEUE_DESC queueDesc{
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		D3D12_COMMAND_QUEUE_PRIORITY_GLOBAL_REALTIME,
+		D3D12_COMMAND_QUEUE_PRIORITY_HIGH,
 		D3D12_COMMAND_QUEUE_FLAG_NONE,
 		0U
 	};
@@ -355,7 +408,7 @@ Instrumentation::Instrumentation(
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
 		8U, 8U,
-		DXGI_FORMAT_B8G8R8A8_UNORM,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
 		FALSE,
 		DXGI_SAMPLE_DESC{
 			1U, 0U
@@ -443,16 +496,16 @@ Instrumentation::Instrumentation(
 		IID_PPV_ARGS(&m_pFence)
 	), "Fence creation failed");
 
-	::std::array<double, 2 * 4> cVertex{
-		-1., 1.,
-		-1., -1.,
-		1., 1.,
-		1., -1.
+	::std::array<FLOAT, 2 * 4> cVertex{
+		-1.F, 1.F,
+		-1.F, -1.F,
+		1.F, 1.F,
+		1.F, -1.F
 	};
 	D3D12_HEAP_PROPERTIES pHeap{
 		D3D12_HEAP_TYPE_DEFAULT,
-		D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE,
-		D3D12_MEMORY_POOL_L1,
+		D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+		D3D12_MEMORY_POOL_UNKNOWN,
 		0U, 0U
 	};
 	D3D12_RESOURCE_DESC dResource{
@@ -462,7 +515,7 @@ Instrumentation::Instrumentation(
 		DXGI_SAMPLE_DESC{
 			1U, 0U
 		},
-		D3D12_TEXTURE_LAYOUT_UNKNOWN,
+		D3D12_TEXTURE_LAYOUT_ROW_MAJOR,
 		D3D12_RESOURCE_FLAG_NONE
 	};
 	::Windows::ThrowIfFailed(m_pD3dDevice->CreateCommittedResource(
@@ -473,7 +526,6 @@ Instrumentation::Instrumentation(
 	), "Vertex buffer creation failed");
 
 	pHeap.Type = D3D12_HEAP_TYPE_UPLOAD;
-	pHeap.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 	::Microsoft::WRL::ComPtr<ID3D12Resource> pUploadBuffer{ nullptr };
 	::Windows::ThrowIfFailed(m_pD3dDevice->CreateCommittedResource(
 		&pHeap, D3D12_HEAP_FLAG_NONE, &dResource,
@@ -518,7 +570,7 @@ Instrumentation::Instrumentation(
 	m_pCommandQueue->Signal(m_pFence.Get(), ++m_count);
 
 	m_vVertexBuffer.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
-	m_vVertexBuffer.StrideInBytes = 2 * sizeof(double);
+	m_vVertexBuffer.StrideInBytes = 2 * sizeof(FLOAT);
 	m_vVertexBuffer.SizeInBytes = sizeof(cVertex);
 
 	D3D12_DESCRIPTOR_HEAP_DESC dShaderResourceHeap{
@@ -532,15 +584,25 @@ Instrumentation::Instrumentation(
 		IID_PPV_ARGS(&m_pvShaderResourceHeap)
 	), "SRV heap descriptor creation failed");
 
-	::std::array<D3D12_ROOT_PARAMETER, 2> cParam{};
-	cParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	cParam[0].Constants.ShaderRegister = Constants::color;
-	cParam[0].Constants.Num32BitValues = 4U;
+	::std::array<D3D12_ROOT_PARAMETER, 3> cParam{};
+	D3D12_DESCRIPTOR_RANGE rDescriptor{
+		D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+		1U,
+		0U, 0U,
+		0U
+	};
+	cParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	cParam[0].DescriptorTable.NumDescriptorRanges = 1U;
+	cParam[0].DescriptorTable.pDescriptorRanges = &rDescriptor;
 	cParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	cParam[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	cParam[0].Constants.ShaderRegister = Constants::offset;
-	cParam[1].Constants.Num32BitValues = 2U;
+	cParam[1].Constants.ShaderRegister = Constants::color;
+	cParam[1].Constants.Num32BitValues = 4U;
 	cParam[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	cParam[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	cParam[2].Constants.ShaderRegister = Constants::offset;
+	cParam[2].Constants.Num32BitValues = 2U;
+	cParam[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	D3D12_STATIC_SAMPLER_DESC dSampler{
 		D3D12_FILTER_MIN_MAG_MIP_POINT,
 		D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER,
@@ -633,7 +695,7 @@ Instrumentation::Instrumentation(
 		},
 		UINT_MAX,
 		D3D12_RASTERIZER_DESC{
-			D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_BACK,
+			D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_NONE,
 			FALSE,
 			D3D12_DEFAULT_DEPTH_BIAS, D3D12_DEFAULT_DEPTH_BIAS_CLAMP, D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS,
 			TRUE,
@@ -664,18 +726,9 @@ Instrumentation::Instrumentation(
 		IID_PPV_ARGS(&m_pPipelineState)
 	), "Pipeline state creation failed");
 
-	::Microsoft::WRL::ComPtr<IDXGIDevice1> pDxgiDevice{ nullptr };
-	::Windows::ThrowIfFailed(m_pD3dDevice.As(
-		&pDxgiDevice
-	), "Could not get DXGI device");
-
-	::Windows::ThrowIfFailed(pDxgiDevice->SetMaximumFrameLatency(
-		1U
-	), "Could not set maximum frame latency");
-
 	::Microsoft::WRL::ComPtr<IDCompositionDevice> pCompositionDevice{ nullptr };
 	::Windows::ThrowIfFailed(DCompositionCreateDevice(
-		pDxgiDevice.Get(),
+		nullptr,
 		IID_PPV_ARGS(&pCompositionDevice)
 	), "Composition device creation failed");
 
@@ -699,6 +752,17 @@ Instrumentation::Instrumentation(
 
 	::Windows::ThrowIfFailed(pCompositionDevice->Commit(
 	), "Could not commit composition device");
+
+	if (m_pFence->GetCompletedValue() < m_count) {
+		::Windows::ThrowIfFailed(m_pFence->SetEventOnCompletion(
+			m_count,
+			m_hEvent
+		), "Event signaling failed");
+		::Windows::wWaitForSingleObject(
+			m_hEvent,
+			INFINITE
+		);
+	}
 }
 
 Instrumentation::~Instrumentation() {
