@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.D3D12", "src
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.Cherry", "src\Voicemeeter.UI.Cherry\Voicemeeter.UI.Cherry.vcxproj", "{3D402B49-3499-4717-A44E-5318FDB37943}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.D3D12", "src\Voicemeeter.Clients.UI.D3D12\Voicemeeter.Clients.UI.D3D12.vcxproj", "{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -202,6 +204,18 @@ Global
 		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x64.Build.0 = Remote|x64
 		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x86.ActiveCfg = Release|Win32
 		{3D402B49-3499-4717-A44E-5318FDB37943}.Remote|x86.Build.0 = Release|Win32
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Debug|x64.ActiveCfg = Debug|x64
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Debug|x64.Build.0 = Debug|x64
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Debug|x86.ActiveCfg = Debug|Win32
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Debug|x86.Build.0 = Debug|Win32
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Release|x64.ActiveCfg = Release|x64
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Release|x64.Build.0 = Release|x64
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Release|x86.ActiveCfg = Release|Win32
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Release|x86.Build.0 = Release|Win32
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Remote|x64.ActiveCfg = Remote|x64
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Remote|x64.Build.0 = Remote|x64
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Remote|x86.ActiveCfg = Release|Win32
+		{4B45C89C-C67F-4CA2-BC68-C7E77D7E89BB}.Remote|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

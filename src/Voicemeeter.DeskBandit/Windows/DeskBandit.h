@@ -9,6 +9,7 @@
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
 #include "Voicemeeter.Clients.Remote/Cherry.h"
 #include "Voicemeeter.Clients.UI.D2D/Cherry.h"
+#include "Voicemeeter.Clients.UI.D3D12/Cherry.h"
 #include "Windows/Timer.h"
 
 namespace Voicemeeter {
@@ -53,7 +54,9 @@ namespace Voicemeeter {
 			::std::unordered_map<UINT_PTR, ::Windows::Timer*> m_lpTimer;
 			::std::unique_ptr<::Voicemeeter::Adapters::Multiclient::Cherry> m_pMixer;
 			::std::unique_ptr<::Voicemeeter::Clients::Remote::Cherry> m_pRemote;
-			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pScene;
+			::Voicemeeter::UI::Scene* m_pScene;
+			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pD2dScene;
+			::std::unique_ptr<::Voicemeeter::UI::D3D12::Scene> m_pD3d12Scene;
 
 			static LRESULT CALLBACK WndProcW(
 				HWND hWnd,

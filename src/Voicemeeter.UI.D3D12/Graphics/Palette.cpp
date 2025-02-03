@@ -13,7 +13,10 @@
 
 #include "Palette.h"
 
+#pragma comment(lib, "d3d12")
+#pragma comment(lib, "d3dcompiler")
 #pragma comment(lib, "dcomp")
+#pragma comment(lib, "dxgi")
 
 using namespace ::Voicemeeter::UI::D3D12::Graphics;
 

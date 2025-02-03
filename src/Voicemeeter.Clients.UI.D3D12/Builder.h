@@ -10,13 +10,13 @@
 #include "Voicemeeter.UI/Direction.h"
 #include "Voicemeeter.UI/Trackers/Focus.h"
 #include "Voicemeeter.UI/Trackers/Input.h"
-#include "Voicemeeter.UI.D2D/Scene.h"
+#include "Voicemeeter.UI.D3D12/Scene.h"
 #include "Windows/Registry.h"
 
 namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
-			namespace D2D {
+			namespace D3D12 {
 				template<typename TMixer>
 				class Builder {
 					static_assert(
@@ -26,10 +26,12 @@ namespace Voicemeeter {
 				public:
 					inline Builder(
 						HWND hWnd,
+						HMODULE hModule,
 						::Environment::IInputTracker& inputTracker,
 						::Environment::ITimer& compositionTimer,
 						TMixer& mixer
 					) : m_hWnd{ hWnd }
+					  , m_hModule{ hModule }
 					  , m_inputTracker{ inputTracker }
 					  , m_compositionTimer{ compositionTimer }
 					  , m_mixer{ mixer }
@@ -75,12 +77,12 @@ namespace Voicemeeter {
 						m_marginVertex = vertex;
 						return *this;
 					};
-					::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> Build() {
+					::std::unique_ptr<::Voicemeeter::UI::D3D12::Scene> Build() {
 						LoadOverrides();
-						::std::unique_ptr<::Voicemeeter::UI::D2D::Graphics::Palette> pPalette{
-							new ::Voicemeeter::UI::D2D::Graphics::Palette{
+						::std::unique_ptr<::Voicemeeter::UI::D3D12::Graphics::Palette> pPalette{
+							new ::Voicemeeter::UI::D3D12::Graphics::Palette{
 								m_theme, m_direction == ::Voicemeeter::UI::Direction::Right,
-								m_hWnd
+								m_hWnd, m_hModule
 							}
 						};
 						::std::unique_ptr<::Voicemeeter::UI::Trackers::Focus> pFocusTracker{
@@ -90,7 +92,7 @@ namespace Voicemeeter {
 							new ::Voicemeeter::UI::Trackers::Input{ m_inputTracker }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::Graphics::ICanvas> pCanvas{
-							new ::Voicemeeter::UI::D2D::Graphics::Canvas{ *pPalette }
+							new ::Voicemeeter::UI::D3D12::Graphics::Canvas{ *pPalette }
 						};
 						::std::unique_ptr<::Voicemeeter::UI::IComponent> pComposition{
 							Compose(
@@ -98,8 +100,8 @@ namespace Voicemeeter {
 								*pFocusTracker, *pInputTracker
 							)
 						};
-						return ::std::unique_ptr<::Voicemeeter::UI::D2D::Scene>{
-							new ::Voicemeeter::UI::D2D::Scene{
+						return ::std::unique_ptr<::Voicemeeter::UI::D3D12::Scene>{
+							new ::Voicemeeter::UI::D3D12::Scene{
 								pPalette,
 								pInputTracker, pFocusTracker,
 								pCanvas, pComposition
@@ -109,6 +111,7 @@ namespace Voicemeeter {
 
 				private:
 					HWND m_hWnd;
+					HMODULE m_hModule;
 					::Environment::IInputTracker& m_inputTracker;
 					::Environment::ITimer& m_compositionTimer;
 					TMixer& m_mixer;
@@ -197,7 +200,7 @@ namespace Voicemeeter {
 						}
 					};
 					::std::unique_ptr<::Voicemeeter::UI::IComponent> Compose(
-						::Voicemeeter::UI::D2D::Graphics::Palette& palette,
+						::Voicemeeter::UI::D3D12::Graphics::Palette& palette,
 						::Voicemeeter::UI::Trackers::Focus& focusTracker,
 						::Voicemeeter::UI::Trackers::Input& inputTracker
 					);
