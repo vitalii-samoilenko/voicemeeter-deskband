@@ -20,11 +20,6 @@
 
 using namespace ::Voicemeeter::UI::D3D12::Graphics;
 
-enum Constants : UINT {
-	color = 0U,
-	offset = 1U
-};
-
 void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	::Windows::ThrowIfFailed(m_palette.get_Instrumentation()
 		.get_pCommandAllocator()
@@ -297,20 +292,28 @@ void Atlas::Fill(
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->RSSetScissorRects(1U, &scissor);
-	::std::array<FLOAT, 4> cConstant{
+	UINT width{ 0U };
+	UINT height{ 0U };
+	::Windows::ThrowIfFailed(m_pAtlas->get_pBitmap()
+		->GetSize(
+			&width, &height
+	), "Failed to get bitmap size");
+	::std::array<FLOAT, 8> cConstants{
 		static_cast<FLOAT>(color[RGBA::red]),
 		static_cast<FLOAT>(color[RGBA::green]),
 		static_cast<FLOAT>(color[RGBA::blue]),
-		static_cast<FLOAT>(color[RGBA::alpha])
+		static_cast<FLOAT>(color[RGBA::alpha]),
+		static_cast<FLOAT>(maskPoint[0] / width),
+		static_cast<FLOAT>(maskPoint[1] / height),
+		static_cast<FLOAT>((vertex[0] + AAEPS) / width),
+		static_cast<FLOAT>((vertex[1] + AAEPS) / height)
 	};
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
-			->SetGraphicsRoot32BitConstants(Constants::color + 1U, 4U, cConstant.data(), 0U);
-	cConstant[0] = static_cast<FLOAT>(maskPoint[0]);
-	cConstant[1] = static_cast<FLOAT>(maskPoint[1]);
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->SetGraphicsRoot32BitConstants(Constants::offset + 1U, 2U, cConstant.data(), 0U);
+			->SetGraphicsRoot32BitConstants(
+				1U,
+				static_cast<UINT>(cConstants.size()), cConstants.data(),
+				0U);
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -497,10 +500,10 @@ Instrumentation::Instrumentation(
 	), "Fence creation failed");
 
 	::std::array<FLOAT, 2 * 4> cVertex{
-		-1.F, 1.F,
 		-1.F, -1.F,
-		1.F, 1.F,
-		1.F, -1.F
+		-1.F, 1.F,
+		1.F, -1.F,
+		1.F, 1.F
 	};
 	D3D12_HEAP_PROPERTIES pHeap{
 		D3D12_HEAP_TYPE_DEFAULT,
@@ -584,7 +587,7 @@ Instrumentation::Instrumentation(
 		IID_PPV_ARGS(&m_pvShaderResourceHeap)
 	), "SRV heap descriptor creation failed");
 
-	::std::array<D3D12_ROOT_PARAMETER, 3> cParam{};
+	::std::array<D3D12_ROOT_PARAMETER, 2> cParam{};
 	D3D12_DESCRIPTOR_RANGE rDescriptor{
 		D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
 		1U,
@@ -596,13 +599,9 @@ Instrumentation::Instrumentation(
 	cParam[0].DescriptorTable.pDescriptorRanges = &rDescriptor;
 	cParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	cParam[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	cParam[1].Constants.ShaderRegister = Constants::color;
-	cParam[1].Constants.Num32BitValues = 4U;
+	cParam[1].Constants.ShaderRegister = 0U;
+	cParam[1].Constants.Num32BitValues = 8U;
 	cParam[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	cParam[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-	cParam[2].Constants.ShaderRegister = Constants::offset;
-	cParam[2].Constants.Num32BitValues = 2U;
-	cParam[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	D3D12_STATIC_SAMPLER_DESC dSampler{
 		D3D12_FILTER_MIN_MAG_MIP_POINT,
 		D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER,
@@ -685,8 +684,8 @@ Instrumentation::Instrumentation(
 			FALSE, FALSE,
 			{
 				D3D12_RENDER_TARGET_BLEND_DESC{
-					FALSE, FALSE,
-					D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+					TRUE, FALSE,
+					D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
 					D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
 					D3D12_LOGIC_OP_NOOP,
 					D3D12_COLOR_WRITE_ENABLE_ALL

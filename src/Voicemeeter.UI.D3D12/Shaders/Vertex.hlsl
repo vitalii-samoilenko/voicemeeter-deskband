@@ -6,6 +6,7 @@ struct VSOutput {
 VSOutput Main(float4 position : POSITION) {
     VSOutput output;
     output.position = position;
-    output.uv = position;
+    output.uv = (position + 1) / 2;
+    output.uv.y = 1 - output.uv.y;
     return output;
 }
