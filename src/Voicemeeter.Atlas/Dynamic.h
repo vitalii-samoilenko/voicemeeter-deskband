@@ -31,6 +31,12 @@ namespace Voicemeeter {
 			inline IWICBitmap* get_pBitmap() const {
 				return m_pBitmap.Get();
 			};
+			inline UINT get_Width() const {
+				return m_width;
+			};
+			inline UINT get_Height() const {
+				return m_height;
+			};
 
 			inline ::std::valarray<double> MapPosition(size_t x, size_t y) const {
 				return {
@@ -50,6 +56,8 @@ namespace Voicemeeter {
 				const ::std::valarray<double>& scale
 			) : m_blockWidth{ ::std::ceil(Specification::Block::Width * ::std::max(static_cast<FLOAT>(scale[0]), ::std::numeric_limits<FLOAT>::epsilon())) }
 			  , m_blockHeight{ ::std::ceil(Specification::Block::Height * ::std::max(static_cast<FLOAT>(scale[1]), ::std::numeric_limits<FLOAT>::epsilon())) }
+			  , m_width{ static_cast<UINT>(m_blockWidth * Specification::Width) + 1U }
+			  , m_height{ static_cast<UINT>(m_blockHeight * Specification::Height) + 1U }
 			  , m_scale{ ::D2D1::Matrix3x2F::Scale(static_cast<FLOAT>(scale[0]), static_cast<FLOAT>(scale[1])) }
 			  , m_pWicFactory{ nullptr }
 			  , m_pBitmap{ nullptr }
@@ -68,8 +76,7 @@ namespace Voicemeeter {
 				), "WIC factory creation failed");
 
 				::Windows::ThrowIfFailed(m_pWicFactory->CreateBitmap(
-					static_cast<UINT>(m_blockWidth * Specification::Width) + 1U,
-					static_cast<UINT>(m_blockHeight * Specification::Height) + 1U,
+					m_width, m_height,
 #ifndef NDEBUG
 					GUID_WICPixelFormat32bppPRGBA,
 #else
@@ -172,6 +179,8 @@ namespace Voicemeeter {
 		private:
 			FLOAT m_blockWidth;
 			FLOAT m_blockHeight;
+			UINT m_width;
+			UINT m_height;
 			::D2D1::Matrix3x2F m_scale;
 			::Microsoft::WRL::ComPtr<IWICImagingFactory> m_pWicFactory;
 			::Microsoft::WRL::ComPtr<IWICBitmap> m_pBitmap;

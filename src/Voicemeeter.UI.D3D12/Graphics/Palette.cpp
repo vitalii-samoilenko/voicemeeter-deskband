@@ -254,32 +254,6 @@ void Atlas::Fill(
 		m_palette.get_Instrumentation()
 			.get_Frame()
 	};
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->SetPipelineState(
-				m_palette.get_Instrumentation()
-					.get_pPipelineState());
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->SetGraphicsRootSignature(
-				m_palette.get_Instrumentation()
-					.get_pRootSignature());
-	::std::array<ID3D12DescriptorHeap*, 1> cpDescriptorHeap{
-		m_palette.get_Instrumentation()
-			.get_pvShaderResourceHeap()
-	};
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->SetDescriptorHeaps(
-				static_cast<UINT>(cpDescriptorHeap.size()),
-				cpDescriptorHeap.data());
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->SetGraphicsRootDescriptorTable(
-				0U,
-				m_palette.get_Instrumentation()
-					.get_pvShaderResourceHeap()
-						->GetGPUDescriptorHandleForHeapStart());
 	D3D12_VIEWPORT viewport{
 		static_cast<FLOAT>(point[0]),
 		static_cast<FLOAT>(point[1]),
@@ -298,21 +272,15 @@ void Atlas::Fill(
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->RSSetScissorRects(1U, &scissor);
-	UINT width{ 0U };
-	UINT height{ 0U };
-	::Windows::ThrowIfFailed(m_pAtlas->get_pBitmap()
-		->GetSize(
-			&width, &height
-	), "Failed to get bitmap size");
 	::std::array<FLOAT, 8> cConstants{
 		static_cast<FLOAT>(color[RGBA::red]),
 		static_cast<FLOAT>(color[RGBA::green]),
 		static_cast<FLOAT>(color[RGBA::blue]),
 		static_cast<FLOAT>(color[RGBA::alpha]),
-		static_cast<FLOAT>(maskPoint[0] / width),
-		static_cast<FLOAT>(maskPoint[1] / height),
-		static_cast<FLOAT>((vertex[0] + AAEPS) / width),
-		static_cast<FLOAT>((vertex[1] + AAEPS) / height)
+		static_cast<FLOAT>(maskPoint[0] / m_pAtlas->get_Width()),
+		static_cast<FLOAT>(maskPoint[1] / m_pAtlas->get_Height()),
+		static_cast<FLOAT>((vertex[0] + AAEPS) / m_pAtlas->get_Width()),
+		static_cast<FLOAT>((vertex[1] + AAEPS) / m_pAtlas->get_Height())
 	};
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
@@ -320,14 +288,6 @@ void Atlas::Fill(
 				1U,
 				static_cast<UINT>(cConstants.size()), cConstants.data(),
 				0U);
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	m_palette.get_Instrumentation()
-		.get_pCommandList(frame)
-			->IASetVertexBuffers(0U, 1U,
-				&m_palette.get_Instrumentation()
-					.get_vVertexBuffer());
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->DrawInstanced(4U, 1U, 0U, 0U);

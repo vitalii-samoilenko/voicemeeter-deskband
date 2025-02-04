@@ -85,8 +85,38 @@ void Scene::Render() {
 			->Reset(
 				m_pPalette->get_Instrumentation()
 					.get_pCommandAllocator(frame),
-				nullptr
+				m_pPalette->get_Instrumentation()
+					.get_pPipelineState()
 	), "Command list reset failed");
+	m_pPalette->get_Instrumentation()
+		.get_pCommandList(frame)
+			->SetGraphicsRootSignature(
+				m_pPalette->get_Instrumentation()
+					.get_pRootSignature());
+	::std::array<ID3D12DescriptorHeap*, 1> cpDescriptorHeap{
+		m_pPalette->get_Instrumentation()
+			.get_pvShaderResourceHeap()
+	};
+	m_pPalette->get_Instrumentation()
+		.get_pCommandList(frame)
+			->SetDescriptorHeaps(
+				static_cast<UINT>(cpDescriptorHeap.size()),
+				cpDescriptorHeap.data());
+	m_pPalette->get_Instrumentation()
+		.get_pCommandList(frame)
+			->SetGraphicsRootDescriptorTable(
+				0U,
+				m_pPalette->get_Instrumentation()
+					.get_pvShaderResourceHeap()
+						->GetGPUDescriptorHandleForHeapStart());
+	m_pPalette->get_Instrumentation()
+		.get_pCommandList(frame)
+			->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	m_pPalette->get_Instrumentation()
+		.get_pCommandList(frame)
+			->IASetVertexBuffers(0U, 1U,
+				&m_pPalette->get_Instrumentation()
+					.get_vVertexBuffer());
 	D3D12_RESOURCE_BARRIER barrier{
 		D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 		D3D12_RESOURCE_BARRIER_FLAG_NONE,
