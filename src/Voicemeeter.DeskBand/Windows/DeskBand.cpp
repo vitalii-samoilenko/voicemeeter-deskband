@@ -24,6 +24,11 @@ static bool g_shutdown{ false };
 
 static constexpr LRESULT OK{ 0 };
 
+enum class RenderEngine {
+	D2D = 0,
+	D3D12 = 1
+};
+
 DeskBand::DeskBand(
 ) : m_cRef{ 1 }
   , m_pSite{ NULL }
@@ -41,7 +46,9 @@ DeskBand::DeskBand(
   , m_lpTimer{}
   , m_pMixer{ nullptr }
   , m_pRemote{ nullptr }
-  , m_pScene{ nullptr } {
+  , m_pScene{ nullptr }
+  , m_pD2dScene{ nullptr }
+  , m_pD3d12Scene{ nullptr } {
 	InterlockedIncrement(&g_cDllRef);
 }
 
@@ -381,29 +388,12 @@ LRESULT CALLBACK DeskBand::WndProcW(
 			pWnd->m_hWnd = hWnd;
 			pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_pRenderTimer.reset(new ::Windows::Timer{ hWnd });
-			pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
-				[pWnd]()->bool {
-					pWnd->m_pScene->Render();
-					return true;
-				});
 			pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
 			pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pRenderTimer->get_Id(), pWnd->m_pRenderTimer.get());
 			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
 			pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
-			::Voicemeeter::Clients::UI::D2D::Cherry builder{
-				hWnd,
-				*pWnd,
-				*pWnd->m_pCompositionTimer,
-				*pWnd->m_pMixer
-			};
-			if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
-				builder
-					.WithNetwork(false)
-					.WithIgnoredStrip(3)
-					.WithIgnoredStrip(5);
-			}
 			::Voicemeeter::UI::Direction direction{ ::Voicemeeter::UI::Direction::Right };
 			::std::valarray<double> vertex{
 				static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
@@ -414,9 +404,56 @@ LRESULT CALLBACK DeskBand::WndProcW(
 				direction = ::Voicemeeter::UI::Direction::Down;
 				::std::swap(vertex[0], vertex[1]);
 			}
-			pWnd->m_pScene = builder
-				.WithDirection(direction)
-				.Build();
+			DWORD engine{ static_cast<DWORD>(RenderEngine::D2D) };
+			::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"RenderEngine", engine);
+			switch (static_cast<RenderEngine>(engine)) {
+			case RenderEngine::D3D12: {
+				pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
+					[pWnd]()->bool {
+						pWnd->m_pD3d12Scene->Render();
+						return true;
+					});
+				::Voicemeeter::Clients::UI::D3D12::Cherry builder{
+					hWnd, g_hInst,
+					*pWnd,
+					*pWnd->m_pCompositionTimer,
+					*pWnd->m_pMixer
+				};
+				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
+					builder
+						.WithNetwork(false)
+						.WithIgnoredStrip(3)
+						.WithIgnoredStrip(5);
+				}
+				pWnd->m_pD3d12Scene = builder
+					.WithDirection(direction)
+					.Build();
+				pWnd->m_pScene = pWnd->m_pD3d12Scene.get();
+			} break;
+			default: {
+				pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
+					[pWnd]()->bool {
+						pWnd->m_pD2dScene->Render();
+						return true;
+					});
+				::Voicemeeter::Clients::UI::D2D::Cherry builder{
+					hWnd,
+					*pWnd,
+					*pWnd->m_pCompositionTimer,
+					*pWnd->m_pMixer
+				};
+				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
+					builder
+						.WithNetwork(false)
+						.WithIgnoredStrip(3)
+						.WithIgnoredStrip(5);
+				}
+				pWnd->m_pD2dScene = builder
+					.WithDirection(direction)
+					.Build();
+				pWnd->m_pScene = pWnd->m_pD2dScene.get();
+			} break;
+			}
 			pWnd->m_pScene->Rescale(vertex);
 			vertex = pWnd->m_pScene->get_Size();
 			if (direction == ::Voicemeeter::UI::Direction::Down) {
