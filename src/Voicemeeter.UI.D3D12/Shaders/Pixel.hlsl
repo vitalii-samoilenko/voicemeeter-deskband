@@ -14,5 +14,5 @@ float4 Main(PSInput input) : SV_TARGET {
         g_texture.Sample(
                 g_sampler,
                 g_transform.xy + g_transform.zw * input.uv)
-            .a);
+            .a * g_color.a);
 }
