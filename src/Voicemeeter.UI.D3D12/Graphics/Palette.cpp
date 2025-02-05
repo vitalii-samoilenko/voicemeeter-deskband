@@ -43,12 +43,6 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 			&pLock
 	), "Bitmap lock failed");
 
-	UINT width{ 0U };
-	UINT height{ 0U };
-	::Windows::ThrowIfFailed(pLock->GetSize(
-		&width, &height
-	), "Failed to get bitmap size");
-
 	UINT size{ 0U };
 	WICInProcPointer pSrc{ nullptr };
 	::Windows::ThrowIfFailed(pLock->GetDataPointer(
@@ -64,7 +58,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	D3D12_RESOURCE_DESC dResource{
 		D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 		0ULL,
-		width, height, 1U, 1U,
+		m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1U, 1U,
 #ifndef NDEBUG
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 #else
@@ -92,7 +86,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 	static constexpr UINT64 PixelSize{ 1ULL };
 #endif // !NDEBUG
 
-	UINT rowSize{ width * PixelSize };
+	UINT rowSize{ m_pAtlas->get_Width() * PixelSize };
 	UINT remainder{ rowSize % 4ULL };
 	UINT srcRowPitch{
 		(remainder
@@ -108,7 +102,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 
 	pHeap.Type = D3D12_HEAP_TYPE_UPLOAD;
 	dResource.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	dResource.Width = dstRowPitch * height;
+	dResource.Width = dstRowPitch * m_pAtlas->get_Height();
 	dResource.Height = 1U;
 	dResource.Format = DXGI_FORMAT_UNKNOWN;
 	dResource.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
@@ -130,7 +124,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 		0U, &range,
 		reinterpret_cast<void**>(&pDst)
 	), "Upload buffer map failed");
-	for (UINT row{ 0U }; row < height; ++row) {
+	for (UINT row{ 0U }; row < m_pAtlas->get_Height(); ++row) {
 		memcpy(pDst + dstRowPitch * row, pSrc + srcRowPitch * row, rowSize);
 	}
 	pUploadBuffer->Unmap(0U, nullptr);
@@ -146,7 +140,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 #else
 				DXGI_FORMAT_A8_UNORM,
 #endif // !NDEBUG
-				width, height, 1U,
+				m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1U,
 				dstRowPitch
 			}
 		}
