@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Voicemeeter.UI.Cherry/Graphics/Canvas.h"
-
 #include "Palette.h"
+#include "Voicemeeter.UI.Cherry/Graphics/Canvas.h"
 
 namespace Voicemeeter {
 	namespace UI {

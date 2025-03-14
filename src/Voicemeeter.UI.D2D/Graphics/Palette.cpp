@@ -31,7 +31,7 @@ void Atlas::Fill(
 	bool blend) {
 	using RGBA = ::Voicemeeter::UI::Cherry::Graphics::Theme::RGBA;
 
-	constexpr double AAEPS{ 0.5 - ::std::numeric_limits<double>::epsilon() };
+	constexpr double AAEPS{ 1. };
 
 	if (blend) {
 		m_palette.get_Instrumentation()

@@ -27,21 +27,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Decorators\Bundle\Animations\Knob.h" />
-    <ClInclude Include="Decorators\Bundle\Animations\Plug.h" />
-    <ClInclude Include="Decorators\Bundle\Animations\Vban.h" />
-    <ClInclude Include="Graphics\Bundles\Knob.h" />
-    <ClInclude Include="Graphics\Bundles\Plug.h" />
-    <ClInclude Include="Graphics\Bundles\Vban.h" />
     <ClInclude Include="Graphics\Canvas.h" />
-    <ClInclude Include="Graphics\Glyph.h" />
     <ClInclude Include="Graphics\Palette.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Animations\Knob.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Animations\Plug.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Animations\Vban.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Knob.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Plug.h" />
-    <ClInclude Include="Policies\Glyph\Updates\Vban.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shaders.h" />
   </ItemGroup>

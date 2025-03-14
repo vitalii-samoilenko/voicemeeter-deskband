@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Voicemeeter.UI/Scene.h"
-
 #include "Graphics/Canvas.h"
+#include "Voicemeeter.UI/Scene.h"
 
 namespace Voicemeeter {
 	namespace UI {

@@ -195,7 +195,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Builder.h" />
     <ClInclude Include="Cherry.h" />
   </ItemGroup>
   <ItemGroup>

@@ -242,12 +242,18 @@ void Atlas::Fill(
 	bool blend) {
 	using RGBA = ::Voicemeeter::UI::Cherry::Graphics::Theme::RGBA;
 
-	constexpr double AAEPS{ 0.5 - ::std::numeric_limits<double>::epsilon() };
+	constexpr double AAEPS{ 1. };
 
 	const size_t& frame{
 		m_palette.get_Instrumentation()
 			.get_Frame()
 	};
+	if (blend) {
+		m_palette.get_Instrumentation()
+			.get_pCommandList(frame)
+				->SetPipelineState(m_palette.get_Instrumentation()
+					.get_pBlendPipelineState());
+	}
 	D3D12_VIEWPORT viewport{
 		static_cast<FLOAT>(point[0]),
 		static_cast<FLOAT>(point[1]),
@@ -285,6 +291,12 @@ void Atlas::Fill(
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
 			->DrawInstanced(4U, 1U, 0U, 0U);
+	if (blend) {
+		m_palette.get_Instrumentation()
+			.get_pCommandList(frame)
+				->SetPipelineState(m_palette.get_Instrumentation()
+					.get_pPipelineState());
+	}
 }
 
 Instrumentation::Instrumentation(
@@ -308,6 +320,7 @@ Instrumentation::Instrumentation(
 
   , m_pRootSignature{ nullptr }
   , m_pPipelineState{ nullptr }
+  , m_pBlendPipelineState{ nullptr }
   , m_pCommandAllocator{ nullptr }
   , m_pCommandList{ nullptr }
   , m_pFence{ nullptr }
@@ -683,6 +696,14 @@ Instrumentation::Instrumentation(
 	::Windows::ThrowIfFailed(m_pD3dDevice->CreateGraphicsPipelineState(
 		&dPipelineState,
 		IID_PPV_ARGS(&m_pPipelineState)
+	), "Pipeline state creation failed");
+
+	dPipelineState.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	dPipelineState.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_INV_DEST_ALPHA;
+	dPipelineState.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	::Windows::ThrowIfFailed(m_pD3dDevice->CreateGraphicsPipelineState(
+		&dPipelineState,
+		IID_PPV_ARGS(&m_pBlendPipelineState)
 	), "Pipeline state creation failed");
 
 	::Microsoft::WRL::ComPtr<IDCompositionDevice> pCompositionDevice{ nullptr };

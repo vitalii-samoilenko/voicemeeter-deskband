@@ -43,11 +43,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Voicemeeter.DeskBand.def">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="..\Windows\Messages.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
@@ -57,5 +52,10 @@
     <ResourceCompile Include="..\Voicemeeter.UI.D3D12\Shaders.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Voicemeeter.DeskBand.def">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

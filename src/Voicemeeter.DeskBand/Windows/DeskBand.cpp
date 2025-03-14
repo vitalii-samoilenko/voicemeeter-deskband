@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include <cmath>
 #include <fstream>
 #include <string>
@@ -404,7 +406,7 @@ LRESULT CALLBACK DeskBand::WndProcW(
 				direction = ::Voicemeeter::UI::Direction::Down;
 				::std::swap(vertex[0], vertex[1]);
 			}
-			DWORD engine{ static_cast<DWORD>(RenderEngine::D2D) };
+			DWORD engine{ static_cast<DWORD>(RenderEngine::D3D12) };
 			::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"RenderEngine", engine);
 			switch (static_cast<RenderEngine>(engine)) {
 			case RenderEngine::D3D12: {
@@ -419,6 +421,8 @@ LRESULT CALLBACK DeskBand::WndProcW(
 					*pWnd->m_pCompositionTimer,
 					*pWnd->m_pMixer
 				};
+				builder
+					.WithDirection(direction);
 				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
 					builder
 						.WithNetwork(false)
@@ -426,7 +430,6 @@ LRESULT CALLBACK DeskBand::WndProcW(
 						.WithIgnoredStrip(5);
 				}
 				pWnd->m_pD3d12Scene = builder
-					.WithDirection(direction)
 					.Build();
 				pWnd->m_pScene = pWnd->m_pD3d12Scene.get();
 			} break;
@@ -442,6 +445,8 @@ LRESULT CALLBACK DeskBand::WndProcW(
 					*pWnd->m_pCompositionTimer,
 					*pWnd->m_pMixer
 				};
+				builder
+					.WithDirection(direction);
 				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
 					builder
 						.WithNetwork(false)
@@ -449,7 +454,6 @@ LRESULT CALLBACK DeskBand::WndProcW(
 						.WithIgnoredStrip(5);
 				}
 				pWnd->m_pD2dScene = builder
-					.WithDirection(direction)
 					.Build();
 				pWnd->m_pScene = pWnd->m_pD2dScene.get();
 			} break;

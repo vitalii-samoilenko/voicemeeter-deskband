@@ -74,6 +74,16 @@ Explorer.exe &
 
 ### Customization
 
+Default rendering engine is DirectX 12
+
+In case if you experience any issues you can try Direct 2D via registry key:
+
+```
+HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand
+```
+
+Add DWORD value RenderingEngine and set it to 0
+
 By default UI is animated with target 100 FPS
 
 In case if you experience any issues or seek performance boost/power safety you can disable animations via registry key:
@@ -83,6 +93,7 @@ HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand
 ```
 
 Add DWORD value Animations and set it to 0
+
 
 Custom colors and font family could be set via registry key:
 

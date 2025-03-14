@@ -79,6 +79,9 @@ namespace Voicemeeter {
 					inline ID3D12PipelineState* get_pPipelineState() const {
 						return m_pPipelineState.Get();
 					};
+					inline ID3D12PipelineState* get_pBlendPipelineState() const {
+						return m_pBlendPipelineState.Get();
+					};
 					inline ID3D12CommandAllocator* get_pCommandAllocator() const {
 						return m_pCommandAllocator.Get();
 					};
@@ -126,6 +129,7 @@ namespace Voicemeeter {
 
 					::Microsoft::WRL::ComPtr<ID3D12RootSignature> m_pRootSignature;
 					::Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pPipelineState;
+					::Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pBlendPipelineState;
 					::Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_pCommandAllocator;
 					::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 					::Microsoft::WRL::ComPtr<ID3D12Fence> m_pFence;

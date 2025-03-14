@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include <cmath>
 #include <fstream>
 #include <string>
@@ -149,7 +151,7 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
 			pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
 			pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
-			DWORD engine{ static_cast<DWORD>(RenderEngine::D2D) };
+			DWORD engine{ static_cast<DWORD>(RenderEngine::D3D12) };
 			::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"RenderEngine", engine);
 			switch (static_cast<RenderEngine>(engine)) {
 			case RenderEngine::D3D12: {
@@ -164,6 +166,10 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					*pWnd->m_pCompositionTimer,
 					*pWnd->m_pMixer
 				};
+				builder
+					.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
+					.WithMarginPosition({ 4., 4. })
+					.WithMarginSize({ 4., 4. });
 				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
 					builder
 						.WithNetwork(false)
@@ -171,9 +177,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 						.WithIgnoredStrip(5);
 				}
 				pWnd->m_pD3d12Scene = builder
-					.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
-					.WithMarginPosition({ 4., 4. })
-					.WithMarginSize({ 4., 4. })
 					.Build();
 				pWnd->m_pScene = pWnd->m_pD3d12Scene.get();
 			} break;
@@ -189,6 +192,10 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					*pWnd->m_pCompositionTimer,
 					*pWnd->m_pMixer
 				};
+				builder
+					.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
+					.WithMarginPosition({ 4., 4. })
+					.WithMarginSize({ 4., 4. });
 				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
 					builder
 						.WithNetwork(false)
@@ -196,9 +203,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 						.WithIgnoredStrip(5);
 				}
 				pWnd->m_pD2dScene = builder
-					.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
-					.WithMarginPosition({ 4., 4. })
-					.WithMarginSize({ 4., 4. })
 					.Build();
 				pWnd->m_pScene = pWnd->m_pD2dScene.get();
 			} break;

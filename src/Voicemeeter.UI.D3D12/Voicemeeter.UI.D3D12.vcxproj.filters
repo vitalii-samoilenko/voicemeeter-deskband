@@ -19,30 +19,6 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{39a2d591-c8b1-4067-809d-127aa345588e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Decorators">
-      <UniqueIdentifier>{e375dfed-0815-4e7c-96c5-fb7883fff10f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Decorators\Bundle">
-      <UniqueIdentifier>{eefd8a55-d072-4166-b055-5f1bc13db482}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Decorators\Bundle\Animations">
-      <UniqueIdentifier>{170b67c7-8eab-49e3-a53b-172154a7b824}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Graphics\Bundles">
-      <UniqueIdentifier>{b124ea02-ae2c-4a20-a40a-ab736b92c046}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Policies">
-      <UniqueIdentifier>{3ac65a44-e039-44a0-b5cb-9c55b4b7c515}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Policies\Glyph">
-      <UniqueIdentifier>{cf65ebfe-6ded-49bd-a947-09054438f2e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Policies\Glyph\Updates">
-      <UniqueIdentifier>{3ee3314e-4a07-4a46-a3d0-4ca537912c87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Policies\Glyph\Updates\Animations">
-      <UniqueIdentifier>{36a8ee1c-344a-4255-ba88-2b3c98b0b580}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{8ceea6cd-9bd3-42a0-80b2-facd822b9325}</UniqueIdentifier>
     </Filter>
@@ -51,53 +27,14 @@
     <ClInclude Include="Graphics\Palette.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Decorators\Bundle\Animations\Knob.h">
-      <Filter>Header Files\Decorators\Bundle\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="Decorators\Bundle\Animations\Plug.h">
-      <Filter>Header Files\Decorators\Bundle\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="Decorators\Bundle\Animations\Vban.h">
-      <Filter>Header Files\Decorators\Bundle\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Bundles\Knob.h">
-      <Filter>Header Files\Graphics\Bundles</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Bundles\Plug.h">
-      <Filter>Header Files\Graphics\Bundles</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Bundles\Vban.h">
-      <Filter>Header Files\Graphics\Bundles</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Canvas.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics\Glyph.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Knob.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Plug.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Vban.h">
-      <Filter>Header Files\Policies\Glyph\Updates</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Animations\Knob.h">
-      <Filter>Header Files\Policies\Glyph\Updates\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Animations\Plug.h">
-      <Filter>Header Files\Policies\Glyph\Updates\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="Policies\Glyph\Updates\Animations\Vban.h">
-      <Filter>Header Files\Policies\Glyph\Updates\Animations</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Canvas.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
