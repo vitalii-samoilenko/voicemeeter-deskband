@@ -137,7 +137,7 @@ Cherry::Cherry(
 					get_pBrush());
 		},
 		CherrySpecification::Plug::Frame::Point::X, CherrySpecification::Plug::Frame::Point::Y,
-		[this, scale = CherrySpecification::Knob::Frame::Radius / (CherrySpecification::Plug::Frame::Height + 2.F)]()->void {
+		[this, scale = CherrySpecification::Knob::Frame::Radius / (CherrySpecification::Plug::Frame::Height + 1.F)]()->void {
 			using Specification = CherrySpecification::Plug;
 
 			::D2D1::Matrix3x2F base{};

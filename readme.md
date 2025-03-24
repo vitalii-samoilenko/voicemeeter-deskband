@@ -101,7 +101,7 @@ Custom colors and font family could be set via registry key:
 HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Theme
 ```
 
-Value names could be taken from [Theme](src/Voicemeeter.UI.D2D/Graphics/Palette.h)
+Value names could be taken from [Theme](src/Voicemeeter.UI.Cherry/Graphics/Palette.h)
 
 Color type is DWORD in hexadecimal format RRGGBB
 
