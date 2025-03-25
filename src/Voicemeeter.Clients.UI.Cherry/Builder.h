@@ -311,12 +311,17 @@ namespace Voicemeeter {
 				private:
 					inline void LoadColor(::std::valarray<double>& color, HKEY hKey, const ::std::wstring& subKey, const ::std::wstring& colorName) {
 						using RGBA = ::Voicemeeter::UI::Cherry::Graphics::Theme::RGBA;
+						enum Mask : UINT32 {
+							red   = 0b11111111000000000000000000000000,
+							green = 0b00000000111111110000000000000000,
+							blue  = 0b00000000000000001111111100000000
+						};
 
 						DWORD dColor{};
 						if (::Windows::Registry::TryGetValue(hKey, subKey, colorName, dColor)) {
-							color[RGBA::red] = (static_cast<UINT32>(dColor) >> (3 - RGBA::red) * 8) / 255.;
-							color[RGBA::green] = (static_cast<UINT32>(dColor) >> (3 - RGBA::green) * 8) / 255.;
-							color[RGBA::blue] = (static_cast<UINT32>(dColor) >> (3 - RGBA::blue) * 8) / 255.;
+							color[RGBA::red] = (static_cast<UINT32>(dColor) & Mask::red ) / static_cast<double>(Mask::red);
+							color[RGBA::green] = (static_cast<UINT32>(dColor) & Mask::green) / static_cast<double>(Mask::green);
+							color[RGBA::blue] = (static_cast<UINT32>(dColor) & Mask::blue) / static_cast<double>(Mask::blue);
 						}
 					};
 				};

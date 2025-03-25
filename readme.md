@@ -103,7 +103,11 @@ HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Theme
 
 Value names could be taken from [Theme](src/Voicemeeter.UI.Cherry/Graphics/Palette.h)
 
-Color type is DWORD in hexadecimal format RRGGBB
+Color type is DWORD in hexadecimal format RRGGBBAA (alpha channel is ignored)
+
+For example, to change strip mute warning color to red use following value:
+
+![ThemeWarning sample](theme_warning_sample.png)
 
 Controls could be disabled via registry key:
 
