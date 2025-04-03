@@ -221,9 +221,6 @@
     <ProjectReference Include="..\Voicemeeter.Clients.Remote\Voicemeeter.Clients.Remote.vcxproj">
       <Project>{a8201ccc-d675-42d9-947a-b6a27450275a}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Voicemeeter.Clients.UI.D2D\Voicemeeter.Clients.UI.D2D.vcxproj">
-      <Project>{9d994208-264d-4b90-8ba7-30fc62304d9b}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Voicemeeter.Clients.UI.D3D12\Voicemeeter.Clients.UI.D3D12.vcxproj">
       <Project>{4b45c89c-c67f-4ca2-bc68-c7e77d7e89bb}</Project>
     </ProjectReference>

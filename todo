@@ -1,9 +1,10 @@
+1. Signed distance fields
+2-3. Contextual menu prototype (select physical input/output)
+2-3. Up to date doc
+
 Rendering thread
 Powersafety
 pch?
-Up to date doc
-Distance fields?
-Contextual menu prototype (select physical input/output)
 Configuration tool
 ::estd::(chrono::)timer for update operations?
 Hidden state?

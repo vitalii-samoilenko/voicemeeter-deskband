@@ -34,7 +34,6 @@ DeskBandit::DeskBandit(
   , m_pMixer{ nullptr }
   , m_pRemote{ nullptr }
   , m_pScene{ nullptr }
-  , m_pD2dScene{ nullptr }
   , m_pD3d12Scene{ nullptr }{
 	::Windows::wSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
@@ -154,7 +153,7 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			DWORD engine{ static_cast<DWORD>(RenderEngine::D3D12) };
 			::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"RenderEngine", engine);
 			switch (static_cast<RenderEngine>(engine)) {
-			case RenderEngine::D3D12: {
+			default: {
 				pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
 					[pWnd]()->bool {
 						pWnd->m_pD3d12Scene->Render();
@@ -179,32 +178,6 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 				pWnd->m_pD3d12Scene = builder
 					.Build();
 				pWnd->m_pScene = pWnd->m_pD3d12Scene.get();
-			} break;
-			default: {
-				pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
-					[pWnd]()->bool {
-						pWnd->m_pD2dScene->Render();
-						return true;
-					});
-				::Voicemeeter::Clients::UI::D2D::Cherry builder{
-					hWnd,
-					*pWnd,
-					*pWnd->m_pCompositionTimer,
-					*pWnd->m_pMixer
-				};
-				builder
-					.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
-					.WithMarginPosition({ 4., 4. })
-					.WithMarginSize({ 4., 4. });
-				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
-					builder
-						.WithNetwork(false)
-						.WithIgnoredStrip(3)
-						.WithIgnoredStrip(5);
-				}
-				pWnd->m_pD2dScene = builder
-					.Build();
-				pWnd->m_pScene = pWnd->m_pD2dScene.get();
 			} break;
 			}
 			pWnd->m_pScene->Rescale({

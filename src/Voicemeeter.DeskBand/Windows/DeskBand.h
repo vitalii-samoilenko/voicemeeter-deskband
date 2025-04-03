@@ -9,7 +9,6 @@
 #include "Environment/IInputTracker.h"
 #include "Voicemeeter/Adapters/Multiclient/Cherry.h"
 #include "Voicemeeter.Clients.Remote/Cherry.h"
-#include "Voicemeeter.Clients.UI.D2D/Cherry.h"
 #include "Voicemeeter.Clients.UI.D3D12/Cherry.h"
 #include "Windows/Timer.h"
 
@@ -90,7 +89,6 @@ namespace Voicemeeter {
 			::std::unique_ptr<::Voicemeeter::Adapters::Multiclient::Cherry> m_pMixer;
 			::std::unique_ptr<::Voicemeeter::Clients::Remote::Cherry> m_pRemote;
 			::Voicemeeter::UI::Scene* m_pScene;
-			::std::unique_ptr<::Voicemeeter::UI::D2D::Scene> m_pD2dScene;
 			::std::unique_ptr<::Voicemeeter::UI::D3D12::Scene> m_pD3d12Scene;
 
 			~DeskBand();

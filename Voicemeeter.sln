@@ -19,15 +19,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows", "src\Windows\Wind
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.DeskBandit", "src\Voicemeeter.DeskBandit\Voicemeeter.DeskBandit.vcxproj", "{807A809C-6CCA-4EDA-BEDB-415911367CD8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.UI.D2D", "src\Voicemeeter.UI.D2D\Voicemeeter.UI.D2D.vcxproj", "{C55C74A6-D812-446D-94E1-75FE1AA95797}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter", "src\Voicemeeter\Voicemeeter.vcxproj", "{20F519BE-036E-4A91-81D9-51C5AD1661DB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Environment", "src\Environment\Environment.vcxproj", "{C6D12871-1150-4F94-8136-975AA8A893E5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.Remote", "src\Voicemeeter.Clients.Remote\Voicemeeter.Clients.Remote.vcxproj", "{A8201CCC-D675-42D9-947A-B6A27450275A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.D2D", "src\Voicemeeter.Clients.UI.D2D\Voicemeeter.Clients.UI.D2D.vcxproj", "{9D994208-264D-4B90-8BA7-30FC62304D9B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Atlas", "src\Voicemeeter.Atlas\Voicemeeter.Atlas.vcxproj", "{77B08162-A8D9-4F43-9297-41CC35F508F9}"
 EndProject
@@ -110,18 +106,6 @@ Global
 		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Remote|x64.Deploy.0 = Remote|x64
 		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Remote|x86.ActiveCfg = Remote|Win32
 		{807A809C-6CCA-4EDA-BEDB-415911367CD8}.Remote|x86.Build.0 = Remote|Win32
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Debug|x64.ActiveCfg = Debug|x64
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Debug|x64.Build.0 = Debug|x64
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Debug|x86.ActiveCfg = Debug|Win32
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Debug|x86.Build.0 = Debug|Win32
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x64.ActiveCfg = Release|x64
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x64.Build.0 = Release|x64
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x86.ActiveCfg = Release|Win32
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Release|x86.Build.0 = Release|Win32
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Remote|x64.ActiveCfg = Remote|x64
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Remote|x64.Build.0 = Remote|x64
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Remote|x86.ActiveCfg = Remote|Win32
-		{C55C74A6-D812-446D-94E1-75FE1AA95797}.Remote|x86.Build.0 = Remote|Win32
 		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x64.ActiveCfg = Debug|x64
 		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x64.Build.0 = Debug|x64
 		{20F519BE-036E-4A91-81D9-51C5AD1661DB}.Debug|x86.ActiveCfg = Debug|Win32
@@ -158,18 +142,6 @@ Global
 		{A8201CCC-D675-42D9-947A-B6A27450275A}.Remote|x64.Build.0 = Remote|x64
 		{A8201CCC-D675-42D9-947A-B6A27450275A}.Remote|x86.ActiveCfg = Remote|Win32
 		{A8201CCC-D675-42D9-947A-B6A27450275A}.Remote|x86.Build.0 = Remote|Win32
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Debug|x64.ActiveCfg = Debug|x64
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Debug|x64.Build.0 = Debug|x64
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Debug|x86.ActiveCfg = Debug|Win32
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Debug|x86.Build.0 = Debug|Win32
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Release|x64.ActiveCfg = Release|x64
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Release|x64.Build.0 = Release|x64
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Release|x86.ActiveCfg = Release|Win32
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Release|x86.Build.0 = Release|Win32
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x64.ActiveCfg = Remote|x64
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x64.Build.0 = Remote|x64
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x86.ActiveCfg = Remote|Win32
-		{9D994208-264D-4B90-8BA7-30FC62304D9B}.Remote|x86.Build.0 = Remote|Win32
 		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x64.ActiveCfg = Debug|x64
 		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x64.Build.0 = Debug|x64
 		{77B08162-A8D9-4F43-9297-41CC35F508F9}.Debug|x86.ActiveCfg = Debug|Win32
