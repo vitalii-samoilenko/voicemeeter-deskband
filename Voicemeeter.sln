@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.D3D1
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Clients.UI.Cherry", "src\Voicemeeter.Clients.UI.Cherry\Voicemeeter.Clients.UI.Cherry.vcxproj", "{4802971F-E66B-4266-A34A-F68F1E1C50AD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Voicemeeter.Atlas.Generator", "src\Voicemeeter.Atlas.Generator\Voicemeeter.Atlas.Generator.vcxproj", "{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -202,6 +204,18 @@ Global
 		{4802971F-E66B-4266-A34A-F68F1E1C50AD}.Remote|x64.Build.0 = Remote|x64
 		{4802971F-E66B-4266-A34A-F68F1E1C50AD}.Remote|x86.ActiveCfg = Release|Win32
 		{4802971F-E66B-4266-A34A-F68F1E1C50AD}.Remote|x86.Build.0 = Release|Win32
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Debug|x64.ActiveCfg = Debug|x64
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Debug|x64.Build.0 = Debug|x64
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Debug|x86.ActiveCfg = Debug|Win32
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Debug|x86.Build.0 = Debug|Win32
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Release|x64.ActiveCfg = Release|x64
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Release|x64.Build.0 = Release|x64
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Release|x86.ActiveCfg = Release|Win32
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Release|x86.Build.0 = Release|Win32
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Remote|x64.ActiveCfg = Release|x64
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Remote|x64.Build.0 = Release|x64
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Remote|x86.ActiveCfg = Release|Win32
+		{E5D53B71-D2E3-43CB-B23D-CF5F8F9E5DA2}.Remote|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

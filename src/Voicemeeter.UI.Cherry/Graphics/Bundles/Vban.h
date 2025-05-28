@@ -50,12 +50,14 @@ namespace Voicemeeter {
 											Atlas::Specification::Vban::Frame::Point::Y);
 							}
 
+							constexpr FLOAT Scale{ 2.F * Atlas::Specification::Knob::Frame::Radius / Atlas::Specification::Vban::Frame::Height };
 							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
 										Bundle::get_Position(),
 										Bundle::get_Size(),
 										m_maskPoint,
+										{ static_cast<double>(Atlas::Specification::Vban::Frame::Width * Scale), static_cast<double>(Atlas::Specification::Vban::Frame::Height * Scale) },
 										m_color,
 										false
 									);

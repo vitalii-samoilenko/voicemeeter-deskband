@@ -105,6 +105,7 @@ namespace Voicemeeter {
 						const ::std::valarray<double>& point,
 						const ::std::valarray<double>& vertex,
 						const ::std::valarray<double>& maskPoint,
+						const ::std::valarray<double>& maskVertex,
 						const ::std::valarray<double>& color,
 						bool blend);
 

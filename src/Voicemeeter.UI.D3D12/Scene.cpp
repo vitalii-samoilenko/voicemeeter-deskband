@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+#include "Windows/Wrappers.h"
+
 #include "Scene.h"
 
 using namespace ::Voicemeeter::UI::D3D12;

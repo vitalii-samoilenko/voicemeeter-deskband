@@ -13,41 +13,39 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Windows">
-      <UniqueIdentifier>{dd24a80e-969f-46cf-8ac3-424da00d43b8}</UniqueIdentifier>
+    <Filter Include="Header Files\Mask">
+      <UniqueIdentifier>{a60633e4-a16f-4b77-b495-5645f8b62001}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Windows">
-      <UniqueIdentifier>{2ea2e647-2c69-46f2-a842-8d889705c478}</UniqueIdentifier>
+    <Filter Include="Source Files\Mask">
+      <UniqueIdentifier>{8d8ed054-d774-43b5-b4ba-c4a3a5974eeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Field">
+      <UniqueIdentifier>{044b3ee3-fd19-4433-8e34-ac9cb2c20787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Field">
+      <UniqueIdentifier>{62c47587-f6e4-40c8-bc9d-0d7ec414b579}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Windows\DeskBandit.h">
-      <Filter>Header Files\Windows</Filter>
+    <ClInclude Include="Mask\Cherry.h">
+      <Filter>Header Files\Mask</Filter>
     </ClInclude>
-    <ClInclude Include="Version.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Mask\Dynamic.h">
+      <Filter>Header Files\Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="Field\Encoder.h">
+      <Filter>Header Files\Field</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Windows\DeskBandit.cpp">
-      <Filter>Source Files\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\Windows\Messages.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-    <ResourceCompile Include="Version.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-    <ResourceCompile Include="..\Voicemeeter.UI.D3D12\Shaders.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-    <ResourceCompile Include="..\Voicemeeter.Atlas\Fields.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <ClCompile Include="Mask\Cherry.cpp">
+      <Filter>Source Files\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Field\Encoder.cpp">
+      <Filter>Source Files\Field</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

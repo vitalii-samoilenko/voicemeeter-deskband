@@ -10,6 +10,7 @@
 #include <d3dcompiler.h>
 
 #include "../Shaders.h"
+#include "Windows/Wrappers.h"
 
 #include "Palette.h"
 
@@ -33,21 +34,9 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 				nullptr
 	), "Command list reset failed");
 
-	m_pAtlas.reset(new ::Voicemeeter::Atlas::Cherry{ m_horizontal, scale });
+	m_pAtlas.reset(new ::Voicemeeter::Atlas::Cherry{ NULL });
 
-	::Microsoft::WRL::ComPtr<IWICBitmapLock> pLock{ nullptr };
-	::Windows::ThrowIfFailed(m_pAtlas->get_pBitmap()
-		->Lock(
-			nullptr,
-			WICBitmapLockRead,
-			&pLock
-	), "Bitmap lock failed");
-
-	UINT size{ 0U };
-	WICInProcPointer pSrc{ nullptr };
-	::Windows::ThrowIfFailed(pLock->GetDataPointer(
-		&size, &pSrc
-	), "Failed to get bitmap data");
+	BYTE* pSrc{ reinterpret_cast<BYTE*>(m_pAtlas->get_pField()) };
 
 	D3D12_HEAP_PROPERTIES pHeap{
 		D3D12_HEAP_TYPE_DEFAULT,
@@ -59,11 +48,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 		D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 		0ULL,
 		m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1U, 1U,
-#ifndef NDEBUG
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-#else
-		DXGI_FORMAT_A8_UNORM,
-#endif // !NDEBUG
+		DXGI_FORMAT_R32_FLOAT,
 		DXGI_SAMPLE_DESC{
 			1U, 0U
 		},
@@ -80,20 +65,9 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 					.get_ppTexture())
 	), "Texture creation failed");
 
-#ifndef NDEBUG
-	static constexpr UINT64 PixelSize{ 4ULL };
-#else
-	static constexpr UINT64 PixelSize{ 1ULL };
-#endif // !NDEBUG
-
-	UINT rowSize{ m_pAtlas->get_Width() * PixelSize };
-	UINT remainder{ rowSize % 4ULL };
-	UINT srcRowPitch{
-		(remainder
-			? rowSize - remainder + 4ULL
-			: rowSize)
-	};
-	remainder = rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT;
+	UINT rowSize{ m_pAtlas->get_Width() * 4 };
+	UINT srcRowPitch{ rowSize };
+	UINT remainder{ rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT };
 	UINT dstRowPitch{
 		(remainder
 			? rowSize - remainder + D3D12_TEXTURE_DATA_PITCH_ALIGNMENT
@@ -135,11 +109,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 		D3D12_PLACED_SUBRESOURCE_FOOTPRINT{
 			0ULL,
 			D3D12_SUBRESOURCE_FOOTPRINT{
-#ifndef NDEBUG
-				DXGI_FORMAT_R8G8B8A8_UNORM,
-#else
-				DXGI_FORMAT_A8_UNORM,
-#endif // !NDEBUG
+				DXGI_FORMAT_R32_FLOAT,
 				m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1U,
 				dstRowPitch
 			}
@@ -196,11 +166,7 @@ void Atlas::Rescale(const ::std::valarray<double>& scale) {
 					.get_Count());
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC dvShaderResource{
-#ifndef NDEBUG
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-#else
-		DXGI_FORMAT_A8_UNORM,
-#endif // !NDEBUG
+		DXGI_FORMAT_R32_FLOAT,
 		D3D12_SRV_DIMENSION_TEXTURE2D,
 		D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING
 	};
@@ -238,6 +204,7 @@ void Atlas::Fill(
 	const ::std::valarray<double>& point,
 	const ::std::valarray<double>& vertex,
 	const ::std::valarray<double>& maskPoint,
+	const ::std::valarray<double>& maskVertex,
 	const ::std::valarray<double>& color,
 	bool blend) {
 	using RGBA = ::Voicemeeter::UI::Cherry::Graphics::Theme::RGBA;
@@ -279,8 +246,8 @@ void Atlas::Fill(
 		static_cast<FLOAT>(color[RGBA::alpha]),
 		static_cast<FLOAT>(maskPoint[0] / m_pAtlas->get_Width()),
 		static_cast<FLOAT>(maskPoint[1] / m_pAtlas->get_Height()),
-		static_cast<FLOAT>((vertex[0] + AAEPS) / m_pAtlas->get_Width()),
-		static_cast<FLOAT>((vertex[1] + AAEPS) / m_pAtlas->get_Height())
+		static_cast<FLOAT>((maskVertex[0] + AAEPS) / m_pAtlas->get_Width()),
+		static_cast<FLOAT>((maskVertex[1] + AAEPS) / m_pAtlas->get_Height())
 	};
 	m_palette.get_Instrumentation()
 		.get_pCommandList(frame)
@@ -576,7 +543,7 @@ Instrumentation::Instrumentation(
 	cParam[1].Constants.Num32BitValues = 8U;
 	cParam[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	D3D12_STATIC_SAMPLER_DESC dSampler{
-		D3D12_FILTER_MIN_MAG_MIP_POINT,
+		D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT,
 		D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER,
 		0.F, 0U, D3D12_COMPARISON_FUNC_NEVER,
 		D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,

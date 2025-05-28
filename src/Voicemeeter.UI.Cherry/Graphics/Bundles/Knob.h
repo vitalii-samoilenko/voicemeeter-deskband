@@ -142,29 +142,32 @@ namespace Voicemeeter {
 										Bundle::get_Position(),
 										Bundle::get_Size(),
 										m_maskPoint,
+										{ 2. * Atlas::Specification::Knob::Frame::Radius, 2. * Atlas::Specification::Knob::Frame::Radius },
 										m_frameColor,
 										false
 									);
-							Bundle::get_Palette()
-								.get_Atlas()
-									.Fill(
-										m_labelPoint,
-										m_labelVertex,
-										m_labelMaskPoint,
-										m_labelColor,
-										true
-									);
-							Bundle::get_Palette()
-								.get_Atlas()
-									.Fill(
-										m_indicatorPoint,
-										m_indicatorVertex,
-										m_indicatorMaskPoint,
-										Bundle::get_Palette()
-											.get_Theme()
-												.Indicator,
-										true
-									);
+							//Bundle::get_Palette()
+							//	.get_Atlas()
+							//		.Fill(
+							//			m_labelPoint,
+							//			m_labelVertex,
+							//			m_labelMaskPoint,
+							//			m_labelVertex,
+							//			m_labelColor,
+							//			true
+							//		);
+							//Bundle::get_Palette()
+							//	.get_Atlas()
+							//		.Fill(
+							//			m_indicatorPoint,
+							//			m_indicatorVertex,
+							//			m_indicatorMaskPoint,
+							//			m_indicatorVertex,
+							//			Bundle::get_Palette()
+							//				.get_Theme()
+							//					.Indicator,
+							//			true
+							//		);
 						};
 
 					private:

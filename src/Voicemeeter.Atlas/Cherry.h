@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Dynamic.h"
+#include <valarray>
+
+#include "windows.h"
 
 namespace Voicemeeter {
 	namespace Atlas {
@@ -96,13 +98,10 @@ namespace Voicemeeter {
 			};
 		};
 
-		class Cherry : public Dynamic<CherrySpecification> {
-			friend struct RenderTextW;
-
+		class Cherry {
 		public:
-			Cherry(
-				bool horizontal,
-				const ::std::valarray<double>& scale
+			explicit Cherry(
+				HMODULE hModule
 			);
 			Cherry() = delete;
 			Cherry(const Cherry&) = delete;
@@ -112,6 +111,29 @@ namespace Voicemeeter {
 
 			Cherry& operator=(const Cherry&) = delete;
 			Cherry& operator=(Cherry&&) = delete;
+
+			inline void* get_pField() const {
+				return m_pField;
+			};
+			inline UINT get_Width() const {
+				return static_cast<UINT>(CherrySpecification::Width * CherrySpecification::Block::Width) + 1U;
+			};
+			inline UINT get_Height() const {
+				return static_cast<UINT>(CherrySpecification::Height * CherrySpecification::Block::Height) + 1U;
+			};
+
+			inline ::std::valarray<double> MapPosition(size_t x, size_t y) const {
+				return {
+					CherrySpecification::Block::Width * x + 1.,
+					CherrySpecification::Block::Height * y + 1.
+				};
+			};
+			inline ::std::valarray<double> MapSize(FLOAT x, FLOAT y) const {
+				return { x, y };
+			};
+
+		private:
+			void* m_pField;
 		};
 	}
 }

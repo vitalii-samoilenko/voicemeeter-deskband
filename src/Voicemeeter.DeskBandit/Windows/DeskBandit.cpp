@@ -165,10 +165,10 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 					*pWnd->m_pCompositionTimer,
 					*pWnd->m_pMixer
 				};
-				builder
-					.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
-					.WithMarginPosition({ 4., 4. })
-					.WithMarginSize({ 4., 4. });
+				//builder
+				//	.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
+				//	.WithMarginPosition({ 4., 4. })
+				//	.WithMarginSize({ 4., 4. });
 				if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
 					builder
 						.WithNetwork(false)
@@ -186,12 +186,12 @@ LRESULT CALLBACK DeskBandit::WndProcW(
 			});
 			const ::std::valarray<double>& vertex{ pWnd->m_pScene->get_Size() };
 			pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(::std::ceil(vertex[0]));
-			::Windows::wSetWindowPos(
-				pWnd->m_hWnd, NULL,
-				pWnd->m_rc.left, pWnd->m_rc.top,
-				pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
-				0U
-			);
+			//::Windows::wSetWindowPos(
+			//	pWnd->m_hWnd, NULL,
+			//	pWnd->m_rc.left, pWnd->m_rc.top,
+			//	pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
+			//	0U
+			//);
 			::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 		} break;
 		case WM_DESTROY: {

@@ -238,6 +238,7 @@
     <None Include="Voicemeeter.DeskBand.def" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="..\Voicemeeter.Atlas\Fields.rc" />
     <ResourceCompile Include="..\Voicemeeter.UI.D3D12\Shaders.rc" />
     <ResourceCompile Include="..\Windows\Messages.rc" />
     <ResourceCompile Include="Version.rc" />

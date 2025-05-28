@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include "Windows/Wrappers.h"
+
 #include "Canvas.h"
 
 using namespace ::Voicemeeter::UI::D3D12::Graphics;

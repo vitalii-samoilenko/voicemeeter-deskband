@@ -92,24 +92,27 @@ namespace Voicemeeter {
 											Atlas::Specification::Plug::Label::Strip::Point::Y + m_label / Atlas::Specification::Width);
 							}
 
+							constexpr FLOAT Scale{ Atlas::Specification::Knob::Frame::Radius / (Atlas::Specification::Plug::Frame::Height + 1.F) };
 							Bundle::get_Palette()
 								.get_Atlas()
 									.Fill(
 										Bundle::get_Position(),
 										Bundle::get_Size(),
 										m_maskPoint,
+										{ static_cast<double>(Atlas::Specification::Plug::Frame::Width * Scale), static_cast<double>(Atlas::Specification::Plug::Frame::Height * Scale) },
 										m_color,
 										false
 									);
-							Bundle::get_Palette()
-								.get_Atlas()
-									.Fill(
-										m_labelPoint,
-										m_labelVertex,
-										m_labelMaskPoint,
-										m_color,
-										true
-									);
+							//Bundle::get_Palette()
+							//	.get_Atlas()
+							//		.Fill(
+							//			m_labelPoint,
+							//			m_labelVertex,
+							//			m_labelMaskPoint,
+							//			m_labelVertex,
+							//			m_color,
+							//			true
+							//		);
 						};
 
 					private:
