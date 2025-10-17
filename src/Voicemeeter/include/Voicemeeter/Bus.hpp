@@ -1,16 +1,16 @@
 #ifndef VOICEMEETER_BUS_HPP
 #define VOICEMEETER_BUS_HPP
 
-#include <array>
+#include <tuple>
 #include <utility>
 
 namespace Voicemeeter {
-	template<size_t Width, typename TChannel>
+	template<typename... TChannels>
 	class Bus {
 	public:
 		template<typename... Args>
 		inline explicit Bus(Args &&...args)
-			: _lines{ ::std::forward<Args>(args)... } {
+			: _channels{ ::std::forward<Args>(args)... } {
 
 		};
 		Bus(Bus const &) = delete;
@@ -21,15 +21,13 @@ namespace Voicemeeter {
 		Bus & operator=(Bus const &) = delete;
 		Bus & operator=(Bus &&) = delete;
 
-		inline auto begin() {
-			return _lines.begin();
-		};
-		inline auto end() {
-			return _lines.end();
+		template<size_t I>
+		inline auto & get_Channel() {
+			return ::std::get<I>(_channels);
 		};
 
 	private:
-		::std::array<TChannel, Width> _lines;
+		::std::tuple<TChannels...> _channels;
 	};
 }
 

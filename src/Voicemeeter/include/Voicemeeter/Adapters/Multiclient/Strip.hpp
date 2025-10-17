@@ -7,12 +7,10 @@
 namespace Voicemeeter {
 	namespace Adapters {
 		namespace Multiclient {
-
 			template<typename TStrip>
 			using Strip = Amplifier<
 				Mute<
 					TStrip>>;
-
 		}
 	}
 }

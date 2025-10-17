@@ -1,7 +1,56 @@
-Timer:
-	set(duration, callback)
-	elapse()
-
 InputTracker:
 	EnableInputTrack()
 	DisableInputTrack()
+
+Interactive:
+	Focus(mode)
+	MouseLDown(point)
+	MouseLDouble(point)
+	MouseLUp(point)
+	MouseMDown(point)
+	MouseMDouble(point)
+	MouseRDown(point)
+	MouseRDouble(point)
+	MouseWheel(point, delta)
+	MouseMove(point)
+
+Movable:
+	Move(point)
+
+Resizable:
+	Resize(vertex)
+
+Scalable:
+	get_BaseSize()
+	Rescale(vertex)
+
+Visible:
+	get_Position()
+	get_Size()
+	Redraw(point, vertex)
+
+Component:
+	Visible
+	Scalable
+	Movable
+	Interactive
+
+Control:
+	Component
+Panel:
+	Component
+
+Scene:
+	Visible
+	Resizable
+	Scalable
+	Interactive
+
+Canvas:
+	Visible
+	Resizable
+
+Glyph:
+	Visible
+	Movable
+	Scalable

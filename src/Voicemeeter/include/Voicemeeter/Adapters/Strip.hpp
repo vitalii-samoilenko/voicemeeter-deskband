@@ -7,12 +7,10 @@
 
 namespace Voicemeeter {
 	namespace Adapters {
-
-		template<size_t Width, typename TChannel>
+		template<typename... TChannels>
 		using Strip = Amplifier<
 			Mute<
-				Bus<Width, TChannel>>
-
+				Bus<TChannels>>;
 	}
 }
 
