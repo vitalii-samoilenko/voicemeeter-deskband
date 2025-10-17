@@ -1,0 +1,7 @@
+Timer:
+	set(duration, callback)
+	elapse()
+
+InputTracker:
+	EnableInputTrack()
+	DisableInputTrack()
