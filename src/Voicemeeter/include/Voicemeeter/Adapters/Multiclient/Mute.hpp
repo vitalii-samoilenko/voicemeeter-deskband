@@ -1,7 +1,6 @@
-#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
-#define VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
+#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_MUTE_HPP
+#define VOICEMEETER_ADAPTERS_MULTICLIENT_MUTE_HPP
 
-#include <cmath>
 #include <functional>
 #include <typeinfo>
 #include <unordered_map>
@@ -10,29 +9,29 @@
 namespace Voicemeeter {
 	namespace Adapters {
 		namespace Multiclient {
-			template<typename TChannel>
-			class Channel : public TChannel {
+			template<typename TMute>
+			class Mute : public TMute {
 			public:
 				template<typename... Args>
-				inline explicit Channel(Args &&...args)
-					: TChannel{ ::std::forward<Args>(args)... }
+				inline explicit Mute(Args &&...args)
+					: TMute{ ::std::forward<Args>(args)... }
 					, _callbacks{} {
 
 				};
-				Channel(Channel const &) = delete;
-				Channel(Channel &&) = delete;
+				Mute(Mute const &) = delete;
+				Mute(Mute &&) = delete;
 
-				inline ~Channel() = default;
+				inline ~Mute() = default;
 
-				Channel & operator=(Channel const &) = delete;
-				Channel & operator=(Channel &&) = delete;
+				Mute & operator=(Mute const &) = delete;
+				Mute & operator=(Mute &&) = delete;
 
 				template<typename TClient>
-				inline void set_Level(double value) {
-					if (::std::abs(value - TChannel::get_Level()) < 0.01) {
+				void set_Mute(bool value) {
+					if (value == TMute::get_Mute()) {
 						return;
 					}
-					TChannel::set_Level(value);
+					TMute::set_Mute(value);
 					for (auto &[client, callback] : _callbacks) {
 						if (&client == &typeid(TClient)) {
 							continue;
@@ -70,21 +69,21 @@ namespace Voicemeeter {
 					};
 
 					template<typename Fn>
-					inline on_level(Fn &&callback) {
+					inline on_mute(Fn &&callback) {
 						_target->_callbacks[*_client] = ::std::forward<Fn>(callback);
 					};
 
 				private:
 					::std::type_info const *_client;
-					Channel *_target;
+					Mute *_target;
 
-					token(::std::type_info const &client, Channel &target)
+					token(::std::type_info const &client, Mute &target)
 						: _client{ &client }
 						, _target{ &target } {
 
 					};
 
-					friend Channel;
+					friend Mute;
 				};
 
 				template<typename TClient>
@@ -95,10 +94,10 @@ namespace Voicemeeter {
 			private:
 				::std::unordered_map<
 					::std::type_info const &,
-					::std::function<void(double)>
+					::std::function<void(bool)>
 				> _callbacks;
 
-				using TChannel::set_Level;
+				using TMute::set_Mute;
 
 				friend token;
 			};

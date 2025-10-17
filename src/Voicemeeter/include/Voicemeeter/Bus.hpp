@@ -13,7 +13,6 @@ namespace Voicemeeter {
 			: _lines{ ::std::forward<Args>(args)... } {
 
 		};
-		Bus() = delete;
 		Bus(Bus const &) = delete;
 		Bus(Bus &&) = delete;
 

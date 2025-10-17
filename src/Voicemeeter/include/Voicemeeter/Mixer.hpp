@@ -9,21 +9,13 @@
 
 namespace Voicemeeter {
 	template<
-		size_t PISize, typename TPIStrip,
-		size_t VISize, typename TVIStrip,
-		size_t POSize, typename TPOStrip,
-		size_t VOSize, typename TVOStrip>
+		size_t PISize, typename TPIBus,
+		size_t VISize, typename TVIBus,
+		size_t POSize, typename TPOBus,
+		size_t VOSize, typename TVOBus>
 	class Mixer {
 	public:
-		template<typename... Args>
-		inline explicit Mixer(Args ...&&args)
-			: _piGroup{ ::std::forward<Args>(args)... }
-			, _viGroup{ ::std::forward<Args>(args)... }
-			, _poGroup{ ::std::forward<Args>(args)... }
-			, _voGroup{ ::std::forward<Args>(args)... } {
-
-		};
-		Mixer() = delete;
+		inline Mixer() = default;
 		Mixer(Mixer const &) = delete;
 		Mixer(Mixer &&) = delete;
 
@@ -32,54 +24,54 @@ namespace Voicemeeter {
 		Mixer & operator=(Mixer const &) = delete;
 		Mixer & operator=(Mixer &&) = delete;
 
-		template<typename TIStrip, typename TOStrip>
-		inline bool get_Plug(TIStrip const &input, TOStrip const &output) const {
+		template<typename TIBus, typename TOBus>
+		inline bool get_Plug(TIBus const &input, TOBus const &output) const {
 			size_t i{
-				::std::is_same_v<TIStrip, TPIStrip>
+				::std::is_same_v<TIBus, TPIBus>
 					? (&input - _piGroup.begin())
 					: (PISize + &input - _viGroup.begin())
 			};
 			size_t j{
-				::std::is_same_v<TOStrip, TPOStrip>
+				::std::is_same_v<TOBus, TPOBus>
 					? (&output - _poGroup.begin())
 					: (POsize + &output - _voGroup.begin())
 			};
 			return _plugs[(POSize + VOSize) * i + j];
 		};
-		template<typename TIStrip, typename TOStrip>
-		inline void set_Plug(TIStrip const &input, TOStrip const &output, bool value) {
+		template<typename TIBus, typename TOBus>
+		inline void set_Plug(TIBus const &input, TOBus const &output, bool value) {
 			size_t i{
-				::std::is_same_v<TIStrip, TPIStrip>
+				::std::is_same_v<TIBus, TPIBus>
 					? (&input - _piGroup.begin())
 					: (PISize + &input - _viGroup.begin())
 			};
 			size_t j{
-				::std::is_same_v<TOStrip, TPOStrip>
+				::std::is_same_v<TOBus, TPOBus>
 					? (&output - _poGroup.begin())
 					: (POsize + &output - _voGroup.begin())
 			};
 			_plugs[(POSize + VOSize) * i + j] = value;
 		};
 
-		inline Group<PISize, TPIStrip> & get_PIGroup() {
+		inline Group<PISize, TPIBus> & get_PIGroup() {
 			return _piGroup;
 		};
-		inline Group<VISize, TVIStrip> & get_VIGroup() {
+		inline Group<VISize, TVIBus> & get_VIGroup() {
 			return _viGroup;
 		};
-		inline Group<POSize, TPOStrip> & get_POGroup() {
+		inline Group<POSize, TPOBus> & get_POGroup() {
 			return _poGroup;
 		};
-		inline Group<VOSize, TVOStrip> & get_VOGroup() {
+		inline Group<VOSize, TVOBus> & get_VOGroup() {
 			return _voGroup;
 		};
 
 
 	private:
-		Group<PISize, TPIStrip> _piGroup;
-		Group<VISize, TVIStrip> _viGroup;
-		Group<POSize, TPOStrip> _poGroup;
-		Group<VOSize, TVOStrip> _voGroup;
+		Group<PISize, TPIBus> _piGroup;
+		Group<VISize, TVIBus> _viGroup;
+		Group<POSize, TPOBus> _poGroup;
+		Group<VOSize, TVOBus> _voGroup;
 		::std::bitset<
 			(PISize + VISize)
 			* (POSize + VOSize)

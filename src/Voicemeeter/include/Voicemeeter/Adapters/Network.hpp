@@ -14,7 +14,6 @@ namespace Voicemeeter {
 				, _vban{ false } {
 
 			};
-			Network() = delete;
 			Network(Network const &) = delete;
 			Network(Network &&) = delete;
 

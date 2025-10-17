@@ -21,10 +21,10 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				inline explicit Mixer(Args &&...args)
-					: TMixer{ ::std::forward<Args>(args)... } {
+					: TMixer{ ::std::forward<Args>(args)... }
+					, _callbacks{} {
 
 				};
-				Mixer() = delete;
 				Mixer(Mixer const &) = delete;
 				Mixer(Mixer &&) = delete;
 

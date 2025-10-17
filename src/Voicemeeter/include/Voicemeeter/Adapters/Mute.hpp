@@ -14,7 +14,6 @@ namespace Voicemeeter {
 				, _mute{ false } {
 
 			};
-			Mute() = delete;
 			Mute(Mute const &) = delete;
 			Mute(Mute &&) = delete;
 

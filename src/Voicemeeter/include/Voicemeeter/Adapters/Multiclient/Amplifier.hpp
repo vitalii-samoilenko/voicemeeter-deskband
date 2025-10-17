@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
-#define VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
+#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_AMPLIFIER_HPP
+#define VOICEMEETER_ADAPTERS_MULTICLIENT_AMPLIFIER_HPP
 
 #include <cmath>
 #include <functional>
@@ -10,29 +10,29 @@
 namespace Voicemeeter {
 	namespace Adapters {
 		namespace Multiclient {
-			template<typename TChannel>
-			class Channel : public TChannel {
+			template<typename TAmplifier>
+			class Amplifier : public TAmplifier {
 			public:
 				template<typename... Args>
-				inline explicit Channel(Args &&...args)
-					: TChannel{ ::std::forward<Args>(args)... }
+				inline explicit Amplifier(Args &&...args)
+					: TAmplifier{ ::std::forward<Args>(args)... }
 					, _callbacks{} {
 
 				};
-				Channel(Channel const &) = delete;
-				Channel(Channel &&) = delete;
+				Amplifier(Amplifier const &) = delete;
+				Amplifier(Amplifier &&) = delete;
 
-				inline ~Channel() = default;
+				inline ~Amplifier() = default;
 
-				Channel & operator=(Channel const &) = delete;
-				Channel & operator=(Channel &&) = delete;
+				Amplifier & operator=(Amplifier const &) = delete;
+				Amplifier & operator=(Amplifier &&) = delete;
 
 				template<typename TClient>
-				inline void set_Level(double value) {
-					if (::std::abs(value - TChannel::get_Level()) < 0.01) {
+				void set_Gain(double value) {
+					if (::std::abs(value - TAmplifier::get_Gain()) < 0.01) {
 						return;
 					}
-					TChannel::set_Level(value);
+					TAmplifier::set_Gain(value);
 					for (auto &[client, callback] : _callbacks) {
 						if (&client == &typeid(TClient)) {
 							continue;
@@ -70,21 +70,21 @@ namespace Voicemeeter {
 					};
 
 					template<typename Fn>
-					inline on_level(Fn &&callback) {
+					inline on_gain(Fn &&callback) {
 						_target->_callbacks[*_client] = ::std::forward<Fn>(callback);
 					};
 
 				private:
 					::std::type_info const *_client;
-					Channel *_target;
+					Amplifier *_target;
 
-					token(::std::type_info const &client, Channel &target)
+					token(::std::type_info const &client, Amplifier &target)
 						: _client{ &client }
 						, _target{ &target } {
 
 					};
 
-					friend Channel;
+					friend Amplifier;
 				};
 
 				template<typename TClient>
@@ -98,7 +98,7 @@ namespace Voicemeeter {
 					::std::function<void(double)>
 				> _callbacks;
 
-				using TChannel::set_Level;
+				using TAmplifier::set_Gain;
 
 				friend token;
 			};

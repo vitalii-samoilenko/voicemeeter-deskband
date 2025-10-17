@@ -1,7 +1,6 @@
-#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
-#define VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
+#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_NETWORK_HPP
+#define VOICEMEETER_ADAPTERS_MULTICLIENT_NETWORK_HPP
 
-#include <cmath>
 #include <functional>
 #include <typeinfo>
 #include <unordered_map>
@@ -10,29 +9,29 @@
 namespace Voicemeeter {
 	namespace Adapters {
 		namespace Multiclient {
-			template<typename TChannel>
-			class Channel : public TChannel {
+			template<typename TNetwork>
+			class Network : public TNetwork {
 			public:
 				template<typename... Args>
-				inline explicit Channel(Args &&...args)
-					: TChannel{ ::std::forward<Args>(args)... }
+				inline explicit Network(Args &&...args)
+					: TNetwork{ ::std::forward(args)... }
 					, _callbacks{} {
 
 				};
-				Channel(Channel const &) = delete;
-				Channel(Channel &&) = delete;
+				Network(Network const &) = delete;
+				Network(Network &&) = delete;
 
-				inline ~Channel() = default;
+				inline ~Network() = default;
 
-				Channel & operator=(Channel const &) = delete;
-				Channel & operator=(Channel &&) = delete;
+				Network & operator=(Network const &) = delete;
+				Network & operator=(Network &&) = delete;
 
 				template<typename TClient>
-				inline void set_Level(double value) {
-					if (::std::abs(value - TChannel::get_Level()) < 0.01) {
+				void set_Vban(bool value) {
+					if (value == TNetwork::get_Vban()) {
 						return;
 					}
-					TChannel::set_Level(value);
+					TNetwork::set_Vban(value);
 					for (auto &[client, callback] : _callbacks) {
 						if (&client == &typeid(TClient)) {
 							continue;
@@ -76,15 +75,15 @@ namespace Voicemeeter {
 
 				private:
 					::std::type_info const *_client;
-					Channel *_target;
+					Network *_target;
 
-					token(::std::type_info const &client, Channel &target)
+					token(::std::type_info const &client, Network &target)
 						: _client{ &client }
 						, _target{ &target } {
 
 					};
 
-					friend Channel;
+					friend Network;
 				};
 
 				template<typename TClient>
@@ -95,10 +94,10 @@ namespace Voicemeeter {
 			private:
 				::std::unordered_map<
 					::std::type_info const &,
-					::std::function<void(double)>
+					::std::function<void(bool)>
 				> _callbacks;
 
-				using TChannel::set_Level;
+				using TNetwork::set_Vban;
 
 				friend token;
 			};

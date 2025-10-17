@@ -14,7 +14,6 @@ namespace Voicemeeter {
 				, _gain{ 0 } {
 
 			};
-			Amplifier() = delete;
 			Amplifier(Amplifier const &) = delete;
 			Amplifier(Amplifier &&) = delete;
 
