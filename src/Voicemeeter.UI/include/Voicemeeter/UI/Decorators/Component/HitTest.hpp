@@ -62,8 +62,7 @@ namespace Voicemeeter {
 					static inline bool is_inside(
 						::std::valarray<int> const &point,
 						::std::valarray<int> const &vertex) {
-						return !(point.min() < 0)
-							&& (point - vertex).max() < 0;
+						return (point - vertex).max() < 0;
 					};
 					static inline bool is_overlapping(
 						::std::valarray<int> const &lhs_point,
