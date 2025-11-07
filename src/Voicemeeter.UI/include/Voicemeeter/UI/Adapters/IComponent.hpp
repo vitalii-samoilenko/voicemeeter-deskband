@@ -127,18 +127,18 @@ namespace Voicemeeter {
 			template<typename TComponent>
 			class Component final : public IComponent {
 			public:
-				inline explicit IComponent(TComponent &target)
+				inline explicit Component(TComponent &target)
 					: _target{ &target }
 					, _type{ Ownership::None } {
 
 				};
-				inline explicit IComponent(::std::unique_ptr<TComponent> &target)
+				inline explicit Component(::std::unique_ptr<TComponent> &target)
 					: _target{ target.get() }
 					, _type{ Ownership::Exclusive }
 					, _eTarget{ ::std::move(target) } {
 
 				};
-				inline explicit IComponent(::std::shared_ptr<TComponent> const &target)
+				inline explicit Component(::std::shared_ptr<TComponent> const &target)
 					: _target{ target.get() }
 					, _type{ Ownership::Shared }
 					, _sTarget{ target } {
