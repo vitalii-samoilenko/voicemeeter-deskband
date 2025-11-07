@@ -16,7 +16,11 @@ namespace estd {
 			: _release{ release } {
 
 		};
-		guard(guard const&) = delete;
+		inline explicit guard(Fn &&release) noexcept
+			: _release{ ::std::move(release) } {
+
+		};
+		guard(guard const &) = delete;
 		inline guard(guard &&) noexcept = default;
 
 		inline ~guard() {

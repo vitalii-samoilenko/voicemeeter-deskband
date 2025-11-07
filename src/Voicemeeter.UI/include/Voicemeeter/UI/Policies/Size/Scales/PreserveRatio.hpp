@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 #define VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 
+#include <tuple>
 #include <valarray>
 
 namespace Voicemeeter {
@@ -9,11 +10,13 @@ namespace Voicemeeter {
 			namespace Size {
 				namespace Scales {
 					struct PreserveRatio {
-						inline ::std::valarray<double> operator()(
-							::std::valarray<double> const &src,
-							::std::valarray<double> const &dst) const {
-							return ::std::valarray<double>(
-								(dst / src).min(), src.size());
+						template<typename... Args>
+						inline ::std::tuple<Args ...> operator()(
+							::std::valarray<int> const &dst,
+							Args &&...args) const {
+							::std::valarray<int> scale{ dst * SCALING_FACTOR / (args + ...) };
+							scale = scale.min();
+							return ::std::tuple<Args ...>{ dst * scale / SCALING_FACTOR ... };
 						};
 					};
 				}

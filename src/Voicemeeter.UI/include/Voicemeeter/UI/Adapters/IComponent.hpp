@@ -18,10 +18,10 @@ namespace Voicemeeter {
 				IVisible & operator=(IVisible const &) = delete;
 				IVisible & operator=(IVisible &&) = delete;
 
-				virtual ::std::valarray<double> const & get_Position() const = 0;
-				virtual ::std::valarray<double> const & get_Size() const = 0;
+				virtual ::std::valarray<int> const & get_Position() const = 0;
+				virtual ::std::valarray<int> const & get_Size() const = 0;
 
-				virtual void Redraw(::std::valarray<double> const &point, ::std::valarray<double> const &vertex) = 0;
+				virtual void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) = 0;
 
 			protected:
 				inline IVisible() = default;
@@ -37,7 +37,7 @@ namespace Voicemeeter {
 				IMovable & operator=(IMovable const &) = delete;
 				IMovable & operator=(IMovable &&) = delete;
 
-				virtual void Move(::std::valarray<double> const &point) = 0;
+				virtual void Move(::std::valarray<int> const &point) = 0;
 
 			protected:
 				inline IMovable() = default;
@@ -53,7 +53,7 @@ namespace Voicemeeter {
 				IResizable & operator=(IResizable const &) = delete;
 				IResizable & operator=(IResizable &&) = delete;
 
-				virtual void Resize(::std::valarray<double> const &vertex) = 0;
+				virtual void Resize(::std::valarray<int> const &vertex) = 0;
 
 			protected:
 				inline IResizable() = default;
@@ -69,9 +69,9 @@ namespace Voicemeeter {
 				IScalable & operator=(IScalable const &) = delete;
 				IScalable & operator=(IScalable &&) = delete;
 
-				virtual ::std::valarray<double> const & get_BaseSize() const = 0;
+				virtual ::std::valarray<int> const & get_BaseSize() const = 0;
 
-				virtual void Rescale(::std::valarray<double> const &vertex) = 0;
+				virtual void Rescale(::std::valarray<int> const &vertex) = 0;
 
 			protected:
 				inline IScalable() = default;
@@ -88,15 +88,15 @@ namespace Voicemeeter {
 				IInteractive & operator=(IInteractive &&) = delete;
 
 				virtual void Focus(Focus mode) = 0;
-				virtual bool MouseLDown(::std::valarray<double> const &point) = 0;
-				virtual bool MouseLDouble(::std::valarray<double> const &point) = 0;
-				virtual bool MouseLUp(::std::valarray<double> const &point) = 0;
-				virtual bool MouseMDown(::std::valarray<double> const &point) = 0;
-				virtual bool MouseMDouble(::std::valarray<double> const &point) = 0;
-				virtual bool MouseRDown(::std::valarray<double> const &point) = 0;
-				virtual bool MouseRDouble(::std::valarray<double> const &point) = 0;
-				virtual bool MouseWheel(::std::valarray<double> const &point, int delta) = 0;
-				virtual bool MouseMove(::std::valarray<double> const &point) = 0;
+				virtual bool MouseLDown(::std::valarray<int> const &point) = 0;
+				virtual bool MouseLDouble(::std::valarray<int> const &point) = 0;
+				virtual bool MouseLUp(::std::valarray<int> const &point) = 0;
+				virtual bool MouseMDown(::std::valarray<int> const &point) = 0;
+				virtual bool MouseMDouble(::std::valarray<int> const &point) = 0;
+				virtual bool MouseRDown(::std::valarray<int> const &point) = 0;
+				virtual bool MouseRDouble(::std::valarray<int> const &point) = 0;
+				virtual bool MouseWheel(::std::valarray<int> const &point, int delta) = 0;
+				virtual bool MouseMove(::std::valarray<int> const &point) = 0;
 
 			protected:
 				inline IInteractive() = default;
@@ -162,53 +162,53 @@ namespace Voicemeeter {
 					return reinterpret_cast<void *>(_target);
 				};
 
-				virtual ::std::valarray<double> const & get_Position() const override {
+				virtual ::std::valarray<int> const & get_Position() const override {
 					return _target->get_Position();
 				};
-				virtual ::std::valarray<double> const & get_Size() const override {
+				virtual ::std::valarray<int> const & get_Size() const override {
 					return _target->get_Size();
 				};
-				virtual ::std::valarray<double> const & get_BaseSize() const override {
+				virtual ::std::valarray<int> const & get_BaseSize() const override {
 					return _target->get_BaseSize();
 				};
 
-				virtual void Redraw(::std::valarray<double> const &point, ::std::valarray<double> const &vertex) override {
+				virtual void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) override {
 					_target->Redraw(point, vertex);
 				};
-				virtual void Move(::std::valarray<double> const &point) override {
+				virtual void Move(::std::valarray<int> const &point) override {
 					_target->Move(point);
 				};
-				virtual void Rescale(::std::valarray<double> const &vertex) override {
+				virtual void Rescale(::std::valarray<int> const &vertex) override {
 					_target->Rescale(vertex);
 				};
 				virtual void Focus(Focus mode) override {
 					_target->Focus(mode);
 				};
-				virtual bool MouseLDown(::std::valarray<double> const &point) override {
+				virtual bool MouseLDown(::std::valarray<int> const &point) override {
 					return _target->MouseLDown(point);
 				};
-				virtual bool MouseLDouble(::std::valarray<double> const &point) override {
+				virtual bool MouseLDouble(::std::valarray<int> const &point) override {
 					return _target->MouseLDouble(point);
 				};
-				virtual bool MouseLUp(::std::valarray<double> const &point) override {
+				virtual bool MouseLUp(::std::valarray<int> const &point) override {
 					return _target->MouseLUp(point);
 				};
-				virtual bool MouseMDown(::std::valarray<double> const &point) override {
+				virtual bool MouseMDown(::std::valarray<int> const &point) override {
 					return _target->MouseMDown(point);
 				};
-				virtual bool MouseMDouble(::std::valarray<double> const &point) override {
+				virtual bool MouseMDouble(::std::valarray<int> const &point) override {
 					return _target->MouseMDouble(point);
 				};
-				virtual bool MouseRDown(::std::valarray<double> const &point) override {
+				virtual bool MouseRDown(::std::valarray<int> const &point) override {
 					return _target->MouseRDown(point);
 				};
-				virtual bool MouseRDouble(::std::valarray<double> const &point) override {
+				virtual bool MouseRDouble(::std::valarray<int> const &point) override {
 					return _target->MouseRDouble(point);
 				};
-				virtual bool MouseWheel(::std::valarray<double> const &point, int delta) override {
+				virtual bool MouseWheel(::std::valarray<int> const &point, int delta) override {
 					return _target->MouseWheel(point, delta);
 				};
-				virtual bool MouseMove(::std::valarray<double> const &point) override {
+				virtual bool MouseMove(::std::valarray<int> const &point) override {
 					return _target->MouseMove(point);
 				};
 

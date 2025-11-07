@@ -51,15 +51,15 @@ namespace Voicemeeter {
 		inline size_t get_Index(TStrip const &strip) const {
 			if (&::std::get<P>(_strips) == &strip) {
 				return P;
-			} else if (&::std::get<V>(_strips) == $strip) {
+			} else if (&::std::get<V>(_strips) == &strip) {
 				return V;
-			} else if (&::std::get<A1>(_strips) == $strip) {
+			} else if (&::std::get<A1>(_strips) == &strip) {
 				return A1;
-			} else if (&::std::get<A2>(_strips) == $strip) {
+			} else if (&::std::get<A2>(_strips) == &strip) {
 				return A2;
-			} else if (&::std::get<B1>(_strips) == $strip) {
+			} else if (&::std::get<B1>(_strips) == &strip) {
 				return B1;
-			} else if (&::std::get<B2>(_strips) == $strip) {
+			} else if (&::std::get<B2>(_strips) == &strip) {
 				return B2;
 			}
 			throw ::std::out_of_range{ "Unknown strip" };

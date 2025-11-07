@@ -13,12 +13,8 @@ namespace Voicemeeter {
 						TState Max,
 						TState Delta>
 					struct Circular {
-						inline bool SetDefault(TState &dst) const {
-							if (dst == Default) {
-								return false;
-							}
+						inline void SetDefault(TState &dst) const {
 							dst = Default;
-							return true;
 						};
 						inline bool SetNext(TState &dst) const {
 							if (Max - Delta < dst) {
@@ -26,7 +22,6 @@ namespace Voicemeeter {
 							} else {
 								dst += Delta;
 							}
-							return true;
 						};
 						inline bool SetPrevious(TState &dst) const {
 							if (dst < Min + Delta) {
@@ -34,12 +29,8 @@ namespace Voicemeeter {
 							} else {
 								dst -= Delta;
 							}
-							return true;
 						};
 						inline bool Set(TState &dst, TState &src) const {
-							if (dst == src) {
-								return false;
-							}
 							if (src < Min) {
 								dst = Max;
 							} else if (Max < src) {
@@ -47,7 +38,6 @@ namespace Voicemeeter {
 							} else {
 								dst = src;
 							}
-							return true;
 						};
 					};
 				}

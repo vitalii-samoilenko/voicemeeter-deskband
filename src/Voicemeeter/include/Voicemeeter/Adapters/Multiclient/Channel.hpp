@@ -1,7 +1,6 @@
 #ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
 #define VOICEMEETER_ADAPTERS_MULTICLIENT_CHANNEL_HPP
 
-#include <cmath>
 #include <functional>
 #include <typeinfo>
 #include <unordered_map>
@@ -28,8 +27,8 @@ namespace Voicemeeter {
 				Channel & operator=(Channel &&) = delete;
 
 				template<typename TClient>
-				inline void set_Level(double value) {
-					if (::std::abs(value - TChannel::get_Level()) < 0.01) {
+				inline void set_Level(int value) {
+					if (value == TChannel::get_Level()) {
 						return;
 					}
 					TChannel::set_Level(value);
@@ -95,7 +94,7 @@ namespace Voicemeeter {
 			private:
 				::std::unordered_map<
 					::std::type_info const &,
-					::std::function<void(double)>
+					::std::function<void(int)>
 				> _callbacks;
 
 				using TChannel::set_Level;

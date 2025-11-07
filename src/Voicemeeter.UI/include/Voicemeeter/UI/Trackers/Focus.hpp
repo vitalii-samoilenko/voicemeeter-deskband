@@ -91,47 +91,47 @@ namespace Voicemeeter {
 					_tracked = nullptr;
 					_mode = FocusT::None;
 				};
-				bool MouseLDown(::std::valarray<double> const &point) {
+				bool MouseLDown(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseLDown(point)
 						: false;
 				};
-				bool MouseLDouble(::std::valarray<double> const &point) {
+				bool MouseLDouble(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseLDouble(point)
 						: false;
 				};
-				bool MouseLUp(::std::valarray<double> const &point) {
+				bool MouseLUp(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseLUp(point)
 						: false;
 				};
-				bool MouseMDown(::std::valarray<double> const &point) {
+				bool MouseMDown(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseMDown(point)
 						: false;
 				};
-				bool MouseMDouble(::std::valarray<double> const &point) {
+				bool MouseMDouble(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseMDouble(point)
 						: false;
 				};
-				bool MouseRDown(::std::valarray<double> const &point) {
+				bool MouseRDown(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseRDown(point)
 						: false;
 				};
-				bool MouseRDouble(::std::valarray<double> const &point) {
+				bool MouseRDouble(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseRDouble(point)
 						: false;
 				};
-				bool MouseWheel(::std::valarray<double> const &point, int delta) {
+				bool MouseWheel(::std::valarray<int> const &point, int delta) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseWheel(point, delta)
 						: false;
 				};
-				bool MouseMove(::std::valarray<double> const &point) {
+				bool MouseMove(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
 						? _tracked->MouseMove(point)
 						: false;

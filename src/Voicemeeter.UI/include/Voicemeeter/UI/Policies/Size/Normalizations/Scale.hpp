@@ -2,7 +2,6 @@
 #define VOICEMEETER_UI_POLICIES_SIZE_NORMALIZATIONS_SCALE_HPP
 
 #include <limits>
-#include <memory>
 #include <valarray>
 
 namespace Voicemeeter {
@@ -12,13 +11,12 @@ namespace Voicemeeter {
 				namespace Normalizations {
 					struct Scale {
 						template<typename TDirection, typename... TComponents>
-						inline void operator()(
-							TDirection &direction,
-							size_t dimension,
-							::std::unique_ptr<TComponents> &...components) const {
-							::std::valarray<double> vertex{
-								direction(::std::valarray<double>(
-									::std::numeric_limits<double>::max(), dimension))
+						inline void operator()(TDirection &direction, TComponents &...components) const {
+							::std::valarray<int> vertex{
+								direction(::std::valarray<int>{
+									::std::numeric_limits<int>::max(),
+									::std::numeric_limits<int>::max()
+								})
 							};
 							((vertex[vertex < components->get_BaseSize()] = components->get_BaseSize()), ...);
 							(components->Resize(vertex), ...);

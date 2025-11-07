@@ -13,15 +13,15 @@ namespace Voicemeeter {
 		Channel & operator=(Channel const &) = delete;
 		Channel & operator=(Channel &&) = delete;
 
-		inline double get_Level() const {
+		inline int get_Level() const {
 			return _level;
 		};
-		inline void set_Level(double value) {
+		inline void set_Level(int value) {
 			_level = value;
 		};
 
 	private:
-		double _level;
+		int _level;
 	};
 }
 

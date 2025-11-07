@@ -22,15 +22,15 @@ namespace Voicemeeter {
 			Amplifier & operator=(Amplifier const &) = delete;
 			Amplifier & operator=(Amplifier &&) = delete;
 
-			inline double get_Gain() const {
+			inline int get_Gain() const {
 				return _gain;
 			};
-			inline void set_Gain(double value) {
+			inline void set_Gain(int value) {
 				_gain = value;
 			};
 
 		private:
-			double _gain;
+			int _gain;
 		};
 	}
 }

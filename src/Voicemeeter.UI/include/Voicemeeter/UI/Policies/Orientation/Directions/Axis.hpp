@@ -10,8 +10,8 @@ namespace Voicemeeter {
 				namespace Directions {
 					template<size_t I>
 					struct Axis {
-						inline ::std::valarray<double> operator()(std::valarray<double> const &src) const {
-							::std::valarray<double> dst(0, src.size());
+						inline ::std::valarray<int> operator()(std::valarray<int> const &src) const {
+							::std::valarray<int> dst{ 0, 0 };
 							dst[I] = src[I];
 							return dst;
 						};

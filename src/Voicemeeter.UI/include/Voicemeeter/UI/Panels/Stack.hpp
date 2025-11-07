@@ -26,32 +26,16 @@ namespace Voicemeeter {
 					: _direction{ ::std::move(direction) }
 					, _scale{ ::std::move(scale) }
 					, _components{ ::std::move(components)... }
-					, _componentsBaseVertex{
-						::std::apply([
-							&direction = _direction,
-							dimension = ::std::get<0>(_components)
-								->get_BaseSize()
-									.size()
-						](::std::unique_ptr<TComponents> &...components)->::std::valarray<double> {
-							normalization(direction, dimension, components...);
-							::std::valarray<double> componentsBaseVertex(0, dimension * sizeof...(TComponents));
-							size_t i{ 0 };
-							(((componentsBaseVertex[
-								::std::slice(i, dimension, sizeof...(TComponents))
-							] = components->get_Size()), (++i)), ...);
-							return componentsBaseVertex;
-						}, _components)
-					}
 					, _vertex{
 						::std::apply([
-							&direction = _direction,
-							dimension = ::std::get<0>(_components)
-								->get_BaseSize()
-									.size()
-						](::std::unique_ptr<TComponents> &...componets)->::std::valarray<double> {
-							::std::valarray<double> vertex(0, dimension);
+							&normalization,
+							&direction = _direction
+						](::std::unique_ptr<TComponents> &...componets)->::std::valarray<int> {
+							normalization(direction, *components...);
+							::std::valarray<int> vertex{ 0, 0 };
 							(((vertex += direction(components->get_Size())),
-							(vertex[vertex < components->get_Size()] = components->get_Size())), ...);
+							(vertex[vertex < components->get_Size()] = components->get_Size())),
+							...);
 							return vertex;
 						}, _components);
 					}
@@ -67,89 +51,113 @@ namespace Voicemeeter {
 				Stack & operator=(Stack const &) = delete;
 				Stack & operator=(Stack &&) = delete;
 
-				inline ::std::valarray<double> const & get_Position() const {
+				inline ::std::valarray<int> const & get_Position() const {
 					return ::std::get<0>(_components)
 						->get_Position();
 				};
-				inline ::std::valarray<double> const & get_Size() const {
+				inline ::std::valarray<int> const & get_Size() const {
 					return _vertex;
 				};
-				inline ::std::valarray<double> const & get_BaseSize() const {
+				inline ::std::valarray<int> const & get_BaseSize() const {
 					return _baseVertex;
 				};
 
-				inline void Redraw(::std::valarray<double> const &point, ::std::valarray<double> const &vertex) {
-					::std::apply([&point, &vertex](::std::unique_ptr<TComponents> &...components)->void {
+				inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
+					::std::apply([
+						&point,
+						&vertex
+					](::std::unique_ptr<TComponents> &...components)->void {
 						(components->Redraw(point, vertex), ...);
 					}, _components);
 				};
-				inline void Rescale(::std::valarray<double> const &vertex) {
-					::std::valarray<double> scale{ _scale(_baseVertex, vertex) };
+				inline void Rescale(::std::valarray<int> const &vertex) {
+					::std::tie(_vertex) = _scale(vertex, _baseVertex);
 					::std::apply([
-						&scale,
-						&componentsBaseVertex = _componentsBaseVertex,
-						dimension = _baseVertex.size()
+						&direction = _direction,
+						vertex = _vertex
 					](::std::unique_ptr<TComponents> &...components)->void {
-						size_t i{ 0 };
-						((components->Rescale(scale * componentsBaseVertex[
-							::std::slice(i, dimension, sizeof...(TComponents))
-						]), (++i)), ...);
+						((components->Rescale(vertex),
+						(vertex -= _direction(components->get_Size()))),
+						...);
 					}, _components);
 					Move(::std::get<0>(_components)
 						->get_Position());
-					_vertex = scale * _baseVertex;
 				};
-				inline void Move(::std::valarray<double> const &point) {
-					::std::apply([&direction = _direction, point](::std::unique_ptr<TComponents> &...components)->void {
-						((components->Move(point), (point += direction(components->get_Size()))), ...);
+				inline void Move(::std::valarray<int> const &point) {
+					::std::apply([
+						&direction = _direction,
+						point
+					](::std::unique_ptr<TComponents> &...components)->void {
+						((components->Move(point),
+						(point += direction(components->get_Size()))),
+						...);
 					}, _components);
 				};
 				inline void Focus(Focus mode) {
 					::std::get<0>(_components)
 						->Focus(mode);
 				};
-				inline bool MouseLDown(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseLDown(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseLDown(point) || ...);
 					}, _components);
 				};
-				inline bool MouseLDouble(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseLDouble(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseLDouble(point) || ...);
 					}, _components);
 				};
-				inline bool MouseLUp(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseLUp(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseLUp(point) || ...);
 					}, _components);
 				};
-				inline bool MouseMDown(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseMDown(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseMDown(point) || ...);
 					}, _components);
 				};
-				inline bool MouseMDouble(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseMDouble(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseMDouble(point) || ...);
 					}, _components);
 				};
-				inline bool MouseRDown(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseRDown(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseRDown(point) || ...);
 					}, _components);
 				};
-				inline bool MouseRDouble(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseRDouble(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseRDouble(point) || ...);
 					}, _components);
 				};
-				inline bool MouseWheel(::std::valarray<double> const &point, int delta) {
-					return ::std::apply([&point, delta](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
+					return ::std::apply([
+						&point,
+						delta
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseWheel(point, delta) || ...);
 					}, _components);
 				};
-				inline bool MouseMove(::std::valarray<double> const &point) {
-					return ::std::apply([&point](::std::unique_ptr<TComponents> &...components)->bool {
+				inline bool MouseMove(::std::valarray<int> const &point) {
+					return ::std::apply([
+						&point
+					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseMove(point) || ...);
 					}, _components);
 				};
@@ -158,9 +166,8 @@ namespace Voicemeeter {
 				TDirection _direction;
 				TScale _scale;
 				::std::tuple<::std::unique_ptr<TComponents>...> _components;
-				::std::valarray<double> _componentsBaseVertex;
-				::std::valarray<double> _vertex;
-				::std::valarray<double> _baseVertex;
+				::std::valarray<int> _vertex;
+				::std::valarray<int> _baseVertex;
 			};
 		}
 	}

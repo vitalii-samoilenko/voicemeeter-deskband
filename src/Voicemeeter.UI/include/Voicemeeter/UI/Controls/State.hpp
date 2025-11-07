@@ -2,6 +2,7 @@
 #define VOICEMEETER_UI_CONTROLS_STATE_HPP
 
 #include <memory>
+#include <tuple>
 #include <utility>
 #include <valarray>
 
@@ -20,13 +21,13 @@ namespace Voicemeeter {
 			class State {
 			public:
 				inline State(
-					::std::valarray<double> &&baseVertex,
+					::std::valarray<int> &&baseVertex,
 					::std::unique_ptr<TGlyph> &&glyph,
 					TChangeNotify &&changeNotify,
 					TStateChange &&stateChange = TStateChange{},
 					TGlyphUpdate &&glyphUpdate = TGlyphUpdate{},
 					TScale &&scale = TScale{})
-					: _point{ ::std::valarray<double>(0, baseVertex.size()) }
+					: _point{ 0, 0 }
 					, _vertex{ baseVertex }
 					, _baseVertex{ ::std::move(baseVertex) }
 					, _state{}
@@ -35,10 +36,7 @@ namespace Voicemeeter {
 					, _stateChange{ ::std::move(stateChange) }
 					, _glyphUpdate{ ::std::move(glyphUpdate) }
 					, _scale{ ::std::move(scale) } {
-					if (!_stateDefault(_state)) {
-						return;
-					}
-					OnSet(false);
+
 				};
 				State() = delete;
 				State(State const &) = delete;
@@ -54,86 +52,78 @@ namespace Voicemeeter {
 				};
 
 				inline void SetDefault() {
-					if (!_state.SetDefault(_state)) {
-						return;
-					}
-					OnSet(true);
+					_stateChange.SetDefault(_state);
+					OnSet();
 				};
 				inline void SetNext() {
-					if (!_state.SetNext(_state)) {
-						return;
-					}
-					OnSet(true);
+					_stateChange.SetNext(_state);
+					OnSet();
 				};
 				inline void SetPrevious() {
-					if (!_state.SetPrevious(_state)) {
-						return;
-					}
-					OnSet(true);
+					_stateChange.SetPrevious(_state);
+					OnSet();
 				};
-				inline void Set(TState &dst, bool notify = true) {
-					if (!_state.Set(_state, dst)) {
-						return;
-					}
-					OnSet(notify);
+				inline void Set(TState &&dst) {
+					_stateChange.Set(_state, dst);
+					OnSet();
 				};
 
-				inline ::std::valarray<double> const & get_Position() const {
+				inline ::std::valarray<int> const & get_Position() const {
 					return _point;
 				};
-				inline ::std::valarray<double> const & get_Size() const {
+				inline ::std::valarray<int> const & get_Size() const {
 					return _vertex;
 				};
-				inline ::std::valarray<double> const & get_BaseSize() const {
+				inline ::std::valarray<int> const & get_BaseSize() const {
 					return _baseVertex;
 				};
 
-				inline void Redraw(::std::valarray<double> const &point, ::std::valarray<double> const &vertex) {
+				inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
 					_glyph->Redraw(point, vertex);
 				};
-				inline void Rescale(::std::valarray<double> const &vertex) {
-					_vertex = _scale(_baseVertex, vertex) * _baseVertex;
+				inline void Rescale(::std::valarray<int> const &vertex) {
+					::std::tie(_vertex) = _scale(vertex, _baseVertex);
 					_glyph->Rescale(_vertex);
 				};
-				inline void Move(::std::valarray<double> const &point) {
+				inline void Move(::std::valarray<int> const &point) {
 					_point = point;
 					_glyph->Move(point);
 				};
 				inline void Focus(Focus mode) {
 
 				};
-				inline bool MouseLDown(::std::valarray<double> const &point) {
+				inline bool MouseLDown(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseLDouble(::std::valarray<double> const &point) {
+				inline bool MouseLDouble(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseLUp(::std::valarray<double> const &point) {
+				inline bool MouseLUp(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseMDown(::std::valarray<double> const &point) {
+				inline bool MouseMDown(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseMDouble(::std::valarray<double> const &point) {
+				inline bool MouseMDouble(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseRDown(::std::valarray<double> const &point) {
+				inline bool MouseRDown(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseRDouble(::std::valarray<double> const &point) {
+				inline bool MouseRDouble(::std::valarray<int> const &point) {
 					return true;
 				};
-				inline bool MouseWheel(::std::valarray<double> const &point, int delta) {
+				inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
 					return true;
 				};
-				inline bool MouseMove(::std::valarray<double> const &point) {
+				inline bool MouseMove(::std::valarray<int> const &point) {
 					return true;
 				};
 
 			private:
-				::std::valarray<double> _point;
-				::std::valarray<double> _vertex;
-				::std::valarray<double> _baseVertex;
+				::std::valarray<int> _point;
+				::std::valarray<int> _vertex;
+				::std::valarray<int> _baseVertex;
 				TState _state;
 				::std::unique_ptr<TGlyph> _glyph;
 				TChangeNotify _changeNotify;
@@ -141,10 +131,8 @@ namespace Voicemeeter {
 				TGlyphUpdate _glyphUpdate;
 				TScale _scale;
 
-				inline void OnSet(bool notify) {
-					if (notify) {
-						_changeNotify(_state);
-					}
+				inline void OnSet() {
+					_changeNotify(_state);
 					_glyphUpdate(*_glyph, _state);
 				};
 			};
