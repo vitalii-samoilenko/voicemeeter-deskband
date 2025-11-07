@@ -104,7 +104,11 @@ namespace Voicemeeter {
 				inline ~IInteractive() = default;
 			};
 
-			class IComponent : public IVisible, IMovable, IScalable, IInteractive {
+			class IComponent :
+				public IVisible,
+				public IMovable,
+				public IScalable,
+				public IInteractive {
 			public:
 				IComponent(IComponent const &) = delete;
 				IComponent(IComponent &&) = delete;
