@@ -26,7 +26,8 @@ namespace Voicemeeter {
 					: _direction{ ::std::move(direction) }
 					, _scale{ ::std::move(scale) }
 					, _components{ ::std::move(components)... }
-					, _vertex{
+					, _vertex{ 0, 0 }
+					, _baseVertex{ 
 						::std::apply([
 							&normalization,
 							&direction = _direction
@@ -37,9 +38,8 @@ namespace Voicemeeter {
 							(vertex[vertex < components->get_Size()] = components->get_Size())),
 							...);
 							return vertex;
-						}, _components);
-					}
-					, _baseVertex{ _vertex } {
+						}, _components)
+					} {
 
 				};
 				Stack() = delete;

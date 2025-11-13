@@ -22,10 +22,10 @@ namespace Voicemeeter {
 						Args &&...args)
 						: TComponent{ ::std::forward<Args>(args)... }
 						, _point{ 0, 0 }
-						, _vertex{ basePaddingPoint + TComponent::get_BaseSize() + basePaddingVertex }
-						, _baseVertex{ _vertex }
-						, _paddingPoint{ basePaddingPoint }
-						, _paddingVertex{ basePaddingVertex }
+						, _vertex{ 0, 0 }
+						, _baseVertex{ basePaddingPoint + TComponent::get_BaseSize() + basePaddingVertex }
+						, _paddingPoint{}
+						, _paddingVertex{}
 						, _basePaddingPoint{ ::std::move(basePaddingPoint) }
 						, _basePaddingVertex{ ::std::move(basePaddingVertex) }
 						, _scale{ ::std::move(scale) } {

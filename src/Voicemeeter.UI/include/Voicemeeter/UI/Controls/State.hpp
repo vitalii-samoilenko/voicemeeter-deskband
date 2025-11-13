@@ -28,7 +28,7 @@ namespace Voicemeeter {
 					TGlyphUpdate &&glyphUpdate = TGlyphUpdate{},
 					TScale &&scale = TScale{})
 					: _point{ 0, 0 }
-					, _vertex{ baseVertex }
+					, _vertex{ 0, 0 }
 					, _baseVertex{ ::std::move(baseVertex) }
 					, _state{}
 					, _glyph{ ::std::move(pGlyph) }
