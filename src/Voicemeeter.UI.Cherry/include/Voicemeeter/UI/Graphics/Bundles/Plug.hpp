@@ -34,6 +34,12 @@ namespace Voicemeeter {
 					Plug & operator=(Plug const &) = delete;
 					Plug & operator=(Plug &&) = delete;
 
+					inline ::std::valarray<int> const & get_Position() const {
+						return _framePoint;
+					};
+					inline ::std::valarray<int> const & get_Size() const {
+						return _frameVertex;
+					};
 
 					inline void set_Position(::std::valarray<int> const &point) {
 						OnSet(_framePoint, point, framePoint);
@@ -66,17 +72,6 @@ namespace Voicemeeter {
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba);
-					};
-
-				protected:
-					inline TPalette & get_Palette() {
-						return _palette;
-					};
-					inline ::std::valarray<int> const & get_Position() const {
-						return _framePoint;
-					};
-					inline ::std::valarray<int> const & get_Size() const {
-						return _frameVertex;
 					};
 
 				private:
