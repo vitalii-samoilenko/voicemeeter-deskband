@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_UI_STATES_KNOB_HPP
-#define VOICEMEETER_UI_STATES_KNOB_HPP
+#ifndef VOICEMEETER_UI_STATES_STRIPKNOB_HPP
+#define VOICEMEETER_UI_STATES_STRIPKNOB_HPP
 
 #include <string>
 #include <valarray>
@@ -7,12 +7,12 @@
 namespace Voicemeeter {
 	namespace UI {
 		namespace States {
-			struct Knob {
+			struct StripKnob {
 				::std::string label;
-				int gain;
-				::std::valarray<int> level;
+				int degree;
 				bool toggle;
 				bool hold;
+				::std::valarray<int> level;
 			};
 		}
 	}
