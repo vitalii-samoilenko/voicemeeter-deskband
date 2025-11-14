@@ -17,7 +17,7 @@ namespace Voicemeeter {
 				IBundle & operator=(IBundle const &) = delete;
 				IBundle & operator=(IBundle &&) = delete;
 
-				virtual void Execute() = 0;
+				virtual void operator()() = 0;
 
 			protected:
 				inline IBunle() = default;
@@ -61,8 +61,8 @@ namespace Voicemeeter {
 				Bundle & operator=(Bundle const &) = delete;
 				Bundle & operator=(Bundle &&) = delete;
 
-				virtual void Execute() override {
-					_target->Execute();
+				virtual void operator()() override {
+					(*_target)();
 				};
 
 			private:

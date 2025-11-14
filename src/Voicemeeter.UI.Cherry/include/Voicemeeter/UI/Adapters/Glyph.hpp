@@ -40,7 +40,7 @@ namespace Voicemeeter {
 				};
 
 				inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
-					TBundle::Invalidate();
+					TBundle::set_Invalid();
 				};
 				inline void Rescale(::std::valarray<int> const &vertex) {
 					TBundle::set_Size(_scale(vertex, _baseVertex));

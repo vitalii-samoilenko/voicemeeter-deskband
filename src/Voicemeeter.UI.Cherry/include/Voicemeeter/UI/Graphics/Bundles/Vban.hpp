@@ -56,11 +56,11 @@ namespace Voicemeeter {
 					inline void set_LabelColor(::std::valarray<int> const &rgba) {
 						OnSet(_textRgba, rgba, textRgba);
 					};
-
-					inline void Invalidate() {
+					inline void set_Invalid() {
 						OnInvalidate(renderTarget);
 					};
-					inline void Execute() {
+
+					inline void operator()() {
 						if (_changes.test(frameVertex)) {
 							_changes.set(framePoint);
 						}
