@@ -12,7 +12,7 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Glyph {
 				namespace Updates {
-					template<typename TPalette>
+					template<typename TPalette, typename TKnob>
 					class StripKnob {
 					public:
 						inline explicit StripKnob(TPalette &palette)
@@ -28,7 +28,6 @@ namespace Voicemeeter {
 						StripKnob & operator=(StripKnob const &) = delete;
 						StripKnob & operator=(StripKnob &&) = delete;
 
-						template<typename TKnob>
 						inline void operator()(TKnob &glyph, States::StripKnob const &state) const {
 							int maxLevel{ state.level.max() };
 							::std::valarray<int> const &rgba{

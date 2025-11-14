@@ -8,7 +8,7 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Glyph {
 				namespace Updates {
-					template<typename TPalette>
+					template<typename TPalette, typename TVban>
 					class Vban {
 					public:
 						inline explicit Vban(TPalette &palette)
@@ -24,7 +24,6 @@ namespace Voicemeeter {
 						Vban & operator=(Vban const &) = delete;
 						Vban & operator=(Vban &&) = delete;
 
-						template<typename TVban>
 						inline void operator()(TVban &glyph, int state) const {
 							::std::valarray<int> const &rgba{
 								state == 0
@@ -36,6 +35,7 @@ namespace Voicemeeter {
 							glyph.set_Color(rgba);
 							glyph.set_LabelColor(rgba);
 						};
+
 					private:
 						TPalette &_palette;
 					};

@@ -62,7 +62,7 @@ namespace Voicemeeter {
 				Bundle & operator=(Bundle &&) = delete;
 
 				virtual void operator()() override {
-					(*_target)();
+					_target->operator()();
 				};
 
 			private:

@@ -8,7 +8,7 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Glyph {
 				namespace Updates {
-					template<typename TPalette>
+					template<typename TPalette, typename TPlug>
 					class Plug {
 					public:
 						inline explicit Plug(TPalette &palette)
@@ -24,7 +24,6 @@ namespace Voicemeeter {
 						Plug & operator=(Plug const &) = delete;
 						Plug & operator=(Plug &&) = delete;
 
-						template<typename TPlug>
 						inline void operator()(TPlug &glyph, int state) const {
 							::std::valarray<int> const &rgba{
 								state == 0
@@ -36,6 +35,7 @@ namespace Voicemeeter {
 							glyph.set_Color(rgba);
 							glyph.set_LabelColor(rgba);
 						};
+
 					private:
 						TPalette &_palette;
 					};
