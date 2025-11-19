@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_STRIPKNOB_HPP
 #define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_STRIPKNOB_HPP
 
+#include <cmath>
 #include <string>
 #include <valarray>
 
@@ -31,7 +32,7 @@ namespace Voicemeeter {
 										? high
 										: normal
 								};
-								glyph.set_Velocity(::std::valarray<long long> {
+								glyph.set_AnimationVelocitySize(::std::valarray<int>{
 									normalize(eq == low), normalize(eq == normal), normalize(eq == high),
 									normalize(state.hold),
 									normalize(gain == high),
@@ -45,7 +46,7 @@ namespace Voicemeeter {
 							};
 
 						private:
-							static long long normalize(bool value) {
+							inline static int normalize(bool value) {
 								return value ? 1 : -1;
 							};
 						};
@@ -74,6 +75,37 @@ namespace Voicemeeter {
 									mute = 5
 									/* warning */
 								};
+								::std::valarray<int> normalizedAnimationVertex{
+									(glyph.get_AnimationSize() * SCALING_FACTOR)
+										/ glyph.get_AnimationBaseSize()
+								};
+								::std::valarray<int> const &animationVelocityVertex{
+									glyph.get_AnimationVelocitySize()
+								};
+								::std::valarray<int> rgba{
+									_palette.get_Theme()
+										.Inactive
+								};
+								_palette.Blend(rgba, _palette.get_Theme()
+									.EqLow, normalizedAnimationVertex[eqLow]);
+								_palette.Blend(rgba, _palette.get_Theme()
+									.EqNormal, normalizedAnimationVertex[eqNormal]);
+								_palette.Blend(rgba, _palette.get_Theme()
+									.EqHight, normalizedAnimationVertex[eqHight]);
+								_palette.Blend(rgba, _palette.get_Theme()
+									.Ok, normalizedAnimationVertex[hold]);
+								_palette.Blend(rgba, _palette.get_Theme()
+									.Error, normalizedAnimationVertex[gainHigh]);
+								_palette.Blend(rgba, _palette.get_Theme()
+									.Warning, normalizedAnimationVertex[mute]);
+								glyph.set_Color(rgba);
+								int signedA{ 2 * normalizedAnimationVertex[hold] - SCALING_FACTOR };
+								if (animationVelociyVertex[hold] < 0 && !(0 < signedA)
+									|| 0 < animationVelocityVertex[hold] && !(signedA < 0)) {
+									glyph.set_Label(glyph.get_ToLabel());
+								}
+								rgba[3] = ::std::abs(signedA);
+								glyph.set_LabelColor(rgba);
 							};
 
 						private:
