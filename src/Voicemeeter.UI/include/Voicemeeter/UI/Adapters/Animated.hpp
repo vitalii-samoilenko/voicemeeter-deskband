@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_ANIMATED_HPP
 #define VOICEMEETER_UI_ADAPTERS_ANIMATED_HPP
 
+#include <cmath>
 #include <utility>
 #include <valarray>
 
