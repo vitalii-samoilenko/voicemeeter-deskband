@@ -53,6 +53,12 @@ namespace Voicemeeter {
 				_composition->Rescale(vertex);
 				_canvas->Resize(_conposition->get_Size());
 			};
+			inline void Show() {
+				_canvas->Show();
+			};
+			inline void Hide() {
+				_canvas->Hide();
+			};
 			inline void Focus(Focus mode) {
 				_focusTracker->Focus(mode);
 			};
