@@ -79,7 +79,7 @@ namespace Voicemeeter {
 					BeforeExecute & operator()(BeforeExecute &&) = delete;
 
 					inline void operator()() {
-						_this->_animationVertex += _this->_palette.get_Timer()
+						_this->_animationVertex += _this->_palette.get_Stopwatch()
 							.get_Elapsed() * _this->_animationVelocityVertex;
 						_this->ClampAnimationSize(_this->_animationVertex);
 						_this->_updateFrame(*_this);
