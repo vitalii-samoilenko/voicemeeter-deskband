@@ -93,31 +93,31 @@ namespace Voicemeeter {
 
 				};
 				inline bool MouseLDown(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseLDouble(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseLUp(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseMDown(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseMDouble(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseRDown(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseRDouble(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 				inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
-					return true;
+					return false;
 				};
 				inline bool MouseMove(::std::valarray<int> const &point) {
-					return true;
+					return false;
 				};
 
 			private:
