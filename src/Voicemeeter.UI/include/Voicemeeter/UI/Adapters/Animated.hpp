@@ -8,9 +8,9 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Adapters {
 			template<
+				typename TBundle,
 				typename TPalette,
-				typename TUpdateFrame,
-				typename TBundle>
+				typename TUpdateFrame>
 			class Animated : public TBundle {
 			public:
 				template<typename... Args>
