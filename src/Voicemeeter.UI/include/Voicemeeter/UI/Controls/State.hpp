@@ -51,20 +51,20 @@ namespace Voicemeeter {
 					return _state;
 				};
 
-				inline void SetDefault() {
+				inline void set_DefaultState() {
 					_stateChange.SetDefault(_state);
 					OnSet();
 				};
-				inline void SetNext() {
+				inline void set_NextState() {
 					_stateChange.SetNext(_state);
 					OnSet();
 				};
-				inline void SetPrevious() {
+				inline void set_PreviousState() {
 					_stateChange.SetPrevious(_state);
 					OnSet();
 				};
-				inline void Set(TState &&dst) {
-					_stateChange.Set(_state, dst);
+				inline void set_State(TState &&value) {
+					_stateChange.Set(_state, value);
 					OnSet();
 				};
 

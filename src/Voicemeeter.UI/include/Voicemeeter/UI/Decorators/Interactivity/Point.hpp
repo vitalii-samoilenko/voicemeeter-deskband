@@ -11,8 +11,7 @@ namespace Voicemeeter {
 			namespace Interactivity {
 				template<
 					typename TComponent,
-					typename TFocusTracker,
-					Focus Mode>
+					typename TFocusTracker>
 				class Point : public TComponent {
 				public:
 					template<typename... Args>
@@ -38,14 +37,14 @@ namespace Voicemeeter {
 					inline bool MouseLDown(::std::valarray<int> const &point) {
 						bool base{ TComponent::MouseLDown(point) };
 						if (base) {
-							_focusTracker.set_Tracked(*this, Mode);
+							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
 					inline bool MouseLDouble(::std::valarray<int> const &point) {
 						bool base{ TComponent::MouseLDouble(point) };
 						if (base) {
-							_focusTracker.set_Tracked(*this, Mode);
+							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
@@ -55,28 +54,28 @@ namespace Voicemeeter {
 					inline bool MouseMDown(::std::valarray<int> const &point) {
 						bool base{ TComponent::MouseMDown(point) };
 						if (base) {
-							_focusTracker.set_Tracked(*this, Mode);
+							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
 					inline bool MouseMDouble(::std::valarray<int> const &point) {
 						bool base{ TComponent::MouseMDouble(point) };
 						if (base) {
-							_focusTracker.set_Tracked(*this, Mode);
+							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
 					inline bool MouseRDown(::std::valarray<int> const &point) {
 						bool base{ TComponent::MouseRDown(point) };
 						if (base) {
-							_focusTracker.set_Tracked(*this, Mode);
+							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
 					inline bool MouseRDouble(::std::valarray<int> const &point) {
 						bool base{ TComponent::MouseRDouble(point) };
 						if (base) {
-							_focusTracker.set_Tracked(*this, Mode);
+							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};

@@ -29,11 +29,11 @@ namespace Voicemeeter {
 
 					};
 					inline bool MouseLDown(::std::valarray<int> const &point) {
-						TStateControl::SetNext();
+						TStateControl::set_NextState();
 						return true;
 					};
 					inline bool MouseLDouble(::std::valarray<int> const &point) {
-						TStateControl::SetNext();
+						TStateControl::set_NextState();
 						return true;
 					};
 					inline bool MouseLUp(::std::valarray<int> const &point) {
