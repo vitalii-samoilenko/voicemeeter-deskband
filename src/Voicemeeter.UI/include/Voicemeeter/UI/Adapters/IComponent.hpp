@@ -118,8 +118,6 @@ namespace Voicemeeter {
 				IComponent & operator=(IComponent const &) = delete;
 				IComponent & operator=(IComponent &&) = delete;
 
-				virtual void * get_Target() const = 0;
-
 			protected:
 				inline IComponent() = default;
 			};
@@ -161,10 +159,6 @@ namespace Voicemeeter {
 
 				Component & operator=(Component const &) = delete;
 				Component & operator=(Component &&) = delete;
-
-				virtual void * get_Target() override {
-					return reinterpret_cast<void *>(_target);
-				};
 
 				virtual ::std::valarray<int> const & get_Position() const override {
 					return _target->get_Position();

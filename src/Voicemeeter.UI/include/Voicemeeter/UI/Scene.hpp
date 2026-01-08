@@ -42,14 +42,14 @@ namespace Voicemeeter {
 				return _composition->get_BaseSize();
 			};
 
-			inline void Redraw(::std::valarray<int> const & point, ::std::valarray<int> const & vertex) {
+			inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
 				_canvas->Redraw(point, vertex);
 			};
-			inline void Resize(::std::valarray<int> const & vertex) {
+			inline void Resize(::std::valarray<int> const &vertex) {
 				_canvas->Resize(vertex);
 				_composition->Rescale(vertex);
 			};
-			inline void Rescale(::std::valarray<int> const & vertex) {
+			inline void Rescale(::std::valarray<int> const &vertex) {
 				_composition->Rescale(vertex);
 				_canvas->Resize(_conposition->get_Size());
 			};
@@ -62,39 +62,39 @@ namespace Voicemeeter {
 			inline void Focus(Focus mode) {
 				_focusTracker->Focus(mode);
 			};
-			inline bool MouseLDown(::std::valarray<int> const & point) {
+			inline bool MouseLDown(::std::valarray<int> const &point) {
 				return _focusTracker->MouseLDown(point)
 					|| _composition->MouseLDown(point);
 			};
-			inline bool MouseLDouble(::std::valarray<int> const & point) {
+			inline bool MouseLDouble(::std::valarray<int> const &point) {
 				return _focusTracker->MouseLDouble(point)
 					|| _composition->MouseLDouble(point);
 			};
-			inline bool MouseLUp(::std::valarray<int> const & point) {
+			inline bool MouseLUp(::std::valarray<int> const &point) {
 				return _focusTracker->MouseLUp(point)
 					|| _composition->MouseLUp(point);
 			};
-			inline bool MouseMDown(::std::valarray<int> const & point) {
+			inline bool MouseMDown(::std::valarray<int> const &point) {
 				return _focusTracker->MouseMDown(point)
 					|| _composition->MouseMDown(point);
 			};
-			inline bool MouseMDouble(::std::valarray<int> const & point) {
+			inline bool MouseMDouble(::std::valarray<int> const &point) {
 				return _focusTracker->MouseMDouble(point)
 					|| _composition->MouseMDouble(point);
 			};
-			inline bool MouseRDown(::std::valarray<int> const & point) {
+			inline bool MouseRDown(::std::valarray<int> const &point) {
 				return _focusTracker->MouseRDown(point)
 					|| _composition->MouseRDown(point);
 			};
-			inline bool MouseRDouble(::std::valarray<int> const & point) {
+			inline bool MouseRDouble(::std::valarray<int> const &point) {
 				return _focusTracker->MouseRDouble(point)
 					|| _composition->MouseRDouble(point);
 			};
-			inline bool MouseWheel(::std::valarray<int> const & point, int delta) {
+			inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
 				return _focusTracker->MouseWheel(point, delta)
 					|| _composition->MouseWheel(point, delta);
 			};
-			inline bool MouseMove(::std::valarray<int> const & point) {
+			inline bool MouseMove(::std::valarray<int> const &point) {
 				return _focusTracker->MouseMove(point)
 					|| _composition->MouseMove(point);
 			};

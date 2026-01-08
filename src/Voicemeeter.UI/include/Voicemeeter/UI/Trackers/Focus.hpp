@@ -16,7 +16,8 @@ namespace Voicemeeter {
 			public:
 				inline explicit Focus(TInputTracker &inputTracker)
 					: _inputTracker{ inputTracker }
-					, _target{ nullptr }
+					, _tracked{ nullptr }
+					, _trackedId{ nullptr }
 					, _mode{ FocusT::None } {
 
 				};
@@ -31,31 +32,17 @@ namespace Voicemeeter {
 
 				template<typename TComponent>
 				inline FocusT get_Track(TComponent const &target) const {
-					return _tracked && _tracked->get_Target() == &target
+					return _trackedId == &target
 						? _mode
 						: FocusT::None;
 				};
 				template<typename TComponent>
 				inline void set_Track(TComponent &target, FocusT value) {
-					enum Owner{ None, Tracked, Target };
-					enum Request{ Give, Take };
-					Owner owner{
-						_tracked
-							? _tracked->get_Target() == &target
-								? Target
-								: Tracked
-							: None
-					};
-					Request request{
-						value == FocusT::None
-							? Give
-							: Take
-					};
-					if (owner == Target) {
+					if (_trackedId == &target) {
 						if (_mode == value) {
 							return;
 						}
-					} else if (request == Give) {
+					} else if (value == FocusT::None) {
 						return;
 					}
 					if (_mode == FocusT::Fixed) {
@@ -63,17 +50,21 @@ namespace Voicemeeter {
 							_inputTracker.DisableInputTrack();
 						}
 					} else if (value == FocusT::Fixed) {
-						_inputTracked.EnableInputTrack();
+						_inputTracker.EnableInputTrack();
 					}
-					if (request == Give || owner == Tracked) {
-						_tracked->Focus(FocusT::None);
-						_tracked = nullptr;
+					if (_tracked) {
+						if (value == FocusT::None || _trackedId != &target) {
+							_tracked->Focus(FocusT::None);
+							_tracked = nullptr;
+							_trackedId = nullptr;
+						}
 					}
-					if (request == Take) {
-						if (owner != Target) {
+					if (value != FocusT::None) {
+						if (_trackedId == nullptr) {
 							_tracked = ::std::make_unique<
 								Adapters::Component<TComponent>>(
 									target);
+							_trackedId = &target;
 						}
 						_tracked->Focus(value);
 					}
@@ -81,7 +72,7 @@ namespace Voicemeeter {
 				};
 
 				inline void Focus(FocusT mode) {
-					if (mode != focust::None) {
+					if (mode != FocusT::None) {
 						return;
 					}
 					if (_mode == FocusT::Fixed) {
@@ -89,6 +80,7 @@ namespace Voicemeeter {
 					}
 					_tracked.Focus(FocusT::None);
 					_tracked = nullptr;
+					_trackedId = nullptr;
 					_mode = FocusT::None;
 				};
 				bool MouseLDown(::std::valarray<int> const &point) {
@@ -142,6 +134,7 @@ namespace Voicemeeter {
 
 				TInputTracker &_inputTracker;
 				::std::unique_ptr<Adapters::IComponent> _tracked;
+				void *_trackedId;
 				FocusT _mode;
 			};
 		}

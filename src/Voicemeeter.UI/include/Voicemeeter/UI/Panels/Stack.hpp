@@ -12,14 +12,13 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Panels {
 			template<
-				typename TNormalization,
 				typename TDirection,
 				typename TScale,
 				typename... TComponents>
 			class Stack {
 			public:
 				inline Stack(
-					TNormalization &&normalization = TNormalization{},
+					::std::valarray<int> &&baseVertex,
 					TDirection &&direction = TDirection{},
 					TScale &&scale = TScale{},
 					::std::unique_ptr<TComponents> &&...components)
@@ -27,19 +26,7 @@ namespace Voicemeeter {
 					, _scale{ ::std::move(scale) }
 					, _components{ ::std::move(components)... }
 					, _vertex{ 0, 0 }
-					, _baseVertex{ 
-						::std::apply([
-							&normalization,
-							&direction = _direction
-						](::std::unique_ptr<TComponents> &...componets)->::std::valarray<int> {
-							normalization(direction, *components...);
-							::std::valarray<int> vertex{ 0, 0 };
-							(((vertex += direction(components->get_Size())),
-							(vertex[vertex < components->get_Size()] = components->get_Size())),
-							...);
-							return vertex;
-						}, _components)
-					} {
+					, _baseVertex{ ::std::move(baseVertex) } {
 
 				};
 				Stack() = delete;
@@ -67,7 +54,8 @@ namespace Voicemeeter {
 						&point,
 						&vertex
 					](::std::unique_ptr<TComponents> &...components)->void {
-						(components->Redraw(point, vertex), ...);
+						(components->Redraw(point, vertex)
+						, ...);
 					}, _components);
 				};
 				inline void Rescale(::std::valarray<int> const &vertex) {
@@ -76,9 +64,9 @@ namespace Voicemeeter {
 						&direction = _direction,
 						vertex = _vertex
 					](::std::unique_ptr<TComponents> &...components)->void {
-						((components->Rescale(vertex),
-						(vertex -= _direction(components->get_Size()))),
-						...);
+						((components->Rescale(vertex)
+						,(vertex -= direction(components->get_Size())))
+						, ...);
 					}, _components);
 					Move(::std::get<0>(_components)
 						->get_Position());
@@ -88,9 +76,9 @@ namespace Voicemeeter {
 						&direction = _direction,
 						point
 					](::std::unique_ptr<TComponents> &...components)->void {
-						((components->Move(point),
-						(point += direction(components->get_Size()))),
-						...);
+						((components->Move(point)
+						,(point += direction(components->get_Size())))
+						, ...);
 					}, _components);
 				};
 				inline void Focus(Focus mode) {

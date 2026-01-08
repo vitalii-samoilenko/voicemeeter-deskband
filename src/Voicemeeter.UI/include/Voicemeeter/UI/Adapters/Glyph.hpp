@@ -30,10 +30,10 @@ namespace Voicemeeter {
 				Glyph & operator=(Glyph &&) = delete;
 
 				inline ::std::valarray<int> const & get_Position() const {
-					return TBundle::get_Position();
+					return TBundle::get_FramePosition();
 				};
 				inline ::std::valarray<int> const & get_Size() const {
-					return TBundle::get_Size();
+					return TBundle::get_FrameSize();
 				};
 				inline ::std::valarray<int> const & get_BaseSize() const {
 					return _baseVertex;
@@ -43,10 +43,10 @@ namespace Voicemeeter {
 					TBundle::set_Invalid();
 				};
 				inline void Rescale(::std::valarray<int> const &vertex) {
-					TBundle::set_Size(_scale(vertex, _baseVertex));
+					TBundle::set_FrameSize(_scale(vertex, _baseVertex));
 				};
 				inline void Move(::std::valarray<int> const &point) {
-					TBundle::set_Position(point);
+					TBundle::set_FramePosition(point);
 				};
 
 			private:

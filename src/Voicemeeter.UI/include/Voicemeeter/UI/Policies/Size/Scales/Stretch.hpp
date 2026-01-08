@@ -20,7 +20,7 @@ namespace Voicemeeter {
 							::std::valarray<int> const &dst,
 							Args &&...args) const {
 							::std::valarray<int> scale{ dst * SCALING_FACTOR / (args + ...) };
-							return ::std::tuple<Args ...>{ dst * scale / SCALING_FACTOR ... };
+							return ::std::tuple<Args ...>{ args * scale / SCALING_FACTOR ... };
 						};
 					};
 				}
