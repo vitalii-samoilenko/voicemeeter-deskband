@@ -25,9 +25,17 @@ namespace Voicemeeter {
 
 				class slot final {
 				public:
-					inline slot() = default;
+					slot() = delete;
 					slot(slot const &) = delete;
-					inline slot(slot &&) = default;
+					inline slot(slot &&other)
+						: _items{ other.items }
+						, _i{ other._i }
+						, _itemId{ other._itemId }
+						, _itemTypeId{ other._itemTypeId } {
+						other._i = 0;
+						other._itemId = nullptr;
+						other._itemTypeId = nullptr;
+					};
 
 					inline ~slot() = default;
 
@@ -36,22 +44,26 @@ namespace Voicemeeter {
 
 					template<typename TBundle>
 					inline void overwrite(TBundle &target) const {
-						if (!_items
-							|| _itemId && _itemId != &target
-							|| _itemTypeId == &typeid(TBundle)) {
-							return;
+						if (_itemId) {
+							if (_itemId != &target
+								|| _itemTypeId == &typeid(TBundle)) {
+								return;
+							}
+						} else {
+							_itemId = &target;
+							_i = _items.size();
+							_items.emplace_back(nullptr);
 						}
-						_items->operator[](_i) = ::std::make_unique<
+						_items[_i] = ::std::make_unique<
 							Adapters::Bundle<TBundle>>(
 							target);
-						_itemId = &target;
 						_itemTypeId = &typeid(TBundle);
 					};
 
 				private:
 					friend Queue;
 
-					::std::vector<::std::unique_ptr<Adapters::IBundle>> *_items;
+					::std::vector<::std::unique_ptr<Adapters::IBundle>> &_items;
 					size_t _i;
 					void const *_itemId;
 					void const *_itemTypeId;
@@ -59,10 +71,10 @@ namespace Voicemeeter {
 					inline explicit slot(
 						::std::vector<::std::unique_ptr<Adapters::IBundle>> &items)
 						: _items{ &items }
-						, _i{ items.size() }
+						, _i{ 0 }
 						, _itemId{ nullptr }
 						, _itemTypeId{ nullptr } {
-						_items->emplace_back(nullptr);
+
 					};
 				};
 
@@ -77,11 +89,8 @@ namespace Voicemeeter {
 					return _items.end();
 				};
 
-				template<typename TBundle>
-				inline slot push(TBundle &item) {
-					slot target{ _items };
-					target.overwrite(item);
-					return target;
+				inline slot reserve() {
+					return slot{ _items };
 				};
 
 			private:
