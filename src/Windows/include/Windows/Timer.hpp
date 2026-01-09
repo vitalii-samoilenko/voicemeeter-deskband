@@ -43,7 +43,7 @@ namespace Windows {
 			}
 			KillTimer(_hWnd, get_Id());
 			_target = nullptr;
-			targetId = nullptr;
+			_targetId = nullptr;
 		};
 
 		inline void Elapse() {
@@ -71,57 +71,24 @@ namespace Windows {
 		class Tick final : public ITick {
 		public:
 			inline explicit Tick(TTick &target)
-				: _target{ &target }
-				, _type{ Ownership::None } {
-
-			};
-			inline explicit Tick(::std::unique_ptr<TTick> &&target)
-				: _target{ target.get() }
-				, _type{ Ownership::Exclusive }
-				, _eTarget{ ::std::move(target) } {
-
-			};
-			inline explicit Tick(::std::shared_ptr<TBundle> const &target)
-				: _target{ target.get() }
-				, _type{ Ownership::Shared }
-				, _sTarget{ target } {
+				: _target{ target } {
 
 			};
 			Tick() = delete;
 			Tick(Tick const &) = delete;
 			Tick(Tick &&) = delete;
 
-			inline ~Tick() {
-				switch(_type) {
-				case Ownership::Exclusive:
-					_eTarget = nullptr;
-					break;
-				case Ownership::Shared:
-					_sTarget = nullptr;
-					break;
-				};
-			};
+			inline ~Tick() = default;
 
 			Tick & operator=(Tick const &) = delete;
 			Tick & operator=(Tick &&) = delete;
 
 			virtual void operator()() override {
-				_target->operator()();
+				_target();
 			};
 
 		private:
-			enum class Ownership {
-				None = 0,
-				Exclusive = 1,
-				Shared = 2
-			};
-
-			TTick *_target;
-			Ownership _type;
-			union {
-				::std::unique_ptr<TBundle> _eTarget;
-				::std::shared_ptr<TBundle> _sTarget;
-			};
+			TTick &_target;
 		};
 
 		HWND _hWnd;
@@ -129,7 +96,7 @@ namespace Windows {
 	};
 
 	::std::unique_ptr<ITick> _target;
-	void *_targetId;
+	void const *_targetId;
 }
 
 #endif

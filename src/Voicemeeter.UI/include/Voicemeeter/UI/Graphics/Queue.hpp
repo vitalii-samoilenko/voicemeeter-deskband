@@ -36,34 +36,33 @@ namespace Voicemeeter {
 
 					template<typename TBundle>
 					inline void overwrite(TBundle &target) const {
-						if (_itemId != &target
+						if (!_items
+							|| _itemId && _itemId != &target
 							|| _itemTypeId == &typeid(TBundle)) {
 							return;
 						}
-						_queue->_items[_pos] = ::std::make_unique<
+						_items->operator[](_i) = ::std::make_unique<
 							Adapters::Bundle<TBundle>>(
 							target);
 						_itemId = &target;
-						_itemTypeId = const_cast<void *>(
-							&typeid(TBundle));
+						_itemTypeId = &typeid(TBundle);
 					};
 
 				private:
-					Queue *_queue;
-					size_t _pos;
-					void *_itemId;
-					void *_itemTypeId;
-
 					friend Queue;
 
-					inline slot(
-						Queue &queue,
-						size_t pos)
-						: _target{ &target }
-						, _pos{ pos }
+					::std::vector<::std::unique_ptr<Adapters::IBundle>> *_items;
+					size_t _i;
+					void const *_itemId;
+					void const *_itemTypeId;
+
+					inline explicit slot(
+						::std::vector<::std::unique_ptr<Adapters::IBundle>> &items)
+						: _items{ &items }
+						, _i{ items.size() }
 						, _itemId{ nullptr }
 						, _itemTypeId{ nullptr } {
-
+						_items->emplace_back(nullptr);
 					};
 				};
 
@@ -80,16 +79,13 @@ namespace Voicemeeter {
 
 				template<typename TBundle>
 				inline slot push(TBundle &item) {
-					slot target{ *this, _items.size() };
-					_items.emplace_back(nullptr);
+					slot target{ _items };
 					target.overwrite(item);
 					return target;
 				};
 
 			private:
 				::std::vector<::std::unique_ptr<Adapters::IBundle>> _items;
-
-				friend slot;
 			};
 		}
 	}

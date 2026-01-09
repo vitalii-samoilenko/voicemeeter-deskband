@@ -85,48 +85,39 @@ namespace Voicemeeter {
 				};
 				bool MouseLDown(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseLDown(point)
-						: false;
+						&& _tracked->MouseLDown(point);
 				};
 				bool MouseLDouble(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseLDouble(point)
-						: false;
+						&& _tracked->MouseLDouble(point);
 				};
 				bool MouseLUp(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseLUp(point)
-						: false;
+						&& _tracked->MouseLUp(point);
 				};
 				bool MouseMDown(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseMDown(point)
-						: false;
+						&& _tracked->MouseMDown(point);
 				};
 				bool MouseMDouble(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseMDouble(point)
-						: false;
+						&& _tracked->MouseMDouble(point);
 				};
 				bool MouseRDown(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseRDown(point)
-						: false;
+						&& _tracked->MouseRDown(point);
 				};
 				bool MouseRDouble(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseRDouble(point)
-						: false;
+						&& _tracked->MouseRDouble(point);
 				};
 				bool MouseWheel(::std::valarray<int> const &point, int delta) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseWheel(point, delta)
-						: false;
+						&& _tracked->MouseWheel(point, delta);
 				};
 				bool MouseMove(::std::valarray<int> const &point) {
 					return _mode == FocusT::Fixed
-						? _tracked->MouseMove(point)
-						: false;
+						&& _tracked->MouseMove(point);
 				};
 
 			private:
@@ -134,7 +125,7 @@ namespace Voicemeeter {
 
 				TInputTracker &_inputTracker;
 				::std::unique_ptr<Adapters::IComponent> _tracked;
-				void *_trackedId;
+				void const *_trackedId;
 				FocusT _mode;
 			};
 		}

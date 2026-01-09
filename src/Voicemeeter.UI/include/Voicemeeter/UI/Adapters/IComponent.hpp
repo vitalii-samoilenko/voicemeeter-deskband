@@ -1,8 +1,6 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_ICOMPONENT_HPP
 #define VOICEMEETER_UI_ADAPTERS_ICOMPONENT_HPP
 
-#include <memory>
-#include <utility>
 #include <valarray>
 
 #include "Voicemeeter/UI/Focus.hpp"
@@ -126,103 +124,70 @@ namespace Voicemeeter {
 			class Component final : public IComponent {
 			public:
 				inline explicit Component(TComponent &target)
-					: _target{ &target }
-					, _type{ Ownership::None } {
-
-				};
-				inline explicit Component(::std::unique_ptr<TComponent> &target)
-					: _target{ target.get() }
-					, _type{ Ownership::Exclusive }
-					, _eTarget{ ::std::move(target) } {
-
-				};
-				inline explicit Component(::std::shared_ptr<TComponent> const &target)
-					: _target{ target.get() }
-					, _type{ Ownership::Shared }
-					, _sTarget{ target } {
+					: _target{ target } {
 
 				};
 				Component() = delete;
 				Component(Component const &) = delete;
 				Component(Component &&) = delete;
 
-				inline ~Component() {
-					switch (_type) {
-					case Ownership::Exclusive:
-						_eTarget = nullptr;
-						break;
-					case Ownership::Shared:
-						_sTarget = nullptr;
-						break;
-					};
-				};
+				inline ~Component() = default;
 
 				Component & operator=(Component const &) = delete;
 				Component & operator=(Component &&) = delete;
 
 				virtual ::std::valarray<int> const & get_Position() const override {
-					return _target->get_Position();
+					return _target.get_Position();
 				};
 				virtual ::std::valarray<int> const & get_Size() const override {
-					return _target->get_Size();
+					return _target.get_Size();
 				};
 				virtual ::std::valarray<int> const & get_BaseSize() const override {
-					return _target->get_BaseSize();
+					return _target.get_BaseSize();
 				};
 
 				virtual void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) override {
-					_target->Redraw(point, vertex);
+					_target.Redraw(point, vertex);
 				};
 				virtual void Move(::std::valarray<int> const &point) override {
-					_target->Move(point);
+					_target.Move(point);
 				};
 				virtual void Rescale(::std::valarray<int> const &vertex) override {
-					_target->Rescale(vertex);
+					_target.Rescale(vertex);
 				};
 				virtual void Focus(Focus mode) override {
-					_target->Focus(mode);
+					_target.Focus(mode);
 				};
 				virtual bool MouseLDown(::std::valarray<int> const &point) override {
-					return _target->MouseLDown(point);
+					return _target.MouseLDown(point);
 				};
 				virtual bool MouseLDouble(::std::valarray<int> const &point) override {
-					return _target->MouseLDouble(point);
+					return _target.MouseLDouble(point);
 				};
 				virtual bool MouseLUp(::std::valarray<int> const &point) override {
-					return _target->MouseLUp(point);
+					return _target.MouseLUp(point);
 				};
 				virtual bool MouseMDown(::std::valarray<int> const &point) override {
-					return _target->MouseMDown(point);
+					return _target.MouseMDown(point);
 				};
 				virtual bool MouseMDouble(::std::valarray<int> const &point) override {
-					return _target->MouseMDouble(point);
+					return _target.MouseMDouble(point);
 				};
 				virtual bool MouseRDown(::std::valarray<int> const &point) override {
-					return _target->MouseRDown(point);
+					return _target.MouseRDown(point);
 				};
 				virtual bool MouseRDouble(::std::valarray<int> const &point) override {
-					return _target->MouseRDouble(point);
+					return _target.MouseRDouble(point);
 				};
 				virtual bool MouseWheel(::std::valarray<int> const &point, int delta) override {
-					return _target->MouseWheel(point, delta);
+					return _target.MouseWheel(point, delta);
 				};
 				virtual bool MouseMove(::std::valarray<int> const &point) override {
-					return _target->MouseMove(point);
+					return _target.MouseMove(point);
 				};
 
 			private:
-				enum class Ownership {
-					None = 0,
-					Exclusive = 1,
-					Shared = 2
-				};
-
-				TComponent *_target;
-				Ownership _type;
-				union {
-					::std::unique_ptr<TComponent> _eTarget;
-					::std::shared_ptr<TComponent> _sTarget;
-				};
+				TComponent &_target;
 			};
 		}
 	}

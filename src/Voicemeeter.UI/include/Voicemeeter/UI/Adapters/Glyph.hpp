@@ -43,7 +43,8 @@ namespace Voicemeeter {
 					TBundle::set_Invalid();
 				};
 				inline void Rescale(::std::valarray<int> const &vertex) {
-					TBundle::set_FrameSize(_scale(vertex, _baseVertex));
+					auto [frameVertex] = _scale(vertex, _baseVertex);
+					TBundle::set_FrameSize(frameVertex);
 				};
 				inline void Move(::std::valarray<int> const &point) {
 					TBundle::set_FramePosition(point);

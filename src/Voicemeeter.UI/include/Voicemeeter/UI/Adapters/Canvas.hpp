@@ -56,6 +56,10 @@ namespace Voicemeeter {
 			private:
 				class FrameTick {
 				public:
+					inline explicit FrameTick(TToolkit &toolkit)
+						: _toolkit{ toolkit } {
+
+					};
 					FrameTick() = delete;
 					FrameTick(FrameTick const &) = delete;
 					FrameTick(FrameTick &&) = delete;
@@ -71,8 +75,6 @@ namespace Voicemeeter {
 					};
 
 				private:
-					friend Canvas;
-
 					TToolkit &_toolkit;
 				};
 
