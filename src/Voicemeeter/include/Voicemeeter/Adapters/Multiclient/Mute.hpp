@@ -2,7 +2,6 @@
 #define VOICEMEETER_ADAPTERS_MULTICLIENT_MUTE_HPP
 
 #include <functional>
-#include <typeinfo>
 #include <unordered_map>
 #include <utility>
 
@@ -32,8 +31,8 @@ namespace Voicemeeter {
 						return;
 					}
 					TMute::set_Mute(value);
-					for (auto &[client, callback] : _callbacks) {
-						if (&client == &typeid(TClient)) {
+					for (auto &[clientId, callback] : _callbacks) {
+						if (clientId == &typeid(TClient)) {
 							continue;
 						}
 						callback(value);
@@ -45,61 +44,60 @@ namespace Voicemeeter {
 					token() = delete;
 					token(token const $) = delete;
 					inline token(token &&other)
-						: _client{ other._client }
-						, _target{ other._target }{
-						other._client = nullptr;
-						other._target = nullptr;
+						: _clientId{ other._clientId }
+						, _callbacks{ other._callbacks }{
+						other._clientId = nullptr;
 					};
 
 					inline ~token() {
-						if (!_client || !_target) {
+						if (!_clientId) {
 							return;
 						}
-						_target->_callbacks.erase(*_client);
-						_client = nullptr;
-						_target = nullptr;
+						_callbacks.erase(_clientId);
+						_clientId = nullptr;
 					};
 
 					token & operator=(token const &) = delete;
-					inline token & operator=(token &&other) {
-						_client = other._client;
-						_target = other._target;
-						other._client = nullptr;
-						other._target = nullptr;
-					};
+					token & operator=(token &&) = delete;
 
 					template<typename Fn>
 					inline on_mute(Fn &&callback) {
-						_target->_callbacks[*_client] = ::std::forward<Fn>(callback);
+						_callbacks[_clientId] = ::std::forward<Fn>(callback);
 					};
 
 				private:
-					::std::type_info const *_client;
-					Mute *_target;
+					friend Mute;
 
-					token(::std::type_info const &client, Mute &target)
-						: _client{ &client }
-						, _target{ &target } {
+					void const *_clientId;
+				::std::unordered_map<
+					void const *,
+					::std::function<void(bool)>
+				> &_callbacks;
+
+					token(
+						void const *clientId,
+						::std::unordered_map<
+							void const *,
+							::std::function<void(bool)>
+						> &callbacks)
+						: _clientId{ clientId }
+						, _callbacks{ callbacks } {
 
 					};
-
-					friend Mute;
 				};
 
 				template<typename TClient>
 				token Subscribe() {
-					return token{ typeid(TClient), *this };
+					return token{ &typeid(TClient), _callbacks };
 				};
 
 			private:
 				::std::unordered_map<
-					::std::type_info const &,
+					void const *,
 					::std::function<void(bool)>
 				> _callbacks;
 
 				using TMute::set_Mute;
-
-				friend token;
 			};
 		}
 	}
