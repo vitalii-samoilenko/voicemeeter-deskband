@@ -24,7 +24,7 @@ namespace Voicemeeter {
 						TDirection &&direction = TDirection{},
 						Args &&...args)
 						: TStripKnob{ ::std::forward<Args>(args)... }
-						, _timer{ timer }
+						, _releaseTick{ timer, *this }
 						, _direction{ ::std::move(direction) }
 						, _initPoint{ 0, 0 } {
 
@@ -42,28 +42,29 @@ namespace Voicemeeter {
 						if (mode != Focus::None) {
 							return;
 						}
-						set_HoldState(false);
+						_releaseTick();
 					};
 					inline bool MouseLDown(::std::valarray<int> const &point) {
-						set_HoldState(true);
+						_releaseTick.Unset();
+						TStripKnob::set_HoldState(true);
 						_initPoint = point;
 						return true;
 					};
 					inline bool MouseLDouble(::std::valarray<int> const &point) {
+						_releaseTick.Set();
 						TStripKnob::set_DefaultState();
-						SetRelease();
 						return true;
 					};
 					inline bool MouseLUp(::std::valarray<int> const &point) {
-						SetRelease();
+						_releaseTick.Set();
 						return true;
 					};
 					inline bool MouseMDown(::std::valarray<int> const &point) {
-						toggle_MuteState();
+						TStripKnob::toggle_MuteState();
 						return true;
 					};
 					inline bool MouseMDouble(::std::valarray<int> const &point) {
-						toggle_MuteState();
+						TStripKnob::toggle_MuteState();
 						return true;
 					};
 					inline bool MouseRDown(::std::valarray<int> const &point) {
@@ -73,11 +74,15 @@ namespace Voicemeeter {
 						return true;
 					};
 					inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
-						add_GainState(delta);
+						_releaseTick.Set();
+						States::StripKnob state{ TStripKnob::get_State() };
+						state.hold = true;
+						state.degree += delta;
+						TStripKnob::set_State(state);
 						return true;
 					};
 					inline bool MouseMove(::std::valarray<int> const &point) {
-						add_GainState(
+						TStripKnob::add_GainState(
 							_direction(point - _initPoint)
 							.sum());
 						_initPoint = point;
@@ -85,33 +90,47 @@ namespace Voicemeeter {
 					};
 
 				private:
-					TTimer &_timer;
+					class ReleaseTick final {
+					public:
+						inline ReleaseTick(
+							TTimer &timer,
+							TStripKnob &stripKnob)
+							: _timer{ timer }
+							, _stripKnob{ stripKnob } {
+
+						};
+						ReleaseTick() = delete;
+						ReleaseTick(ReleaseTick const &) = delete;
+						ReleaseTick(ReleaseTick &&) = delete;
+
+						inline ~ReleaseTick() = default;
+
+						ReleaseTick & operator=(ReleaseTick const &) = delete;
+						ReleaseTick & operator=(ReleaseTick &&) = delete;
+
+						inline void operator()() const {
+							Unset();
+							_stripKnob.set_HoldState(false);
+						};
+
+						inline void Set() {
+							_timer.Set(
+								::std::chrono::milliseconds{ 2000 },
+								*this);
+						};
+						inline void Unset() {
+							_timer.Unset(
+								*this);
+						};
+
+					private:
+						TTimer &_timer;
+						TStripKnob &_stripKnob;
+					};
+
+					ReleaseTick _releaseTick;
 					TDirection _direction;
 					::std::valarray<int> _initPoint;
-
-					inline void set_HoldState(bool value) {
-						State::StripKnob state{ TStripKnob::get_State() };
-						state.hold = value;
-						TStripKnob::set_State(state);
-					};
-					inline void toggle_MuteState() {
-						State::StripKnob state{ TStripKnob::get_State() };
-						state.toggle = !state.toggle;
-						TStripKnob::set_State(state);
-					};
-					inline void add_GainState(int value) {
-						State::StripKnob state{ TStripKnob::get_State() };
-						state.degree += value;
-						TStripKnob::set_State(state);
-					};
-
-					inline void SetRelease() {
-						_timer.Set(::std::chrono::milliseconds{ 2000 },
-							[this]()->void {
-								set_HoldState(false);
-								return false;
-							});
-					};
 				};
 			}
 		}

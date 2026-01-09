@@ -8,11 +8,11 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Glyph {
 				namespace Updates {
-					template<typename TPalette, typename TVban>
+					template<typename TToolkit, typename TVban>
 					class Vban {
 					public:
-						inline explicit Vban(TPalette &palette)
-							: _palette{ palette } {
+						inline explicit Vban(TToolkit &toolkit)
+							: _toolkit{ toolkit } {
 
 						};
 						Vban() = delete;
@@ -27,17 +27,16 @@ namespace Voicemeeter {
 						inline void operator()(TVban &glyph, int state) const {
 							::std::valarray<int> const &rgba{
 								state == 0
-									? _palette.get_Theme()
+									? _toolkit.get_Theme()
 										.Inactive
-									: _palette.get_Theme()
+									: _toolkit.get_Theme()
 										.Information
 							};
-							glyph.set_Color(rgba);
-							glyph.set_LabelColor(rgba);
+							glyph.set_FrameColor(rgba);
 						};
 
 					private:
-						TPalette &_palette;
+						TToolkit &_toolkit;
 					};
 				}
 			}

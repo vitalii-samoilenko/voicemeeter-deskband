@@ -12,17 +12,17 @@ namespace Voicemeeter {
 						template<typename TPlug>
 						struct Plug {
 							inline void operator()(TPlug &glyph, int state) const {
-								glyph.set_AnimationVelocitySize(::std::valarray<int>{
+								glyph.set_AnimationSize(::std::valarray<int>{
 									state == 0 ? -1 : 1
 								});
 							};
 						};
 
-						template<typename TPalette, typename TPlug>
+						template<typename TToolkit, typename TPlug>
 						class PlugFrame {
 						public:
-							inline explicit PlugFrame(TPalette &palette)
-								: _palette{ palette } {
+							inline explicit PlugFrame(TToolkit &toolkit)
+								: _toolkit{ toolkit } {
 
 							};
 							PlugFrame() = delete;

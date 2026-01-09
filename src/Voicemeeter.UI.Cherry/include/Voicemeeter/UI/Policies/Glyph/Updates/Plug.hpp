@@ -8,11 +8,11 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Glyph {
 				namespace Updates {
-					template<typename TPalette, typename TPlug>
+					template<typename TToolkit, typename TPlug>
 					class Plug {
 					public:
-						inline explicit Plug(TPalette &palette)
-							: _palette{ palette } {
+						inline explicit Plug(TToolkit &toolkit)
+							: _toolkit{ toolkit } {
 
 						};
 						Plug() = delete;
@@ -27,17 +27,16 @@ namespace Voicemeeter {
 						inline void operator()(TPlug &glyph, int state) const {
 							::std::valarray<int> const &rgba{
 								state == 0
-									? _palette.get_Theme()
+									? _toolkit.get_Theme()
 										.Inactive
-									: _palette.get_Theme()
+									: _toolkit.get_Theme()
 										.Active
 							};
-							glyph.set_Color(rgba);
-							glyph.set_LabelColor(rgba);
+							glyph.set_FrameColor(rgba);
 						};
 
 					private:
-						TPalette &_palette;
+						TToolkit &_toolkit;
 					};
 				}
 			}

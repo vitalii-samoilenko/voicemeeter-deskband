@@ -1,8 +1,6 @@
 #ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_STRIPKNOB_HPP
 #define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_STRIPKNOB_HPP
 
-#include <cmath>
-#include <string>
 #include <valarray>
 
 #include "Voicemeeter/UI/States/StripKnob.hpp"
@@ -12,11 +10,11 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Glyph {
 				namespace Updates {
-					template<typename TPalette, typename TKnob>
+					template<typename TToolkit, typename TKnob>
 					class StripKnob {
 					public:
-						inline explicit StripKnob(TPalette &palette)
-							: _palette{ palette } {
+						inline explicit StripKnob(TToolkit &toolkit)
+							: _toolkit{ toolkit } {
 
 						};
 						StripKnob() = delete;
@@ -32,37 +30,32 @@ namespace Voicemeeter {
 							int maxLevel{ state.level.max() };
 							::std::valarray<int> const &rgba{
 								state.toggle
-									? _palette.get_Theme()
+									? _toolkit.get_Theme()
 										.Warning
 									: state.hold
 										? 0 < state.degree
-											? _palette.get_Theme()
+											? _toolkit.get_Theme()
 												.Error
-											: _palette.get_Theme()
+											: _toolkit.get_Theme()
 												.Ok
 										: 700 < maxLevel
 											? 1000 < maxLevel
-												? _palette.get_Theme()
+												? _toolkit.get_Theme()
 													.EqHigh
-												: _palette.get_Theme()
+												: _toolkit.get_Theme()
 													.EqNormal
 											: 5 < maxLevel
-												? _palette.get_Theme()
+												? _toolkit.get_Theme()
 													.EqLow
-												: _palette.get_Theme()
+												: _toolkit.get_Theme()
 													.Inactive
 							};
-							glyph.set_Color(rgba);
-							glyph.set_Angle(state.degree);
-							glyph.set_Label(state.hold
-								? ::std::to_string(::std::abs(state.degree)
-									/ (45 * SCALING_FACTOR / 12))
-								: state.label);
-							glyph.set_LabelColor(rgba);
+							glyph.set_FrameColor(rgba);
+							glyph.set_IndicatorAngle(state.degree);
 						};
 
 					private:
-						TPalette &_palette;
+						TToolkit &_toolkit;
 					};
 				}
 			}

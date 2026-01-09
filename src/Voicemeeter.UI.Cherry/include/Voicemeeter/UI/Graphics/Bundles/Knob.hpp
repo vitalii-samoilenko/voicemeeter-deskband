@@ -2,18 +2,21 @@
 #define VOICEMEETER_UI_GRAPHICS_BUNDLES_KNOB_HPP
 
 #include <bitset>
-#include <string_view>
 #include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {
 			namespace Bundles {
-				template<typename TPalette>
+				template<typename TToolkit>
 				class Knob {
 				public:
-					inline explicit Knob(TPalette &palette)
-						: _palette{ palette }
+					inline explicit Knob(TToolkit &toolkit)
+						: _toolkit{ toolkit }
+						, _slot{
+							_toolkit.get_Queue()
+								.reserve()
+						}
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
@@ -25,10 +28,7 @@ namespace Voicemeeter {
 						, _indicatorVertex{ 0, 0 }
 						, _indicatorAtlasPoint{ 0, 0 }
 						, _indicatorAtlasVertex{ 0, 0 }
-						, _indicatorRgba{ 0, 0, 0, 0 }
-						, _indicatorTextPoint{ 0, 0 }
-						, _indicatorTextVertex{ 0, 0 }
-						, _indicatorTextColor{ 0, 0, 0, 0 }
+						, _indicatorRgba{ 0, 0, 0, 0 } {
 
 					};
 					Knob() = delete;
@@ -40,74 +40,74 @@ namespace Voicemeeter {
 					Knob & operator=(Knob const &) = delete;
 					Knob & operator=(Knob &&) = delete;
 
-					inline ::std::valarray<int> const & get_Position() const {
+					inline ::std::valarray<int> const & get_FramePosition() const {
 						return _framePoint;
 					};
-					inline ::std::valarray<int> const & get_Size() const {
+					inline ::std::valarray<int> const & get_FrameSize() const {
 						return _frameVertex;
 					};
 
-					inline void set_Position(::std::valarray<int> const &point) {
-						OnSet(_framePoint, point, framePoint);
+					inline void set_FramePosition(::std::valarray<int> const &point) {
+						OnSet(_framePoint, point, FramePoint);
 					};
-					inline void set_Size(::std::valarray<int> const &vertex) {
-						OnSet(_frameVertex, vertex, frameVertex);
+					inline void set_FrameSize(::std::valarray<int> const &vertex) {
+						OnSet(_frameVertex, vertex, FrameVertex);
 					};
-					inline void set_Color(::std::valarray<int> const &rgba) {
-						OnSet(_frameRgba, rgba, frameRgba);
+					inline void set_FrameColor(::std::valarray<int> const &rgba) {
+						OnSet(_frameRgba, rgba, FrameRgba);
 					};
-					inline void set_Angle(int degree) {
-						OnSet(_indicatorDegree, degree, indicatorDegree);
+					inline void set_IndicatorAngle(int degree) {
+						OnSet(_indicatorDegree, degree, IndicatorDegree);
 					};
 					inline void set_IndicatorColor(::std::valarray<int> const &rgba) {
-						OnSet(_indicatorRgba, rgba, indicatorRgba);
-					};
-					inline void set_Label(::std::string_view text) {
-
-					};
-					inline void set_LabelColor(::std::valarray<int> const &rgba) {
-
+						OnSet(_indicatorRgba, rgba, IndicatorRgba);
 					};
 					inline void set_Invalid() {
-						OnInvalidate(renderTarget);
+						OnInvalidate(RenderTarget);
 					};
 
 					inline void operator()() {
-						if (_changes.test(frameVertex)) {
-							_changes.set(framePoint);
+						if (_changes.test(FrameVertex)) {
+							_changes.set(FramePoint);
 						}
-						if (_changes.test(framePoint)) {
-							_changes.set(indicatorDegree);
+						if (_changes.test(FramePoint)) {
+							_changes.set(IndicatorDegree);
 						}
-						if (_changes.test(indicatorDegree) {
+						if (_changes.test(IndicatorDegree) {
 						}
 						_changes.reset();
-						_palette.get_Atlas()
+						_slot.reset();
+						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba);
-						_palette.get_Atlas()
+						_toolkit.get_Atlas()
 							.FillSDF(
 								_indicatorAtlasPoint, _indicatorAtlasVertex,
 								_indicatorPoint, _indicatorVertex,
 								_indicatorRgba);
 					};
 
-				private:
-					enum flags : size_t {
-						framePoint,
-						frameVertex,
-						frameRgba,
-						indicatorDegree,
-						indicatorRgba,
-						indicatorText,
-						indicatorTextRgba,
-						renderTarget
+				protected:
+					inline slot_t & get_Slot() {
+						return _slot;
 					};
 
-					TPalette &_palette;
-					::std::bitset<renderTarget + 1> _changes;
+				private:
+					using slot_t = decltype(_toolkit.get_Queue())::slot;
+					enum flags_t : size_t {
+						FramePoint,
+						FrameVertex,
+						FrameRgba,
+						IndicatorDegree,
+						IndicatorRgba,
+						RenderTarget
+					};
+
+					TToolkit &_toolkit;
+					slot_t _slot;
+					::std::bitset<RenderTarget + 1> _changes;
 					::std::valarray<int> _framePoint;
 					::std::valarray<int> _frameVertex;
 					::std::valarray<int> _frameAtlasPoint;
@@ -119,22 +119,18 @@ namespace Voicemeeter {
 					::std::valarray<int> _indicatorAtlasPoint;
 					::std::valarray<int> _indicatorAtlasVertex;
 					::std::valarray<int> _indicatorRgba;
-					::std::valarray<int> _indicatorTextPoint;
-					::std::valarray<int> _indicatorTextVertex;
-					::std::valarray<int> _indicatorTextRgba;
 
 					template<typename T>
-					inline void OnSet(T &dst, T const &src, flags property) {
+					inline void OnSet(T &dst, T const &src, flags_t property) {
 						if (src == dst) {
 							return;
 						}
 						dst = src;
 						OnInvalidate(property);
 					};
-					inline void OnInvalidate(flags property) {
+					inline void OnInvalidate(flags_t property) {
 						if (_changes.none()) {
-							_palette.get_Queue()
-								+= *this;
+							_slot.overwrite(*this);
 						}
 						_changes.set(property);
 					};

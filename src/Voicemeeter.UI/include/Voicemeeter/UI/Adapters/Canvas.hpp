@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_CANVAS_HPP
 #define VOICEMEETER_UI_ADAPTERS_CANVAS_HPP
 
+#include <chrono>
 #include <utility>
 #include <valarray>
 
@@ -17,8 +18,7 @@ namespace Voicemeeter {
 					TTimer &timer,
 					Args &&...args)
 					: TToolkit{ ::std::forward<Args>(args) }
-					, _timer{ timer }
-					, _frameTick{ *this }
+					, _frameTick{ timer, *this }
 					, _point{ 0, 0 } {
 
 				};
@@ -47,10 +47,10 @@ namespace Voicemeeter {
 						.set_Size(vertex);
 				};
 				inline void Show() {
-					_timer.Set(_frameTick);
+					_frameTick.Set();
 				};
 				inline void Hide() {
-					_timer.Unset(_frameTick);
+					_frameTick.Unset();
 				};
 
 			private:
@@ -74,11 +74,21 @@ namespace Voicemeeter {
 							.Update();
 					};
 
+					inline void Set() {
+						_timer.Set(
+							::std::chrono::milliseconds{ 17 },
+							*this);
+					};
+					inline void Unset() {
+						_timer.Unset(
+							*this);
+					};
+
 				private:
+					TTimer &_timer;
 					TToolkit &_toolkit;
 				};
 
-				TTimer &_timer;
 				FrameTick _frameTick;
 				::std::valarray<int> _point;
 			};

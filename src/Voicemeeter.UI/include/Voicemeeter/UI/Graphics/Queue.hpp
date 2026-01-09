@@ -28,13 +28,11 @@ namespace Voicemeeter {
 					slot() = delete;
 					slot(slot const &) = delete;
 					inline slot(slot &&other)
-						: _items{ other.items }
+						: _items{ other._items }
 						, _i{ other._i }
-						, _itemId{ other._itemId }
-						, _itemTypeId{ other._itemTypeId } {
+						, _itemId{ other._itemId } {
 						other._i = 0;
 						other._itemId = nullptr;
-						other._itemTypeId = nullptr;
 					};
 
 					inline ~slot() = default;
@@ -43,21 +41,21 @@ namespace Voicemeeter {
 					slot & operator=(slot &&) = delete;
 
 					template<typename TBundle>
-					inline void overwrite(TBundle &target) const {
-						if (_itemId) {
-							if (_itemId != &target
-								|| _itemTypeId == &typeid(TBundle)) {
-								return;
-							}
-						} else {
-							_itemId = &target;
+					inline void overwrite(TBundle &target) {
+						if (_itemId == &typeid(TBundle)) {
+							return;
+						} else if (_itemId == nullptr) {
 							_i = _items.size();
 							_items.emplace_back(nullptr);
 						}
 						_items[_i] = ::std::make_unique<
 							Adapters::Bundle<TBundle>>(
 							target);
-						_itemTypeId = &typeid(TBundle);
+						_itemId = &typeid(TBundle);
+					};
+					inline void reset() {
+						_i = 0;
+						_itemId = nullptr;
 					};
 
 				private:
@@ -66,14 +64,12 @@ namespace Voicemeeter {
 					::std::vector<::std::unique_ptr<Adapters::IBundle>> &_items;
 					size_t _i;
 					void const *_itemId;
-					void const *_itemTypeId;
 
 					inline explicit slot(
 						::std::vector<::std::unique_ptr<Adapters::IBundle>> &items)
-						: _items{ &items }
+						: _items{ items }
 						, _i{ 0 }
-						, _itemId{ nullptr }
-						, _itemTypeId{ nullptr } {
+						, _itemId{ nullptr } {
 
 					};
 				};
