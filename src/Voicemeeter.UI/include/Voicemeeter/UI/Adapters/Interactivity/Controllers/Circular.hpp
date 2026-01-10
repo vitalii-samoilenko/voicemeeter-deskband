@@ -32,13 +32,13 @@ namespace Voicemeeter {
 						Circular & operator=(Circular &&) = delete;
 
 						inline void set_NextState() {
-							state_t dst{ TStateControl::get_State() };
-							if (_max - _delta < dst) {
-								dst = _min;
+							state_t state{ TStateControl::get_State() };
+							if (_max - _delta < state) {
+								state = _min;
 							} else {
-								dst += _delta;
+								state += _delta;
 							}
-							TStateControl::set_State(dst);
+							TStateControl::set_State(state);
 						};
 
 					private:
