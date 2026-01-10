@@ -42,7 +42,8 @@ namespace Voicemeeter {
 						if (mode != Focus::None) {
 							return;
 						}
-						_releaseTick();
+						_releaseTick.Unset();
+						TStripKnob::set_HoldState(false);
 					};
 					inline bool MouseLDown(::std::valarray<int> const &point) {
 						_releaseTick.Unset();
@@ -75,10 +76,7 @@ namespace Voicemeeter {
 					};
 					inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
 						_releaseTick.Set();
-						States::StripKnob state{ TStripKnob::get_State() };
-						state.hold = true;
-						state.degree += delta;
-						TStripKnob::set_State(state);
+						TStripKnob::add_GainState(delta);
 						return true;
 					};
 					inline bool MouseMove(::std::valarray<int> const &point) {
