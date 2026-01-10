@@ -1,61 +1,60 @@
-#ifndef VOICEMEETER_UI_DECORATORS_INTERACTIVITY_CAROUSEL_HPP
-#define VOICEMEETER_UI_DECORATORS_INTERACTIVITY_CAROUSEL_HPP
+#ifndef VOICEMEETER_UI_ADAPTERS_INTERACTIVITY_TRANSPARENT_HPP
+#define VOICEMEETER_UI_ADAPTERS_INTERACTIVITY_TRANSPARENT_HPP
 
 #include <utility>
+#include <valarray>
 
 #include "Voicemeeter/UI/Focus.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
-		namespace Decorators {
+		namespace Adapters {
 			namespace Interactivity {
-				template<typename TCircularControl>
-				class Carousel : public TCircularControl {
+				template<typename TGlyph>
+				class Transparent : public TGlyph {
 				public:
 					template<typename... Args>
-					inline explicit Carousel(Args &&...args)
-						: TCircularControl{ ::std::forward<Args>(args)... } {
+					inline explicit Transparent(Args &&...args)
+						: TGlyph{ ::std::forward<Args>(args)... } {
 
 					};
-					Carousel(Carousel const &) = delete;
-					Carousel(Carousel &&) = delete;
+					Transparent(Transparent const &) = delete;
+					Transparent(Transparent &&) = delete;
 
-					inline ~Carousel() = default;
+					inline ~Transparent() = default;
 
-					Carousel & operator=(Carousel const &) = delete;
-					Carousel & operator=(Carousel &&) = delete;
+					Transparent & operator=(Transparent const &) = delete;
+					Transparent & operator=(Transparent &&) = delete;
 
 					inline void Focus(Focus mode) {
 
 					};
 					inline bool MouseLDown(::std::valarray<int> const &point) {
-						TCircularControl::set_NextState();
-						return true;
+						return false;
 					};
 					inline bool MouseLDouble(::std::valarray<int> const &point) {
-						TCircularControl::set_NextState();
-						return true;
+						return false;
 					};
 					inline bool MouseLUp(::std::valarray<int> const &point) {
-						return true;
+						return false;
 					};
 					inline bool MouseMDown(::std::valarray<int> const &point) {
-						return true;
+						return false;
 					};
 					inline bool MouseMDouble(::std::valarray<int> const &point) {
-						return true;
+						return false;
 					};
 					inline bool MouseRDown(::std::valarray<int> const &point) {
-						return true;
+						return false;
 					};
 					inline bool MouseRDouble(::std::valarray<int> const &point) {
-						return true;
+						return false;
 					};
 					inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
-						return true;
+						return false;
 					};
 					inline bool MouseMove(::std::valarray<int> const &point) {
-						return true;
+						return false;
 					};
 				};
 			}
