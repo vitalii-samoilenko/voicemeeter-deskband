@@ -7,7 +7,9 @@
 namespace Voicemeeter {
 	namespace UI {
 		namespace Adapters {
-			template<typename TBundle, typename TScale>
+			template<
+				typename TBundle,
+				typename TScale>
 			class Glyph : public TBundle {
 			public:
 				template<typename... Args>
@@ -39,7 +41,9 @@ namespace Voicemeeter {
 					return _baseVertex;
 				};
 
-				inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
+				inline void Redraw(
+					::std::valarray<int> const &point,
+					::std::valarray<int> const &vertex) {
 					TBundle::set_Invalid();
 				};
 				inline void Rescale(::std::valarray<int> const &vertex) {

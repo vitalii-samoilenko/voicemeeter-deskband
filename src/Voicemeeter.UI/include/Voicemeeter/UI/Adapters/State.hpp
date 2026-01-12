@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_STATE_HPP
 #define VOICEMEETER_UI_ADAPTERS_STATE_HPP
 
+#include <optional>
 #include <utility>
 
 namespace Voicemeeter {
@@ -8,18 +9,20 @@ namespace Voicemeeter {
 		namespace Adapters {
 			template<
 				typename TControl,
-				typename TState,
+				typename TValue,
 				typename TNotify,
 				typename TUpdate>
 			class State : public TControl {
 			public:
+				using state_t = TValue;
+
 				template<typename... Args>
 				inline State(
 					TNotify &&notify = TNotify{},
 					TUpdate &&update = TUpdate{},
 					Args &&...args)
 					: TControl{ ::std::forward<Args>(args)... }
-					, _state{}
+					, _value{}
 					, _update{ ::std::move(update) }
 					, _notify{ ::std::move(notify) } {
 
@@ -33,17 +36,17 @@ namespace Voicemeeter {
 				State & operator=(State const &) = delete;
 				State & operator=(State &&) = delete;
 
-				inline TState const & get_State() const {
-					return _state;
+				inline state_t const & get_State() const {
+					return _value;
 				};
-				inline void set_State(TState const &value) {
-					_state = value;
-					_notify(_state);
-					_update(*this, _state);
+				inline void set_State(state_t const &value) {
+					_value = value;
+					_notify(_value);
+					_update(*this, _value);
 				};
 
 			private:
-				TState _state;
+				::std::optional<state_t> _value;
 				TNotify _notify;
 				TUpdate _update;
 			};

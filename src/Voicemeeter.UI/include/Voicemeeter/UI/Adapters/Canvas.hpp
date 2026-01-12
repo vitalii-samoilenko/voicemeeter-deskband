@@ -22,6 +22,7 @@ namespace Voicemeeter {
 					, _point{ 0, 0 } {
 
 				};
+				Canvas() = delete;
 				Canvas(Canvas const &) = delete;
 				Canvas(Canvas &&) = delete;
 
@@ -38,7 +39,9 @@ namespace Voicemeeter {
 						.get_Size();
 				};
 
-				inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
+				inline void Redraw(
+					::std::valarray<int> const &point,
+					::std::valarray<int> const &vertex) {
 					TToolkit::get_Frame()
 						.Present(point, vertex);
 				};

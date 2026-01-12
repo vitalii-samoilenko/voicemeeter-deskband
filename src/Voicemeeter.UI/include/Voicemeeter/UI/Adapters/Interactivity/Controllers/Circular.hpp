@@ -11,6 +11,8 @@ namespace Voicemeeter {
 					template<typename TStateControl>
 					class Circular : public TStateControl {
 					public:
+						using state_t = typename TStateControl::state_t;
+
 						template<typename... Args>
 						inline Circular(
 							state_t const &min,
@@ -42,8 +44,6 @@ namespace Voicemeeter {
 						};
 
 					private:
-						using state_t = decltype(TStateControl::get_State());
-
 						state_t _min;
 						state_t _max;
 						state_t _delta;

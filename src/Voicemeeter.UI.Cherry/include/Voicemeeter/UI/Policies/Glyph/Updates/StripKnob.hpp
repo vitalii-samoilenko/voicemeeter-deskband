@@ -27,7 +27,6 @@ namespace Voicemeeter {
 						StripKnob & operator=(StripKnob &&) = delete;
 
 						inline void operator()(TKnob &glyph, States::StripKnob const &state) const {
-							int maxLevel{ state.level.max() };
 							::std::valarray<int> const &rgba{
 								state.toggle
 									? _toolkit.get_Theme()
@@ -38,13 +37,13 @@ namespace Voicemeeter {
 												.Error
 											: _toolkit.get_Theme()
 												.Ok
-										: 700 < maxLevel
-											? 1000 < maxLevel
+										: 700 < state.level
+											? 1000 < state.level
 												? _toolkit.get_Theme()
 													.EqHigh
 												: _toolkit.get_Theme()
 													.EqNormal
-											: 5 < maxLevel
+											: 5 < state.level
 												? _toolkit.get_Theme()
 													.EqLow
 												: _toolkit.get_Theme()

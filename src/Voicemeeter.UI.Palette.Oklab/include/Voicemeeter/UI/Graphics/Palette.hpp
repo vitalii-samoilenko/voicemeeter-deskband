@@ -21,6 +21,49 @@ namespace Voicemeeter {
 
 				class gradient final {
 				public:
+					gradient() = delete;
+					inline gradient(gradient const &) = default;
+					inline gradient(gradient &&) = default;
+
+					inline ~gradient() = default;
+
+					inline gradient & operator=(gradient const &) = default;
+					inline gradient & operator=(gradient &&) = default;
+
+					inline ::std::valarray<int> pick(int at) const {
+						float atF{ to_float(at) };
+						float atFi{ to_float(SCALING_FACTOR - at) };
+						::ok_color::RGB target{
+							::ok_color::oklab_to_linear_srgb(
+								::ok_color::Lab{
+									_from.L * atFi + _to.L * atF,
+									_from.a * atFi + _to.a * atF,
+									_from.b * atFi + _to.b * atF
+								})
+						};
+						return ::std::valarray<int>{
+							to_int(
+								::ok_color::srgb_transfer_function_inv(
+									target.r)),
+							to_int(
+								::ok_color::srgb_transfer_function_inv(
+									target.r)),
+							to_int(
+								::ok_color::srgb_transfer_function_inv(
+									target.r)),
+							(_fromA * (SCALING_FACTOR - at) + _toA * at)
+								/ SCALING_FACTOR
+						};
+					};
+
+				private:
+					friend Palette;
+
+					::ok_color::Lab _from;
+					::ok_color::Lab _to;
+					int _fromA;
+					int _toA;
+
 					inline gradient(
 						::std::valarray<int> const &from,
 						::std::valarray<int> const &to)
@@ -50,46 +93,6 @@ namespace Voicemeeter {
 						, _toA{ to[3] } {
 
 					};
-					gradient() = delete;
-					inline gradient(gradient const &) = default;
-					inline gradient(gradient &&) = default;
-
-					inline ~gradient() = default;
-
-					inline gradient & operator=(gradient const &) = default;
-					inline gradient & operator=(gradient &&) = default;
-
-					inline ::std::valarray<int> Pick(int at) const {
-						float atF{ to_float(at) };
-						float atFi{ to_float(SCALING_FACTOR - at) };
-						::ok_color::RGB target{
-							::ok_color::oklab_to_linear_srgb(
-								::ok_color::Lab{
-									_from.L * atFi + _to.L * atF,
-									_from.a * atFi + _to.a * atF,
-									_from.b * atFi + _to.b * atF
-								})
-						};
-						return ::std::valarray<int>{
-							to_int(
-								::ok_color::srgb_transfer_function_inv(
-									target.r)),
-							to_int(
-								::ok_color::srgb_transfer_function_inv(
-									target.r)),
-							to_int(
-								::ok_color::srgb_transfer_function_inv(
-									target.r)),
-							(_fromA * (SCALING_FACTOR - at) + _toA * at)
-								/ SCALING_FACTOR
-						};
-					};
-
-				private:
-					::ok_color::Lab _from;
-					::ok_color::Lab _to;
-					int _fromA;
-					int _toA;
 
 					inline static float to_float(int n) {
 						return static_cast<float>(n) / SCALING_FACTOR;

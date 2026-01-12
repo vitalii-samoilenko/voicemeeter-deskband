@@ -53,10 +53,6 @@ namespace Voicemeeter {
 							target);
 						_itemId = &typeid(TBundle);
 					};
-					inline void reset() {
-						_i = 0;
-						_itemId = nullptr;
-					};
 
 				private:
 					friend Queue;

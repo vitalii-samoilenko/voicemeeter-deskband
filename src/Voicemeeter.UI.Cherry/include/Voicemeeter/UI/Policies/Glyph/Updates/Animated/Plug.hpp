@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_PLUG_HPP
 #define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_PLUG_HPP
 
+#include <cmath>
 #include <valarray>
 
 namespace Voicemeeter {
@@ -9,12 +10,34 @@ namespace Voicemeeter {
 			namespace Glyph {
 				namespace Updates {
 					namespace Animated {
-						template<typename TPlug>
+						template<typename TToolkit>
+						struct PlugContext {
+							typename TToolkit::Palette::gradient path;
+							int distanceQ
+						};
+
+						template<typename TToolkit, typename TPlug>
 						struct Plug {
 							inline void operator()(TPlug &glyph, int state) const {
-								glyph.set_AnimationSize(::std::valarray<int>{
-									state == 0 ? -1 : 1
-								});
+								glyph.set_AnimationSize(
+									::std::valarray<int>{ state * 200 });
+								::std::valarray<int> animationVertex{
+									glyph.get_AnimationSize()
+									- glyph.get_AnimationPoint()
+								};
+								glyph.set_AnimationContext(
+									PlugContext<TToolkit>{
+										_toolkit.get_Palette()
+											.Interpolate(
+												glyph.get_FrameColor(),
+												0 < state
+													? _toolkit.get_Theme()
+														.Active
+													: _toolkit.get_Theme()
+														.Inactive)),
+										(animationVertex * animationVertex)
+											.sum()
+									});
 							};
 						};
 
@@ -35,25 +58,28 @@ namespace Voicemeeter {
 							PlugFrame & operator=(PlugFrame &&) = delete;
 
 							inline void operator()(TPlug glyph) const {
-								enum dimension : size_t {
-									/* inactive */ active = 0
+								::std::valarray<int> animationVertex{
+									glyph.get_AnimationSize()
+									- glyph.get_AnimationPoint()
 								};
-								::std::valarray<int> normalizedAnimationVertex{
-									(glyph.get_AnimationSize() * SCALING_FACTOR)
-										/ glyph.get_AnimationBaseSize()
+								int remainingQ{
+									(animationVertex * animationVertex)
+										.sum()
 								};
-								::std::valarray<int> rgba{
-									_palette.get_Theme()
-										.Inactive
+								PlugContext<TToolkit> const &context{
+									glyph.get_AnimationContext()
 								};
-								_palette.Blend(rgba, _palette.get_Theme()
-									.Active, normalizedAnimationVertex[active]);
-								glyph.set_Color(rgba);
-								glyph.set_LabelColor(rgba);
+								int at{
+									SCALING_FACTOR - ::std::sqrt(
+										remainingQ * SCALING_FACTOR / context.distanceQ
+										* SCALING_FACTOR)
+								};
+								glyph.set_FrameColor(
+									context.path.pick(at));
 							};
 
 						private:
-							TPalette &_palette;
+							TToolkit &_toolkit;
 						};
 					}
 				}

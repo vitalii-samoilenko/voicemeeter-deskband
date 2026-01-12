@@ -2,6 +2,7 @@
 #define VOICEMEETER_UI_GRAPHICS_BUNDLES_PLUG_HPP
 
 #include <bitset>
+#include <optional>
 #include <valarray>
 
 namespace Voicemeeter {
@@ -13,10 +14,7 @@ namespace Voicemeeter {
 				public:
 					inline explicit Plug(TToolkit &toolkit)
 						: _toolkit{ toolkit }
-						, _slot{
-							_toolkit.get_Queue()
-								.reserve()
-						}
+						, _slot{}
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
@@ -39,6 +37,9 @@ namespace Voicemeeter {
 					};
 					inline ::std::valarray<int> const & get_FrameSize() const {
 						return _frameVertex;
+					};
+					inline ::std::valarray<int> const & get_FrameColor() const {
+						return _frameRgba;
 					};
 
 					inline void set_FramePosition(::std::valarray<int> const &point) {
@@ -86,7 +87,7 @@ namespace Voicemeeter {
 					};
 
 					TToolkit &_toolkit;
-					slot_t _slot;
+					::std::optional<slot_t> _slot;
 					::std::bitset<RenderTarget + 1> _changes;
 					::std::valarray<int> _framePoint;
 					::std::valarray<int> _frameVertex;
@@ -104,6 +105,8 @@ namespace Voicemeeter {
 					};
 					inline void OnInvalidate(flags_t property) {
 						if (_changes.none()) {
+							_slot = _toolkit.get_Queue()
+								.reserve();
 							_slot.overwrite(*this);
 						}
 						_changes.set(property);

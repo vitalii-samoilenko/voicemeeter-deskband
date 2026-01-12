@@ -19,7 +19,9 @@ namespace Voicemeeter {
 				virtual ::std::valarray<int> const & get_Position() const = 0;
 				virtual ::std::valarray<int> const & get_Size() const = 0;
 
-				virtual void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) = 0;
+				virtual void Redraw(
+					::std::valarray<int> const &point,
+					::std::valarray<int> const &vertex) = 0;
 
 			protected:
 				inline IVisible() = default;
@@ -146,7 +148,9 @@ namespace Voicemeeter {
 					return _target.get_BaseSize();
 				};
 
-				virtual void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) override {
+				virtual void Redraw(
+					::std::valarray<int> const &point,
+					::std::valarray<int> const &vertex) override {
 					_target.Redraw(point, vertex);
 				};
 				virtual void Move(::std::valarray<int> const &point) override {

@@ -2,6 +2,7 @@
 #define VOICEMEETER_UI_ADAPTERS_GRAPHICS_ANIMATED_HPP
 
 #include <cmath>
+#include <optional>
 #include <tuple>
 #include <utility>
 #include <valarray>
@@ -12,8 +13,37 @@ namespace Voicemeeter {
 			namespace Graphics {
 				template<
 					typename TBundle,
+					typename TValue>
+				class Context : public TBundle {
+				public:
+					template<typename... Args>
+					inline explicit Context(Args &&...args)
+						: TBundle{ ::std::forward<Args>(args)... } {
+
+					};
+					Context(Context const &) = delete;
+					Context(Context &&) = delete;
+
+					inline ~Context() = default;
+
+					Context & operator=(Context const &) = delete;
+					Context & operator=(Context &&) = delete;
+
+					inline TValue const & get_AnimationContext() const {
+						return _value;
+					};
+					inline void set_AnimationContext(TValue const &value) {
+						_value = value;
+					};
+
+				private:
+					::std::optional<TValue> _value;
+				};
+
+				template<
+					typename TBundle,
 					typename TToolkit,
-					typename TUpdateFrame,
+					typename TUpdate,
 					typename... TSubSpaces>
 				class Animated : public TBundle {
 				public:
@@ -21,14 +51,14 @@ namespace Voicemeeter {
 					inline Animated(
 						TToolkit &toolkit,
 						TSubSpaces &&...subSpaces,
-						TUpdateFrame &&updateFrame = TUpdateFrame{},
+						TUpdate &&update = TUpdate{},
 						Args &&...args)
 						: TBundle{ ::std::forward<Args>(args)... }
 						, _toolkit{ toolkit }
-						, _animationPoint(0, (subSpaces.size() + ...))
-						, _animationVertex{ _animationPoint }
+						, _point(0, (subSpaces.size() + ...))
+						, _vertex{ _point }
 						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces)... }
-						, _updateFrame{ ::std::move(updateFrame) } {
+						, _update{ ::std::move(update) } {
 
 					};
 					Animated() = delete;
@@ -41,54 +71,67 @@ namespace Voicemeeter {
 					Animated & operator()(Animated &&) = delete;
 
 					inline ::std::valarray<int> const & get_AnimationPosition() const {
-						return _animationPoint;
+						return _point;
 					};
 					inline ::std::valarray<int> const & get_AnimationSize() const {
-						return _animationVertex;
+						return _vertex;
 					};
 
 					inline void set_AnimationSize(::std::valarray<int> const &vertex) {
-						if (vertex == _animationVertex) {
+						if (vertex == _vertex) {
 							return;
 						}
-						_animationVertex = vertex;
+						_vertex = vertex;
 						Enqueue();
 					};
 
 					inline void operator()() {
 						::std::apply([
-							traveled = _toolkit.get_Stopwatch()
-								.get_Elapsed(),
-							&animationPoint = _animationPoint,
-							&animationVertex = _animationVertex
+							&toolkit = _toolkit,
+							&point = _point,
+							&vertex = _vertex
 						](TSubSpaces &...subSpaces)->void {
-							auto remainingVertex = animationVertex - animationPoint;
-							auto remainingVertexQ = remainingVertex * remainingVertex;
-							int traveledQ{ traveled * traveled };
-							int remainingQ{ 0 };
-							(((remainingQ = remainingVertexQ[subSpaces].sum())
-							,(animationPoint = traveledQ < remainingQ
-								? animationPoint + ::std::sqrt(
-									traveledQ * SCALING_FACTOR / remainingQ
-									* SCALING_FACTOR) * remainingVertex
-									/ SCALING_FACTOR
-								: animationVertex))
+							int taveled{
+								toolkit.get_Stopwatch()
+									.get_Elapsed()
+							};
+							if (HALF_LIFE < traveled) {
+								point = vertex;
+								return;
+							}
+							int traveled2{ traveled * traveled };
+							auto animationVertex = vertex - point;
+							auto animationVertex2 = animationVertex * animationVertex;
+							int distance2{ 0 };
+							int r{ 0 };
+							int rI{ 0 };
+							(((distance2 = animationVertex2[subSpaces].sum())
+							,(r = traveled2 < distance2
+								? ::std::sqrt(
+									traveled2 * SCALING_FACTOR / distance2
+									* SCALING_FACTOR)
+								: SCALING_FACTOR)
+							,(rI = SCALING_FACTOR - r)
+							,(point[subSpaces] = (point[subSpaces] * rI
+								+ vertex[subSpaces] * r) / SCALING_FACTOR))
 							, ...);
 						}, _subSpaces);
-						_updateFrame(*this);
+						_update(*this);
 						TBundle::operator()();
-						if (_animationPoint == _animationVertex) {
+						if (_point == _vertex) {
 							return;
 						}
 						Enqueue();
 					};
 
 				private:
+					static constexpr int HALF_LIFE{ 46340 };
+
 					TToolkit &_toolkit;
-					::std::valarray<int> _animationPoint;
-					::std::valarray<int> _animationVertex;
-					::std::tuple<TSubSpaces...> _subSpaces;
-					TUpdateFrame _updateFrame;
+					::std::valarray<int> _point;
+					::std::valarray<int> _vertex;
+					::std::tuple<TSubSpaces ...> _subSpaces;
+					TUpdate _update;
 
 					inline void Enqueue() {
 						TBundle::set_Invalid();
