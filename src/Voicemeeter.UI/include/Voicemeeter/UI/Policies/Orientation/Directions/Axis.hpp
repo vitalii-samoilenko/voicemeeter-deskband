@@ -1,8 +1,6 @@
 #ifndef VOICEMEETER_UI_POLICIES_ORIENTATION_DIRECTIONS_AXIS_HPP
 #define VOICEMEETER_UI_POLICIES_ORIENTATION_DIRECTIONS_AXIS_HPP
 
-#include <valarray>
-
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
@@ -10,8 +8,8 @@ namespace Voicemeeter {
 				namespace Directions {
 					template<size_t I>
 					struct Axis {
-						inline ::std::valarray<int> operator()(std::valarray<int> const &src) const {
-							::std::valarray<int> dst{ 0, 0 };
+						inline vector_t operator()(vector_t const &src) const {
+							vector_t dst(0, src.size());
 							dst[I] = src[I];
 							return dst;
 						};

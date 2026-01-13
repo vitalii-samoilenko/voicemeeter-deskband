@@ -1,8 +1,6 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_PALETTE_HPP
 #define VOICEMEETER_UI_GRAPHICS_PALETTE_HPP
 
-#include <valarray>
-
 #include "ok_color.h"
 
 namespace Voicemeeter {
@@ -30,18 +28,18 @@ namespace Voicemeeter {
 					inline gradient & operator=(gradient const &) = default;
 					inline gradient & operator=(gradient &&) = default;
 
-					inline ::std::valarray<int> pick(int at) const {
+					inline vector_t pick(num_t at) const {
 						float atF{ to_float(at) };
-						float atFi{ to_float(SCALING_FACTOR - at) };
+						float atF1m{ to_float(SCALING_FACTOR - at) };
 						::ok_color::RGB target{
 							::ok_color::oklab_to_linear_srgb(
 								::ok_color::Lab{
-									_from.L * atFi + _to.L * atF,
-									_from.a * atFi + _to.a * atF,
-									_from.b * atFi + _to.b * atF
+									_from.L * atF1m + _to.L * atF,
+									_from.a * atF1m + _to.a * atF,
+									_from.b * atF1m + _to.b * atF
 								})
 						};
-						return ::std::valarray<int>{
+						return vector_t{
 							to_int(
 								::ok_color::srgb_transfer_function_inv(
 									target.r)),
@@ -61,12 +59,12 @@ namespace Voicemeeter {
 
 					::ok_color::Lab _from;
 					::ok_color::Lab _to;
-					int _fromA;
-					int _toA;
+					num_t _fromA;
+					num_t _toA;
 
 					inline gradient(
-						::std::valarray<int> const &from,
-						::std::valarray<int> const &to)
+						vector_t const &from,
+						vector_t const &to)
 						: _from{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
@@ -94,21 +92,18 @@ namespace Voicemeeter {
 
 					};
 
-					inline static float to_float(int n) {
+					inline static float to_float(num_t n) {
 						return static_cast<float>(n) / SCALING_FACTOR;
 					};
 					inline static int to_int(float n) {
-						return static_cast<int>(n * SCALING_FACTOR);
+						return static_cast<num_t>(n * SCALING_FACTOR);
 					};
 				};
 
 				inline gradient Interpolate(
-					::std::valarray<int> const &from,
-					::std::valarray<int> const &to) const {
+					vector_t const &from, vector_t const &to) const {
 					return gradient{ from, to };
 				};
-
-			private:
 			};
 		}
 	}

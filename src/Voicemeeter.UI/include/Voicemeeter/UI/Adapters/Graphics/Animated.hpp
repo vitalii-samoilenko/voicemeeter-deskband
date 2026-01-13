@@ -5,7 +5,6 @@
 #include <optional>
 #include <tuple>
 #include <utility>
-#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -16,6 +15,8 @@ namespace Voicemeeter {
 					typename TValue>
 				class Context : public TBundle {
 				public:
+					using context_t = TValue;
+
 					template<typename... Args>
 					inline explicit Context(Args &&...args)
 						: TBundle{ ::std::forward<Args>(args)... } {
@@ -29,15 +30,15 @@ namespace Voicemeeter {
 					Context & operator=(Context const &) = delete;
 					Context & operator=(Context &&) = delete;
 
-					inline TValue const & get_AnimationContext() const {
+					inline context_t const & get_AnimationContext() const {
 						return _value;
 					};
-					inline void set_AnimationContext(TValue const &value) {
+					inline void set_AnimationContext(context_t const &value) {
 						_value = value;
 					};
 
 				private:
-					::std::optional<TValue> _value;
+					::std::optional<context_t> _value;
 				};
 
 				template<
@@ -70,15 +71,15 @@ namespace Voicemeeter {
 					Animated & operator()(Animated const &) = delete;
 					Animated & operator()(Animated &&) = delete;
 
-					inline ::std::valarray<int> const & get_AnimationPosition() const {
+					inline vector_t const & get_AnimationPosition() const {
 						return _point;
 					};
-					inline ::std::valarray<int> const & get_AnimationSize() const {
+					inline vector_t const & get_AnimationSize() const {
 						return _vertex;
 					};
 
-					inline void set_AnimationSize(::std::valarray<int> const &vertex) {
-						if (vertex == _vertex) {
+					inline void set_AnimationSize(vector_t const &vertex) {
+						if (_vertex == vertex) {
 							return;
 						}
 						_vertex = vertex;
@@ -91,7 +92,7 @@ namespace Voicemeeter {
 							&point = _point,
 							&vertex = _vertex
 						](TSubSpaces &...subSpaces)->void {
-							int taveled{
+							num_t taveled{
 								toolkit.get_Stopwatch()
 									.get_Elapsed()
 							};
@@ -99,21 +100,21 @@ namespace Voicemeeter {
 								point = vertex;
 								return;
 							}
-							int traveled2{ traveled * traveled };
+							num_t traveled2{ traveled * traveled };
 							auto animationVertex = vertex - point;
 							auto animationVertex2 = animationVertex * animationVertex;
-							int distance2{ 0 };
-							int r{ 0 };
-							int rI{ 0 };
+							num_t distance2{ 0 };
+							num_t rI{ 0 };
 							(((distance2 = animationVertex2[subSpaces].sum())
-							,(r = traveled2 < distance2
+							,(rI = traveled2 < distance2
 								? ::std::sqrt(
-									traveled2 * SCALING_FACTOR / distance2
+									distance2 * SCALING_FACTOR / traveled2
 									* SCALING_FACTOR)
 								: SCALING_FACTOR)
-							,(rI = SCALING_FACTOR - r)
-							,(point[subSpaces] = (point[subSpaces] * rI
-								+ vertex[subSpaces] * r) / SCALING_FACTOR))
+							,(point[subSpaces] = (
+									point[subSpaces] * (rI - SCALING_FACTOR)
+									+ vertex[subSpaces] * SCALING_FACTOR
+								) / rI))
 							, ...);
 						}, _subSpaces);
 						_update(*this);
@@ -125,11 +126,9 @@ namespace Voicemeeter {
 					};
 
 				private:
-					static constexpr int HALF_LIFE{ 46340 };
-
 					TToolkit &_toolkit;
-					::std::valarray<int> _point;
-					::std::valarray<int> _vertex;
+					vector_t _point;
+					vector_t _vertex;
 					::std::tuple<TSubSpaces ...> _subSpaces;
 					TUpdate _update;
 

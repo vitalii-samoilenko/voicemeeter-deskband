@@ -17,14 +17,22 @@ namespace Voicemeeter {
 				typename TFrame>
 			class Toolkit {
 			public:
+				using State = TState;
+				using Atlas = TAtlas;
+				using Queue = TQueue;
+				using Stopwatch = TStopwatch;
+				using Palette = TPalette;
+				using Theme = TTheme;
+				using Frame = TFrame;
+
 				inline Toolkit(
-					::std::unique_ptr<TState> &&state,
-					::std::unique_ptr<TAtlas> &&atlas,
-					::std::unique_ptr<TQueue> &&queue,
-					::std::unique_ptr<TStopwatch> &&stopwatch,
-					::std::unique_ptr<TPalette> &&palette,
-					::std::unique_ptr<TTheme> &&theme,
-					::std::unique_ptr<TFrame> &&frame)
+					::std::unique_ptr<State> &&state,
+					::std::unique_ptr<Atlas> &&atlas,
+					::std::unique_ptr<Queue> &&queue,
+					::std::unique_ptr<Stopwatch> &&stopwatch,
+					::std::unique_ptr<Palette> &&palette,
+					::std::unique_ptr<Theme> &&theme,
+					::std::unique_ptr<Frame> &&frame)
 					: _state{ ::std::move(state) }
 					, _atlas{ ::std::move(atlas) }
 					, _queue{ ::std::move(queue) }
@@ -43,36 +51,36 @@ namespace Voicemeeter {
 				Toolkit & operator=(Toolkit const &) = delete;
 				Toolkit & operator=(Toolkit &&) = delete;
 
-				inline TState & get_State() {
+				inline State & get_State() {
 					return *_state;
 				};
-				inline TAtlas & get_Atlas() {
+				inline Atlas & get_Atlas() {
 					return *_atlas;
 				};
-				inline TQueue & get_Queue() {
+				inline Queue & get_Queue() {
 					return *_queue;
 				};
-				inline TStopwatch & get_Stopwatch() {
+				inline Stopwatch & get_Stopwatch() {
 					return *_stopwatch;
 				};
-				inline TPalette & get_Palette() {
+				inline Palette & get_Palette() {
 					return *_palette;
 				};
-				inline TTheme & get_Theme() {
+				inline Theme & get_Theme() {
 					return *_theme;
 				};
-				inline TFrame & get_Frame() {
+				inline Frame & get_Frame() {
 					return *_frame;
 				};
 
 			private:
-				::std::unique_ptr<TState> _state;
-				::std::unique_ptr<TAtlas> _atlas;
-				::std::unique_ptr<TQueue> _queue;
-				::std::unique_ptr<TStopwatch> _stopwatch;
-				::std::unique_ptr<TPalette> _palette;
-				::std::unique_ptr<TTheme> _theme;
-				::std::unique_ptr<TFrame> _frame;
+				::std::unique_ptr<State> _state;
+				::std::unique_ptr<Atlas> _atlas;
+				::std::unique_ptr<Queue> _queue;
+				::std::unique_ptr<Stopwatch> _stopwatch;
+				::std::unique_ptr<Palette> _palette;
+				::std::unique_ptr<Theme> _theme;
+				::std::unique_ptr<Frame> _frame;
 			};
 		}
 	}

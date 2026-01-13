@@ -26,7 +26,7 @@ namespace Voicemeeter {
 				Amplifier & operator=(Amplifier &&) = delete;
 
 				template<typename TClient>
-				void set_Gain(int value) {
+				void set_Gain(num_t value) {
 					if (value == TAmplifier::get_Gain()) {
 						return;
 					}
@@ -71,14 +71,14 @@ namespace Voicemeeter {
 					void const *_clientId;
 					::std::unordered_map<
 						void const *,
-						::std::function<void(int)>
+						::std::function<void(num_t)>
 					> &_callbacks;
 
 					token(
 						void const *clientId,
 						::std::unordered_map<
 							void const *,
-							::std::function<void(int)>
+							::std::function<void(num_t)>
 						> &callbacks)
 						: _clientId{ clientId }
 						, _callbacks{ callbacks } {
@@ -94,7 +94,7 @@ namespace Voicemeeter {
 			private:
 				::std::unordered_map<
 					void const *,
-					::std::function<void(int)>
+					::std::function<void(num_t)>
 				> _callbacks;
 
 				using TAmplifier::set_Gain;

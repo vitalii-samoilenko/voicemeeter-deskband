@@ -4,7 +4,6 @@
 #include <memory>
 #include <tuple>
 #include <utility>
-#include <valarray>
 
 #include "Voicemeeter/UI/Focus.hpp"
 
@@ -18,7 +17,7 @@ namespace Voicemeeter {
 			class Stack {
 			public:
 				inline Stack(
-					::std::valarray<int> &&baseVertex,
+					vector_t &&baseVertex,
 					TDirection &&direction = TDirection{},
 					TScale &&scale = TScale{},
 					::std::unique_ptr<TComponents> &&...components)
@@ -38,18 +37,18 @@ namespace Voicemeeter {
 				Stack & operator=(Stack const &) = delete;
 				Stack & operator=(Stack &&) = delete;
 
-				inline ::std::valarray<int> const & get_Position() const {
+				inline vector_t const & get_Position() const {
 					return ::std::get<0>(_components)
 						->get_Position();
 				};
-				inline ::std::valarray<int> const & get_Size() const {
+				inline vector_t const & get_Size() const {
 					return _vertex;
 				};
-				inline ::std::valarray<int> const & get_BaseSize() const {
+				inline vector_t const & get_BaseSize() const {
 					return _baseVertex;
 				};
 
-				inline void Redraw(::std::valarray<int> const &point, ::std::valarray<int> const &vertex) {
+				inline void Redraw(vector_t const &point, vector_t const &vertex) {
 					::std::apply([
 						&point,
 						&vertex
@@ -58,7 +57,7 @@ namespace Voicemeeter {
 						, ...);
 					}, _components);
 				};
-				inline void Rescale(::std::valarray<int> const &vertex) {
+				inline void Rescale(vector_t const &vertex) {
 					::std::tie(_vertex) = _scale(vertex, _baseVertex);
 					::std::apply([
 						&direction = _direction,
@@ -71,7 +70,7 @@ namespace Voicemeeter {
 					Move(::std::get<0>(_components)
 						->get_Position());
 				};
-				inline void Move(::std::valarray<int> const &point) {
+				inline void Move(vector_t const &point) {
 					::std::apply([
 						&direction = _direction,
 						point
@@ -85,56 +84,56 @@ namespace Voicemeeter {
 					::std::get<0>(_components)
 						->Focus(mode);
 				};
-				inline bool MouseLDown(::std::valarray<int> const &point) {
+				inline bool MouseLDown(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseLDown(point) || ...);
 					}, _components);
 				};
-				inline bool MouseLDouble(::std::valarray<int> const &point) {
+				inline bool MouseLDouble(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseLDouble(point) || ...);
 					}, _components);
 				};
-				inline bool MouseLUp(::std::valarray<int> const &point) {
+				inline bool MouseLUp(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseLUp(point) || ...);
 					}, _components);
 				};
-				inline bool MouseMDown(::std::valarray<int> const &point) {
+				inline bool MouseMDown(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseMDown(point) || ...);
 					}, _components);
 				};
-				inline bool MouseMDouble(::std::valarray<int> const &point) {
+				inline bool MouseMDouble(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseMDouble(point) || ...);
 					}, _components);
 				};
-				inline bool MouseRDown(::std::valarray<int> const &point) {
+				inline bool MouseRDown(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseRDown(point) || ...);
 					}, _components);
 				};
-				inline bool MouseRDouble(::std::valarray<int> const &point) {
+				inline bool MouseRDouble(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
 						return (components->MouseRDouble(point) || ...);
 					}, _components);
 				};
-				inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
+				inline bool MouseWheel(vector_t const &point, num_t delta) {
 					return ::std::apply([
 						&point,
 						delta
@@ -142,7 +141,7 @@ namespace Voicemeeter {
 						return (components->MouseWheel(point, delta) || ...);
 					}, _components);
 				};
-				inline bool MouseMove(::std::valarray<int> const &point) {
+				inline bool MouseMove(vector_t const &point) {
 					return ::std::apply([
 						&point
 					](::std::unique_ptr<TComponents> &...components)->bool {
@@ -153,9 +152,9 @@ namespace Voicemeeter {
 			private:
 				TDirection _direction;
 				TScale _scale;
-				::std::tuple<::std::unique_ptr<TComponents>...> _components;
-				::std::valarray<int> _vertex;
-				::std::valarray<int> _baseVertex;
+				::std::tuple<::std::unique_ptr<TComponents> ...> _components;
+				vector_t _vertex;
+				vector_t _baseVertex;
 			};
 		}
 	}

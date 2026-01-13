@@ -3,7 +3,6 @@
 
 #include <tuple>
 #include <utility>
-#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -15,8 +14,8 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				inline Padding(
-					::std::valarray<int> &&basePaddingPoint,
-					::std::valarray<int> &&basePaddingVertex,
+					vector_t &&basePaddingPoint,
+					vector_t &&basePaddingVertex,
 					TScale &&scale = TScale{},
 					Args &&...args)
 					: TComponent{ ::std::forward<Args>(args)... }
@@ -39,36 +38,36 @@ namespace Voicemeeter {
 				Padding & operator=(Padding const &) = delete;
 				Padding & operator=(Padding &&) = delete;
 
-				inline ::std::valarray<int> const & get_Position() const {
+				inline vector_t const & get_Position() const {
 					return _point;
 				};
-				inline ::std::valarray<int> const & get_Size() const {
+				inline vector_t const & get_Size() const {
 					return _vertex;
 				};
-				inline ::std::valarray<int> const & get_BaseSize() const {
+				inline vector_t const & get_BaseSize() const {
 					return _baseVertex;
 				};
 
-				inline void Rescale(::std::valarray<int> const &vertex) {
-					::std::tie(_paddingPoint, ::std::ignore, _paddingVertex) =
-						_scale(vertex, _basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
+				inline void Rescale(vector_t const &vertex) {
+					::std::tie(_paddingPoint, ::std::ignore, _paddingVertex) = _scale(vertex,
+							_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
 					TComponent::Move(_point + _paddingPoint);
 					TComponent::Rescale(vertex - _paddingPoint - _paddingVertex);
 					_vertex = _paddingPoint + TComponent::get_Size() + _paddingVertex;
 				};
-				inline void Move(::std::valarray<int> const &point) {
+				inline void Move(vector_t const &point) {
 					_point = point;
 					TComponent::Move(point + _paddingPoint);
 				};
 
 			private:
-				::std::valarray<int> _point;
-				::std::valarray<int> _vertex;
-				::std::valarray<int> _baseVertex;
-				::std::valarray<int> _paddingPoint;
-				::std::valarray<int> _paddingVertex;
-				::std::valarray<int> _basePaddingPoint;
-				::std::valarray<int> _basePaddingVertex;
+				vector_t _point;
+				vector_t _vertex;
+				vector_t _baseVertex;
+				vector_t _paddingPoint;
+				vector_t _paddingVertex;
+				vector_t _basePaddingPoint;
+				vector_t _basePaddingVertex;
 				TScale _scale;
 			};
 		}

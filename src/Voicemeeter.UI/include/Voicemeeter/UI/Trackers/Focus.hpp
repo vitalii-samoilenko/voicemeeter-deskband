@@ -2,8 +2,6 @@
 #define VOICEMEETER_UI_TRACKERS_FOCUS_HPP
 
 #include <memory>
-#include <stdexcept>
-#include <valarray>
 
 #include "Voicemeeter/UI/Adapters/IComponent.hpp"
 #include "Voicemeeter/UI/Focus.hpp"
@@ -83,39 +81,39 @@ namespace Voicemeeter {
 					_trackedId = nullptr;
 					_mode = FocusT::None;
 				};
-				bool MouseLDown(::std::valarray<int> const &point) {
+				bool MouseLDown(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseLDown(point);
 				};
-				bool MouseLDouble(::std::valarray<int> const &point) {
+				bool MouseLDouble(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseLDouble(point);
 				};
-				bool MouseLUp(::std::valarray<int> const &point) {
+				bool MouseLUp(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseLUp(point);
 				};
-				bool MouseMDown(::std::valarray<int> const &point) {
+				bool MouseMDown(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseMDown(point);
 				};
-				bool MouseMDouble(::std::valarray<int> const &point) {
+				bool MouseMDouble(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseMDouble(point);
 				};
-				bool MouseRDown(::std::valarray<int> const &point) {
+				bool MouseRDown(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseRDown(point);
 				};
-				bool MouseRDouble(::std::valarray<int> const &point) {
+				bool MouseRDouble(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseRDouble(point);
 				};
-				bool MouseWheel(::std::valarray<int> const &point, int delta) {
+				bool MouseWheel(vector_t const &point, num_t delta) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseWheel(point, delta);
 				};
-				bool MouseMove(::std::valarray<int> const &point) {
+				bool MouseMove(vector_t const &point) {
 					return _mode == FocusT::Fixed
 						&& _tracked->MouseMove(point);
 				};

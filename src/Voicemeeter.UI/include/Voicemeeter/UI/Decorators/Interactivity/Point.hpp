@@ -34,55 +34,55 @@ namespace Voicemeeter {
 					inline void Focus(Focus mode) {
 
 					};
-					inline bool MouseLDown(::std::valarray<int> const &point) {
+					inline bool MouseLDown(vector_t const &point) {
 						bool base{ TComponent::MouseLDown(point) };
 						if (base) {
 							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseLDouble(::std::valarray<int> const &point) {
+					inline bool MouseLDouble(vector_t const &point) {
 						bool base{ TComponent::MouseLDouble(point) };
 						if (base) {
 							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseLUp(::std::valarray<int> const &point) {
+					inline bool MouseLUp(vector_t const &point) {
 						return TComponent::MouseLUp(point);
 					};
-					inline bool MouseMDown(::std::valarray<int> const &point) {
+					inline bool MouseMDown(vector_t const &point) {
 						bool base{ TComponent::MouseMDown(point) };
 						if (base) {
 							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseMDouble(::std::valarray<int> const &point) {
+					inline bool MouseMDouble(vector_t const &point) {
 						bool base{ TComponent::MouseMDouble(point) };
 						if (base) {
 							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseRDown(::std::valarray<int> const &point) {
+					inline bool MouseRDown(vector_t const &point) {
 						bool base{ TComponent::MouseRDown(point) };
 						if (base) {
 							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseRDouble(::std::valarray<int> const &point) {
+					inline bool MouseRDouble(vector_t const &point) {
 						bool base{ TComponent::MouseRDouble(point) };
 						if (base) {
 							_focusTracker.set_Tracked(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
+					inline bool MouseWheel(vector_t const &point, num_t delta) {
 						return TComponent::MouseWheel(point, delta);
 					};
-					inline bool MouseMove(::std::valarray<int> const &point) {
+					inline bool MouseMove(vector_t const &point) {
 						return TComponent::MouseMove(point);
 					};
 

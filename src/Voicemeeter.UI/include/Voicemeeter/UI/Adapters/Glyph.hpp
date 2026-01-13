@@ -2,7 +2,6 @@
 #define VOICEMEETER_UI_ADAPTERS_GLYPH_HPP
 
 #include <utility>
-#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -14,7 +13,7 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				inline Glyph(
-					::std::valarray<int> &&baseVertex,
+					vector_t &&baseVertex,
 					TScale &&scale = TScale{},
 					Args &&...args)
 					: TBundle{ ::std::forward<Args>(args)... }
@@ -31,31 +30,29 @@ namespace Voicemeeter {
 				Glyph & operator=(Glyph const &) = delete;
 				Glyph & operator=(Glyph &&) = delete;
 
-				inline ::std::valarray<int> const & get_Position() const {
+				inline vector_t const & get_Position() const {
 					return TBundle::get_FramePosition();
 				};
-				inline ::std::valarray<int> const & get_Size() const {
+				inline vector_t const & get_Size() const {
 					return TBundle::get_FrameSize();
 				};
-				inline ::std::valarray<int> const & get_BaseSize() const {
+				inline vector_t const & get_BaseSize() const {
 					return _baseVertex;
 				};
 
-				inline void Redraw(
-					::std::valarray<int> const &point,
-					::std::valarray<int> const &vertex) {
+				inline void Redraw(vector_t const &point, vector_t const &vertex) {
 					TBundle::set_Invalid();
 				};
-				inline void Rescale(::std::valarray<int> const &vertex) {
+				inline void Rescale(vector_t const &vertex) {
 					auto [frameVertex] = _scale(vertex, _baseVertex);
 					TBundle::set_FrameSize(frameVertex);
 				};
-				inline void Move(::std::valarray<int> const &point) {
+				inline void Move(vector_t const &point) {
 					TBundle::set_FramePosition(point);
 				};
 
 			private:
-				::std::valarray<int> _baseVertex;
+				vector_t _baseVertex;
 				TScale _scale;
 			};
 		}

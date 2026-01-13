@@ -3,8 +3,6 @@
 
 #include <utility>
 
-#include "Voicemeeter/UI/States/StripKnob.hpp"
-
 namespace Voicemeeter {
 	namespace UI {
 		namespace Adapters {
@@ -13,6 +11,8 @@ namespace Voicemeeter {
 					template<typename TStripKnob>
 					class StripKnob : public TStripKnob {
 					public:
+						using state_t = typename TStripKnob::state_t;
+
 						template<typename... Args>
 						inline explicit StripKnob(Args &&...args)
 							: TStripKnob{ ::std::forward<Args>(args)... } {
@@ -28,23 +28,23 @@ namespace Voicemeeter {
 						StripKnob & operator=(StripKnob &&) = delete;
 
 						inline void set_DefaultState() {
-							States::StripKnob state{ TStripKnob::get_State() };
+							state_t state{ TStripKnob::get_State() };
 							state.degree = DEFAULT;
 							state.hold = true;
 							TStripKnob::set_State(state);
 						};
 						inline void set_HoldState(bool value) {
-							States::StripKnob state{ TStripKnob::get_State() };
+							state_t state{ TStripKnob::get_State() };
 							state.hold = value;
 							TStripKnob::set_State(state);
 						};
 						inline void toggle_MuteState() {
-							States::StripKnob state{ TStripKnob::get_State() };
+							state_t state{ TStripKnob::get_State() };
 							state.toggle = !state.toggle;
 							TStripKnob::set_State(state);
 						};
-						inline void add_GainState(int value) {
-							States::StripKnob state{ TStripKnob::get_State() };
+						inline void add_GainState(num_t value) {
+							state_t state{ TStripKnob::get_State() };
 							if (state.degree < MIN - value) {
 								state.degree = MIN;
 							} else if (MAX - value < state.degree) {
@@ -57,9 +57,9 @@ namespace Voicemeeter {
 						};
 
 					private:
-						static constexpr int DEFAULT{ 0 };
-						static constexpr int MIN{ -225 * SCALING_FACTOR };
-						static constexpr int MAX{ 45 * SCALING_FACTOR };
+						static constexpr num_t DEFAULT{ 0 };
+						static constexpr num_t MIN{ -225 * SCALING_FACTOR };
+						static constexpr num_t MAX{ 45 * SCALING_FACTOR };
 					};
 				}
 			}

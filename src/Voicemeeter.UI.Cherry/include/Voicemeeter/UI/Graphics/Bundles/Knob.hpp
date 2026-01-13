@@ -2,7 +2,7 @@
 #define VOICEMEETER_UI_GRAPHICS_BUNDLES_KNOB_HPP
 
 #include <bitset>
-#include <valarray>
+#include <optional>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -13,10 +13,7 @@ namespace Voicemeeter {
 				public:
 					inline explicit Knob(TToolkit &toolkit)
 						: _toolkit{ toolkit }
-						, _slot{
-							_toolkit.get_Queue()
-								.reserve()
-						}
+						, _slot{}
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
@@ -40,26 +37,29 @@ namespace Voicemeeter {
 					Knob & operator=(Knob const &) = delete;
 					Knob & operator=(Knob &&) = delete;
 
-					inline ::std::valarray<int> const & get_FramePosition() const {
+					inline vector_t const & get_FramePosition() const {
 						return _framePoint;
 					};
-					inline ::std::valarray<int> const & get_FrameSize() const {
+					inline vector_t const & get_FrameSize() const {
 						return _frameVertex;
 					};
+					inline vector_t const & get_FrameColor() const {
+						return _frameRgba;
+					};
 
-					inline void set_FramePosition(::std::valarray<int> const &point) {
+					inline void set_FramePosition(vector_t const &point) {
 						OnSet(_framePoint, point, FramePoint);
 					};
-					inline void set_FrameSize(::std::valarray<int> const &vertex) {
+					inline void set_FrameSize(vector_t const &vertex) {
 						OnSet(_frameVertex, vertex, FrameVertex);
 					};
-					inline void set_FrameColor(::std::valarray<int> const &rgba) {
+					inline void set_FrameColor(vector_t const &rgba) {
 						OnSet(_frameRgba, rgba, FrameRgba);
 					};
-					inline void set_IndicatorAngle(int degree) {
+					inline void set_IndicatorAngle(num_t degree) {
 						OnSet(_indicatorDegree, degree, IndicatorDegree);
 					};
-					inline void set_IndicatorColor(::std::valarray<int> const &rgba) {
+					inline void set_IndicatorColor(vector_t const &rgba) {
 						OnSet(_indicatorRgba, rgba, IndicatorRgba);
 					};
 					inline void set_Invalid() {
@@ -90,35 +90,36 @@ namespace Voicemeeter {
 					};
 
 				protected:
+					using slot_t = typename TToolkit::Queue::slot;
+
 					inline slot_t & get_Slot() {
 						return _slot;
 					};
 
 				private:
-					using slot_t = decltype(_toolkit.get_Queue())::slot;
 					enum flags_t : size_t {
-						FramePoint,
-						FrameVertex,
-						FrameRgba,
-						IndicatorDegree,
-						IndicatorRgba,
-						RenderTarget
+						FramePoint = 0,
+						FrameVertex = 1,
+						FrameRgba = 2,
+						IndicatorDegree = 3,
+						IndicatorRgba = 4,
+						RenderTarget = 5
 					};
 
 					TToolkit &_toolkit;
-					slot_t _slot;
+					::std::optional<slot_t> _slot;
 					::std::bitset<RenderTarget + 1> _changes;
-					::std::valarray<int> _framePoint;
-					::std::valarray<int> _frameVertex;
-					::std::valarray<int> _frameAtlasPoint;
-					::std::valarray<int> _frameAtlasVertex;
-					::std::valarray<int> _frameRgba;
-					int _indicatorDegree;
-					::std::valarray<int> _indicatorPoint;
-					::std::valarray<int> _indicatorVertex;
-					::std::valarray<int> _indicatorAtlasPoint;
-					::std::valarray<int> _indicatorAtlasVertex;
-					::std::valarray<int> _indicatorRgba;
+					vector_t _framePoint;
+					vector_t _frameVertex;
+					vector_t _frameAtlasPoint;
+					vector_t _frameAtlasVertex;
+					vector_t _frameRgba;
+					num_t _indicatorDegree;
+					vector_t _indicatorPoint;
+					vector_t _indicatorVertex;
+					vector_t _indicatorAtlasPoint;
+					vector_t _indicatorAtlasVertex;
+					vector_t _indicatorRgba;
 
 					template<typename T>
 					inline void OnSet(T &dst, T const &src, flags_t property) {
@@ -130,6 +131,8 @@ namespace Voicemeeter {
 					};
 					inline void OnInvalidate(flags_t property) {
 						if (_changes.none()) {
+							_slot = _toolkit.get_Queue()
+								.reserve();
 							_slot.overwrite(*this);
 						}
 						_changes.set(property);

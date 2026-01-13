@@ -1,9 +1,7 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_CANVAS_HPP
 #define VOICEMEETER_UI_ADAPTERS_CANVAS_HPP
 
-#include <chrono>
 #include <utility>
-#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -31,21 +29,19 @@ namespace Voicemeeter {
 				Canvas & operator=(Canvas const &) = delete;
 				Canvas & operator=(Canvas &&) = delete;
 
-				inline ::std::valarray<int> const & get_Position() const {
+				inline vector_t const & get_Position() const {
 					return _point;
 				};
-				inline ::std::valarray<int> const & get_Size() const {
+				inline vector_t const & get_Size() const {
 					return TToolkit::get_Frame()
 						.get_Size();
 				};
 
-				inline void Redraw(
-					::std::valarray<int> const &point,
-					::std::valarray<int> const &vertex) {
+				inline void Redraw(vector_t const &point, vector_t const &vertex) {
 					TToolkit::get_Frame()
 						.Present(point, vertex);
 				};
-				inline void Resize(::std::valarray<int> const &vertex) {
+				inline void Resize(vector_t const &vertex) {
 					TToolkit::get_Frame()
 						.set_Size(vertex);
 				};
@@ -78,13 +74,10 @@ namespace Voicemeeter {
 					};
 
 					inline void Set() {
-						_timer.Set(
-							::std::chrono::milliseconds{ 17 },
-							*this);
+						_timer.Set(17, *this);
 					};
 					inline void Unset() {
-						_timer.Unset(
-							*this);
+						_timer.Unset(*this);
 					};
 
 				private:
@@ -93,7 +86,7 @@ namespace Voicemeeter {
 				};
 
 				FrameTick _frameTick;
-				::std::valarray<int> _point;
+				vector_t _point;
 			};
 		}
 	}

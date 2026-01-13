@@ -9,8 +9,8 @@ namespace Voicemeeter {
 			class Stopwatch final {
 			public:
 				inline Stopwatch()
-					: _current{ ::std::chrono::steady_closk::now() }
-					, _previous{ _current } {
+					: _current{}
+					, _previous{} {
 
 				};
 				Stopwatch(Stopwatch const &) = delete;
@@ -21,8 +21,8 @@ namespace Voicemeeter {
 				Stopwatch & operator=(Stopwatch const &) = delete;
 				Stopwatch & operator=(Stopwatch &&) = delete;
 
-			inline int get_Elapsed() const {
-				return static_cast<int>(
+			inline num_t get_Elapsed() const {
+				return static_cast<num_t>(
 					::std::chrono::duration_cast<
 						::std::chrono::milliseconds>(
 						_current - previous)

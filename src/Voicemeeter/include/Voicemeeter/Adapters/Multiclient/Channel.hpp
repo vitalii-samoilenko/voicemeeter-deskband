@@ -26,7 +26,7 @@ namespace Voicemeeter {
 				Channel & operator=(Channel &&) = delete;
 
 				template<typename TClient>
-				inline void set_Level(int value) {
+				inline void set_Level(num_t value) {
 					if (value == TChannel::get_Level()) {
 						return;
 					}
@@ -71,14 +71,14 @@ namespace Voicemeeter {
 					void const *_clientId;
 					::std::unordered_map<
 						void const *,
-						::std::function<void(int)>
+						::std::function<void(num_t)>
 					> &_callbacks;
 
 					token(
 						void const *clientId,
 						::std::unordered_map<
 							void const *,
-							::std::function<void(int)>
+							::std::function<void(num_t)>
 						> &callbacks)
 						: _clientId{ clientId }
 						, _callbacks{ callbacks } {
@@ -94,7 +94,7 @@ namespace Voicemeeter {
 			private:
 				::std::unordered_map<
 					void const *,
-					::std::function<void(int)>
+					::std::function<void(num_t)>
 				> _callbacks;
 
 				using TChannel::set_Level;

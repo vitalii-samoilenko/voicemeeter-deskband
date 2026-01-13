@@ -2,7 +2,6 @@
 #define VOICEMEETER_UI_ADAPTERS_INTERACTIVITY_TRANSPARENT_HPP
 
 #include <utility>
-#include <valarray>
 
 #include "Voicemeeter/UI/Focus.hpp"
 
@@ -29,31 +28,31 @@ namespace Voicemeeter {
 					inline void Focus(Focus mode) {
 
 					};
-					inline bool MouseLDown(::std::valarray<int> const &point) {
+					inline bool MouseLDown(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseLDouble(::std::valarray<int> const &point) {
+					inline bool MouseLDouble(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseLUp(::std::valarray<int> const &point) {
+					inline bool MouseLUp(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseMDown(::std::valarray<int> const &point) {
+					inline bool MouseMDown(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseMDouble(::std::valarray<int> const &point) {
+					inline bool MouseMDouble(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseRDown(::std::valarray<int> const &point) {
+					inline bool MouseRDown(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseRDouble(::std::valarray<int> const &point) {
+					inline bool MouseRDouble(vector_t const &point) {
 						return false;
 					};
-					inline bool MouseWheel(::std::valarray<int> const &point, int delta) {
+					inline bool MouseWheel(vector_t const &point, num_t delta) {
 						return false;
 					};
-					inline bool MouseMove(::std::valarray<int> const &point) {
+					inline bool MouseMove(vector_t const &point) {
 						return false;
 					};
 				};
