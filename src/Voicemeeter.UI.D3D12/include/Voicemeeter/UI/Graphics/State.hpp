@@ -543,6 +543,9 @@ namespace Voicemeeter {
 				inline UINT64 get_Count(size_t frame) const {
 					return _counts[frame];
 				};
+				inline UINT64 inc_Count(size_t frame) {
+					return ++(_counts[frame]);
+				};
 
 			private:
 				static constexpr size_t FRAME_COUNT{ 2 };
