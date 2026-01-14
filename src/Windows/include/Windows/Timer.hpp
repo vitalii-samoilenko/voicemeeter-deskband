@@ -29,8 +29,8 @@ namespace Windows {
 		};
 
 		template<typename TTick>
-		inline void Set(::std::chrono::milliseconds duration, TTick &target) {
-			SetTimer(_hWnd, get_Id(), static_cast<UINT>(duration.count()), NULL);
+		inline void Set(num_t duration, TTick &target) {
+			SetTimer(_hWnd, get_Id(), static_cast<UINT>(duration), NULL);
 			_target = ::std::make_unique<
 				Tick<TTick>>(
 				target);
@@ -92,11 +92,9 @@ namespace Windows {
 		};
 
 		HWND _hWnd;
-		::std::function<bool()> _callback;
+		::std::unique_ptr<ITick> _target;
+		void const *_targetId;
 	};
-
-	::std::unique_ptr<ITick> _target;
-	void const *_targetId;
 }
 
 #endif
