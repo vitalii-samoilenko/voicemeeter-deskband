@@ -1,7 +1,6 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_FRAME_HPP
 #define VOICEMEETER_UI_GRAPHICS_FRAME_HPP
 
-#include <array>
 #include <cmath>
 #include <utility>
 
@@ -121,13 +120,9 @@ namespace Voicemeeter {
 					_state.get_CommandList(frame)
 						->SetGraphicsRootSignature(
 							_state.get_RootSignature());
-					::std::array<ID3D12DescriptorHeap *, 1> hTextureHeaps{
-						_state.get_hTextureHeap()
-					};
+					ID3D12DescriptorHeap *hTextureHeap{ _state.get_hTextureHeap() };
 					_state.get_CommandList(frame)
-						->SetDescriptorHeaps(
-							static_cast<UINT>(hTextureHeaps.size()),
-							hTextureHeaps.data());
+						->SetDescriptorHeaps(1, &hTextureHeap);
 					_state.get_CommandList(frame)
 						->SetGraphicsRootDescriptorTable(
 							0,
