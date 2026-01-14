@@ -107,9 +107,9 @@ namespace Voicemeeter {
 							num_t rI{ 0 };
 							(((distance2 = animationVertex2[subSpaces].sum())
 							,(rI = traveled2 < distance2
-								? ::std::sqrt(
+								? static_cast<num_t>(::std::sqrt(
 									distance2 * SCALING_FACTOR / traveled2
-									* SCALING_FACTOR)
+									* SCALING_FACTOR))
 								: SCALING_FACTOR)
 							,(point[subSpaces] = (
 									point[subSpaces] * (rI - SCALING_FACTOR)

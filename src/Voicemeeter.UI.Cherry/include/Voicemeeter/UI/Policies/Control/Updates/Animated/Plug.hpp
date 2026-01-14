@@ -1,40 +1,38 @@
-#ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_PLUG_HPP
-#define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_PLUG_HPP
+#ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_ANIMATED_PLUG_HPP
+#define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_ANIMATED_PLUG_HPP
 
 #include <cmath>
-#include <valarray>
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
-			namespace Glyph {
+			namespace Control {
 				namespace Updates {
 					namespace Animated {
 						template<typename TToolkit>
 						struct PlugContext {
 							typename TToolkit::Palette::gradient path;
-							int distanceQ
+							int distance2;
 						};
 
 						template<typename TToolkit, typename TPlug>
 						struct Plug {
-							inline void operator()(TPlug &glyph, int state) const {
-								glyph.set_AnimationSize(
-									::std::valarray<int>{ state * 200 });
-								::std::valarray<int> animationVertex{
-									glyph.get_AnimationSize()
-									- glyph.get_AnimationPoint()
-								};
-								glyph.set_AnimationContext(
-									PlugContext<TToolkit>{
+							inline void operator()(
+								TPlug &control, typename TPlug::state_t state) const {
+								control.set_AnimationSize(
+									vector_t{ state * 200 });
+								auto animationVertex = control.get_AnimationSize()
+									- control.get_AnimationPoint();
+								control.set_AnimationContext(
+									typename TPlug::context_t{
 										_toolkit.get_Palette()
 											.Interpolate(
-												glyph.get_FrameColor(),
-												0 < state
+												state
 													? _toolkit.get_Theme()
 														.Active
 													: _toolkit.get_Theme()
-														.Inactive)),
+														.Inactive,
+												control.get_FrameColor()),
 										(animationVertex * animationVertex)
 											.sum()
 									});
@@ -57,25 +55,23 @@ namespace Voicemeeter {
 							PlugFrame & operator=(PlugFrame const &) = delete;
 							PlugFrame & operator=(PlugFrame &&) = delete;
 
-							inline void operator()(TPlug glyph) const {
-								::std::valarray<int> animationVertex{
-									glyph.get_AnimationSize()
-									- glyph.get_AnimationPoint()
-								};
-								int remainingQ{
+							inline void operator()(TPlug &control) const {
+								auto animationVertex = control.get_AnimationSize()
+									- control.get_AnimationPoint();
+								num_t remaining2{
 									(animationVertex * animationVertex)
 										.sum()
 								};
-								PlugContext<TToolkit> const &context{
-									glyph.get_AnimationContext()
+								typename TPlug::context_t const &context{
+									control.get_AnimationContext()
 								};
-								int at{
-									SCALING_FACTOR - ::std::sqrt(
-										remainingQ * SCALING_FACTOR / context.distanceQ
-										* SCALING_FACTOR)
+								num_t rI{
+									static_cast<num_t>(::std::sqrt(
+										context.distance2 * SCALING_FACTOR / remaining2
+										* SCALING_FACTOR))
 								};
 								glyph.set_FrameColor(
-									context.path.pick(at));
+									context.path.pick(rI));
 							};
 
 						private:

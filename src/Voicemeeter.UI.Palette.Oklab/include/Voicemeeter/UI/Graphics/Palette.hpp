@@ -28,15 +28,15 @@ namespace Voicemeeter {
 					inline gradient & operator=(gradient const &) = default;
 					inline gradient & operator=(gradient &&) = default;
 
-					inline vector_t pick(num_t at) const {
-						float atF{ to_float(at) };
-						float atF1m{ to_float(SCALING_FACTOR - at) };
+					inline vector_t pick(num_t rI) const {
+						float rIF{ to_float(rI) };
+						float rIm1F{ to_float(rI - SCALING_FACTOR) };
 						::ok_color::RGB target{
 							::ok_color::oklab_to_linear_srgb(
 								::ok_color::Lab{
-									_from.L * atF1m + _to.L * atF,
-									_from.a * atF1m + _to.a * atF,
-									_from.b * atF1m + _to.b * atF
+									(_from.L * rIm1F + _to.L) / rIF,
+									(_from.a * rIm1F + _to.a) / rIF,
+									(_from.b * rIm1F + _to.b) / rIF,
 								})
 						};
 						return vector_t{
@@ -49,8 +49,7 @@ namespace Voicemeeter {
 							to_int(
 								::ok_color::srgb_transfer_function_inv(
 									target.r)),
-							(_fromA * (SCALING_FACTOR - at) + _toA * at)
-								/ SCALING_FACTOR
+							(_fromA * (rI - SCALING_FACTOR) + _toA) / rI
 						};
 					};
 

@@ -87,6 +87,8 @@ namespace Voicemeeter {
 								_indicatorAtlasPoint, _indicatorAtlasVertex,
 								_indicatorPoint, _indicatorVertex,
 								_indicatorRgba);
+						_toolkit.get_Frame()
+							.Invalidate(_framePoint, _frameVertex);
 					};
 
 				protected:
