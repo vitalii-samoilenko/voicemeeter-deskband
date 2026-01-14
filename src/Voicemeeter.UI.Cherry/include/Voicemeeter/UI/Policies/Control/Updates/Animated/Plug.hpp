@@ -16,27 +16,48 @@ namespace Voicemeeter {
 						};
 
 						template<typename TToolkit, typename TPlug>
-						struct Plug {
+						class Plug {
+						public:
+							inline explicit Plug(TToolkit &toolkit)
+								: _toolkit{ toolkit } {
+
+							};
+							Plug() = delete;
+							Plug(Plug const &) = delete;
+							inline Plug(Plug &&) = default;
+
+							inline ~Plug() = default;
+
+							Plug & operator=(Plug const &) = delete;
+							Plug & operator=(Plug &&) = delete;
+
 							inline void operator()(
 								TPlug &control, typename TPlug::state_t state) const {
-								control.set_AnimationSize(
-									vector_t{ state * 200 });
+								constexpr num_t ANIMATION_LENGTH{ 200 };
+								vector_t targetVertex{ 0 };
+								vector_t targetRgba{
+									_toolkit.get_Theme()
+										.Inactive
+								};
+								if (state) {
+									targetVertex[0] = ANIMATION_LENGTH;
+									targetRgba = _toolkit.get_Theme()
+										.Active;
+								}
+								control.set_AnimationSize(targetVertex);
 								auto animationVertex = control.get_AnimationSize()
 									- control.get_AnimationPoint();
 								control.set_AnimationContext(
 									typename TPlug::context_t{
 										_toolkit.get_Palette()
-											.Interpolate(
-												state
-													? _toolkit.get_Theme()
-														.Active
-													: _toolkit.get_Theme()
-														.Inactive,
-												control.get_FrameColor()),
+											.Interpolate(targetRgba, control.get_FrameColor()),
 										(animationVertex * animationVertex)
 											.sum()
 									});
 							};
+
+						private:
+							TToolkit &_toolkit;
 						};
 
 						template<typename TToolkit, typename TPlug>
@@ -70,7 +91,7 @@ namespace Voicemeeter {
 										context.distance2 * SCALING_FACTOR / remaining2
 										* SCALING_FACTOR))
 								};
-								glyph.set_FrameColor(
+								control.set_FrameColor(
 									context.path.pick(rI));
 							};
 

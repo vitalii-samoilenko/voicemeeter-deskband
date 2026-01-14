@@ -1,12 +1,10 @@
-#ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_VBAN_HPP
-#define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_VBAN_HPP
-
-#include <valarray>
+#ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_VBAN_HPP
+#define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_VBAN_HPP
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
-			namespace Glyph {
+			namespace Control {
 				namespace Updates {
 					template<typename TToolkit, typename TVban>
 					class Vban {
@@ -24,15 +22,15 @@ namespace Voicemeeter {
 						Vban & operator=(Vban const &) = delete;
 						Vban & operator=(Vban &&) = delete;
 
-						inline void operator()(TVban &glyph, int state) const {
-							::std::valarray<int> const &rgba{
-								state == 0
+						inline void operator()(
+							TVban &control, typename TVban::state_t state) const {
+							glyph.set_FrameColor(
+								state
 									? _toolkit.get_Theme()
-										.Inactive
-									: _toolkit.get_Theme()
 										.Information
-							};
-							glyph.set_FrameColor(rgba);
+									: _toolkit.get_Theme()
+										.Inactive
+							);
 						};
 
 					private:

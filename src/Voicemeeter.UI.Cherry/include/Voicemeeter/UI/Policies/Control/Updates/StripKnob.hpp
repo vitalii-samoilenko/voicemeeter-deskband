@@ -1,16 +1,12 @@
-#ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_STRIPKNOB_HPP
-#define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_STRIPKNOB_HPP
-
-#include <valarray>
-
-#include "Voicemeeter/UI/States/StripKnob.hpp"
+#ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_STRIPKNOB_HPP
+#define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_STRIPKNOB_HPP
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
-			namespace Glyph {
+			namespace Control {
 				namespace Updates {
-					template<typename TToolkit, typename TKnob>
+					template<typename TToolkit, typename TStripKnob>
 					class StripKnob {
 					public:
 						inline explicit StripKnob(TToolkit &toolkit)
@@ -26,8 +22,9 @@ namespace Voicemeeter {
 						StripKnob & operator=(StripKnob const &) = delete;
 						StripKnob & operator=(StripKnob &&) = delete;
 
-						inline void operator()(TKnob &glyph, States::StripKnob const &state) const {
-							::std::valarray<int> const &rgba{
+						inline void operator()(
+							TStripKnob &control, typename TStripKnob::state_t const &state) const {
+							control.set_FrameColor(
 								state.toggle
 									? _toolkit.get_Theme()
 										.Warning
@@ -48,9 +45,8 @@ namespace Voicemeeter {
 													.EqLow
 												: _toolkit.get_Theme()
 													.Inactive
-							};
-							glyph.set_FrameColor(rgba);
-							glyph.set_IndicatorAngle(state.degree);
+							);
+							control.set_IndicatorAngle(state.degree);
 						};
 
 					private:

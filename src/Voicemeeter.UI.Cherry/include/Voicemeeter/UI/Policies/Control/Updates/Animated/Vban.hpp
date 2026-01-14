@@ -1,28 +1,70 @@
-#ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_VBAN_HPP
-#define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_ANIMATED_VBAN_HPP
+#ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_ANIMATED_VBAN_HPP
+#define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_ANIMATED_VBAN_HPP
 
-#include <valarray>
+#include <cmath>
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
-			namespace Glyph {
+			namespace Control {
 				namespace Updates {
 					namespace Animated {
-						template<typename TVban>
-						struct Vban {
-							inline void operator()(TVban &glyph, int state) const {
-								glyph.set_AnimationVelocitySize(::std::valarray<int>{
-									state == 0 ? -1 : 1
-								});
-							};
+						template<typename TToolkit>
+						struct VbanContext {
+							typename TToolkit::Palette::gradient path;
+							int distance2;
 						};
 
-						template<typename TPalette, typename TVban>
+						template<typename TToolkit, typename TVban>
+						class Vban {
+						public:
+							inline explicit Vban(TToolkit &toolkit)
+								: _toolkit{ toolkit } {
+
+							};
+							Vban() = delete;
+							Vban(Vban const &) = delete;
+							inline Vban(Vban &&) = default;
+
+							inline ~Vban() = default;
+
+							Vban & operator=(Vban const &) = delete;
+							Vban & operator=(Vban &&) = delete;
+
+							inline void operator()(
+								TVban &control, typename TVban::state_t state) const {
+								constexpr num_t ANIMATION_LENGTH{ 200 };
+								vector_t targetVertex{ 0 };
+								vector_t targetRgba{
+									_toolkit.get_Theme()
+										.Inactive
+								};
+								if (state) {
+									targetVertex[0] = ANIMATION_LENGTH;
+									targetRgba = _toolkit.get_Theme()
+										.Information;
+								}
+								control.set_AnimationSize(targetVertex);
+								auto animationVertex = control.get_AnimationSize()
+									- control.get_AnimationPoint();
+								control.set_AnimationContext(
+									typename TVban::context_t{
+										_toolkit.get_Palette()
+											.Interpolate(targetRgba, control.get_FrameColor()),
+										(animationVertex * animationVertex)
+											.sum()
+									});
+							};
+						
+						private:
+							TToolkit &_toolkit;
+						};
+
+						template<typename TToolkit, typename TVban>
 						class VbanFrame {
 						public:
-							inline explicit VbanFrame(TPalette &palette)
-								: _palette{ palette } {
+							inline explicit VbanFrame(TToolkit &toolkit)
+								: _toolkit{ toolkit } {
 
 							};
 							VbanFrame() = delete;
@@ -34,26 +76,27 @@ namespace Voicemeeter {
 							VbanFrame & operator=(VbanFrame const &) = delete;
 							VbanFrame & operator=(VbanFrame &&) = delete;
 
-							inline void operator()(TVban glyph) const {
-								enum dimension : size_t {
-									/* inactive */ active = 0
+							inline void operator()(TVban &control) const {
+								auto animationVertex = control.get_AnimationSize()
+									- control.get_AnimationPoint();
+								num_t remaining2{
+									(animationVertex * animationVertex)
+										.sum()
 								};
-								::std::valarray<int> normalizedAnimationVertex{
-									(glyph.get_AnimationSize() * SCALING_FACTOR)
-										/ glyph.get_AnimationBaseSize()
+								typename TVban::context_t const &context{
+									control.get_AnimationContext()
 								};
-								::std::valarray<int> rgba{
-									_palette.get_Theme()
-										.Inactive
+								num_t rI{
+									static_cast<num_t>(::std::sqrt(
+										context.distance2 * SCALING_FACTOR / remaining2
+										* SCALING_FACTOR))
 								};
-								_palette.Blend(rgba, _palette.get_Theme()
-									.Information, normalizedAnimationVertex[active]);
-								glyph.set_Color(rgba);
-								glyph.set_LabelColor(rgba);
+								control.set_FrameColor(
+									context.path.pick(rI));
 							};
 
 						private:
-							TPalette &_palette;
+							TToolkit &_toolkit;
 						};
 					}
 				}

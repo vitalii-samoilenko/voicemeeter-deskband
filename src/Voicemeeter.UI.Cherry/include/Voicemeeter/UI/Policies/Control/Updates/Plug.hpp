@@ -1,12 +1,10 @@
-#ifndef VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_PLUG_HPP
-#define VOICEMEETER_UI_POLICIES_GLYPH_UPDATES_PLUG_HPP
-
-#include <valarray>
+#ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_PLUG_HPP
+#define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_PLUG_HPP
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
-			namespace Glyph {
+			namespace Control {
 				namespace Updates {
 					template<typename TToolkit, typename TPlug>
 					class Plug {
@@ -24,15 +22,15 @@ namespace Voicemeeter {
 						Plug & operator=(Plug const &) = delete;
 						Plug & operator=(Plug &&) = delete;
 
-						inline void operator()(TPlug &glyph, int state) const {
-							::std::valarray<int> const &rgba{
-								state == 0
+						inline void operator()(
+							TPlug &control, typename TPlug::state_t state) const {
+							control.set_FrameColor(
+								state
 									? _toolkit.get_Theme()
-										.Inactive
-									: _toolkit.get_Theme()
 										.Active
-							};
-							glyph.set_FrameColor(rgba);
+									: _toolkit.get_Theme()
+										.Inactive
+							);
 						};
 
 					private:
