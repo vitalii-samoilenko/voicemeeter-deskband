@@ -22,7 +22,8 @@ namespace Voicemeeter {
 				inline State(
 					HWND hWnd,
 					HMODULE hModule)
-					: _d3dDevice{ nullptr }
+					: _hWnd{ hWnd }
+					, _d3dDevice{ nullptr }
 					, _commandQueue{ nullptr }
 					, _commandAllocator{ nullptr }
 					, _commandList{ nullptr }
@@ -38,7 +39,6 @@ namespace Voicemeeter {
 					, _count{ 0 }
 					, _swapChain{ nullptr }
 					, _hRenderTargetHeap{ nullptr }
-					, _frame{ 0 }
 					, _hRenderTargets{}
 					, _renderTargets{ nullptr, nullptr }
 					, _commandAllocators{ nullptr, nullptr }
@@ -80,7 +80,7 @@ namespace Voicemeeter {
 							IID_PPV_ARGS(&dxgiFactory)
 						), "DXGI factory creation failed");
 						::Windows::ThrowIfFailed(dxgiFactory->MakeWindowAssociation(
-							hWnd,
+							_hWnd,
 							DXGI_MWA_NO_ALT_ENTER
 						), "Failed to disable fullscreen transition");
 						::Microsoft::WRL::ComPtr<IDXGIAdapter4> dxgiAdapter{ nullptr };
@@ -206,12 +206,8 @@ namespace Voicemeeter {
 						_commandList->ResourceBarrier(1, &barrier);
 						::Windows::ThrowIfFailed(_commandList->Close(
 						), "Command list close failed");
-						::std::array<ID3D12CommandList *, 1> commandLists{
-							_commandList.Get()
-						};
-						_commandQueue->ExecuteCommandLists(
-							static_cast<UINT>(commandLists.size()),
-							commandLists.data());
+						ID3D12CommandList *commandList{ _commandList.Get() };
+						_commandQueue->ExecuteCommandLists(1, &commandList);
 						_commandQueue->Signal(_fence.Get(), ++_count);
 						_hSquareBuffer.BufferLocation = _squareBuffer->GetGPUVirtualAddress();
 						_hSquareBuffer.StrideInBytes = 2 * sizeof(FLOAT);
@@ -428,7 +424,7 @@ namespace Voicemeeter {
 							IID_PPV_ARGS(&compositionDevice)
 						), "Composition device creation failed");
 						::Windows::ThrowIfFailed(compositionDevice->CreateTargetForHwnd(
-							hWnd, TRUE,
+							_hWnd, TRUE,
 							&_compositionTarget
 						), "Composition target creation failed");
 						::Microsoft::WRL::ComPtr<IDCompositionVisual> compositionVisual{ nullptr };
@@ -471,20 +467,57 @@ namespace Voicemeeter {
 				State & operator=(State const &) = delete;
 				State & operator=(State &&) = delete;
 
+				inline constexpr size_t get_Frames() const {
+					return FRAME_COUNT;
+				};
+
+				inline HWND get_hWnd() const {
+					return _hWnd;
+				};
 				inline ID3D12Device8 * get_D3dDevice() const {
 					return _d3dDevice.Get();
-				};
-				inline IDXGISwapChain4 * get_SwapChain() const {
-					return _swapChain.Get();
 				};
 				inline ID3D12CommandQueue * get_CommandQueue() const {
 					return _commandQueue.Get();
 				};
-				inline constexpr size_t get_Frames() const {
-					return FRAME_COUNT;
+				inline ID3D12CommandAllocator * get_CommandAllocator() const {
+					return _commandAllocator.Get();
 				};
-				inline size_t get_Frame() const {
-					return _frame;
+				inline ID3D12GraphicsCommandList * get_CommandList() const {
+					return _commandList.Get();
+				};
+				inline ID3D12RootSignature * get_RootSignature() const {
+					return _rootSignature.Get();
+				};
+				inline ID3D12PipelineState * get_DefaultState() const {
+					return _defaultState.Get();
+				};
+				inline ID3D12PipelineState * get_BlendState() const {
+					return _blendState.Get();
+				};
+				inline ID3D12DescriptorHeap * get_hTextureHeap() const {
+					return _hTextureHeap.Get();
+				};
+				inline ID3D12Resource * get_Texture() const {
+					return _texture.Get();
+				};
+				inline ID3D12Resource ** geta_Texture() {
+					return &_texture;
+				};
+				inline D3D12_VERTEX_BUFFER_VIEW get_hSquareBuffer() const {
+					return _hSquareBuffer;
+				};
+				inline ID3D12Fence * get_Fence() const {
+					return _fence.Get();
+				};
+				inline HANDLE get_hEvent() const {
+					return _hEvent;
+				};
+				inline UINT64 get_Count() const {
+					return _count;
+				};
+				inline IDXGISwapChain4 * get_SwapChain() const {
+					return _swapChain.Get();
 				};
 				inline D3D12_CPU_DESCRIPTOR_HANDLE get_hRenderTarget(size_t frame) const {
 					return _hRenderTargets[frame];
@@ -510,46 +543,11 @@ namespace Voicemeeter {
 				inline UINT64 get_Count(size_t frame) const {
 					return _counts[frame];
 				};
-				inline ID3D12RootSignature * get_RootSignature() const {
-					return _rootSignature.Get();
-				};
-				inline ID3D12PipelineState * get_PipelineState() const {
-					return _pipelineState.Get();
-				};
-				inline ID3D12PipelineState * get_BlendState() const {
-					return _blendState.Get();
-				};
-				inline ID3D12CommandAllocator * get_CommandAllocator() const {
-					return _commandAllocator.Get();
-				};
-				inline ID3D12GraphicsCommandList * get_CommandList() const {
-					return _commandList.Get();
-				};
-				inline ID3D12Fence * get_Fence() const {
-					return _fence.Get();
-				};
-				inline HANDLE get_hEvent() const {
-					return _hEvent;
-				};
-				inline UINT64 get_Count() const {
-					return _count;
-				};
-				inline D3D12_VERTEX_BUFFER_VIEW const & get_hVertexBuffer() const {
-					return _hVertexBuffer;
-				};
-				inline ID3D12DescriptorHeap * get_hShaderHeap() const {
-					return _hShaderHeap.Get();
-				};
-				inline ID3D12Resource * get_Texture() const {
-					return _texture.Get();
-				};
-				inline ID3D12Resource ** geta_Texture() {
-					return &_texture;
-				};
 
 			private:
 				static constexpr size_t FRAME_COUNT{ 2 };
 
+				HWND _hWnd;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _d3dDevice;
 				::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
 				::Microsoft::WRL::ComPtr<ID3D12CommandAllocator> _commandAllocator;
@@ -566,7 +564,6 @@ namespace Voicemeeter {
 				UINT64 _count;
 				::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _hRenderTargetHeap;
-				size_t _frame;
 				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, FRAME_COUNT> _hRenderTargets;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, FRAME_COUNT> _renderTargets;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> _commandAllocators;
