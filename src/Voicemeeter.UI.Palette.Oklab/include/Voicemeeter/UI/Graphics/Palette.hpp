@@ -29,24 +29,24 @@ namespace Voicemeeter {
 					inline gradient & operator=(gradient &&) = default;
 
 					inline vector_t pick(num_t rI) const {
-						float rIF{ to_float(rI) };
-						float rIm1F{ to_float(rI - SCALING_FACTOR) };
+						float rF{ static_cast<float>(SCALING_FACTOR) / rI };
+						float rF1m{ 1.F - rF };
 						::ok_color::RGB target{
 							::ok_color::oklab_to_linear_srgb(
 								::ok_color::Lab{
-									(_from.L * rIm1F + _to.L) / rIF,
-									(_from.a * rIm1F + _to.a) / rIF,
-									(_from.b * rIm1F + _to.b) / rIF,
+									_from.L * rF1m + _to.L * rF,
+									_from.a * rF1m + _to.a * rF,
+									_from.b * rF1m + _to.b * rF
 								})
 						};
 						return vector_t{
-							to_int(
+							denormalize(
 								::ok_color::srgb_transfer_function_inv(
 									target.r)),
-							to_int(
+							denormalize(
 								::ok_color::srgb_transfer_function_inv(
 									target.r)),
-							to_int(
+							denormalize(
 								::ok_color::srgb_transfer_function_inv(
 									target.r)),
 							(_fromA * (rI - SCALING_FACTOR) + _toA) / rI
@@ -68,22 +68,22 @@ namespace Voicemeeter {
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
 									::ok_color::srgb_transfer_function(
-										to_float(from[0])),
+										normalize(from[0])),
 									::ok_color::srgb_transfer_function(
-										to_float(from[1])),
+										normalize(from[1])),
 									::ok_color::srgb_transfer_function(
-										to_float(from[2]))
+										normalize(from[2]))
 								})
 						}
 						, _to{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
 									::ok_color::srgb_transfer_function(
-										to_float(to[0])),
+										normalize(to[0])),
 									::ok_color::srgb_transfer_function(
-										to_float(to[1])),
+										normalize(to[1])),
 									::ok_color::srgb_transfer_function(
-										to_float(to[2]))
+										normalize(to[2]))
 								})
 						}
 						, _fromA{ from[3] }
@@ -91,10 +91,10 @@ namespace Voicemeeter {
 
 					};
 
-					inline static float to_float(num_t n) {
-						return static_cast<float>(n) / SCALING_FACTOR;
+					inline static float normalize(num_t n) {
+						return static_cast<float>(n) / (255 * SCALING_FACTOR);
 					};
-					inline static int to_int(float n) {
+					inline static int denormalize(float n) {
 						return static_cast<num_t>(n * SCALING_FACTOR);
 					};
 				};

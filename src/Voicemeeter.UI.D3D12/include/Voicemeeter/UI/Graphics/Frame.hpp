@@ -6,6 +6,8 @@
 
 #include "Windows/API.hpp"
 
+#include <d3d12.h>
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {

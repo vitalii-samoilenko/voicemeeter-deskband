@@ -145,6 +145,7 @@ namespace Voicemeeter {
 						), "Fence creation failed");
 						_hEvent = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
 					}
+					::Microsoft::WRL::ComPtr<ID3D12Resource> squareUploadBuffer{ nullptr };
 					{
 						::std::array<FLOAT, 2 * 4> square{
 							-1.F, -1.F,
@@ -175,24 +176,23 @@ namespace Voicemeeter {
 							IID_PPV_ARGS(&_squareBuffer)
 						), "Vertex buffer creation failed");
 						squareHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-						::Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer{ nullptr };
 						::Windows::ThrowIfFailed(_d3dDevice->CreateCommittedResource(
 							&squareHeapProps, D3D12_HEAP_FLAG_NONE, &squareDesc,
 							D3D12_RESOURCE_STATE_GENERIC_READ,
 							nullptr,
-							IID_PPV_ARGS(&uploadBuffer)
+							IID_PPV_ARGS(&squareUploadBuffer)
 						), "Upload buffer creation failed");
 						D3D12_RANGE range{
 							0, 0
 						};
 						void *data{ nullptr };
-						::Windows::ThrowIfFailed(uploadBuffer->Map(
+						::Windows::ThrowIfFailed(squareUploadBuffer->Map(
 							0, &range,
 							&data
 						), "Upload buffer map failed");
 						::memcpy(data, square.data(), sizeof(square));
-						uploadBuffer->Unmap(0, nullptr);
-						_commandList->CopyResource(_squareBuffer.Get(), uploadBuffer.Get());
+						squareUploadBuffer->Unmap(0, nullptr);
+						_commandList->CopyResource(_squareBuffer.Get(), squareUploadBuffer.Get());
 						D3D12_RESOURCE_BARRIER barrier{
 							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 							D3D12_RESOURCE_BARRIER_FLAG_NONE,
@@ -204,14 +204,136 @@ namespace Voicemeeter {
 							}
 						};
 						_commandList->ResourceBarrier(1, &barrier);
+						_hSquareBuffer.BufferLocation = _squareBuffer->GetGPUVirtualAddress();
+						_hSquareBuffer.StrideInBytes = 2 * sizeof(FLOAT);
+						_hSquareBuffer.SizeInBytes = sizeof(square);
+					}
+					::Microsoft::WRL::ComPtr<ID3D12Resource> textureUploadBuffer{ nullptr };
+					{
+						HRSRC hAtlas{
+							::Windows::FindResourceW(hModule,
+								MAKEINTRESOURCE(IDR_ATLAS), L"Texture")
+						};
+						BYTE *src{
+							reinterpret_cast<BYTE *>(
+								::Windows::LockResource(
+									::Windows::LoadResource(hModule, hAtlas)))
+						};
+						D3D12_HEAP_PROPERTIES textureHeapProps{
+							D3D12_HEAP_TYPE_DEFAULT,
+							D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+							D3D12_MEMORY_POOL_UNKNOWN,
+							0, 0
+						};
+						D3D12_RESOURCE_DESC textureDesc{
+							D3D12_RESOURCE_DIMENSION_TEXTURE2D,
+							0,
+							m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1, 1,
+							DXGI_FORMAT_R32_FLOAT,
+							DXGI_SAMPLE_DESC{
+								1, 0
+							},
+							D3D12_TEXTURE_LAYOUT_UNKNOWN,
+							D3D12_RESOURCE_FLAG_NONE
+						};
+						::Windows::ThrowIfFailed(_d3dDevice->CreateCommittedResource(
+								&textureHeapProps, D3D12_HEAP_FLAG_NONE, &textureDesc,
+								D3D12_RESOURCE_STATE_COPY_DEST,
+								nullptr,
+								IID_PPV_ARGS(&_texture)
+						), "Texture creation failed");
+						UINT rowSize{ m_pAtlas->get_Width() * 4 };
+						UINT srcRowPitch{ rowSize };
+						UINT remainder{ rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT };
+						UINT dstRowPitch{
+							remainder
+								? rowSize - remainder + D3D12_TEXTURE_DATA_PITCH_ALIGNMENT
+								: rowSize
+						};
+						textureHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+						textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+						textureDesc.Width = dstRowPitch * m_pAtlas->get_Height();
+						textureDesc.Height = 1;
+						textureDesc.Format = DXGI_FORMAT_UNKNOWN;
+						textureDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+						::Windows::ThrowIfFailed(_d3dDevice->CreateCommittedResource(
+							&textureHeapProps, D3D12_HEAP_FLAG_NONE, &textureDesc,
+							D3D12_RESOURCE_STATE_GENERIC_READ,
+							nullptr,
+							IID_PPV_ARGS(&textureUploadBuffer)
+						), "Upload buffer creation failed");
+						D3D12_RANGE range{
+							0, 0
+						};
+						BYTE *dst{ nullptr };
+						::Windows::ThrowIfFailed(textureUploadBuffer->Map(
+							0, &range,
+							reinterpret_cast<void **>(&dst)
+						), "Upload buffer map failed");
+						for (UINT row{ 0 }; row < m_pAtlas->get_Height(); ++row) {
+							memcpy(dst + dstRowPitch * row, src + srcRowPitch * row, rowSize);
+						}
+						textureUploadBuffer->Unmap(0, nullptr);
+						D3D12_TEXTURE_COPY_LOCATION srcLoc{
+							textureUploadBuffer.Get(),
+							D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
+							D3D12_PLACED_SUBRESOURCE_FOOTPRINT{
+								0,
+								D3D12_SUBRESOURCE_FOOTPRINT{
+									DXGI_FORMAT_R32_FLOAT,
+									m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1,
+									dstRowPitch
+								}
+							}
+						};
+						D3D12_TEXTURE_COPY_LOCATION dstLoc{
+							_texture.Get(),
+							D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX
+						};
+						dstLoc.SubresourceIndex = 0;
+						_commandList->CopyTextureRegion(
+							&dstLoc,
+							0U, 0U, 0U,
+							&srcLoc,
+							nullptr);
+						D3D12_RESOURCE_BARRIER barrier{
+							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
+							D3D12_RESOURCE_BARRIER_FLAG_NONE,
+							D3D12_RESOURCE_TRANSITION_BARRIER{
+								_texture.Get(),
+								D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+								D3D12_RESOURCE_STATE_COPY_DEST,
+								D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+							}
+						};
+						_commandList->ResourceBarrier(1U, &barrier);
+						D3D12_DESCRIPTOR_HEAP_DESC hTextureHeapDesc{
+							D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+							1,
+							D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+							0
+						};
+						::Windows::ThrowIfFailed(_d3dDevice->CreateDescriptorHeap(
+							&hTextureHeapDesc,
+							IID_PPV_ARGS(&_hTextureHeap)
+						), "SRV heap descriptor creation failed");
+						D3D12_SHADER_RESOURCE_VIEW_DESC hTextureDesc{
+							DXGI_FORMAT_R32_FLOAT,
+							D3D12_SRV_DIMENSION_TEXTURE2D,
+							D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING
+						};
+						hTextureDesc.Texture2D.MipLevels = 1U;
+						_d3dDevice->CreateShaderResourceView(
+							_texture.Get(),
+							&hTextureDesc,
+							_hTextureHeap->GetCPUDescriptorHandleForHeapStart());
+					}
+					{
 						::Windows::ThrowIfFailed(_commandList->Close(
 						), "Command list close failed");
 						ID3D12CommandList *commandList{ _commandList.Get() };
 						_commandQueue->ExecuteCommandLists(1, &commandList);
 						_commandQueue->Signal(_fence.Get(), ++_count);
-						_hSquareBuffer.BufferLocation = _squareBuffer->GetGPUVirtualAddress();
-						_hSquareBuffer.StrideInBytes = 2 * sizeof(FLOAT);
-						_hSquareBuffer.SizeInBytes = sizeof(square);
 					}
 					{
 						D3D12_DESCRIPTOR_HEAP_DESC hRenderTargetHeapDesc{
@@ -256,18 +378,6 @@ namespace Voicemeeter {
 							), "Fence creation failed");
 							_hEvents[frame] = ::Windows::wCreateEventW(NULL, FALSE, FALSE, NULL)
 						}
-					}
-					{
-						D3D12_DESCRIPTOR_HEAP_DESC hTextureHeapDesc{
-							D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-							1,
-							D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-							0
-						};
-						::Windows::ThrowIfFailed(_d3dDevice->CreateDescriptorHeap(
-							&hTextureHeapDesc,
-							IID_PPV_ARGS(&_hTextureHeap)
-						), "SRV heap descriptor creation failed");
 					}
 					{
 						D3D12_DESCRIPTOR_RANGE hTextureRange{

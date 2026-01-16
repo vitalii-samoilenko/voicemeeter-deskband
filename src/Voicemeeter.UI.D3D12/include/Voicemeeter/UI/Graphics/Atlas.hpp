@@ -1,6 +1,12 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_ATLAS_HPP
 #define VOICEMEETER_UI_GRAPHICS_ATLAS_HPP
 
+#include <array>
+
+#include "Windows/API.hpp"
+
+#include <d3d12.h>
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {
