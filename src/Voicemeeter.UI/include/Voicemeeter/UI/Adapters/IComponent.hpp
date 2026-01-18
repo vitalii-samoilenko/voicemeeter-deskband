@@ -1,6 +1,8 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_ICOMPONENT_HPP
 #define VOICEMEETER_UI_ADAPTERS_ICOMPONENT_HPP
 
+#include "wheel.hpp"
+
 #include "Voicemeeter/UI/Focus.hpp"
 
 namespace Voicemeeter {

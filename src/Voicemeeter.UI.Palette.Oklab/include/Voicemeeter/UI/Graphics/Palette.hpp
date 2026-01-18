@@ -1,6 +1,8 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_PALETTE_HPP
 #define VOICEMEETER_UI_GRAPHICS_PALETTE_HPP
 
+#include "wheel.hpp"
+
 #include "ok_color.h"
 
 namespace Voicemeeter {
@@ -29,7 +31,7 @@ namespace Voicemeeter {
 					inline gradient & operator=(gradient &&) = default;
 
 					inline vector_t pick(num_t rI) const {
-						float rF{ static_cast<float>(SCALING_FACTOR) / rI };
+						float rF{ static_cast<float>(One) / rI };
 						float rF1m{ 1.F - rF };
 						::ok_color::RGB target{
 							::ok_color::oklab_to_linear_srgb(
@@ -49,7 +51,7 @@ namespace Voicemeeter {
 							denormalize(
 								::ok_color::srgb_transfer_function_inv(
 									target.r)),
-							(_fromA * (rI - SCALING_FACTOR) + _toA) / rI
+							(_fromA * (rI - One) + _toA) / rI
 						};
 					};
 
@@ -92,10 +94,10 @@ namespace Voicemeeter {
 					};
 
 					inline static float normalize(num_t n) {
-						return static_cast<float>(n) / (255 * SCALING_FACTOR);
+						return static_cast<float>(n) / push(255);
 					};
 					inline static int denormalize(float n) {
-						return static_cast<num_t>(n * SCALING_FACTOR);
+						return static_cast<num_t>(push(255) * n);
 					};
 				};
 

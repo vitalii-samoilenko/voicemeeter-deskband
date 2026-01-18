@@ -5,6 +5,8 @@
 #include <memory>
 #include <utility>
 
+#include "wheel.hpp"
+
 #include "Windows/API.h"
 
 namespace Windows {

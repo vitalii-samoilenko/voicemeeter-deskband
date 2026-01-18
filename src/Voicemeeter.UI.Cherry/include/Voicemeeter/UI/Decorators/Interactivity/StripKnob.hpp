@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "wheel.hpp"
+
 #include "Voicemeeter/UI/Focus.hpp"
 
 namespace Voicemeeter {
@@ -78,8 +80,7 @@ namespace Voicemeeter {
 					};
 					inline bool MouseMove(vector_t const &point) {
 						TStripKnob::add_GainState(
-							_direction(point - _initPoint)
-							.sum());
+							sum(_direction(point - _initPoint)));
 						_initPoint = point;
 						return true;
 					};

@@ -1,11 +1,11 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_FRAME_HPP
 #define VOICEMEETER_UI_GRAPHICS_FRAME_HPP
 
-#include <cmath>
 #include <utility>
 
-#include "Windows/API.hpp"
+#include "wheel.hpp"
 
+#include "Windows/API.hpp"
 #include <d3d12.h>
 
 namespace Voicemeeter {
@@ -47,8 +47,8 @@ namespace Voicemeeter {
 							&width, &height
 					), "Could not get swap chain size");
 					return vector_t{
-						static_cast<num_t>(width),
-						static_cast<num_t>(height)
+						push(static_cast<num_t>(width)),
+						push(static_cast<num_t>(height))
 					};
 				};
 				inline void set_Size(vector_t const &vertex) {
@@ -69,8 +69,8 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(_state.get_SwapChain()
 						->ResizeBuffers1(
 							0,
-							static_cast<UINT>(::std::max(8, ceil(vertex[0]))),
-							static_cast<UINT>(::std::max(8, ceil(vertex[1]))),
+							static_cast<UINT>(ceil(vertex[0])),
+							static_cast<UINT>(ceil(vertex[1])),
 							DXGI_FORMAT_UNKNOWN,
 							0,
 							nullptr, nullptr
@@ -217,10 +217,6 @@ namespace Voicemeeter {
 				bool _first;
 				vector_t _fromPoint;
 				vector_t _toPoint;
-
-				static num_t ceil(num_t n) {
-					return (n + SCALING_FACTOR - 1) / SCALING_FACTOR;
-				};
 			};
 		}
 	}

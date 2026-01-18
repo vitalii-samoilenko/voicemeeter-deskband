@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Adapters {
@@ -58,8 +60,8 @@ namespace Voicemeeter {
 
 					private:
 						static constexpr num_t DEFAULT{ 0 };
-						static constexpr num_t MIN{ -225 * SCALING_FACTOR };
-						static constexpr num_t MAX{ 45 * SCALING_FACTOR };
+						static constexpr num_t MIN{ push(-225) };
+						static constexpr num_t MAX{ push(45) };
 					};
 				}
 			}

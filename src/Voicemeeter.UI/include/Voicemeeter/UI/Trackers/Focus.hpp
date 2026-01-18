@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "wheel.hpp"
+
 #include "Voicemeeter/UI/Adapters/IComponent.hpp"
 #include "Voicemeeter/UI/Focus.hpp"
 

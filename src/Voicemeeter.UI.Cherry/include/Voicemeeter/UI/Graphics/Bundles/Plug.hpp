@@ -4,6 +4,10 @@
 #include <bitset>
 #include <optional>
 
+#include "wheel.hpp"
+
+#include "Voicemeeter/UI/Definitions/Atlas.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {
@@ -17,8 +21,8 @@ namespace Voicemeeter {
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
-						, _frameAtlasPoint{ 0, 0 }
-						, _frameAtlasVertex{ 0, 0 }
+						, _frameAtlasPoint{ ATLAS_PLUG_FRAME_X, ATLAS_PLUG_FRAME_Y }
+						, _frameAtlasVertex{ ATLAS_PLUG_FRAME_W, ATLAS_PLUG_FRAME_H }
 						, _frameRgba{ 0, 0, 0, 0 } {
 
 					};

@@ -4,15 +4,18 @@
 #include <array>
 
 #include "memory.hpp"
+#include "wheel.hpp"
 
 #include "Windows/API.hpp"
 #include "Windows/COM.hpp"
-
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include <dcomp.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
+
+#include "Voicemeeter/UI/Definitions/Atlas.hpp"
+#include "Voicemeeter/UI/Definitions/Loader.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -111,7 +114,7 @@ namespace Voicemeeter {
 							DXGI_SAMPLE_DESC{
 								1, 0
 							},
-							DXGI_USAGE_RENDER_TARGET_OUTPUT, FRAME_COUNT,
+							DXGI_USAGE_RENDER_TARGET_OUTPUT, FrameCount,
 							DXGI_SCALING_STRETCH,
 							DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
 							DXGI_ALPHA_MODE_PREMULTIPLIED,
@@ -212,7 +215,8 @@ namespace Voicemeeter {
 					{
 						HRSRC hAtlas{
 							::Windows::FindResourceW(hModule,
-								MAKEINTRESOURCE(IDR_ATLAS), L"Texture")
+								MAKEINTRESOURCE(IDR_BIT_ATLAS),
+								MAKEINTRESOURCE(IDT_BIT))
 						};
 						BYTE *src{
 							reinterpret_cast<BYTE *>(
@@ -228,7 +232,7 @@ namespace Voicemeeter {
 						D3D12_RESOURCE_DESC textureDesc{
 							D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 							0,
-							m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1, 1,
+							ATLAS_W, ATLAS_H, 1, 1,
 							DXGI_FORMAT_R32_FLOAT,
 							DXGI_SAMPLE_DESC{
 								1, 0
@@ -242,7 +246,7 @@ namespace Voicemeeter {
 								nullptr,
 								IID_PPV_ARGS(&_texture)
 						), "Texture creation failed");
-						UINT rowSize{ m_pAtlas->get_Width() * 4 };
+						UINT rowSize{ ATLAS_W * 4 };
 						UINT srcRowPitch{ rowSize };
 						UINT remainder{ rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT };
 						UINT dstRowPitch{
@@ -252,7 +256,7 @@ namespace Voicemeeter {
 						};
 						textureHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 						textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-						textureDesc.Width = dstRowPitch * m_pAtlas->get_Height();
+						textureDesc.Width = dstRowPitch * ATLAS_H;
 						textureDesc.Height = 1;
 						textureDesc.Format = DXGI_FORMAT_UNKNOWN;
 						textureDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
@@ -270,7 +274,7 @@ namespace Voicemeeter {
 							0, &range,
 							reinterpret_cast<void **>(&dst)
 						), "Upload buffer map failed");
-						for (UINT row{ 0 }; row < m_pAtlas->get_Height(); ++row) {
+						for (UINT row{ 0 }; row < ATLAS_H; ++row) {
 							memcpy(dst + dstRowPitch * row, src + srcRowPitch * row, rowSize);
 						}
 						textureUploadBuffer->Unmap(0, nullptr);
@@ -281,7 +285,7 @@ namespace Voicemeeter {
 								0,
 								D3D12_SUBRESOURCE_FOOTPRINT{
 									DXGI_FORMAT_R32_FLOAT,
-									m_pAtlas->get_Width(), m_pAtlas->get_Height(), 1,
+									ATLAS_W, ATLAS_H, 1,
 									dstRowPitch
 								}
 							}
@@ -337,7 +341,7 @@ namespace Voicemeeter {
 					}
 					{
 						D3D12_DESCRIPTOR_HEAP_DESC hRenderTargetHeapDesc{
-							D3D12_DESCRIPTOR_HEAP_TYPE_RTV, FRAME_COUNT,
+							D3D12_DESCRIPTOR_HEAP_TYPE_RTV, FrameCount,
 							D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
 							0
 						};
@@ -352,7 +356,7 @@ namespace Voicemeeter {
 						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
 							_hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
 						};
-						for (size_t frame{ 0 }; frame < FRAME_COUNT; ++frame) {
+						for (size_t frame{ 0 }; frame < FrameCount; ++frame) {
 							_hRenderTargets[frame].ptr = SIZE_T(INT64(hRenderTarget.ptr)
 								+ INT64(frame * hRenderTargetSize));
 							::Windows::ThrowIfFailed(_swapChain->GetBuffer(
@@ -426,11 +430,13 @@ namespace Voicemeeter {
 						::Microsoft::WRL::ComPtr<ID3DBlob> pixelShader{ nullptr };
 						HRSRC hVertexCode{
 							::Windows::FindResourceW(hModule,
-								MAKEINTRESOURCE(IDR_VERTEX), L"Shader")
+								MAKEINTRESOURCE(IDR_HLSL_VERTEX),
+								MAKEINTRESOURCE(IDT_HLSL))
 						};
 						HRSRC hPixelCode{
 							::Windows::FindResourceW(hModule,
-								MAKEINTRESOURCE(IDR_PIXEL), L"Shader")
+								MAKEINTRESOURCE(IDR_HLSL_PIXEL),
+								MAKEINTRESOURCE(IDT_HLSL))
 						};
 						UINT compileFlags{ 0 };
 #ifndef NDEBUG
@@ -578,7 +584,7 @@ namespace Voicemeeter {
 				State & operator=(State &&) = delete;
 
 				inline constexpr size_t get_Frames() const {
-					return FRAME_COUNT;
+					return FrameCount;
 				};
 
 				inline HWND get_hWnd() const {
@@ -658,7 +664,7 @@ namespace Voicemeeter {
 				};
 
 			private:
-				static constexpr size_t FRAME_COUNT{ 2 };
+				static constexpr size_t FrameCount{ 2 };
 
 				HWND _hWnd;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _d3dDevice;
@@ -677,13 +683,13 @@ namespace Voicemeeter {
 				UINT64 _count;
 				::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _hRenderTargetHeap;
-				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, FRAME_COUNT> _hRenderTargets;
-				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, FRAME_COUNT> _renderTargets;
-				::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, FRAME_COUNT> _commandAllocators;
-				::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, FRAME_COUNT> _commandLists;
-				::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, FRAME_COUNT> _fences;
-				::std::array<HANDLE, FRAME_COUNT> _hEvents;
-				::std::array<UINT64, FRAME_COUNT> _counts;
+				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, FrameCount> _hRenderTargets;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, FrameCount> _renderTargets;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, FrameCount> _commandAllocators;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, FrameCount> _commandLists;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, FrameCount> _fences;
+				::std::array<HANDLE, FrameCount> _hEvents;
+				::std::array<UINT64, FrameCount> _counts;
 				::Microsoft::WRL::ComPtr<IDCompositionTarget> _compositionTarget;
 			};
 		}

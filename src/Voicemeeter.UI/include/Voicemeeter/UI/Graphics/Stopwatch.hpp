@@ -3,6 +3,8 @@
 
 #include <chrono>
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {

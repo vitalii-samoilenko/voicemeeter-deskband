@@ -1,7 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_ANIMATED_VBAN_HPP
 #define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_ANIMATED_VBAN_HPP
 
-#include <cmath>
+#include "wheel.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -12,7 +12,7 @@ namespace Voicemeeter {
 						template<typename TToolkit>
 						struct VbanContext {
 							typename TToolkit::Palette::gradient path;
-							int distance2;
+							num_t distance2;
 						};
 
 						template<typename TToolkit, typename TVban>
@@ -33,14 +33,14 @@ namespace Voicemeeter {
 
 							inline void operator()(
 								TVban &control, typename TVban::state_t state) const {
-								constexpr num_t ANIMATION_LENGTH{ 200 };
+								constexpr num_t AnimationLength{ 200 };
 								vector_t targetVertex{ 0 };
 								vector_t targetRgba{
 									_toolkit.get_Theme()
 										.Inactive
 								};
 								if (state) {
-									targetVertex[0] = ANIMATION_LENGTH;
+									targetVertex[0] = AnimationLength;
 									targetRgba = _toolkit.get_Theme()
 										.Information;
 								}
@@ -51,8 +51,7 @@ namespace Voicemeeter {
 									typename TVban::context_t{
 										_toolkit.get_Palette()
 											.Interpolate(targetRgba, control.get_FrameColor()),
-										(animationVertex * animationVertex)
-											.sum()
+										sum(animationVertex * animationVertex)
 									});
 							};
 						
@@ -80,16 +79,13 @@ namespace Voicemeeter {
 								auto animationVertex = control.get_AnimationSize()
 									- control.get_AnimationPoint();
 								num_t remaining2{
-									(animationVertex * animationVertex)
-										.sum()
+									sum(animationVertex * animationVertex)
 								};
 								typename TVban::context_t const &context{
 									control.get_AnimationContext()
 								};
 								num_t rI{
-									static_cast<num_t>(::std::sqrt(
-										context.distance2 * SCALING_FACTOR / remaining2
-										* SCALING_FACTOR))
+										sqrt(push(context.distance2) / remaining2)
 								};
 								control.set_FrameColor(
 									context.path.pick(rI));

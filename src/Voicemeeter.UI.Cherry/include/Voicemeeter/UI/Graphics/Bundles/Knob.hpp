@@ -4,6 +4,10 @@
 #include <bitset>
 #include <optional>
 
+#include "wheel.hpp"
+
+#include "Voicemeeter/UI/Definitions/Atlas.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {
@@ -17,14 +21,14 @@ namespace Voicemeeter {
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
-						, _frameAtlasPoint{ 0, 0 }
-						, _frameAtlasVertex{ 0, 0 }
+						, _frameAtlasPoint{ ATLAS_KNOB_FRAME_X, ATLAS_KNOB_FRAME_Y }
+						, _frameAtlasVertex{ ATLAS_KNOB_FRAME_W, ATLAS_KNOB_FRAME_H }
 						, _frameRgba{ 0, 0, 0, 0 }
 						, _indicatorDegree{}
 						, _indicatorPoint{ 0, 0 }
 						, _indicatorVertex{ 0, 0 }
-						, _indicatorAtlasPoint{ 0, 0 }
-						, _indicatorAtlasVertex{ 0, 0 }
+						, _indicatorAtlasPoint{ ATLAS_KNOB_INDICATOR_X, ATLAS_KNOB_INDICATOR_Y }
+						, _indicatorAtlasVertex{ ATLAS_KNOB_INDICATOR_W, ATLAS_KNOB_INDICATOR_H }
 						, _indicatorRgba{ 0, 0, 0, 0 } {
 
 					};
@@ -68,12 +72,23 @@ namespace Voicemeeter {
 
 					inline void operator()() {
 						if (_changes.test(FrameVertex)) {
+							_indicatorVertex = _frameVertex / 10;
 							_changes.set(FramePoint);
 						}
 						if (_changes.test(FramePoint)) {
 							_changes.set(IndicatorDegree);
 						}
 						if (_changes.test(IndicatorDegree) {
+							vector_t transformI{
+								sinI(_indicatorDegree),
+								cosI(_indicatorDegree)
+							};
+							auto frameR = _frameVertex / 2;
+							auto center = _framePoint + frameR;
+							auto indicatorR = frameR * 4 / 5;
+							_indicatorPoint = center
+								+ indicatorR / transformI
+								- _indicatorVertex / 2;
 						}
 						_changes.reset();
 						_slot.reset();
@@ -86,7 +101,8 @@ namespace Voicemeeter {
 							.FillSDF(
 								_indicatorAtlasPoint, _indicatorAtlasVertex,
 								_indicatorPoint, _indicatorVertex,
-								_indicatorRgba);
+								_indicatorRgba,
+								true);
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

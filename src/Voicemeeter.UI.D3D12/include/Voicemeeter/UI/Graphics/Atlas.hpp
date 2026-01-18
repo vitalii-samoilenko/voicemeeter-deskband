@@ -3,9 +3,12 @@
 
 #include <array>
 
-#include "Windows/API.hpp"
+#include "wheel.hpp"
 
+#include "Windows/API.hpp"
 #include <d3d12.h>
+
+#include "Voicemeeter/UI/Definitions/Atlas.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -40,8 +43,10 @@ namespace Voicemeeter {
 								_state.get_BlendState());
 					}
 					D3D12_VIEWPORT viewport{
-						to_FLOAT(dstPoint[0]), to_FLOAT(dstPoint[1]),
-						to_FLOAT(dstVertex[0]), to_FLOAT(dstVertex[1])
+						static_cast<FLOAT>(dstPoint[0]) / One,
+						static_cast<FLOAT>(dstPoint[1]) / One,
+						static_cast<FLOAT>(dstVertex[0]) / One,
+						static_cast<FLOAT>(dstVertex[1]) / One
 					};
 					_state.get_CommandList(frame)
 						->RSSetViewports(1, &viewport);
@@ -54,14 +59,14 @@ namespace Voicemeeter {
 					_state.get_CommandList(frame)
 						->RSSetScissorRects(1, &scissor);
 					::std::array<FLOAT, 8> constants{
-						to_FLOAT(color[0]),
-						to_FLOAT(color[1]),
-						to_FLOAT(color[2]),
-						to_FLOAT(color[3]),
-						to_FLOAT(srcPoint[0] / m_pAtlas->get_Width()),
-						to_FLOAT(srcPoint[1] / m_pAtlas->get_Height()),
-						to_FLOAT(srcVertex[0] / m_pAtlas->get_Width()),
-						to_FLOAT(srcVertex[1] / m_pAtlas->get_Height())
+						static_cast<FLOAT>(color[0]) / One,
+						static_cast<FLOAT>(color[1]) / One,
+						static_cast<FLOAT>(color[2]) / One,
+						static_cast<FLOAT>(color[3]) / One,
+						static_cast<FLOAT>(srcPoint[0]) / push(ATLAS_W),
+						static_cast<FLOAT>(srcPoint[1]) / push(ATLAS_H),
+						static_cast<FLOAT>(srcVertex[0]) / push(ATLAS_W),
+						static_cast<FLOAT>(srcVertex[1]) / push(ATLAS_H)
 					};
 					_state.get_CommandList(frame)
 						->SetGraphicsRoot32BitConstants(
@@ -79,16 +84,6 @@ namespace Voicemeeter {
 
 			private:
 				TState &_state;
-
-				static FLOAT to_FLOAT(num_t n) {
-					return static_cast<FLOAT>(n) / SCALING_FACTOR;
-				};
-				static num_t floor(num_t n) {
-					return n / SCALING_FACTOR;
-				};
-				static num_t ceil(num_t n) {
-					return (n + SCALING_FACTOR - 1) / SCALING_FACTOR;
-				};
 			};
 		}
 	}

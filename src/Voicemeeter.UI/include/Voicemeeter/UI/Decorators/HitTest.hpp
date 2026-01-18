@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Decorators {
@@ -59,7 +61,7 @@ namespace Voicemeeter {
 			private:
 				static inline bool is_inside(
 					vector_t const &point, vector_t const &vertex) {
-					return (point - vertex).max() < 0;
+					return max(point - vertex) < 0;
 				};
 				static inline bool is_overlapping(
 					vector_t const &lhs_point, vector_t const &lhs_vertex,

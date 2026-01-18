@@ -1,10 +1,11 @@
 #ifndef VOICEMEETER_UI_ADAPTERS_GRAPHICS_ANIMATED_HPP
 #define VOICEMEETER_UI_ADAPTERS_GRAPHICS_ANIMATED_HPP
 
-#include <cmath>
 #include <optional>
 #include <tuple>
 #include <utility>
+
+#include "wheel.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -96,7 +97,7 @@ namespace Voicemeeter {
 								toolkit.get_Stopwatch()
 									.get_Elapsed()
 							};
-							if (HALF_LIFE < traveled) {
+							if (!is_safe(traveled)) {
 								point = vertex;
 								return;
 							}
@@ -105,15 +106,13 @@ namespace Voicemeeter {
 							auto animationVertex2 = animationVertex * animationVertex;
 							num_t distance2{ 0 };
 							num_t rI{ 0 };
-							(((distance2 = animationVertex2[subSpaces].sum())
+							(((distance2 = sum(animationVertex2[subSpaces]))
 							,(rI = traveled2 < distance2
-								? static_cast<num_t>(::std::sqrt(
-									distance2 * SCALING_FACTOR / traveled2
-									* SCALING_FACTOR))
-								: SCALING_FACTOR)
+								? sqrt(push(distance2) / traveled2)
+								: One)
 							,(point[subSpaces] = (
-									point[subSpaces] * (rI - SCALING_FACTOR)
-									+ vertex[subSpaces] * SCALING_FACTOR
+									point[subSpaces] * (rI - One)
+									+ push(vertex[subSpaces]))
 								) / rI))
 							, ...);
 						}, _subSpaces);

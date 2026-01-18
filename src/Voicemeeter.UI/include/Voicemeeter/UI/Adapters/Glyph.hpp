@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Adapters {
@@ -44,7 +46,7 @@ namespace Voicemeeter {
 					TBundle::set_Invalid();
 				};
 				inline void Rescale(vector_t const &vertex) {
-					auto [frameVertex] = _scale(vertex, _baseVertex);
+					auto const &[frameVertex] = _scale(vertex, _baseVertex);
 					TBundle::set_FrameSize(frameVertex);
 				};
 				inline void Move(vector_t const &point) {

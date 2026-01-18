@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "wheel.hpp"
+
 #include "Voicemeeter/UI/Focus.hpp"
 
 namespace Voicemeeter {

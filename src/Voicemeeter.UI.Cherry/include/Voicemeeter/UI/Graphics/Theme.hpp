@@ -1,6 +1,8 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_THEME_HPP
 #define VOICEMEETER_UI_GRAPHICS_THEME_HPP
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {
