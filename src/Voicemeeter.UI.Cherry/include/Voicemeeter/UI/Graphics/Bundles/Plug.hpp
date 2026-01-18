@@ -21,8 +21,14 @@ namespace Voicemeeter {
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
-						, _frameAtlasPoint{ ATLAS_PLUG_FRAME_X, ATLAS_PLUG_FRAME_Y }
-						, _frameAtlasVertex{ ATLAS_PLUG_FRAME_W, ATLAS_PLUG_FRAME_H }
+						, _frameAtlasPoint{
+							push(ATLAS_PLUG_FRAME_X),
+							push(ATLAS_PLUG_FRAME_Y)
+						}
+						, _frameAtlasVertex{
+							push(ATLAS_PLUG_FRAME_W),
+							push(ATLAS_PLUG_FRAME_H)
+						}
 						, _frameRgba{ 0, 0, 0, 0 } {
 
 					};

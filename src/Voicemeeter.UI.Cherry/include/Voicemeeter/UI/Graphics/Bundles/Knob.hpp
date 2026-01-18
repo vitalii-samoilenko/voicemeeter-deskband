@@ -21,14 +21,26 @@ namespace Voicemeeter {
 						, _changes{}
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
-						, _frameAtlasPoint{ ATLAS_KNOB_FRAME_X, ATLAS_KNOB_FRAME_Y }
-						, _frameAtlasVertex{ ATLAS_KNOB_FRAME_W, ATLAS_KNOB_FRAME_H }
+						, _frameAtlasPoint{
+							push(ATLAS_KNOB_FRAME_X),
+							push(ATLAS_KNOB_FRAME_Y)
+						}
+						, _frameAtlasVertex{
+							push(ATLAS_KNOB_FRAME_W),
+							push(ATLAS_KNOB_FRAME_H)
+						}
 						, _frameRgba{ 0, 0, 0, 0 }
 						, _indicatorDegree{}
 						, _indicatorPoint{ 0, 0 }
 						, _indicatorVertex{ 0, 0 }
-						, _indicatorAtlasPoint{ ATLAS_KNOB_INDICATOR_X, ATLAS_KNOB_INDICATOR_Y }
-						, _indicatorAtlasVertex{ ATLAS_KNOB_INDICATOR_W, ATLAS_KNOB_INDICATOR_H }
+						, _indicatorAtlasPoint{
+							push(ATLAS_KNOB_INDICATOR_X),
+							push(ATLAS_KNOB_INDICATOR_Y)
+						}
+						, _indicatorAtlasVertex{
+							push(ATLAS_KNOB_INDICATOR_W),
+							push(ATLAS_KNOB_INDICATOR_H)
+						}
 						, _indicatorRgba{ 0, 0, 0, 0 } {
 
 					};
