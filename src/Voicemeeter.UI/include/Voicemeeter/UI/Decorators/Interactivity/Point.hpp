@@ -20,7 +20,7 @@ namespace Voicemeeter {
 					inline explicit Point(
 						TFocusTracker &focusTracker,
 						Args &&...args)
-						: TComponent{ ::std::forward<Args>(args)... }
+						: TComponent{ ::std::forward<Args>(args) ... }
 						, _focusTracker{ focusTracker } {
 
 					};

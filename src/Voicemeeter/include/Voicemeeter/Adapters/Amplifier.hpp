@@ -12,7 +12,7 @@ namespace Voicemeeter {
 		public:
 			template<typename... Args>
 			inline explicit Amplifier(Args &&...args)
-				: TBus{ ::std::forward<Args>(args)... }
+				: TBus{ ::std::forward<Args>(args) ... }
 				, _gain{ 0 } {
 
 			};

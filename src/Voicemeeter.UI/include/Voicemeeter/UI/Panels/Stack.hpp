@@ -25,7 +25,7 @@ namespace Voicemeeter {
 					::std::unique_ptr<TComponents> &&...components)
 					: _direction{ ::std::move(direction) }
 					, _scale{ ::std::move(scale) }
-					, _components{ ::std::move(components)... }
+					, _components{ ::std::move(components) ... }
 					, _vertex{ 0, 0 }
 					, _baseVertex{ ::std::move(baseVertex) } {
 

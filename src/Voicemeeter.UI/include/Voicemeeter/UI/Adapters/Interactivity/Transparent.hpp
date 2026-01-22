@@ -16,7 +16,7 @@ namespace Voicemeeter {
 				public:
 					template<typename... Args>
 					inline explicit Transparent(Args &&...args)
-						: TGlyph{ ::std::forward<Args>(args)... } {
+						: TGlyph{ ::std::forward<Args>(args) ... } {
 
 					};
 					Transparent(Transparent const &) = delete;

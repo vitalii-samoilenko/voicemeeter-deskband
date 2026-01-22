@@ -14,6 +14,8 @@ namespace Voicemeeter {
 			template<typename TInputTracker>
 			class Focus final {
 			public:
+				using FocusT = ::Voicemeeter::Focus;
+
 				inline explicit Focus(TInputTracker &inputTracker)
 					: _inputTracker{ inputTracker }
 					, _tracked{ nullptr }
@@ -121,8 +123,6 @@ namespace Voicemeeter {
 				};
 
 			private:
-				using FocusT = ::Voicemeeter::Focus;
-
 				TInputTracker &_inputTracker;
 				::std::unique_ptr<Adapters::IComponent> _tracked;
 				void const *_trackedId;

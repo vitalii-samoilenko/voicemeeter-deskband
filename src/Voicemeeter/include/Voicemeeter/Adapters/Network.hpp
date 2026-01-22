@@ -10,7 +10,7 @@ namespace Voicemeeter {
 		public:
 			template<typename... Args>
 			inline explicit Network(Args &&...args)
-				: TMixer{ ::std::forward<Args>(args)... }
+				: TMixer{ ::std::forward<Args>(args) ... }
 				, _vban{ false } {
 
 			};

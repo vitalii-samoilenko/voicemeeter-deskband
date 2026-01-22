@@ -15,7 +15,7 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				inline explicit Channel(Args &&...args)
-					: TChannel{ ::std::forward<Args>(args)... }
+					: TChannel{ ::std::forward<Args>(args) ... }
 					, _callbacks{} {
 
 				};
@@ -56,7 +56,6 @@ namespace Voicemeeter {
 							return;
 						}
 						callbacks.erase(_clientId);
-						_clientId = nullptr;
 					};
 
 					token & operator=(token const &) = delete;
@@ -64,36 +63,38 @@ namespace Voicemeeter {
 
 					template<typename Fn>
 					inline on_level(Fn &&callback) {
-						_callbacks[*_clientId] = ::std::forward<Fn>(callback);
+						_callbacks[_clientId]
+							= ::std::forward<Fn>(callback);
+					};
+
+				protected:
+					void const *_clientId;
+
+					inline token(
+						void const *clientId,
+						Channel &target)
+						: _clientId{ clientId }
+						, _callbacks{ target._callbacks } {
+
 					};
 
 				private:
-					friend Channel;
+					friend class Channel;
 
-					void const *_clientId;
 					::std::unordered_map<
 						void const *,
 						::std::function<void(num_t)>
 					> &_callbacks;
-
-					token(
-						void const *clientId,
-						::std::unordered_map<
-							void const *,
-							::std::function<void(num_t)>
-						> &callbacks)
-						: _clientId{ clientId }
-						, _callbacks{ callbacks } {
-
-					};
 				};
 
 				template<typename TClient>
 				token Subscribe() {
-					return token{ &typeid(TClient), _callbacks };
+					return token{ &typeid(TClient), *this };
 				};
 
 			private:
+				friend class token;
+
 				::std::unordered_map<
 					void const *,
 					::std::function<void(num_t)>

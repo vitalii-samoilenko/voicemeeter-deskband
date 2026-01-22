@@ -55,15 +55,14 @@ namespace Voicemeeter {
 					};
 
 				private:
-					friend Queue;
+					friend class Queue;
 
 					::std::vector<::std::unique_ptr<Adapters::IBundle>> &_items;
 					size_t _i;
 					void const *_itemId;
 
-					inline explicit slot(
-						::std::vector<::std::unique_ptr<Adapters::IBundle>> &items)
-						: _items{ items }
+					inline explicit slot(Queue &target)
+						: _items{ target._items }
 						, _i{ 0 }
 						, _itemId{ nullptr } {
 
@@ -82,10 +81,12 @@ namespace Voicemeeter {
 				};
 
 				inline slot reserve() {
-					return slot{ _items };
+					return slot{ *this };
 				};
 
 			private:
+				friend class slot;
+
 				::std::vector<::std::unique_ptr<Adapters::IBundle>> _items;
 			};
 		}

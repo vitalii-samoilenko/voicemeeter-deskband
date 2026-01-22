@@ -20,7 +20,7 @@ namespace Voicemeeter {
 					vector_t &&basePaddingVertex,
 					TScale &&scale = TScale{},
 					Args &&...args)
-					: TComponent{ ::std::forward<Args>(args)... }
+					: TComponent{ ::std::forward<Args>(args) ... }
 					, _point{ 0, 0 }
 					, _vertex{ 0, 0 }
 					, _baseVertex{ basePaddingPoint + TComponent::get_BaseSize() + basePaddingVertex }

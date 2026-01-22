@@ -11,7 +11,7 @@ namespace Voicemeeter {
 					template<size_t I>
 					struct Axis {
 						template<typename V>
-						inline vector_t operator()(V const &src) const {
+						inline auto operator()(V const &src) const {
 							vector_t dst(src.size(), 0);
 							dst[I] = src[I];
 							return dst;

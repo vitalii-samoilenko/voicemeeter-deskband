@@ -13,7 +13,7 @@ namespace Voicemeeter {
 			public:
 				template<typename... Args>
 				inline explicit HitTest(Args &&...args)
-					: TComponent{ ::std::forward<Args>(args)... } {
+					: TComponent{ ::std::forward<Args>(args) ... } {
 
 				};
 				HitTest(HitTest const &) = delete;
@@ -59,23 +59,31 @@ namespace Voicemeeter {
 				};
 
 			private:
-				static inline bool is_inside(
-					vector_t const &point, vector_t const &vertex) {
+				template<
+					typename Vp, typename Vv>
+				inline static bool is_inside(
+					Vp const &point, Vv const &vertex) {
 					return max(point - vertex) < 0;
 				};
-				static inline bool is_overlapping(
-					vector_t const &lhs_point, vector_t const &lhs_vertex,
-					vector_t const &rhs_point, vector_t const &rhs_vertex) {
+				template<
+					typename Vlp, typename Vlv,
+					typename Vrp, typename Vrv>
+				inline static bool is_overlapping(
+					Vlp const &lhs_point, Vlv const &lhs_vertex,
+					Vrp const &rhs_point, Vrv const &rhs_vertex) {
 					return is_inside(rhs_point, lhs_point + lhs_vertex)
 						&& is_inside(lhs_point, rhs_point + rhs_vertex);
 				};
+				template<
+					typename Vp, typename Vv>
 				inline bool IsOverlapping(
-					vector_t const &point, vector_t const &vertex) const {
+					Vp const &point, Vv const &vertex) const {
 					return is_overlapping(
 							point, vertex,
 							TComponent::get_Position(), TComponent::get_Size());
 				};
-				inline bool IsInside(vector_t const &point) const {
+				template<typename Vp>
+				inline bool IsInside(Vp const &point) const {
 					return is_inside(
 						point - TComponent::get_Position(), TComponent::get_Size());
 				};

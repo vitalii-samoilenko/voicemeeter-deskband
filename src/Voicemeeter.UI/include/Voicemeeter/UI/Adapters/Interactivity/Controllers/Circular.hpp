@@ -19,7 +19,7 @@ namespace Voicemeeter {
 							state_t const &max,
 							state_t const &delta,
 							Args &&...args)
-							: TStateControl{ ::std::forward<Args>(args)... }
+							: TStateControl{ ::std::forward<Args>(args) ... }
 							, _min{ min }
 							, _max{ max }
 							, _delta{ delta } {

@@ -11,9 +11,11 @@ namespace Voicemeeter {
 			template<typename TMute>
 			class Mute : public TMute {
 			public:
+				using TToken = typename TMute::token;
+
 				template<typename... Args>
 				inline explicit Mute(Args &&...args)
-					: TMute{ ::std::forward<Args>(args)... }
+					: TMute{ ::std::forward<Args>(args) ... }
 					, _callbacks{} {
 
 				};
@@ -39,22 +41,17 @@ namespace Voicemeeter {
 					}
 				};
 
-				class token {
+				class token : public TToken {
 				public:
 					token() = delete;
 					token(token const $) = delete;
-					inline token(token &&other)
-						: _clientId{ other._clientId }
-						, _callbacks{ other._callbacks }{
-						other._clientId = nullptr;
-					};
+					inline token(token &&) = default;
 
 					inline ~token() {
-						if (!_clientId) {
+						if (!TToken::_clientId) {
 							return;
 						}
-						_callbacks.erase(_clientId);
-						_clientId = nullptr;
+						_callbacks.erase(TToken::_clientId);
 					};
 
 					token & operator=(token const &) = delete;
@@ -62,36 +59,35 @@ namespace Voicemeeter {
 
 					template<typename Fn>
 					inline on_mute(Fn &&callback) {
-						_callbacks[_clientId] = ::std::forward<Fn>(callback);
+						_callbacks[TToken::_clientId]
+							= ::std::forward<Fn>(callback);
 					};
 
 				private:
-					friend Mute;
+					friend class Mute;
 
-					void const *_clientId;
-				::std::unordered_map<
-					void const *,
-					::std::function<void(bool)>
-				> &_callbacks;
+					::std::unordered_map<
+						void const *,
+						::std::function<void(bool)>
+					> &_callbacks;
 
-					token(
+					inline token(
 						void const *clientId,
-						::std::unordered_map<
-							void const *,
-							::std::function<void(bool)>
-						> &callbacks)
-						: _clientId{ clientId }
-						, _callbacks{ callbacks } {
+						Mute &target)
+						: TToken{ clientId, target }
+						, _callbacks{ target._callbacks } {
 
 					};
 				};
 
 				template<typename TClient>
 				token Subscribe() {
-					return token{ &typeid(TClient), _callbacks };
+					return token{ &typeid(TClient), *this };
 				};
 
 			private:
+				friend class token;
+
 				::std::unordered_map<
 					void const *,
 					::std::function<void(bool)>

@@ -17,7 +17,7 @@ namespace Voicemeeter {
 				inline explicit Canvas(
 					TTimer &timer,
 					Args &&...args)
-					: TToolkit{ ::std::forward<Args>(args) }
+					: TToolkit{ ::std::forward<Args>(args) ... }
 					, _frameTick{ timer, *this }
 					, _point{ 0, 0 } {
 
@@ -57,15 +57,20 @@ namespace Voicemeeter {
 			private:
 				class FrameTick {
 				public:
-					inline explicit FrameTick(TToolkit &toolkit)
-						: _toolkit{ toolkit } {
+					inline explicit FrameTick(
+						TTimer &timer,
+						TToolkit &toolkit)
+						: _timer{ timer }
+						, _toolkit{ toolkit } {
 
 					};
 					FrameTick() = delete;
 					FrameTick(FrameTick const &) = delete;
 					FrameTick(FrameTick &&) = delete;
 
-					inline ~FrameTick() = default;
+					inline ~FrameTick() {
+						Unset();
+					};
 
 					FrameTick & operator=(FrameTick const &) = delete;
 					FrameTick & operator=(FrameTick &&) = delete;

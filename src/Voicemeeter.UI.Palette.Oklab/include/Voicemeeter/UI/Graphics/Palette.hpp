@@ -56,7 +56,7 @@ namespace Voicemeeter {
 					};
 
 				private:
-					friend Palette;
+					friend class Palette;
 
 					::ok_color::Lab _from;
 					::ok_color::Lab _to;

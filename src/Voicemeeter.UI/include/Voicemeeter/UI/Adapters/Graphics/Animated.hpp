@@ -20,7 +20,7 @@ namespace Voicemeeter {
 
 					template<typename... Args>
 					inline explicit Context(Args &&...args)
-						: TBundle{ ::std::forward<Args>(args)... } {
+						: TBundle{ ::std::forward<Args>(args) ... } {
 
 					};
 					Context(Context const &) = delete;
@@ -55,11 +55,11 @@ namespace Voicemeeter {
 						TSubSpaces &&...subSpaces,
 						TUpdate &&update = TUpdate{},
 						Args &&...args)
-						: TBundle{ ::std::forward<Args>(args)... }
+						: TBundle{ ::std::forward<Args>(args) ... }
 						, _toolkit{ toolkit }
-						, _point(0, (subSpaces.size() + ...))
+						, _point((subSpaces.size() + ...), 0)
 						, _vertex{ _point }
-						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces)... }
+						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces) ... }
 						, _update{ ::std::move(update) } {
 
 					};
@@ -112,7 +112,7 @@ namespace Voicemeeter {
 								: One)
 							,(point[subSpaces] = (
 									point[subSpaces] * (rI - One)
-									+ push(vertex[subSpaces]))
+									+ push(vertex[subSpaces])
 								) / rI))
 							, ...);
 						}, _subSpaces);

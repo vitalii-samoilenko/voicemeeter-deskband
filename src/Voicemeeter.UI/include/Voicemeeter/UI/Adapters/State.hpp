@@ -21,7 +21,7 @@ namespace Voicemeeter {
 					TNotify &&notify = TNotify{},
 					TUpdate &&update = TUpdate{},
 					Args &&...args)
-					: TControl{ ::std::forward<Args>(args)... }
+					: TControl{ ::std::forward<Args>(args) ... }
 					, _value{}
 					, _update{ ::std::move(update) }
 					, _notify{ ::std::move(notify) } {

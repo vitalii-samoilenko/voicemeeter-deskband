@@ -18,7 +18,7 @@ namespace Voicemeeter {
 					vector_t &&baseVertex,
 					TScale &&scale = TScale{},
 					Args &&...args)
-					: TBundle{ ::std::forward<Args>(args)... }
+					: TBundle{ ::std::forward<Args>(args) ... }
 					, _baseVertex{ ::std::move(baseVertex) }
 					, _scale{ ::std::move(scale) } {
 
@@ -46,7 +46,7 @@ namespace Voicemeeter {
 					TBundle::set_Invalid();
 				};
 				inline void Rescale(vector_t const &vertex) {
-					auto const &[frameVertex] = _scale(vertex, _baseVertex);
+					auto [frameVertex] = _scale(vertex, _baseVertex);
 					TBundle::set_FrameSize(frameVertex);
 				};
 				inline void Move(vector_t const &point) {

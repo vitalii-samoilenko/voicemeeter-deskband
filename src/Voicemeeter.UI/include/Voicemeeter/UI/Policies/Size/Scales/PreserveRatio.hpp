@@ -2,7 +2,6 @@
 #define VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 
 #include <tuple>
-#include <utility>
 
 #include "wheel.hpp"
 
@@ -15,35 +14,36 @@ namespace Voicemeeter {
 						template<
 							typename V,
 							typename... Vs>
-						inline ::std::tuple<Vs ...> operator()(
+						inline auto operator()(
 							V const &dst, Vs &&...srcs) const {
-							auto src = srcs + ...;
-							size_t scale_i{ 0 };
+							num_t nom{ 0 };
+							num_t denom{ 0 };
 							{
 								num_t r{ Inf };
 								num_t rI{ -Inf };
 								for (size_t i{ 0 }; i < dst.size(); ++i) {
-									num_t nom{ dst[i] };
-									num_t denom{ src[i] };
-									if (nom < denom) {
+									num_t tom{ dst[i] };
+									num_t tenom{ (srcs + ...)[i] };
+									if (tom < tenom) {
 										r = 0;
-										num_t temp{ push(denom) / nom };
+										num_t temp{ push(tenom) / tom };
 										if (rI < temp) {
 											rI = temp;
-											scale_i = i;
+											nom = tom;
+											denom = tenom;
 										}
 									} else {
-										num_t temp{ push(nom) / denom };
+										num_t temp{ push(tom) / tenom };
 										if (temp < r) {
 											r = temp;
-											scale_i = i;
+											nom = tom;
+											denom = tenom;
 										}
 									}
 								}
 							}
-							return ::std::tuple<Args ...>{
-								srcs * dst[scale_i] / src[scale_i] ...
-							};
+							return ::std::make_tuple(
+								srcs * nom / denom ...);
 						};
 					};
 				}

@@ -10,7 +10,7 @@ namespace Voicemeeter {
 	public:
 		template<typename... Args>
 		inline explicit Bus(Args &&...args)
-			: _channels{ ::std::forward<Args>(args)... } {
+			: _channels{ ::std::forward<Args>(args) ... } {
 
 		};
 		Bus(Bus const &) = delete;
@@ -27,7 +27,7 @@ namespace Voicemeeter {
 		};
 
 	private:
-		::std::tuple<TChannels...> _channels;
+		::std::tuple<TChannels ...> _channels;
 	};
 }
 
