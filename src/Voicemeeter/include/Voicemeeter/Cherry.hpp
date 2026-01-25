@@ -23,55 +23,6 @@ namespace Voicemeeter {
 	namespace Layouts {
 		class Cherry {
 		public:
-			template<typename... Args>
-			inline explicit Cherry(Args &&...args)
-				: _strips{ ::std::forward<Args>(args) ... } {
-
-			};
-			Cherry(Cherry const &) = delete;
-			Cherry(Cherry &&) = delete;
-
-			inline ~Cherry() = default;
-
-			Cherry & operator=(Cherry const &) = delete;
-			Cherry & operator=(Cherry &&) = delete;
-
-			enum Strips : size_t {
-				P = 0,
-				V = 1,
-				A1 = 2,
-				A2 = 3,
-				B1 = 4,
-				B2 = 5
-			};
-			template<size_t I>
-			inline auto & get_Strip() {
-				return ::std::get<I>(_strips);
-			};
-
-		protected:
-			static constexpr size_t InputSize{ V - P + 1 };
-			static constexpr size_t OutputSize{ B2 - A1 + 1 };
-
-			template<typename TStrip>
-			inline size_t get_Index(TStrip const &strip) const {
-				if (&::std::get<P>(_strips) == &strip) {
-					return P;
-				} else if (&::std::get<V>(_strips) == &strip) {
-					return V;
-				} else if (&::std::get<A1>(_strips) == &strip) {
-					return A1;
-				} else if (&::std::get<A2>(_strips) == &strip) {
-					return A2;
-				} else if (&::std::get<B1>(_strips) == &strip) {
-					return B1;
-				} else if (&::std::get<B2>(_strips) == &strip) {
-					return B2;
-				}
-				throw ::std::out_of_range{ "Unknown strip" };
-			};
-
-		private:
 			template<typename... TChannels>
 			using Strip = Adapters::Multiclient::Mute<
 				Adapters::Multiclient::Amplifier<
@@ -115,6 +66,56 @@ namespace Voicemeeter {
 				Channel,
 				Channel>;
 
+			enum Strips : size_t {
+				P = 0,
+				V = 1,
+				A1 = 2,
+				A2 = 3,
+				B1 = 4,
+				B2 = 5
+			};
+
+			template<typename... Args>
+			inline explicit Cherry(Args &&...args)
+				: _strips{ ::std::forward<Args>(args) ... } {
+
+			};
+			Cherry(Cherry const &) = delete;
+			Cherry(Cherry &&) = delete;
+
+			inline ~Cherry() = default;
+
+			Cherry & operator=(Cherry const &) = delete;
+			Cherry & operator=(Cherry &&) = delete;
+
+			template<size_t I>
+			inline auto & get_Strip() {
+				return ::std::get<I>(_strips);
+			};
+
+		protected:
+			static constexpr size_t InputSize{ V - P + 1 };
+			static constexpr size_t OutputSize{ B2 - A1 + 1 };
+
+			template<typename TStrip>
+			inline size_t get_Index(TStrip const &strip) const {
+				if (&get_Strip<P>() == &strip) {
+					return P;
+				} else if (&get_Strip<V>() == &strip) {
+					return V;
+				} else if (&get_Strip<A1>() == &strip) {
+					return A1;
+				} else if (&get_Strip<A2>() == &strip) {
+					return A2;
+				} else if (&get_Strip<B1>() == &strip) {
+					return B1;
+				} else if (&get_Strip<B2>() == &strip) {
+					return B2;
+				}
+				throw ::std::out_of_range{ "Unknown strip" };
+			};
+
+		private:
 			::std::tuple<
 				PIStrip,
 				VIStrip,

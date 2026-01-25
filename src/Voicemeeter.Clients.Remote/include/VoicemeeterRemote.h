@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Voicemeeter Remote API.                                  V.Burel©2015-2023 */
+/* Voicemeeter Remote API.                                  V.Burel¿2015-2023 */
 /******************************************************************************/
 /* This Library allows communication with Voicemeeter applications            */
 /* 4 Client Applications can be connected to remote Voicemeeter.              */
@@ -30,16 +30,16 @@ extern "C" {
 
 #define VBVMR_RESULT_OK			0
 
-	/******************************************************************************/
-	/*                                                                            */
-	/*                                    Login                                   */
-	/*                                                                            */
-	/******************************************************************************/
+/******************************************************************************/
+/*                                                                            */
+/*                                    Login                                   */
+/*                                                                            */
+/******************************************************************************/
 
-	/** @name Communication Login / logout
-	* @{ */
+/** @name Communication Login / logout
+* @{ */
 
-	/**
+	/** 
 	@brief Open Communication Pipe With Voicemeeter (typically called on software startup).
 	@return :	 0: OK (no error).
 				 1: OK but Voicemeeter Application not launched.
@@ -47,17 +47,17 @@ extern "C" {
 				-2: unexpected login (logout was expected before).
 	*/
 
-	long __stdcall VBVMR_Login(void);
+long __stdcall VBVMR_Login(void);
 
-	/**
+	/** 
 	@brief Close Communication Pipe With Voicemeeter (typically called on software end).
 	@return : 0 if ok.
 	*/
 
-	long __stdcall VBVMR_Logout(void);
+long __stdcall VBVMR_Logout(void);
 
 
-	/**
+	/** 
 	@brief Run Voicemeeter Application (get installation directory and run Voicemeeter Application).
 	@param vType : Voicemeeter type  (1 = Voicemeeter, 2= Voicemeeter Banana, 3= Voicemeeter Potato, 6 = Potato x64 bits).
 	@return :	 0: Ok.
@@ -65,13 +65,10 @@ extern "C" {
 				-2: unknown vType number
 	*/
 
-	long __stdcall VBVMR_RunVoicemeeter(long vType);
+long __stdcall VBVMR_RunVoicemeeter(long vType);
 
 
-	/** @}  */
-
-
-
+/** @}  */
 
 
 
@@ -80,16 +77,19 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                                                                            */
-	/*                             General Information                            */
-	/*                                                                            */
-	/******************************************************************************/
 
-	/** @name General Information
-	* @{ */
 
-	/**
+
+/******************************************************************************/
+/*                                                                            */
+/*                             General Information                            */
+/*                                                                            */
+/******************************************************************************/
+
+/** @name General Information 
+* @{ */
+
+	/** 
 	@brief Get Voicemeeter Type
 	@param pType : Pointer on 32bit long receiving the type (1 = Voicemeeter, 2= Voicemeeter Banana, 3 Potato).
 
@@ -117,9 +117,9 @@ extern "C" {
 				-2: no server.
 	*/
 
-	long __stdcall VBVMR_GetVoicemeeterType(long* pType);
+long __stdcall VBVMR_GetVoicemeeterType(long * pType);
 
-	/**
+	/** 
 	@brief Get Voicemeeter Version
 	@param pType : Pointer on 32bit integer receiving the version (v1.v2.v3.v4)
 						v1 = (version & 0xFF000000)>>24;
@@ -132,13 +132,10 @@ extern "C" {
 				-2: no server.
 	*/
 
-	long __stdcall VBVMR_GetVoicemeeterVersion(long* pVersion);
+long __stdcall VBVMR_GetVoicemeeterVersion(long * pVersion);
 
 
-	/** @}  */
-
-
-
+/** @}  */
 
 
 
@@ -154,29 +151,32 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                                                                            */
-	/*                               Get parameters                               */
-	/*                                                                            */
-	/******************************************************************************/
 
-	/** @name Getting Parameters
-	* @{ */
 
-	/**
+
+/******************************************************************************/
+/*                                                                            */
+/*                               Get parameters                               */
+/*                                                                            */
+/******************************************************************************/
+
+/** @name Getting Parameters
+* @{ */
+
+	/** 
 	@brief  Check if parameters have changed.
 			Call this function periodically (typically every 10 or 20ms).
 			(this function must be called from one thread only)
-
+					
 	@return:	 0: no new paramters.
 				 1: New parameters -> update your display.
 				-1: error (unexpected)
 				-2: no server.
 	*/
 
-	long __stdcall VBVMR_IsParametersDirty(void);
+long __stdcall VBVMR_IsParametersDirty(void);
 
-	/**
+	/** 
 	@brief get parameter value.
 	@param szParamName : Null Terminal ASCII String giving the name of the parameter (see parameters name table)
 	@param pValue : Pointer on float (32bit float by reference) receiving the wanted value.
@@ -187,9 +187,9 @@ extern "C" {
 				-5: structure mismatch
 	*/
 
-	long __stdcall VBVMR_GetParameterFloat(char* szParamName, float* pValue);
+long __stdcall VBVMR_GetParameterFloat(char * szParamName, float * pValue);
 
-	/**
+	/** 
 	@brief get parameter value.
 	@param szParamName : Null Terminal ASCII String giving the name of the parameter (see parameters name table)
 	@param pValue : Pointer on String (512 char or wchar) receiving the wanted value.
@@ -200,12 +200,10 @@ extern "C" {
 				-5: structure mismatch
 	*/
 
-	long __stdcall VBVMR_GetParameterStringA(char* szParamName, char* szString);
-	long __stdcall VBVMR_GetParameterStringW(char* szParamName, unsigned short* wszString);
+long __stdcall VBVMR_GetParameterStringA(char * szParamName, char * szString);
+long __stdcall VBVMR_GetParameterStringW(char * szParamName, unsigned short * wszString);
 
-	/** @}  */
-
-
+/** @}  */
 
 
 
@@ -213,16 +211,18 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                                                                            */
-	/*                                Get levels                                  */
-	/*                                                                            */
-	/******************************************************************************/
 
-	/** @name Getting RT Data
-	* @{ */
 
-	/**
+/******************************************************************************/
+/*                                                                            */
+/*                                Get levels                                  */
+/*                                                                            */
+/******************************************************************************/
+
+/** @name Getting RT Data
+* @{ */
+
+	/** 
 	@brief Get Current levels.
 			(this function must be called from one thread only)
 
@@ -231,7 +231,7 @@ extern "C" {
 					2= post Mute input levels.
 					3= output levels.
 
-	@param nuChannel: audio channel zero based index
+	@param nuChannel: audio channel zero based index 
 						for input 0 = in#1 left, 1= in#1 Right, etc...
 						for output 0 = busA ch1, 1 = busA ch2...
 
@@ -281,20 +281,20 @@ extern "C" {
 				-4: out of range
 	*/
 
-	long __stdcall VBVMR_GetLevel(long nType, long nuChannel, float* pValue);
+long __stdcall VBVMR_GetLevel(long nType, long nuChannel, float * pValue);
 
 
-	/**
+	/** 
 	@brief Get MIDI message from M.I.D.I. input device used by Voicemeeter M.I.D.I. mapping.
 			(this function must be called from one thread only)
 
-	@param pMIDIBuffer:	pointer on MIDI Buffer. Expected message size is below 4 bytes,
-						but it's recommended to use 1024 Bytes local buffer to receive
-						possible multiple M.I.D.I. event message in optimal way:
+	@param pMIDIBuffer:	pointer on MIDI Buffer. Expected message size is below 4 bytes, 
+	                    but it's recommended to use 1024 Bytes local buffer to receive 
+						possible multiple M.I.D.I. event message in optimal way: 
 						unsigned char pBuffer[1024];
 
 
-	@return :	>0: number of bytes placed in buffer (2 or 3 byte for usual M.I.D.I. message)
+	@return :	>0: number of bytes placed in buffer (2 or 3 byte for usual M.I.D.I. message) 
 				-1: error
 				-2: no server.
 				-5: no MIDI data
@@ -302,10 +302,10 @@ extern "C" {
 	*/
 
 
-	long __stdcall VBVMR_GetMidiMessage(unsigned char* pMIDIBuffer, long nbByteMax);
+long __stdcall VBVMR_GetMidiMessage(unsigned char *pMIDIBuffer, long nbByteMax);
 
 
-	/**
+	/** 
 	@brief Send MIDI message to M.I.D.I. output device used by Voicemeeter M.I.D.I. mapping.
 			(this function must be called from one thread only)
 
@@ -313,20 +313,17 @@ extern "C" {
 						(we recommand to not use more than 4KB buffer);
 
 
-	@return :	>0: number of bytes sent.
+	@return :	>0: number of bytes sent. 
 				-1: error
 				-2: no server.
 				-5: cannot send MIDI data
 	*/
 
 
-	long __stdcall VBVMR_SendMidiMessage(unsigned char* pMIDIBuffer, long nbByte);
+long __stdcall VBVMR_SendMidiMessage(unsigned char *pMIDIBuffer, long nbByte);
 
 
-	/** @}  */
-
-
-
+/** @}  */
 
 
 
@@ -334,16 +331,19 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                                                                            */
-	/*                               Set Parameters                               */
-	/*                                                                            */
-	/******************************************************************************/
 
-	/** @name Setting Parameters
-	* @{ */
 
-	/**
+
+/******************************************************************************/
+/*                                                                            */
+/*                               Set Parameters                               */
+/*                                                                            */
+/******************************************************************************/
+
+/** @name Setting Parameters
+* @{ */
+
+	/** 
 	@brief Set a single float 32 bits parameters .
 	@param szParamName : Null Terminal ASCII String giving the name of the parameter (see parameters name table)
 						example:
@@ -359,11 +359,11 @@ extern "C" {
 				-3: unknown parameter
 	*/
 
-	long __stdcall VBVMR_SetParameterFloat(char* szParamName, float Value);
+long __stdcall VBVMR_SetParameterFloat(char * szParamName, float Value);
 
 
 
-	/**
+	/** 
 	@brief Set a single string parameters .
 	@param szParamName : Null Terminal ASCII String giving the name of the parameter (see parameters name table)
 						example:
@@ -376,19 +376,19 @@ extern "C" {
 				-1: error
 				-2: no server.
 				-3: unknown parameter
-
+	
 	*/
 
 
-	long __stdcall VBVMR_SetParameterStringA(char* szParamName, char* szString);
-	long __stdcall VBVMR_SetParameterStringW(char* szParamName, unsigned short* wszString);
+long __stdcall VBVMR_SetParameterStringA(char * szParamName, char * szString);
+long __stdcall VBVMR_SetParameterStringW(char * szParamName, unsigned short * wszString);
 
 
 
 
-	/**
+	/** 
 	@brief Set one or several parameters by a script ( < 48 kB ).
-	@param szParamName : Null Terminal ASCII String giving the script
+	@param szParamName : Null Terminal ASCII String giving the script 
 						 (script allows to change several parameters in the same time - SYNCHRO).
 						 Possible Instuction separators: ',' ';' or '\n'(CR)
 						 EXAMPLE:
@@ -407,14 +407,11 @@ extern "C" {
 				-4: unexpected error
 	*/
 
-	long __stdcall VBVMR_SetParameters(char* szParamScript);
-	long __stdcall VBVMR_SetParametersW(unsigned short* szParamScript);
+long __stdcall VBVMR_SetParameters(char * szParamScript);
+long __stdcall VBVMR_SetParametersW(unsigned short * szParamScript);
 
 
-	/** @}  */
-
-
-
+/** @}  */
 
 
 
@@ -423,27 +420,30 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                            DEVICES ENUMERATOR                              */
-	/******************************************************************************/
 
 
-	/** @name Device Enumeration Functions
-	* @{ */
+
+/******************************************************************************/
+/*                            DEVICES ENUMERATOR                              */
+/******************************************************************************/
+
+
+/** @name Device Enumeration Functions
+* @{ */
 
 #define VBVMR_DEVTYPE_MME		1
 #define VBVMR_DEVTYPE_WDM		3
 #define VBVMR_DEVTYPE_KS		4
 #define VBVMR_DEVTYPE_ASIO		5
 
-	/**
+	/** 
 	@brief Get number of Audio Output Device available on the system
 	@return : return number of device found.
 	*/
 
-	long __stdcall VBVMR_Output_GetDeviceNumber(void);
+long __stdcall VBVMR_Output_GetDeviceNumber(void);
 
-	/**
+	/** 
 	@brief Return pointer on Output Device Descriptor according index
 	@param zindex : zero based index
 	@param nType : Pointer on 32bit long receiving the type (pointer can be NULL).
@@ -452,17 +452,17 @@ extern "C" {
 	@return :	 0: OK (no error).
 	*/
 
-	long __stdcall VBVMR_Output_GetDeviceDescA(long zindex, long* nType, char* szDeviceName, char* szHardwareId);
-	long __stdcall VBVMR_Output_GetDeviceDescW(long zindex, long* nType, unsigned short* wszDeviceName, unsigned short* wszHardwareId);
+long __stdcall VBVMR_Output_GetDeviceDescA(long zindex, long * nType, char * szDeviceName, char * szHardwareId);
+long __stdcall VBVMR_Output_GetDeviceDescW(long zindex, long * nType, unsigned short * wszDeviceName, unsigned short * wszHardwareId);
 
-	/**
+	/** 
 	@brief Get number of Audio Input Device available on the system
 	@return : return number of device found.
 	*/
 
-	long __stdcall VBVMR_Input_GetDeviceNumber(void);
+long __stdcall VBVMR_Input_GetDeviceNumber(void);
 
-	/**
+	/** 
 	@brief Return pointer on Input Device Descriptor according index
 	@param zindex : zero based index
 	@param nType : Pointer on 32bit long receiving the type (pointer can be NULL).
@@ -471,60 +471,60 @@ extern "C" {
 	@return :	 0: OK (no error).
 	*/
 
-	long __stdcall VBVMR_Input_GetDeviceDescA(long zindex, long* nType, char* szDeviceName, char* szHardwareId);
-	long __stdcall VBVMR_Input_GetDeviceDescW(long zindex, long* nType, unsigned short* wszDeviceName, unsigned short* wszHardwareId);
+long __stdcall VBVMR_Input_GetDeviceDescA(long zindex, long * nType, char * szDeviceName, char * szHardwareId);
+long __stdcall VBVMR_Input_GetDeviceDescW(long zindex, long * nType, unsigned short * wszDeviceName, unsigned short * wszHardwareId);
 
 
 
-	/** @}  */
+/** @}  */
 
 
 
 
 
 
-	/******************************************************************************/
-	/*                             VB-AUDIO CALLBACK                              */
-	/******************************************************************************/
-	/* 4x Functions to process all voicemeeter audio input and output channels    */
-	/*                                                                            */
-	/* VBVMR_AudioCallbackRegister	 :to register your audio callback(s)          */
-	/* VBVMR_AudioCallbackStart	     :to start the audio stream                   */
-	/* VBVMR_AudioCallbackStop    	 :to stop the audio stream                    */
-	/* VBVMR_AudioCallbackUnregister :to unregister / Release callback(s)         */
-	/******************************************************************************/
+/******************************************************************************/
+/*                             VB-AUDIO CALLBACK                              */
+/******************************************************************************/
+/* 4x Functions to process all voicemeeter audio input and output channels    */
+/*                                                                            */
+/* VBVMR_AudioCallbackRegister	 :to register your audio callback(s)          */
+/* VBVMR_AudioCallbackStart	     :to start the audio stream                   */
+/* VBVMR_AudioCallbackStop    	 :to stop the audio stream                    */
+/* VBVMR_AudioCallbackUnregister :to unregister / Release callback(s)         */
+/******************************************************************************/
 
-	/** @name VB-Audio Callback Functions
-	* @{ */
-
-
-	typedef struct tagVBVMR_AUDIOINFO
-	{
-		long samplerate;
-		long nbSamplePerFrame;
-	} VBVMR_T_AUDIOINFO, * VBVMR_PT_AUDIOINFO, * VBVMR_LPT_AUDIOINFO;
+/** @name VB-Audio Callback Functions
+* @{ */
 
 
-	typedef struct tagVBVMR_AUDIOBUFFER
-	{
-		long audiobuffer_sr;					//Sampling Rate
-		long audiobuffer_nbs;					//number of sample per frame
-		long audiobuffer_nbi;					//number of inputs
-		long audiobuffer_nbo;					//number of outputs
-		float* audiobuffer_r[128];				//nbi input pointers containing frame of nbs sample (of 32bits float)
-		float* audiobuffer_w[128];				//nbo output pointers containing frame of nbs sample (of 32bits float)
-	} VBVMR_T_AUDIOBUFFER, * VBVMR_PT_AUDIOBUFFER, * VBVMR_LPT_AUDIOBUFFER;
+typedef struct tagVBVMR_AUDIOINFO
+{
+	long samplerate;
+	long nbSamplePerFrame;
+} VBVMR_T_AUDIOINFO, *VBVMR_PT_AUDIOINFO, *VBVMR_LPT_AUDIOINFO;
 
 
-	/**
+typedef struct tagVBVMR_AUDIOBUFFER
+{
+	long audiobuffer_sr;					//Sampling Rate
+	long audiobuffer_nbs;					//number of sample per frame
+	long audiobuffer_nbi;					//number of inputs
+	long audiobuffer_nbo;					//number of outputs
+	float * audiobuffer_r[128];				//nbi input pointers containing frame of nbs sample (of 32bits float)
+	float * audiobuffer_w[128];				//nbo output pointers containing frame of nbs sample (of 32bits float)
+} VBVMR_T_AUDIOBUFFER, *VBVMR_PT_AUDIOBUFFER, *VBVMR_LPT_AUDIOBUFFER;
+
+
+	/** 
 	@brief VB-AUDIO Callback is called for different task to Initialize, perform and end your process.
-		   VB-AUDIO Callback is part of single TIME CRITICAL Thread.
-		   VB-AUDIO Callback is non re-entrant (cannot be called while in process)
-		   VB-AUDIO Callback is supposed to be REAL TIME when called to process buffer.
+	       VB-AUDIO Callback is part of single TIME CRITICAL Thread. 
+	       VB-AUDIO Callback is non re-entrant (cannot be called while in process)
+	       VB-AUDIO Callback is supposed to be REAL TIME when called to process buffer.
 		   (it means that the process has to be performed as fast as possible, waiting cycles are forbidden.
-		   do not use O/S synchronization object, even Critical_Section can generate waiting cycle. Do not use
+		   do not use O/S synchronization object, even Critical_Section can generate waiting cycle. Do not use 
 		   system functions that can generate waiting cycle like display, disk or communication functions for example).
-
+		   
 	@param lpUser: User pointer given on callback registration.
 	@param ncommand: reason why the callback is called.
 	@param lpData: pointer on structure, pending on nCommand.
@@ -534,11 +534,11 @@ extern "C" {
 	*/
 
 
-	typedef long(__stdcall* T_VBVMR_VBAUDIOCALLBACK)(void* lpUser, long nCommand, void* lpData, long nnn);
+typedef long (__stdcall *T_VBVMR_VBAUDIOCALLBACK)(void * lpUser, long nCommand, void * lpData, long nnn);
 
 
 #define  VBVMR_CBCOMMAND_STARTING		1	//command to initialize data according SR and buffer size
-	//info = (VBVMR_LPT_AUDIOINFO)lpData 
+											//info = (VBVMR_LPT_AUDIOINFO)lpData 
 
 #define  VBVMR_CBCOMMAND_ENDING			2	//command to release data
 #define  VBVMR_CBCOMMAND_CHANGE			3	//If change in audio stream, you will have to restart audio 
@@ -548,24 +548,24 @@ extern "C" {
 #define  VBVMR_CBCOMMAND_BUFFER_MAIN	20  //all i/o 
 											//audiobuffer = (VBVMR_LPT_AUDIOBUFFER)lpData 
 											//nnn = synchro = 1 if synchro with Voicemeeter
-
-/*
+											
+/*                   
  -----------------------------------------------------
-	AUDIO BUFFER for VBVMR_CBCOMMAND_BUFFER_IN
+    AUDIO BUFFER for VBVMR_CBCOMMAND_BUFFER_IN
  -----------------------------------------------------
-		VOICEMEETER
+		VOICEMEETER 
 
 		 | Strip 1 | Strip 2 |             Virtual Input             |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+
 		 | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 |
 
-		VOICEMEETER BANANA
+		VOICEMEETER BANANA 
 
 		 | Strip 1 | Strip 2 | Strip 3 |             Virtual Input             |            Virtual Input AUX          |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
 		 | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 |
 
-		VOICEMEETER 8
+		VOICEMEETER 8 
 
 		 | Strip 1 | Strip 2 | Strip 3 | Strip 4 | Strip 5 |             Virtual Input             |            Virtual Input AUX          |             Virtual Input 8           |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -573,15 +573,15 @@ extern "C" {
 
 
 -----------------------------------------------------
-	 AUDIO BUFFER for VBVMR_CBCOMMAND_BUFFER_OUT
+     AUDIO BUFFER for VBVMR_CBCOMMAND_BUFFER_OUT
 -----------------------------------------------------
-		 VOICEMEETER
+		 VOICEMEETER 
 
 		 |             Output A1 / A2            |             Virtual Output            |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
 		 | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 |
 
-		 VOICEMEETER BANANA
+		 VOICEMEETER BANANA 
 
 		 |             Output A1                 |                Output A2              |                Output A3              |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -592,7 +592,7 @@ extern "C" {
 		 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 |
 
 
-		VOICEMEETER 8
+		VOICEMEETER 8 
 
 		 |             Output A1                 |                Output A2              |                Output A3              |                Output A4              |                Output A5              |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -604,9 +604,9 @@ extern "C" {
 
 
 -----------------------------------------------------
-	  AUDIO BUFFER for VBVMR_CBCOMMAND_BUFFER_MAIN
+      AUDIO BUFFER for VBVMR_CBCOMMAND_BUFFER_MAIN
 -----------------------------------------------------
-		 VOICEMEETER
+		 VOICEMEETER 
 
 		 | Strip 1 | Strip 2 |             Virtual Input             |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+
@@ -637,7 +637,7 @@ extern "C" {
 		 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 |
 
 
-		VOICEMEETER 8
+		VOICEMEETER 8 
 
 		 | Strip 1 | Strip 2 | Strip 3 | Strip 4 | Strip 5 |             Virtual Input             |            Virtual Input AUX          |             Virtual Input 8           |
 		 +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
@@ -658,46 +658,46 @@ extern "C" {
 
 */
 
-/**
-@brief register your audio callback function to receive real time audio buffer
-		it's possible to register up to 3x different Audio Callback in the same application or in
-		3x different applications. In the same application, this is possible because Voicemeeter
-		provides 3 kind of audio Streams:
-			- AUDIO INPUT INSERT (to process all Voicemeeter inputs as insert)
-			- AUDIO OUTPUT INSERT (to process all Voicemeeter BUS outputs as insert)
-			- ALL AUDIO I/O (to process all Voicemeeter i/o).
-		Note: a single callback can be used to receive the 3 possible audio streams.
+	/** 
+	@brief register your audio callback function to receive real time audio buffer
+			it's possible to register up to 3x different Audio Callback in the same application or in 
+			3x different applications. In the same application, this is possible because Voicemeeter
+			provides 3 kind of audio Streams:
+				- AUDIO INPUT INSERT (to process all Voicemeeter inputs as insert)	
+				- AUDIO OUTPUT INSERT (to process all Voicemeeter BUS outputs as insert)	
+				- ALL AUDIO I/O (to process all Voicemeeter i/o).
+			Note: a single callback can be used to receive the 3 possible audio streams.
 
-@param mode : callback type (main, input or bus output) see define below
-@param pCallback : Pointer on your callback function.
-@param lpUser : user pointer (pointer that will be passed in callback first argument).
-@param szClientName[64]: IN: Name of the application registering the Callback.
-						 OUT: Name of the application already registered.
-@return :	 0: OK (no error).
-			-1: error
-			 1: callback already registered (by another application).
-*/
+	@param mode : callback type (main, input or bus output) see define below
+	@param pCallback : Pointer on your callback function.
+	@param lpUser : user pointer (pointer that will be passed in callback first argument).
+	@param szClientName[64]: IN: Name of the application registering the Callback.
+							 OUT: Name of the application already registered.
+	@return :	 0: OK (no error).
+				-1: error
+				 1: callback already registered (by another application).
+	*/
 
-	long __stdcall VBVMR_AudioCallbackRegister(long mode, T_VBVMR_VBAUDIOCALLBACK pCallback, void* lpUser, char szClientName[64]);
+long __stdcall VBVMR_AudioCallbackRegister(long mode, T_VBVMR_VBAUDIOCALLBACK pCallback, void * lpUser, char szClientName[64]);
 
 #define VBVMR_AUDIOCALLBACK_IN		0x00000001	//to process input insert
 #define VBVMR_AUDIOCALLBACK_OUT		0x00000002  //to process output bus insert
 #define VBVMR_AUDIOCALLBACK_MAIN	0x00000004  //to receive all i/o
 
-	/**
-	@brief	Start / Stop Audio processing
-
-			he Callback will be called with
+	/** 
+	@brief	Start / Stop Audio processing 
+			
+			he Callback will be called with 
 	@return :	 0: OK (no error).
 				-1: error
 				-2: no callback registred.
 	*/
 
-	long __stdcall VBVMR_AudioCallbackStart(void);
-	long __stdcall VBVMR_AudioCallbackStop(void);
+long __stdcall VBVMR_AudioCallbackStart(void);
+long __stdcall VBVMR_AudioCallbackStop(void);
 
 
-	/**
+	/** 
 	@brief unregister your callback to release voicemeeter virtual driver
 			(this function will automatically call VBVMR_AudioCallbackStop() function)
 	@param pCallback : Pointer on your callback function.
@@ -706,40 +706,40 @@ extern "C" {
 				 1: callback already unregistered.
 	*/
 
-	long __stdcall VBVMR_AudioCallbackUnregister(void);
+long __stdcall VBVMR_AudioCallbackUnregister(void);
 
 
 
-	/** @}  */
+/** @}  */
 
 
 
 
 
 
-	/******************************************************************************/
-	/*                                                                            */
-	/*                                Macro Buttons                               */
-	/*                                                                            */
-	/******************************************************************************/
+/******************************************************************************/
+/*                                                                            */
+/*                                Macro Buttons                               */
+/*                                                                            */
+/******************************************************************************/
 
-	/** @name Macro Buttons functions
-	* @{ */
+/** @name Macro Buttons functions
+* @{ */
 
-	/**
+	/** 
 	@brief  Check if Macro Buttons states changed.
 			Call this function periodically (typically every 50 or 500ms) to know if something happen on MacroButton states .
 			(this function must be called from one thread only)
-
+					
 	@return:	 0: no new status.
 				>0: last nu logical button status changed.
 				-1: error (unexpected)
 				-2: no server.
 	*/
 
-	long __stdcall VBVMR_MacroButton_IsDirty(void);
+long __stdcall VBVMR_MacroButton_IsDirty(void);
 
-	/**
+	/** 
 	@brief get current status of a given button.
 	@param nuLogicalButton : button index: 0 to 79)
 	@param pValue : Pointer on float (32bit float by reference) receiving the wanted value (0.0 = OFF / 1.0 = ON).
@@ -751,9 +751,9 @@ extern "C" {
 				-5: structure mismatch
 	*/
 
-	long __stdcall VBVMR_MacroButton_GetStatus(long nuLogicalButton, float* pValue, long bitmode);
+long __stdcall VBVMR_MacroButton_GetStatus(long nuLogicalButton, float * pValue, long bitmode);
 
-	/**
+	/** 
 	@brief set current button value.
 	@param nuLogicalButton : button index: 0 to 79)
 	@param fValue : float 32 bit value giving the status (0.0 = OFF / 1.0 = ON).
@@ -765,7 +765,7 @@ extern "C" {
 				-5: structure mismatch
 	*/
 
-	long __stdcall VBVMR_MacroButton_SetStatus(long nuLogicalButton, float fValue, long bitmode);
+long __stdcall VBVMR_MacroButton_SetStatus(long nuLogicalButton, float fValue, long bitmode);
 
 #define VBVMR_MACROBUTTON_MODE_DEFAULT		0x00000000	//PUSH or RELEASE button 
 #define VBVMR_MACROBUTTON_MODE_STATEONLY	0x00000002	//change Displayed State only
@@ -774,7 +774,7 @@ extern "C" {
 
 
 
-	/** @}  */
+/** @}  */
 
 
 
@@ -784,91 +784,91 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                          'C' STRUCTURED INTERFACE                          */
-	/******************************************************************************/
+/******************************************************************************/
+/*                          'C' STRUCTURED INTERFACE                          */
+/******************************************************************************/
 
-	typedef long(__stdcall* T_VBVMR_Login)(void);
-	typedef long(__stdcall* T_VBVMR_Logout)(void);
-	typedef long(__stdcall* T_VBVMR_RunVoicemeeter)(long vType);
+typedef long (__stdcall *T_VBVMR_Login)(void);
+typedef long (__stdcall *T_VBVMR_Logout)(void);
+typedef long (__stdcall *T_VBVMR_RunVoicemeeter)(long vType);
 
-	typedef long(__stdcall* T_VBVMR_GetVoicemeeterType)(long* pType);
-	typedef long(__stdcall* T_VBVMR_GetVoicemeeterVersion)(long* pVersion);
+typedef long (__stdcall *T_VBVMR_GetVoicemeeterType)(long * pType);
+typedef long (__stdcall *T_VBVMR_GetVoicemeeterVersion)(long * pVersion);
 
-	typedef long(__stdcall* T_VBVMR_IsParametersDirty)(void);
-	typedef long(__stdcall* T_VBVMR_GetParameterFloat)(char* szParamName, float* pValue);
-	typedef long(__stdcall* T_VBVMR_GetParameterStringA)(char* szParamName, char* szString);
-	typedef long(__stdcall* T_VBVMR_GetParameterStringW)(char* szParamName, unsigned short* wszString);
-
-
-	typedef long(__stdcall* T_VBVMR_GetLevel)(long nType, long nuChannel, float* pValue);
-	typedef long(__stdcall* T_VBVMR_GetMidiMessage)(unsigned char* pMIDIBuffer, long nbByteMax);
-	typedef long(__stdcall* T_VBVMR_SendMidiMessage)(unsigned char* pMIDIBuffer, long nbByteMax);
-
-	typedef long(__stdcall* T_VBVMR_SetParameterFloat)(char* szParamName, float Value);
-	typedef long(__stdcall* T_VBVMR_SetParameters)(char* szParamScript);
-	typedef long(__stdcall* T_VBVMR_SetParametersW)(unsigned short* szParamScript);
-	typedef long(__stdcall* T_VBVMR_SetParameterStringA)(char* szParamName, char* szString);
-	typedef long(__stdcall* T_VBVMR_SetParameterStringW)(char* szParamName, unsigned short* wszString);
-
-	typedef long(__stdcall* T_VBVMR_Output_GetDeviceNumber)(void);
-	typedef long(__stdcall* T_VBVMR_Output_GetDeviceDescA)(long zindex, long* nType, char* szDeviceName, char* szHardwareId);
-	typedef long(__stdcall* T_VBVMR_Output_GetDeviceDescW)(long zindex, long* nType, unsigned short* wszDeviceName, unsigned short* wszHardwareId);
-	typedef long(__stdcall* T_VBVMR_Input_GetDeviceNumber)(void);
-	typedef long(__stdcall* T_VBVMR_Input_GetDeviceDescA)(long zindex, long* nType, char* szDeviceName, char* szHardwareId);
-	typedef long(__stdcall* T_VBVMR_Input_GetDeviceDescW)(long zindex, long* nType, unsigned short* wszDeviceName, unsigned short* wszHardwareId);
-
-	typedef long(__stdcall* T_VBVMR_AudioCallbackRegister)(long mode, T_VBVMR_VBAUDIOCALLBACK pCallback, void* lpUser, char szClientName[64]);
-	typedef long(__stdcall* T_VBVMR_AudioCallbackStart)(void);
-	typedef long(__stdcall* T_VBVMR_AudioCallbackStop)(void);
-	typedef long(__stdcall* T_VBVMR_AudioCallbackUnregister)(void);
-
-	typedef long(__stdcall* T_VBVMR_MacroButton_IsDirty)(void);
-	typedef long(__stdcall* T_VBVMR_MacroButton_GetStatus)(long nuLogicalButton, float* pValue, long bitmode);
-	typedef long(__stdcall* T_VBVMR_MacroButton_SetStatus)(long nuLogicalButton, float fValue, long bitmode);
+typedef long (__stdcall *T_VBVMR_IsParametersDirty)(void);
+typedef long (__stdcall *T_VBVMR_GetParameterFloat)(char * szParamName, float * pValue);
+typedef long (__stdcall *T_VBVMR_GetParameterStringA)(char * szParamName, char * szString);
+typedef long (__stdcall *T_VBVMR_GetParameterStringW)(char * szParamName, unsigned short * wszString);
 
 
+typedef long (__stdcall *T_VBVMR_GetLevel)(long nType, long nuChannel, float * pValue);
+typedef long (__stdcall *T_VBVMR_GetMidiMessage)(unsigned char *pMIDIBuffer, long nbByteMax);
+typedef long (__stdcall *T_VBVMR_SendMidiMessage)(unsigned char *pMIDIBuffer, long nbByteMax);
 
-	typedef struct tagVBVMR_INTERFACE
-	{
-		T_VBVMR_Login					VBVMR_Login;
-		T_VBVMR_Logout					VBVMR_Logout;
-		T_VBVMR_RunVoicemeeter			VBVMR_RunVoicemeeter;
-		T_VBVMR_GetVoicemeeterType		VBVMR_GetVoicemeeterType;
-		T_VBVMR_GetVoicemeeterVersion	VBVMR_GetVoicemeeterVersion;
-		T_VBVMR_IsParametersDirty		VBVMR_IsParametersDirty;
-		T_VBVMR_GetParameterFloat		VBVMR_GetParameterFloat;
-		T_VBVMR_GetParameterStringA		VBVMR_GetParameterStringA;
-		T_VBVMR_GetParameterStringW		VBVMR_GetParameterStringW;
+typedef long (__stdcall *T_VBVMR_SetParameterFloat)(char * szParamName, float Value);
+typedef long (__stdcall *T_VBVMR_SetParameters)(char * szParamScript);
+typedef long (__stdcall *T_VBVMR_SetParametersW)(unsigned short * szParamScript);
+typedef long (__stdcall *T_VBVMR_SetParameterStringA)(char * szParamName, char * szString);
+typedef long (__stdcall *T_VBVMR_SetParameterStringW)(char * szParamName, unsigned short * wszString);
 
-		T_VBVMR_GetLevel				VBVMR_GetLevel;
-		T_VBVMR_GetMidiMessage			VBVMR_GetMidiMessage;
-		T_VBVMR_SendMidiMessage			VBVMR_SendMidiMessage;
+typedef long (__stdcall *T_VBVMR_Output_GetDeviceNumber)(void);
+typedef long (__stdcall *T_VBVMR_Output_GetDeviceDescA)(long zindex, long * nType, char * szDeviceName, char * szHardwareId);
+typedef long (__stdcall *T_VBVMR_Output_GetDeviceDescW)(long zindex, long * nType, unsigned short * wszDeviceName, unsigned short * wszHardwareId);
+typedef long (__stdcall *T_VBVMR_Input_GetDeviceNumber)(void);
+typedef long (__stdcall *T_VBVMR_Input_GetDeviceDescA)(long zindex, long * nType, char * szDeviceName, char * szHardwareId);
+typedef long (__stdcall *T_VBVMR_Input_GetDeviceDescW)(long zindex, long * nType, unsigned short * wszDeviceName, unsigned short * wszHardwareId);
 
-		T_VBVMR_SetParameterFloat		VBVMR_SetParameterFloat;
-		T_VBVMR_SetParameters			VBVMR_SetParameters;
-		T_VBVMR_SetParametersW			VBVMR_SetParametersW;
-		T_VBVMR_SetParameterStringA		VBVMR_SetParameterStringA;
-		T_VBVMR_SetParameterStringW		VBVMR_SetParameterStringW;
+typedef long (__stdcall *T_VBVMR_AudioCallbackRegister)(long mode, T_VBVMR_VBAUDIOCALLBACK pCallback, void * lpUser, char szClientName[64]);
+typedef long (__stdcall *T_VBVMR_AudioCallbackStart)(void);
+typedef long (__stdcall *T_VBVMR_AudioCallbackStop)(void);
+typedef long (__stdcall *T_VBVMR_AudioCallbackUnregister)(void);
 
-		T_VBVMR_Output_GetDeviceNumber	VBVMR_Output_GetDeviceNumber;
-		T_VBVMR_Output_GetDeviceDescA	VBVMR_Output_GetDeviceDescA;
-		T_VBVMR_Output_GetDeviceDescW	VBVMR_Output_GetDeviceDescW;
-		T_VBVMR_Input_GetDeviceNumber	VBVMR_Input_GetDeviceNumber;
-		T_VBVMR_Input_GetDeviceDescA	VBVMR_Input_GetDeviceDescA;
-		T_VBVMR_Input_GetDeviceDescW	VBVMR_Input_GetDeviceDescW;
-
-		T_VBVMR_AudioCallbackRegister	VBVMR_AudioCallbackRegister;
-		T_VBVMR_AudioCallbackStart		VBVMR_AudioCallbackStart;
-		T_VBVMR_AudioCallbackStop		VBVMR_AudioCallbackStop;
-		T_VBVMR_AudioCallbackUnregister	VBVMR_AudioCallbackUnregister;
-
-		T_VBVMR_MacroButton_IsDirty		VBVMR_MacroButton_IsDirty;
-		T_VBVMR_MacroButton_GetStatus	VBVMR_MacroButton_GetStatus;
-		T_VBVMR_MacroButton_SetStatus	VBVMR_MacroButton_SetStatus;
+typedef long (__stdcall *T_VBVMR_MacroButton_IsDirty)(void);
+typedef long (__stdcall *T_VBVMR_MacroButton_GetStatus)(long nuLogicalButton, float * pValue, long bitmode);
+typedef long (__stdcall *T_VBVMR_MacroButton_SetStatus)(long nuLogicalButton, float fValue, long bitmode);
 
 
-	} T_VBVMR_INTERFACE, * PT_VBVMR_INTERFACE, * LPT_VBVMR_INTERFACE;
+
+typedef struct tagVBVMR_INTERFACE
+{
+	T_VBVMR_Login					VBVMR_Login;
+	T_VBVMR_Logout					VBVMR_Logout;
+	T_VBVMR_RunVoicemeeter			VBVMR_RunVoicemeeter;
+	T_VBVMR_GetVoicemeeterType		VBVMR_GetVoicemeeterType;
+	T_VBVMR_GetVoicemeeterVersion	VBVMR_GetVoicemeeterVersion;
+	T_VBVMR_IsParametersDirty		VBVMR_IsParametersDirty;
+	T_VBVMR_GetParameterFloat		VBVMR_GetParameterFloat;
+	T_VBVMR_GetParameterStringA		VBVMR_GetParameterStringA;
+	T_VBVMR_GetParameterStringW		VBVMR_GetParameterStringW;
+
+	T_VBVMR_GetLevel				VBVMR_GetLevel;
+	T_VBVMR_GetMidiMessage			VBVMR_GetMidiMessage;
+	T_VBVMR_SendMidiMessage			VBVMR_SendMidiMessage;
+
+	T_VBVMR_SetParameterFloat		VBVMR_SetParameterFloat;
+	T_VBVMR_SetParameters			VBVMR_SetParameters;
+	T_VBVMR_SetParametersW			VBVMR_SetParametersW;
+	T_VBVMR_SetParameterStringA		VBVMR_SetParameterStringA;
+	T_VBVMR_SetParameterStringW		VBVMR_SetParameterStringW;
+
+	T_VBVMR_Output_GetDeviceNumber	VBVMR_Output_GetDeviceNumber;
+	T_VBVMR_Output_GetDeviceDescA	VBVMR_Output_GetDeviceDescA;
+	T_VBVMR_Output_GetDeviceDescW	VBVMR_Output_GetDeviceDescW;
+	T_VBVMR_Input_GetDeviceNumber	VBVMR_Input_GetDeviceNumber;
+	T_VBVMR_Input_GetDeviceDescA	VBVMR_Input_GetDeviceDescA;
+	T_VBVMR_Input_GetDeviceDescW	VBVMR_Input_GetDeviceDescW;
+
+	T_VBVMR_AudioCallbackRegister	VBVMR_AudioCallbackRegister;
+	T_VBVMR_AudioCallbackStart		VBVMR_AudioCallbackStart;
+	T_VBVMR_AudioCallbackStop		VBVMR_AudioCallbackStop;
+	T_VBVMR_AudioCallbackUnregister	VBVMR_AudioCallbackUnregister;
+
+	T_VBVMR_MacroButton_IsDirty		VBVMR_MacroButton_IsDirty;
+	T_VBVMR_MacroButton_GetStatus	VBVMR_MacroButton_GetStatus;
+	T_VBVMR_MacroButton_SetStatus	VBVMR_MacroButton_SetStatus;
+
+
+} T_VBVMR_INTERFACE, *PT_VBVMR_INTERFACE, *LPT_VBVMR_INTERFACE;
 
 #ifdef VBUSE_LOCALLIB
 	// internal used (not public)
@@ -881,9 +881,9 @@ extern "C" {
 
 
 
-	/******************************************************************************/
-	/*                                VBAN RT PACKET                              */
-	/******************************************************************************/
+/******************************************************************************/
+/*                                VBAN RT PACKET                              */
+/******************************************************************************/
 
 #pragma pack(1)
 
@@ -893,31 +893,31 @@ extern "C" {
 // COMPATIBILITY: defined structure cannot be changed.
 // some field could be added at the end of the structure to keep the compatibility in the time.  
 
-	typedef struct tagVBAN_VMRT_PACKET			//packedt ident: 0
-	{
-		unsigned char voicemeeterType;			// 1 = Voicemeeter, 2= Voicemeeter Banana, 3 Potato
-		unsigned char reserved;					// unused
-		unsigned short buffersize;				// main stream buffer size
-		unsigned long voicemeeterVersion;		// version like for VBVMR_GetVoicemeeterVersion() functino
-		unsigned long optionBits;				// unused
-		unsigned long samplerate;				// main stream samplerate
-		short inputLeveldB100[34];				// pre fader input peak level in dB * 100
-		short outputLeveldB100[64];				// bus output peak level in dB * 100
-		unsigned long TransportBit;				// Transport Status
-		unsigned long stripState[8];			// Strip Buttons Status (see MODE bits below)
-		unsigned long busState[8];				// Bus Buttons Status (see MODE bits below)
-		short stripGaindB100Layer1[8];			// Strip Gain in dB * 100 
-		short stripGaindB100Layer2[8];
-		short stripGaindB100Layer3[8];
-		short stripGaindB100Layer4[8];
-		short stripGaindB100Layer5[8];
-		short stripGaindB100Layer6[8];
-		short stripGaindB100Layer7[8];
-		short stripGaindB100Layer8[8];
-		short busGaindB100[8];					// Bus Gain in dB * 100 
-		char stripLabelUTF8c60[8][60];			// Strip Label
-		char busLabelUTF8c60[8][60];			// Bus Label
-	} T_VBAN_VMRT_PACKET, * PT_VBAN_VMRT_PACKET, * LPT_VBAN_VMRT_PACKET;
+typedef struct tagVBAN_VMRT_PACKET			//packedt ident: 0
+{
+	unsigned char voicemeeterType;			// 1 = Voicemeeter, 2= Voicemeeter Banana, 3 Potato
+	unsigned char reserved;					// unused
+	unsigned short buffersize;				// main stream buffer size
+	unsigned long voicemeeterVersion;		// version like for VBVMR_GetVoicemeeterVersion() functino
+	unsigned long optionBits;				// unused
+	unsigned long samplerate;				// main stream samplerate
+	short inputLeveldB100[34];				// pre fader input peak level in dB * 100
+	short outputLeveldB100[64];				// bus output peak level in dB * 100
+	unsigned long TransportBit;				// Transport Status
+	unsigned long stripState[8];			// Strip Buttons Status (see MODE bits below)
+	unsigned long busState[8];				// Bus Buttons Status (see MODE bits below)
+	short stripGaindB100Layer1[8];			// Strip Gain in dB * 100 
+	short stripGaindB100Layer2[8];
+	short stripGaindB100Layer3[8];
+	short stripGaindB100Layer4[8];
+	short stripGaindB100Layer5[8];
+	short stripGaindB100Layer6[8];
+	short stripGaindB100Layer7[8];
+	short stripGaindB100Layer8[8];
+	short busGaindB100[8];					// Bus Gain in dB * 100 
+	char stripLabelUTF8c60[8][60];			// Strip Label
+	char busLabelUTF8c60[8][60];			// Bus Label
+} T_VBAN_VMRT_PACKET, *PT_VBAN_VMRT_PACKET, *LPT_VBAN_VMRT_PACKET;
 
 #define expected_size_T_VBAN_VMRT_PACKET  1384 //1436 max
 
@@ -974,69 +974,69 @@ extern "C" {
 
 #pragma pack(1)
 
-	// long = 4 bytes
-	// short = 2 bytes
-	// char = 1 byte
-	// float = 4 bytes
+// long = 4 bytes
+// short = 2 bytes
+// char = 1 byte
+// float = 4 bytes
 
-	typedef struct tagVBAN_VMPARAM_STRIP
-	{
-		long mode;
-		float dblevel;			// x 100
-		short Audibility;		// x 100
-		short pos3D_x;			// x 100
-		short pos3D_y;			// x 100
-		short posColor_x;		// x 100
-		short posColor_y;		// x 100
-		short EQgain1;			// x 100
-		short EQgain2;			// x 100
-		short EQgain3;			// x 100
+typedef struct tagVBAN_VMPARAM_STRIP
+{
+	long mode;
+	float dblevel;			// x 100
+	short Audibility;		// x 100
+	short pos3D_x;			// x 100
+	short pos3D_y;			// x 100
+	short posColor_x;		// x 100
+	short posColor_y;		// x 100
+	short EQgain1;			// x 100
+	short EQgain2;			// x 100
+	short EQgain3;			// x 100
+	
+	//first channel parametric EQ 
+	char PEQ_eqOn[6];		// 0 or 1
+	char PEQ_eqtype[6];		// see define below
+	float PEQ_eqgain[6];	
+	float PEQ_eqfreq[6];
+	float PEQ_eqq[6];
 
-		//first channel parametric EQ 
-		char PEQ_eqOn[6];		// 0 or 1
-		char PEQ_eqtype[6];		// see define below
-		float PEQ_eqgain[6];
-		float PEQ_eqfreq[6];
-		float PEQ_eqq[6];
+	short Audibility_c;		// x 100
+	short Audibility_g;		// x 100
+	short Audibility_d;		// x 100
+	short posMod_x;			// x 100
+	short posMod_y;			// x 100
+	short send_reverb;		// x 100
+	short send_delay;		// x 100
+	short send_fx1;			// x 100
+	short send_fx2;			// x 100
+	short dblimit;			// x 100
+	short nKaraoke;			// x 100
 
-		short Audibility_c;		// x 100
-		short Audibility_g;		// x 100
-		short Audibility_d;		// x 100
-		short posMod_x;			// x 100
-		short posMod_y;			// x 100
-		short send_reverb;		// x 100
-		short send_delay;		// x 100
-		short send_fx1;			// x 100
-		short send_fx2;			// x 100
-		short dblimit;			// x 100
-		short nKaraoke;			// x 100
+	short COMP_gain_in;		// x 100
+	short COMP_attack_ms;	// x 10
+	short COMP_release_ms;	// x 10
+	short COMP_n_knee;		// x 100
+	short COMP_comprate;	// x 100
+	short COMP_threshold;	// x 100
+	short COMP_c_enabled;	
+	short COMP_c_auto;
+	short COMP_gain_out;	// x 100
 
-		short COMP_gain_in;		// x 100
-		short COMP_attack_ms;	// x 10
-		short COMP_release_ms;	// x 10
-		short COMP_n_knee;		// x 100
-		short COMP_comprate;	// x 100
-		short COMP_threshold;	// x 100
-		short COMP_c_enabled;
-		short COMP_c_auto;
-		short COMP_gain_out;	// x 100
+	short GATE_dBThreshold_in;	// x 100
+	short GATE_dBDamping_max;	// x 100
+	short GATE_BP_Sidechain;	// x 10
+	short GATE_attack_ms;		// x 10
+	short GATE_hold_ms;			// x 10
+	short GATE_release_ms;		// x 10
 
-		short GATE_dBThreshold_in;	// x 100
-		short GATE_dBDamping_max;	// x 100
-		short GATE_BP_Sidechain;	// x 10
-		short GATE_attack_ms;		// x 10
-		short GATE_hold_ms;			// x 10
-		short GATE_release_ms;		// x 10
+	short DenoiserThreshold;	// x 100
+	short PitchEnabled;		
+	short Pitch_DryWet;			// x 100
+	short Pitch_Value;			// x 100
+	short Pitch_formant_lo;		// x 100
+	short Pitch_formant_med;	// x 100
+	short Pitch_formant_high;	// x 100
 
-		short DenoiserThreshold;	// x 100
-		short PitchEnabled;
-		short Pitch_DryWet;			// x 100
-		short Pitch_Value;			// x 100
-		short Pitch_formant_lo;		// x 100
-		short Pitch_formant_med;	// x 100
-		short Pitch_formant_high;	// x 100
-
-	} T_VBAN_VMPARAM_STRIP, * PT_VBAN_VMPARAM_STRIP, * LPT_VBAN_VMPARAM_STRIP;
+} T_VBAN_VMPARAM_STRIP, *PT_VBAN_VMPARAM_STRIP, *LPT_VBAN_VMPARAM_STRIP;
 
 #define VMRT_EQTYPE_PEQ		0
 #define VMRT_EQTYPE_NOTCH	1
@@ -1048,40 +1048,40 @@ extern "C" {
 
 
 #define expected_size_T_VBAN_VMPARAM_STRIP (8+ (8 * sizeof(short)) + (2*6) + (3 * 6 * sizeof(float)) + ((11 + 9 + 6 + 7) * sizeof(short)))
-	//170
+//170
 
-	typedef struct tagVBAN_VMPARAMSTRIP_PACKET		//packedt ident: 1
-	{
-		unsigned char voicemeeterType;			// 1 = Voicemeeter, 2= Voicemeeter Banana, 3 Potato
-		unsigned char reserved;					// unused
-		unsigned short buffersize;				// main stream buffer size
-		unsigned long voicemeeterVersion;		// version like for VBVMR_GetVoicemeeterVersion() functino
-		unsigned long optionBits;				// unused
-		unsigned long samplerate;				// main stream samplerate
-		T_VBAN_VMPARAM_STRIP Strips[8];			// all input strips
-	} T_VBAN_VMPARAMSTRIP_PACKET, * PT_VBAN_VMPARAMSTRIP_PACKET, * LPT_VBAN_VMPARAMSTRIP_PACKET;
+typedef struct tagVBAN_VMPARAMSTRIP_PACKET		//packedt ident: 1
+{
+	unsigned char voicemeeterType;			// 1 = Voicemeeter, 2= Voicemeeter Banana, 3 Potato
+	unsigned char reserved;					// unused
+	unsigned short buffersize;				// main stream buffer size
+	unsigned long voicemeeterVersion;		// version like for VBVMR_GetVoicemeeterVersion() functino
+	unsigned long optionBits;				// unused
+	unsigned long samplerate;				// main stream samplerate
+	T_VBAN_VMPARAM_STRIP Strips[8];			// all input strips
+} T_VBAN_VMPARAMSTRIP_PACKET, *PT_VBAN_VMPARAMSTRIP_PACKET, *LPT_VBAN_VMPARAMSTRIP_PACKET;
 
 #pragma pack()
 
 #define expected_size_T_VBAN_VMPARAMSTRIP_PACKET ((4 * 4) + (expected_size_T_VBAN_VMPARAM_STRIP * 8)) //1436 max
-	//1376
+//1376
 
-	/******************************************************************************/
-	/*                               LOCAL FUNCTIONS                              */
-	/******************************************************************************/
+/******************************************************************************/
+/*                               LOCAL FUNCTIONS                              */
+/******************************************************************************/
 
-	long VBVMR_LocalInit(void);
-	long VBVMR_LocalEnd(void);
-	void* VBVMR_GetRequestVB0STREAMPTR(void);
+long VBVMR_LocalInit(void);
+long VBVMR_LocalEnd(void);
+void * VBVMR_GetRequestVB0STREAMPTR(void);
 
-	long VBVMR_SetParametersWEx(unsigned short* szParamScript, long fCopyToClient);
+long VBVMR_SetParametersWEx(unsigned short * szParamScript, long fCopyToClient);
 
-	long VBVMR_LoginEx(long properties);
+long VBVMR_LoginEx(long properties);
 
-	long VBVMR_MB_PushSettings(void* lpParam);
+long VBVMR_MB_PushSettings(void * lpParam);
 
 
-	long InitializeDLLInterfaces(T_VBVMR_INTERFACE& iVMR);
+
 
 
 #ifdef __cplusplus
@@ -1089,5 +1089,4 @@ extern "C" {
 #endif
 
 #endif /*__VOICEMEETER_REMOTE_H__*/
-
 

@@ -3,142 +3,142 @@
 
 #include <exception>
 #include <memory>
+#include <utility>
 
-#include "VoicemeeterRemoteLoader.h"
-#include "Voicemeeter/Adapters/Multiclient/Cherry.h"
+#include "vmr_client.h"
+#include "Voicemeeter/Clients/_/Remote.hpp"
+#include "VoicemeeterRemote.h"
 
 namespace Voicemeeter {
 	namespace Clients {
 		template<
-			typename TMixer,
-			typename TTimer>
+			typename TTimer,
+			typename TMixer>
+		class RemoteBuilder;
+
+		template<
+			typename TTimer,
+			typename TMixer>
 		class Remote final {
 		public:
-			enum class LevelType : long {
-				PreFaderInput = 0L,
-				PostFaderInput = 1L,
-				PostMuteInput = 2L,
-				Output = 3L
-			};
+			using Type = _::Remote::runtime_t;
 
-			inline Remote(
-				TMixer &mixer,
-				TTimer &timer)
-				: _mixer{ mixer }
-				, _timer{ timer } {
-
-			};
 			Remote() = delete;
 			Remote(Remote const &) = delete;
 			Remote(Remote &&) = delete;
 
-			inline ~Remote() = default;
+			inline ~Remote() {
+				_client.VBVMR_Logout();
+			};
 
 			Remote & operator=(Remote const &) = delete;
 			Remote & operator=(Remote &&) = delete;
 
-			class vbvmr final {
-			public:
-				vbvmr() = delete;
-				vbvmr(vbvmr const &) = delete;
-				vbvmr(vbvmr &&) = delete;
-
-				inline ~vbvmr() {
-					_remote.VBVMR_Logout();
-				};
-
-				vbvmr & operator=(vbvmr const &) = delete;
-				vbvmr & operator=(vbvmr &&) = delete;
-
-				enum class Type : long {
-					Voicemeeter = 1L,
-					Banana = 2L,
-					Potato = 3L
-				};
-				inline Type get_Type() const {
-					return _type;
-				};
-
-			private:
-				class RemoteTick final {
-				public:
-					inline RemoteTick(
-						TMixer &mixer,
-						TTimer &timer,
-						T_VBVMR_INTERFACE &remote)
-						: _mixer{ mixer }
-						, _timer{ timer }
-						, _remote{ remote } {
-
-					};
-					RemoteTick() = delete;
-					RemoteTick(RemoteTick const &) = delete;
-					RemoteTick(RemoteTick &&) = delete;
-
-					inline ~RemoteTick() {
-						Unset();
-					};
-
-					RemoteTick & operator=(RemoteTick const &) = delete;
-					RemoteTick & operator=(RemoteTick &&) = delete;
-
-					inline void operator()() const {
-						_::Update(_mixer, _remote);
-					};
-
-					inline void Set() {
-						_timer.Set(100, *this);
-					};
-					inline void Unset() {
-						_timer.Unset(*this);
-					};
-
-				private:
-					TMixer &_mixer;
-					TTimer &_timer;
-					T_VBVMR_INTERFACE &_remote;
-				};
-
-				friend Remote;
-
-				T_VBVMR_INTERFACE _remote;
-				Type _type;
-				RemoteTick _remoteTick;
-				_::Bag<TMixer> _tokens;
-
-				inline vbvmr(
-					TMixer &mixer,
-					TTimer &timer)
-					: _remote{}
-					, _type{ Type::Voicemeeter }
-					, _remoteTick{ mixer, timer, _remote }
-					, _tokens{ mixer } {
-					if (::InitializeDLLInterfaces(_remote) != 0) {
-						throw ::std::exception{ "Cannot initialize interfaces" };
-					}
-					long login{ _remote.VBVMR_Login() };
-					if (login < 0) {
-						throw ::std::exception{ "Cannot connect to Voicemeeter" };
-					} else if (login) {
-						_remote.VBVMR_Logout();
-						throw ::std::exception{ "Voicemeeter is not started" };
-					} if (_remote.VBVMR_GetVoicemeeterType(reinterpret_cast<long *>(&_type))) {
-						_remote.VBVMR_Logout();
-						throw ::std::exception{ "Cannot get Voicemeeter type" };
-					}
-					Subscribe();
-					_remoteTick.Set();
-				};
-			};
-
-			::std::unique_ptr<vbvmr> Build() const {
-				return ::std::make_unique<vbvmr>(
-					_mixer, timer);
+			inline Type get_Type() const {
+				runtime_t value{ 0L };
+				if (_client.VBVMR_GetVoicemeeterType(&value)) {
+					throw ::std::exception{ "Could not get Voicemeeter type" };
+				}
+				return value;
 			};
 
 		private:
-			TMixer &_mixer;
+			friend class RemoteBuilder<TTimer, TMixer>;
+
+			class RemoteTick final {
+			public:
+				inline RemoteTick(
+					TTimer &timer,
+					TMixer &mixer,
+					T_VBVMR_INTERFACE &client)
+					: _timer{ timer }
+					, _mixer{ mixer }
+					, _client{ client } {
+
+				};
+				RemoteTick() = delete;
+				RemoteTick(RemoteTick const &) = delete;
+				RemoteTick(RemoteTick &&) = delete;
+
+				inline ~RemoteTick() {
+					Unset();
+				};
+
+				RemoteTick & operator=(RemoteTick const &) = delete;
+				RemoteTick & operator=(RemoteTick &&) = delete;
+
+				inline void operator()() const {
+					_::Remote::Update(_mixer, _client);
+				};
+
+				inline void Set() {
+					_timer.Set(100, *this);
+				};
+				inline void Unset() {
+					_timer.Unset(*this);
+				};
+
+			private:
+				TTimer &_timer;
+				TMixer &_mixer;
+				T_VBVMR_INTERFACE &_client;
+			};
+
+			T_VBVMR_INTERFACE _client;
+			RemoteTick _remoteTick;
+			_::Remote::bag<TMixer> _tokens;
+
+			inline Remote(
+				T_VBVMR_INTERFACE &&client,
+				TTimer &timer,
+				TMixer &mixer)
+				: _client{ ::std::move(client) }
+				, _remoteTick{ timer, mixer, _client }
+				, _tokens{ _::Remote::Subscribe(mixer, _client) } {
+				_remoteTick.Set();
+			};
+		};
+
+		template<
+			typename TTimer,
+			typename TMixer>
+		class RemoteBuilder final {
+		public:
+			inline RemoteBuilder(
+				TTimer &timer,
+				TMixer &mixer)
+				: _timer{ timer }
+				, _mixer{ mixer } {
+
+			};
+			RemoteBuilder() = delete;
+			RemoteBuilder(RemoteBuilder const &) = delete;
+			RemoteBuilder(RemoteBuilder &&) = delete;
+
+			inline ~RemoteBuilder() = default;
+
+			RemoteBuilder & operator=(RemoteBuilder const &) = delete;
+			RemoteBuilder & operator=(Remote &&) = delete;
+
+			::std::unique_ptr<Remote<TTimer, TMixer>> Build() const {
+				T_VBVMR_INTERFACE client{};
+				if (::InitializeDLLInterfaces(client) != 0) {
+					throw ::std::exception{ "Could not initialize interfaces" };
+				}
+				long login{ client.VBVMR_Login() };
+				if (login < 0) {
+					throw ::std::exception{ "Could not connect to Voicemeeter" };
+				} else if (login) {
+					client.VBVMR_Logout();
+					throw ::std::exception{ "Voicemeeter is not started" };
+				}
+				return ::std::make_unique<Remote<TTimer, TMixer>>(
+					::std::move(client), _timer, _mixer);
+			};
+
+		private:
 			TTimer &_timer;
+			TMixer &_mixer;
 		};
 	}
 }

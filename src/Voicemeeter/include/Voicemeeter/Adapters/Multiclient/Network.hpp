@@ -58,7 +58,7 @@ namespace Voicemeeter {
 					token & operator=(token &&) = delete;
 
 					template<typename Fn>
-					inline on_level(Fn &&callback) {
+					inline on_vban(Fn &&callback) {
 						_callbacks[TToken::_clientId]
 							= ::std::forward<Fn>(callback);
 					};

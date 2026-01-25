@@ -583,9 +583,7 @@ namespace Voicemeeter {
 				State & operator=(State const &) = delete;
 				State & operator=(State &&) = delete;
 
-				inline constexpr size_t get_Frames() const {
-					return FrameCount;
-				};
+				static constexpr size_t FrameCount{ 2 };
 
 				inline HWND get_hWnd() const {
 					return _hWnd;
@@ -664,8 +662,6 @@ namespace Voicemeeter {
 				};
 
 			private:
-				static constexpr size_t FrameCount{ 2 };
-
 				HWND _hWnd;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _d3dDevice;
 				::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
