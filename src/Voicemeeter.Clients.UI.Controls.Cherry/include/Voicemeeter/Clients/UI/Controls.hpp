@@ -52,16 +52,16 @@ namespace Voicemeeter {
 					_mixer = &value;
 				};
 				inline void set_Animated(bool value) {
-					_enabled.set(_::Controls::flag::animated,
+					_enabled.set(_::Controls::flags::animated,
 						value);
 				};
 				inline void set_Vban(bool value) {
-					_enabled.set(_::Controls::flag::vban,
+					_enabled.set(_::Controls::flags::vban,
 						value);
 				};
 				template<typename TLayout::Strips Target>
 				inline void set_Enabled(bool value) {
-					_enabled.set(_::Controls::flag::offset + Target,
+					_enabled.set(_::Controls::flags::offset + Target,
 						value);
 				};
 

@@ -52,23 +52,23 @@ namespace Voicemeeter {
 					};
 
 					inline void set_FramePosition(vector_t const &point) {
-						OnSet(_framePoint, point, FramePoint);
+						OnSet(_framePoint, point, flags::framePoint);
 					};
 					inline void set_FrameSize(vector_t const &vertex) {
-						OnSet(_frameVertex, vertex, FrameVertex);
+						OnSet(_frameVertex, vertex, flags::frameVertex);
 					};
 					inline void set_FrameColor(vector_t const &rgba) {
-						OnSet(_frameRgba, rgba, FrameRgba);
+						OnSet(_frameRgba, rgba, flags::frameRgba);
 					};
 					inline void set_Invalid() {
-						OnInvalidate(RenderTarget);
+						OnInvalidate(flags::renderTarget);
 					};
 
 					inline void operator()() {
-						if (_changes.test(FrameVertex)) {
-							_changes.set(FramePoint);
+						if (_changes.test(flags::frameVertex)) {
+							_changes.set(flags::framePoint);
 						}
-						if (_changes.test(FramePoint)) {
+						if (_changes.test(flags::framePoint)) {
 						}
 						_changes.reset();
 						_slot.reset();
@@ -89,11 +89,11 @@ namespace Voicemeeter {
 					};
 
 				private:
-					enum flags_t : size_t {
-						FramePoint = 0,
-						FrameVertex = 1,
-						FrameRgba = 2,
-						RenderTarget = 3
+					enum flags : size_t {
+						framePoint = 0,
+						frameVertex = 1,
+						frameRgba = 2,
+						renderTarget = 3
 					};
 
 					TToolkit &_toolkit;
@@ -106,14 +106,14 @@ namespace Voicemeeter {
 					vector_t _frameRgba;
 
 					template<typename T>
-					inline void OnSet(T &dst, T const &src, flags_t property) {
+					inline void OnSet(T &dst, T const &src, flags property) {
 						if (src == dst) {
 							return;
 						}
 						dst = src;
 						OnInvalidate(property);
 					};
-					inline void OnInvalidate(flags_t property) {
+					inline void OnInvalidate(flags property) {
 						if (_changes.none()) {
 							_slot = _toolkit.get_Queue()
 								.reserve();

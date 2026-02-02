@@ -46,7 +46,7 @@ namespace Voicemeeter {
 		namespace UI {
 			namespace _ {
 				namespace Controls {
-					enum flag : size_t {
+					enum flags : size_t {
 						animated = 0,
 						vban = 1,
 						offset = 1
@@ -76,7 +76,7 @@ namespace Voicemeeter {
 						TToolkit &toolkit,
 						TFocusTracker &focusTracker,
 						::std::bitset<
-							flag::offset
+							flags::offset
 							+ TMixer::InputSize
 							+ TMixer::OutputSize
 						> const &enabled);
@@ -1057,7 +1057,7 @@ namespace Voicemeeter {
 						TToolkit &toolkit,
 						TFocusTracker &focusTracker,
 						::std::bitset<
-							flag::offset
+							flags::offset
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
 						> const &enabled) {
@@ -1092,15 +1092,15 @@ namespace Voicemeeter {
 						};
 						num_t enabledInputs{
 							static_cast<num_t>(
-								enabled.test(flag::offset + Cherry::Strips::P))
-							+ enabled.test(flag::offset + Cherry::Strips::V)
+								enabled.test(flags::offset + Cherry::Strips::P))
+							+ enabled.test(flags::offset + Cherry::Strips::V)
 						};
 						num_t enabledOutputs{
 							static_cast<num_t>(
-								enabled.test(flag::offset + Cherry::Strips::A1))
-							+ enabled.test(flag::offset + Cherry::Strips::A2)
-							+ enabled.test(flag::offset + Cherry::Strips::B1)
-							+ enabled.test(flag::offset + Cherry::Strips::B2)
+								enabled.test(flags::offset + Cherry::Strips::A1))
+							+ enabled.test(flags::offset + Cherry::Strips::A2)
+							+ enabled.test(flags::offset + Cherry::Strips::B1)
+							+ enabled.test(flags::offset + Cherry::Strips::B2)
 						};
 						auto vban = ::std::make_unique<
 							Decorators::ToggleVisibility<
@@ -1113,7 +1113,7 @@ namespace Voicemeeter {
 								UI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
-							enabled.test(flag::vban),
+							enabled.test(flags::vban),
 							vector_t{ PanelPaddingL, PanelPaddingT },
 							vector_t{ PanelPaddingR, PanelPaddingB },
 							UI::Policies::Size::Scales::PreserveRatio{},
@@ -1123,7 +1123,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Vban<TToolkit>,
 								UI::Policies::Control::Updates::Vban<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Vban<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Vban<TToolkit>{ toolkit }
 							},
@@ -1147,7 +1147,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
 								UI::Policies::Control::Updates::StripKnob<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
@@ -1171,7 +1171,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
 								UI::Policies::Control::Updates::StripKnob<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
@@ -1195,7 +1195,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
 								UI::Policies::Control::Updates::StripKnob<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
@@ -1227,7 +1227,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
 								UI::Policies::Control::Updates::StripKnob<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
@@ -1259,7 +1259,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
 								UI::Policies::Control::Updates::StripKnob<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
@@ -1291,7 +1291,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
 								UI::Policies::Control::Updates::StripKnob<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
@@ -1313,7 +1313,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1343,7 +1343,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1365,7 +1365,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1395,7 +1395,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1417,7 +1417,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1447,7 +1447,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1469,7 +1469,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1499,7 +1499,7 @@ namespace Voicemeeter {
 							Policies::Control::Updates::ToggleAnimation<
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
 								UI::Policies::Control::Updates::Plug<TToolkit>>{
-								enabled.test(flag::animated),
+								enabled.test(flags::animated),
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
@@ -1509,7 +1509,7 @@ namespace Voicemeeter {
 							slice_t{ 0, 1, 1 },
 							UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
-						if (enabled.test(flag::vban)) {
+						if (enabled.test(flags::vban)) {
 							vban.set_FrameColor(toolkit.get_Theme()
 								.Inactive);
 						}
@@ -1585,30 +1585,30 @@ namespace Voicemeeter {
 							::std::numeric_limits<size_t>::max());
 						{
 							auto current = targets.begin();
-							if (enabled.test(flag::offset + Cherry::Strips::P)) {
+							if (enabled.test(flags::offset + Cherry::Strips::P)) {
 								*(current++) = Cherry::Strips::P;
 							}
-							if (enabled.test(flag::offset + Cherry::Strips::V)) {
+							if (enabled.test(flags::offset + Cherry::Strips::V)) {
 								*(current++) = Cherry::Strips::V;
 							}
 						}
 						{
 							auto current = targets.begin() + 2;
-							if (enabled.test(flag::offset + Cherry::Strips::A1)) {
+							if (enabled.test(flags::offset + Cherry::Strips::A1)) {
 								*(current++) = Cherry::Strips::A1;
 							}
-							if (enabled.test(flag::offset + Cherry::Strips::A2)) {
+							if (enabled.test(flags::offset + Cherry::Strips::A2)) {
 								*(current++) = Cherry::Strips::A2;
 							}
-							if (enabled.test(flag::offset + Cherry::Strips::B1)) {
+							if (enabled.test(flags::offset + Cherry::Strips::B1)) {
 								*(current++) = Cherry::Strips::B1;
 							}
-							if (enabled.test(flag::offset + Cherry::Strips::B2)) {
+							if (enabled.test(flags::offset + Cherry::Strips::B2)) {
 								*(current++) = Cherry::Strips::B2;
 							}
 						}
 						bag<Cherry> tokens{ mixer };
-						if (enabled.test(flag::vban)) {
+						if (enabled.test(flags::vban)) {
 							tokens.get_Mixer()
 								.on_Vban([
 									&control = &vban

@@ -64,33 +64,33 @@ namespace Voicemeeter {
 					};
 
 					inline void set_FramePosition(vector_t const &point) {
-						OnSet(_framePoint, point, FramePoint);
+						OnSet(_framePoint, point, flags::framePoint);
 					};
 					inline void set_FrameSize(vector_t const &vertex) {
-						OnSet(_frameVertex, vertex, FrameVertex);
+						OnSet(_frameVertex, vertex, flags::frameVertex);
 					};
 					inline void set_FrameColor(vector_t const &rgba) {
-						OnSet(_frameRgba, rgba, FrameRgba);
+						OnSet(_frameRgba, rgba, flags::frameRgba);
 					};
 					inline void set_IndicatorAngle(num_t degree) {
-						OnSet(_indicatorDegree, degree, IndicatorDegree);
+						OnSet(_indicatorDegree, degree, flags::indicatorDegree);
 					};
 					inline void set_IndicatorColor(vector_t const &rgba) {
-						OnSet(_indicatorRgba, rgba, IndicatorRgba);
+						OnSet(_indicatorRgba, rgba, flags::indicatorRgba);
 					};
 					inline void set_Invalid() {
-						OnInvalidate(RenderTarget);
+						OnInvalidate(flags::renderTarget);
 					};
 
 					inline void operator()() {
-						if (_changes.test(FrameVertex)) {
+						if (_changes.test(flags::frameVertex)) {
 							_indicatorVertex = _frameVertex / 10;
-							_changes.set(FramePoint);
+							_changes.set(flags::framePoint);
 						}
-						if (_changes.test(FramePoint)) {
-							_changes.set(IndicatorDegree);
+						if (_changes.test(flags::framePoint)) {
+							_changes.set(flags::indicatorDegree);
 						}
-						if (_changes.test(IndicatorDegree) {
+						if (_changes.test(flags::indicatorDegree) {
 							vector_t transformI{
 								sinI(_indicatorDegree),
 								cosI(_indicatorDegree)
@@ -127,13 +127,13 @@ namespace Voicemeeter {
 					};
 
 				private:
-					enum flags_t : size_t {
-						FramePoint = 0,
-						FrameVertex = 1,
-						FrameRgba = 2,
-						IndicatorDegree = 3,
-						IndicatorRgba = 4,
-						RenderTarget = 5
+					enum flags : size_t {
+						framePoint = 0,
+						frameVertex = 1,
+						frameRgba = 2,
+						indicatorDegree = 3,
+						indicatorRgba = 4,
+						renderTarget = 5
 					};
 
 					TToolkit &_toolkit;
@@ -152,14 +152,14 @@ namespace Voicemeeter {
 					vector_t _indicatorRgba;
 
 					template<typename T>
-					inline void OnSet(T &dst, T const &src, flags_t property) {
+					inline void OnSet(T &dst, T const &src, flags property) {
 						if (src == dst) {
 							return;
 						}
 						dst = src;
 						OnInvalidate(property);
 					};
-					inline void OnInvalidate(flags_t property) {
+					inline void OnInvalidate(flags property) {
 						if (_changes.none()) {
 							_slot = _toolkit.get_Queue()
 								.reserve();

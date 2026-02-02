@@ -220,7 +220,7 @@ namespace Voicemeeter {
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::exception{ key };
 					}
-					mixer.set_Plug<bag<TMixer>, From, To>(0.01 < value);
+					mixer.set_Plug<bag<TMixer>, From, To>(0.01F < value);
 				};
 				template<typename TMixer, typename TMixer::Strips Target>
 				inline void UpdateStrip(TMixer &mixer, T_VBVMR_INTERFACE &client, remote_t remote) {
