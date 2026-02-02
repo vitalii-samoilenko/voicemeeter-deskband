@@ -21,11 +21,8 @@ namespace Voicemeeter {
 					TScale &&scale = TScale{},
 					Args &&...args)
 					: TComponent{ ::std::forward<Args>(args) ... }
-					, _point{ 0, 0 }
-					, _vertex{ 0, 0 }
-					, _baseVertex{ basePaddingPoint + TComponent::get_BaseSize() + basePaddingVertex }
-					, _paddingPoint{}
-					, _paddingVertex{}
+					, _paddingPoint{ 0, 0 }
+					, _paddingVertex{ 0, 0 }
 					, _basePaddingPoint{ ::std::move(basePaddingPoint) }
 					, _basePaddingVertex{ ::std::move(basePaddingVertex) }
 					, _scale{ ::std::move(scale) } {
@@ -41,31 +38,27 @@ namespace Voicemeeter {
 				Padding & operator=(Padding &&) = delete;
 
 				inline vector_t const & get_Position() const {
-					return _point;
+					return TComponent::get_Position() - _paddingPoint;
 				};
 				inline vector_t const & get_Size() const {
-					return _vertex;
+					return _paddingPoint + TComponent::get_Size() + _paddingVertex;
 				};
 				inline vector_t const & get_BaseSize() const {
-					return _baseVertex;
+					return _basePaddingPoint + TComponent::get_BaseSize() + _basePaddingVertex;
 				};
 
 				inline void Rescale(vector_t const &vertex) {
+					vector_t point{ get_Position() };
 					::std::tie(_paddingPoint, ::std::ignore, _paddingVertex) = _scale(vertex,
 							_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
-					TComponent::Move(_point + _paddingPoint);
 					TComponent::Rescale(vertex - _paddingPoint - _paddingVertex);
-					_vertex = _paddingPoint + TComponent::get_Size() + _paddingVertex;
+					Move(point);
 				};
 				inline void Move(vector_t const &point) {
-					_point = point;
 					TComponent::Move(point + _paddingPoint);
 				};
 
 			private:
-				vector_t _point;
-				vector_t _vertex;
-				vector_t _baseVertex;
 				vector_t _paddingPoint;
 				vector_t _paddingVertex;
 				vector_t _basePaddingPoint;

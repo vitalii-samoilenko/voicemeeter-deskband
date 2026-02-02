@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Adapters {

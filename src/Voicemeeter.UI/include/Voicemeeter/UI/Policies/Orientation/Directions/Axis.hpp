@@ -8,14 +8,30 @@ namespace Voicemeeter {
 		namespace Policies {
 			namespace Orientation {
 				namespace Directions {
-					template<size_t I>
-					struct Axis {
+					class Axis final {
+					public:
+						inline explicit Axis(size_t i)
+							: _i{ i } {
+
+						};
+						Axis() = delete;
+						Axis(Axist const &) = delete;
+						inline Axis(Axis &&) = default;
+
+						inline ~Axis() = default;
+
+						Axis & operator=(Axis const &) = delete;
+						Axis & operator=(Axis &&) = delete;
+
 						template<typename V>
 						inline auto operator()(V const &src) const {
 							vector_t dst(src.size(), 0);
-							dst[I] = src[I];
+							dst[_i] = src[_i];
 							return dst;
 						};
+
+					private:
+						size_t _i;
 					};
 				}
 			}

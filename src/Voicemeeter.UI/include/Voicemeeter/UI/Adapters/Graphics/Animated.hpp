@@ -45,7 +45,7 @@ namespace Voicemeeter {
 				template<
 					typename TBundle,
 					typename TToolkit,
-					typename TUpdate,
+					typename TFrame,
 					typename... TSubSpaces>
 				class Animated : public TBundle {
 				public:
@@ -53,14 +53,14 @@ namespace Voicemeeter {
 					inline Animated(
 						TToolkit &toolkit,
 						TSubSpaces &&...subSpaces,
-						TUpdate &&update = TUpdate{},
+						TFrame &&frame = TFrame{},
 						Args &&...args)
 						: TBundle{ ::std::forward<Args>(args) ... }
 						, _toolkit{ toolkit }
 						, _point((subSpaces.size() + ...), 0)
 						, _vertex{ _point }
 						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces) ... }
-						, _update{ ::std::move(update) } {
+						, _frame{ ::std::move(frame) } {
 
 					};
 					Animated() = delete;
@@ -116,7 +116,7 @@ namespace Voicemeeter {
 								) / rI))
 							, ...);
 						}, _subSpaces);
-						_update(*this);
+						_frame(*this);
 						TBundle::operator()();
 						if (_point == _vertex) {
 							return;
@@ -129,7 +129,7 @@ namespace Voicemeeter {
 					vector_t _point;
 					vector_t _vertex;
 					::std::tuple<TSubSpaces ...> _subSpaces;
-					TUpdate _update;
+					TFrame _frame;
 
 					inline void Enqueue() {
 						TBundle::set_Invalid();

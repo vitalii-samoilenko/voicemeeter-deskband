@@ -6,7 +6,7 @@
 
 #include "wheel.hpp"
 
-#include "Voicemeeter/UI/Definitions/Atlas.h"
+#include "Atlas.h"
 
 namespace Voicemeeter {
 	namespace UI {

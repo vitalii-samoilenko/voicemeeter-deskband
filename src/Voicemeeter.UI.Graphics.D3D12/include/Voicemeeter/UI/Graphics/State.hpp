@@ -14,8 +14,8 @@
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 
-#include "Voicemeeter/UI/Definitions/Atlas.h"
-#include "Voicemeeter/UI/Definitions/Loader.h"
+#include "Atlas.h"
+#include "Loader.h"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -150,6 +150,7 @@ namespace Voicemeeter {
 					}
 					::Microsoft::WRL::ComPtr<ID3D12Resource> squareUploadBuffer{ nullptr };
 					{
+						// TODO: vertex identifier for texture alignment
 						::std::array<FLOAT, 2 * 4> square{
 							-1.F, -1.F,
 							-1.F, 1.F,
@@ -564,10 +565,6 @@ namespace Voicemeeter {
 							_hEvent, INFINITE);
 					}
 					failed = false;
-				};
-				inline explicit State(HWND hWnd)
-					: State{ hWnd, NULL } {
-
 				};
 				State() = delete;
 				State(State const &) = delete;

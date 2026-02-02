@@ -75,6 +75,9 @@ namespace Voicemeeter {
 				B2 = 5
 			};
 
+			static constexpr size_t InputSize{ V - P + 1 };
+			static constexpr size_t OutputSize{ B2 - A1 + 1 };
+
 			template<typename... Args>
 			inline explicit Cherry(Args &&...args)
 				: _strips{ ::std::forward<Args>(args) ... } {
@@ -91,28 +94,6 @@ namespace Voicemeeter {
 			template<size_t I>
 			inline auto & get_Strip() {
 				return ::std::get<I>(_strips);
-			};
-
-		protected:
-			static constexpr size_t InputSize{ V - P + 1 };
-			static constexpr size_t OutputSize{ B2 - A1 + 1 };
-
-			template<typename TStrip>
-			inline size_t get_Index(TStrip const &strip) const {
-				if (&get_Strip<P>() == &strip) {
-					return P;
-				} else if (&get_Strip<V>() == &strip) {
-					return V;
-				} else if (&get_Strip<A1>() == &strip) {
-					return A1;
-				} else if (&get_Strip<A2>() == &strip) {
-					return A2;
-				} else if (&get_Strip<B1>() == &strip) {
-					return B1;
-				} else if (&get_Strip<B2>() == &strip) {
-					return B2;
-				}
-				throw ::std::out_of_range{ "Unknown strip" };
 			};
 
 		private:

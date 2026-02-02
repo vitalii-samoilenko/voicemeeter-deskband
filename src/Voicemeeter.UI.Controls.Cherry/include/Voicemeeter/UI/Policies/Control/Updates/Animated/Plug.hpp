@@ -15,11 +15,11 @@ namespace Voicemeeter {
 							num_t distance2;
 						};
 
-						template<typename TToolkit, typename TPlug>
+						template<typename TToolkit>
 						class Plug {
 						public:
-							using context_t = typename TPlug::context_t;
-							using state_t = typename TPlug::state_t;
+							using context_t = PlugContext<TToolkit>;
+							using state_t = num_t;
 
 							inline explicit Plug(TToolkit &toolkit)
 								: _toolkit{ toolkit } {
@@ -34,6 +34,7 @@ namespace Voicemeeter {
 							Plug & operator=(Plug const &) = delete;
 							Plug & operator=(Plug &&) = delete;
 
+							template<typename TPlug>
 							inline void operator()(TPlug &control, state_t state) const {
 								constexpr num_t AnimationLength{ 200 };
 								vector_t targetVertex{ 0 };
@@ -60,10 +61,10 @@ namespace Voicemeeter {
 							TToolkit &_toolkit;
 						};
 
-						template<typename TToolkit, typename TPlug>
+						template<typename TToolkit>
 						class PlugFrame {
 						public:
-							using context_t = typename TPlug::context_t;
+							using context_t = PlugContext<TToolkit>;
 
 							inline explicit PlugFrame(TToolkit &toolkit)
 								: _toolkit{ toolkit } {
@@ -78,6 +79,7 @@ namespace Voicemeeter {
 							PlugFrame & operator=(PlugFrame const &) = delete;
 							PlugFrame & operator=(PlugFrame &&) = delete;
 
+							template<typename TPlug>
 							inline void operator()(TPlug &control) const {
 								auto animationVertex = control.get_AnimationSize()
 									- control.get_AnimationPoint();
@@ -88,7 +90,9 @@ namespace Voicemeeter {
 									control.get_AnimationContext()
 								};
 								num_t rI{
-									sqrt(push(context.distance2) / remaining2)
+									remaining2
+										? sqrt(push(context.distance2) / remaining2)
+										: One
 								};
 								control.set_FrameColor(
 									context.path.pick(rI));

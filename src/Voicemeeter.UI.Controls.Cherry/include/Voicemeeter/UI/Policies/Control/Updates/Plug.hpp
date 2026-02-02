@@ -1,15 +1,17 @@
 #ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_PLUG_HPP
 #define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_PLUG_HPP
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
 			namespace Control {
 				namespace Updates {
-					template<typename TToolkit, typename TPlug>
+					template<typename TToolkit>
 					class Plug {
 					public:
-						using state_t = typename TPlug::state_t;
+						using state_t = num_t;
 
 						inline explicit Plug(TToolkit &toolkit)
 							: _toolkit{ toolkit } {
@@ -24,6 +26,7 @@ namespace Voicemeeter {
 						Plug & operator=(Plug const &) = delete;
 						Plug & operator=(Plug &&) = delete;
 
+						template<typename TPlug>
 						inline void operator()(TPlug &control, state_t state) const {
 							control.set_FrameColor(
 								state

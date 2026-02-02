@@ -63,7 +63,8 @@ namespace Voicemeeter {
 					typename Vp, typename Vv>
 				inline static bool is_inside(
 					Vp const &point, Vv const &vertex) {
-					return max(point - vertex) < 0;
+					return !(min(point) < 0)
+						&& max(point - vertex) < 0;
 				};
 				template<
 					typename Vlp, typename Vlv,

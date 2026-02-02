@@ -35,10 +35,7 @@ namespace Voicemeeter {
 			Remote & operator=(Remote &&) = delete;
 
 			inline Type get_Type() const {
-				runtime_t value{ 0L };
-				if (_client.VBVMR_GetVoicemeeterType(&value)) {
-					throw ::std::exception{ "Could not get Voicemeeter type" };
-				}
+				return _runtime;
 				return value;
 			};
 
@@ -50,10 +47,12 @@ namespace Voicemeeter {
 				inline RemoteTick(
 					TTimer &timer,
 					TMixer &mixer,
-					T_VBVMR_INTERFACE &client)
+					T_VBVMR_INTERFACE &client,
+					_::Remote::runtime_t runtime)
 					: _timer{ timer }
 					, _mixer{ mixer }
-					, _client{ client } {
+					, _client{ client }
+					, _runtime{ runtime } {
 
 				};
 				RemoteTick() = delete;
@@ -68,7 +67,7 @@ namespace Voicemeeter {
 				RemoteTick & operator=(RemoteTick &&) = delete;
 
 				inline void operator()() const {
-					_::Remote::Update(_mixer, _client);
+					_::Remote::Update(_mixer, _client, _runtime);
 				};
 
 				inline void Set() {
@@ -82,19 +81,23 @@ namespace Voicemeeter {
 				TTimer &_timer;
 				TMixer &_mixer;
 				T_VBVMR_INTERFACE &_client;
+				_::Remote::runtime_t _runtime;
 			};
 
 			T_VBVMR_INTERFACE _client;
+			_::Remote::runtime_t _runtime;
 			RemoteTick _remoteTick;
 			_::Remote::bag<TMixer> _tokens;
 
 			inline Remote(
 				T_VBVMR_INTERFACE &&client,
+				_::Remote::runtime_t runtime,
 				TTimer &timer,
 				TMixer &mixer)
 				: _client{ ::std::move(client) }
+				, _runtime{ runtime }
 				, _remoteTick{ timer, mixer, _client }
-				, _tokens{ _::Remote::Subscribe(mixer, _client) } {
+				, _tokens{ _::Remote::Subscribe(mixer, _client, _runtime) } {
 				_remoteTick.Set();
 			};
 		};
@@ -104,14 +107,9 @@ namespace Voicemeeter {
 			typename TMixer>
 		class RemoteBuilder final {
 		public:
-			inline RemoteBuilder(
-				TTimer &timer,
-				TMixer &mixer)
-				: _timer{ timer }
-				, _mixer{ mixer } {
+			using Remote = Remote<TTimer, TMixer>;
 
-			};
-			RemoteBuilder() = delete;
+			inline RemoteBuilder() = default;
 			RemoteBuilder(RemoteBuilder const &) = delete;
 			RemoteBuilder(RemoteBuilder &&) = delete;
 
@@ -120,7 +118,23 @@ namespace Voicemeeter {
 			RemoteBuilder & operator=(RemoteBuilder const &) = delete;
 			RemoteBuilder & operator=(Remote &&) = delete;
 
-			::std::unique_ptr<Remote<TTimer, TMixer>> Build() const {
+			inline void set_Timer(TTimer &value) {
+				_timer = &value;
+			};
+			inline void set_Mixer(TMixer &value) {
+				_mixer = &value;
+			};
+			inline void set_Type(Remote::Type value) {
+				_runtime = value;
+			};
+
+			::std::unique_ptr<Remote> Build() const {
+				if (!_timer) {
+					throw ::std::exception{ "Timer is not set" };
+				}
+				if (!_mixer) {
+					throw ::std::exception{ "Mixer is not set" };
+				}
 				T_VBVMR_INTERFACE client{};
 				if (::InitializeDLLInterfaces(client) != 0) {
 					throw ::std::exception{ "Could not initialize interfaces" };
@@ -132,13 +146,22 @@ namespace Voicemeeter {
 					client.VBVMR_Logout();
 					throw ::std::exception{ "Voicemeeter is not started" };
 				}
-				return ::std::make_unique<Remote<TTimer, TMixer>>(
-					::std::move(client), _timer, _mixer);
+				_::Remote::runtime_t runtime{ 0L };
+				if (client.VBVMR_GetVoicemeeterType(&runtime)) {
+					client.VBVMR_Logout();
+					throw ::std::exception{ "Could not get Voicemeeter type" };
+				}
+				if (_runtime < runtime) {
+					runtime = _runtime;
+				}
+				return ::std::make_unique<Remote>(
+					::std::move(client), runtime, *_timer, *_mixer);
 			};
 
 		private:
-			TTimer &_timer;
-			TMixer &_mixer;
+			TTimer *_timer;
+			TMixer *_mixer;
+			_::Remote::runtime_t _runtime;
 		};
 	}
 }

@@ -47,6 +47,7 @@ inline num_t cosI(num_t n) {
 };
 
 using vector_t = ::std::valarray<num_t>;
+using slice_t = ::std::slice;
 
 template<typename V>
 inline auto push(V const &v) {

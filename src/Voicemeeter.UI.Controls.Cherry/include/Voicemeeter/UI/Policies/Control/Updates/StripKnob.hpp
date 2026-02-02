@@ -1,15 +1,17 @@
 #ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_STRIPKNOB_HPP
 #define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_STRIPKNOB_HPP
 
+#include "Voicemeeter/UI/States/StripKnob.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
 			namespace Control {
 				namespace Updates {
-					template<typename TToolkit, typename TStripKnob>
+					template<typename TToolkit>
 					class StripKnob {
 					public:
-						using state_t = typename TStripKnob::state_t;
+						using state_t = States::StripKnob;
 
 						inline explicit StripKnob(TToolkit &toolkit)
 							: _toolkit{ toolkit } {
@@ -24,6 +26,7 @@ namespace Voicemeeter {
 						StripKnob & operator=(StripKnob const &) = delete;
 						StripKnob & operator=(StripKnob &&) = delete;
 
+						template<typename TStripKnob>
 						inline void operator()(TStripKnob &control, state_t const &state) const {
 							control.set_FrameColor(
 								state.toggle

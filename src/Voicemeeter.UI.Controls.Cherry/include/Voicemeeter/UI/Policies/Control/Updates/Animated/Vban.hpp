@@ -15,11 +15,11 @@ namespace Voicemeeter {
 							num_t distance2;
 						};
 
-						template<typename TToolkit, typename TVban>
+						template<typename TToolkit>
 						class Vban {
 						public:
-							using context_t = typename TVban::context_t;
-							using state_t = typename TVban::state_t;
+							using context_t = Animated<TToolkit>
+							using state_t = num_t;
 
 							inline explicit Vban(TToolkit &toolkit)
 								: _toolkit{ toolkit } {
@@ -34,6 +34,7 @@ namespace Voicemeeter {
 							Vban & operator=(Vban const &) = delete;
 							Vban & operator=(Vban &&) = delete;
 
+							template<typename TVban>
 							inline void operator()(TVban &control, state_t state) const {
 								constexpr num_t AnimationLength{ 200 };
 								vector_t targetVertex{ 0 };
@@ -60,10 +61,10 @@ namespace Voicemeeter {
 							TToolkit &_toolkit;
 						};
 
-						template<typename TToolkit, typename TVban>
+						template<typename TToolkit>
 						class VbanFrame {
 						public:
-							using context_t = typename TVban::context_t;
+							using context_t = VbanContext<TToolkit>;
 
 							inline explicit VbanFrame(TToolkit &toolkit)
 								: _toolkit{ toolkit } {
@@ -78,6 +79,7 @@ namespace Voicemeeter {
 							VbanFrame & operator=(VbanFrame const &) = delete;
 							VbanFrame & operator=(VbanFrame &&) = delete;
 
+							template<typename TVban>
 							inline void operator()(TVban &control) const {
 								auto animationVertex = control.get_AnimationSize()
 									- control.get_AnimationPoint();
@@ -88,7 +90,9 @@ namespace Voicemeeter {
 									control.get_AnimationContext()
 								};
 								num_t rI{
-										sqrt(push(context.distance2) / remaining2)
+										remaining2
+											? sqrt(push(context.distance2) / remaining2)
+											: One
 								};
 								control.set_FrameColor(
 									context.path.pick(rI));

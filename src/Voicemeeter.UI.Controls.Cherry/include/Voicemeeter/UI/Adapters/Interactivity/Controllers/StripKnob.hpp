@@ -31,7 +31,7 @@ namespace Voicemeeter {
 
 						inline void set_DefaultState() {
 							state_t state{ TStripKnob::get_State() };
-							state.degree = DEFAULT;
+							state.degree = Default;
 							state.hold = true;
 							TStripKnob::set_State(state);
 						};
@@ -47,10 +47,10 @@ namespace Voicemeeter {
 						};
 						inline void add_GainState(num_t value) {
 							state_t state{ TStripKnob::get_State() };
-							if (state.degree < MIN - value) {
-								state.degree = MIN;
-							} else if (MAX - value < state.degree) {
-								state.degree = MAX;
+							if (state.degree < Min - value) {
+								state.degree = Min;
+							} else if (Max - value < state.degree) {
+								state.degree = Max;
 							} else {
 								state.degree += value;
 							}
@@ -59,9 +59,9 @@ namespace Voicemeeter {
 						};
 
 					private:
-						static constexpr num_t DEFAULT{ 0 };
-						static constexpr num_t MIN{ push(-225) };
-						static constexpr num_t MAX{ push(45) };
+						static constexpr num_t Default{ 0 };
+						static constexpr num_t Min{ push(-225) };
+						static constexpr num_t Max{ push(45) };
 					};
 				}
 			}

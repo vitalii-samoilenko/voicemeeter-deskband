@@ -7,6 +7,7 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace States {
 			struct StripKnob {
+				size_t target;
 				num_t degree;
 				bool toggle;
 				bool hold;

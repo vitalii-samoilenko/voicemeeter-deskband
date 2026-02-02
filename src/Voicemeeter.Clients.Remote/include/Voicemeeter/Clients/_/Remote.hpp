@@ -1,5 +1,5 @@
-#ifndef IMPL_VOICEMEETER_CLIENTS_REMOTE_HPP
-#define IMPL_VOICEMEETER_CLIENTS_REMOTE_HPP
+#ifndef VOICEMEETER_CLIENTS___REMOTE_HPP
+#define VOICEMEETER_CLIENTS___REMOTE_HPP
 
 #include <exception>
 
@@ -181,7 +181,7 @@ namespace Voicemeeter {
 
 				template<typename TMixer, typename TMixer::Strips From, typename TMixer::Strips To>
 				inline void SubscribePlug(typename TMixer::token &token, TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
-					token.on_plug(mixer.get_Strip<From>(), mixer.get_Strip<To>(), [
+					token.on_plug<From, To>([
 						&client,
 						key = ToPlugKey<TMixer, From, To>(runtime)
 					](bool value)->void {
@@ -220,7 +220,7 @@ namespace Voicemeeter {
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::exception{ key };
 					}
-					mixer.set_Plug<bag<TMixer>>(mixer.get_Strip<From>(), mixer.get_Strip<To>(), 0.01 < value);
+					mixer.set_Plug<bag<TMixer>, From, To>(0.01 < value);
 				};
 				template<typename TMixer, typename TMixer::Strips Target>
 				inline void UpdateStrip(TMixer &mixer, T_VBVMR_INTERFACE &client, remote_t remote) {
@@ -254,11 +254,7 @@ namespace Voicemeeter {
 				};
 
 				template<>
-				inline bag<Cherry> Subscribe<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client) {
-					runtime_t runtime{ Voicemeeter };
-					if (_client.VBVMR_GetVoicemeeterType(&runtime)) {
-						throw ::std::exception{ "Could not get Voicemeeter type" };
-					}
+				inline bag<Cherry> Subscribe<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
 					bag<Cherry> tokens{ mixer };
 					SubscribePlug<Cherry,
 						Cherry::Strips::P, Cherry::Strips::A1>(
@@ -315,11 +311,7 @@ namespace Voicemeeter {
 					return tokens;
 				};
 				template<>
-				inline void Update<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client) {
-					runtime_t runtime{ Voicemeeter };
-					if (client.VBVMR_GetVoicemeeterType(&runtime)) {
-						throw ::std::exception{ "Could not get Voicemeeter type" };
-					}
+				inline void Update<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
 					long temp{ client.VBVMR_IsParametersDirty() };
 					if (temp < 0) {
 						throw ::std::exception{ "Could not check Voicemeeter" };

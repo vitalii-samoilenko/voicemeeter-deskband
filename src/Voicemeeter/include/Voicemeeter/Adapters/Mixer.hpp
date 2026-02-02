@@ -22,17 +22,19 @@ namespace Voicemeeter {
 			Mixer & operator=(Mixer const &) = delete;
 			Mixer & operator=(Mixer &&) = delete;
 
-			template<typename TIBus, typename TOBus>
-			inline bool get_Plug(TIBus const &input, TOBus const &output) const {
-				size_t i{ TLayout::get_Index(input) };
-				size_t j{ TLayout::get_Index(output) };
-				return _plugs[TLayout::OutputSize * i + j];
+			template<typename TLayout::Strips From, typename TLayout::Strips To>
+			inline bool get_Plug() const {
+				return _plugs[
+					From * TLayout::OutputSize
+					+ To - TLayout::InputSize
+				];
 			};
-			template<typename TIBus, typename TOBus>
-			inline void set_Plug(TIBus const &input, TOBus const &output, bool value) {
-				size_t i{ TLayout::get_Index(input) };
-				size_t j{ TLayout::get_Index(output) };
-				_plugs[TLayout::OutputSize * i + j] = value;
+			template<typename TLayout::Strips From, typename TLayout::Strips To>
+			inline void set_Plug(bool value) {
+				return _plugs[
+					From * TLayout::OutputSize
+					+ To - TLayout::InputSize
+				] = value;
 			};
 
 		private:

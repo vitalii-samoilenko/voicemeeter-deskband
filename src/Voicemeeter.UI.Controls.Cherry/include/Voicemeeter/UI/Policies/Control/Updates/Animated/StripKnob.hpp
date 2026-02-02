@@ -3,6 +3,8 @@
 
 #include "wheel.hpp"
 
+#include "Voicemeeter/UI/States/StripKnob.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
@@ -15,11 +17,11 @@ namespace Voicemeeter {
 							num_t distance2;
 						};
 
-						template<typename TToolkit, typename TStripKnob>
+						template<typename TToolkit>
 						class StripKnob {
 						public:
-							using context_t = typename TStripKnob::context_t;
-							using state_t = typename TStripKnob::state_t;
+							using context_t = StripKnobContext<TToolkit>;
+							using state_t = States::StripKnob;
 
 							inline explicit StripKnob(TToolkit &toolkit)
 								: _toolkit{ toolkit } {
@@ -34,6 +36,7 @@ namespace Voicemeeter {
 							StripKnob & operator=(StripKnob const &) = delete;
 							StripKnob & operator=(StripKnob &&) = delete;
 
+							template<typename TStripKnob>
 							inline void operator()(TStripKnob &control, state_t const &state) const {
 								constexpr num_t AnimationLength{ 200 };
 								vector_t targetVertex{
@@ -91,13 +94,13 @@ namespace Voicemeeter {
 							TToolkit &_toolkit;
 						};
 
-						template<typename TPalette, typename TStripKnob>
+						template<typename TToolkit>>
 						class StripKnobFrame {
 						public:
-							using context_t = typename TStripKnob::context_t;
+							using context_t = StripKnobContext<TToolkit>;
 
-							inline explicit StripKnobFrame(TPalette &palette)
-								: _palette{ palette } {
+							inline explicit StripKnobFrame(TToolkit &toolkit)
+								: _toolkit{ toolkit } {
 
 							};
 							StripKnobFrame() = delete;
@@ -109,6 +112,7 @@ namespace Voicemeeter {
 							StripKnobFrame & operator=(StripKnobFrame const &) = delete;
 							StripKnobFrame & operator=(StripKnobFrame &&) = delete;
 
+							template<typename TStripKnob>
 							inline void operator()(TStripKnob &control) const {
 								auto animationVertex = control.get_AnimationSize()
 									- control.get_AnimationPoint();
@@ -119,14 +123,16 @@ namespace Voicemeeter {
 									control.get_AnimationContext()
 								};
 								num_t rI{
-										sqrt(push(context.distance2) / remaining2)
+										remaining2
+											? sqrt(push(context.distance2) / remaining2)
+											: One
 								};
 								control.set_FrameColor(
 									context.path.pick(rI));
 							};
 
 						private:
-							TPalette &_palette;
+							TToolkit &_toolkit;
 						};
 					}
 				}

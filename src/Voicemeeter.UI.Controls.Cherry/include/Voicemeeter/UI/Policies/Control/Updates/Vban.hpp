@@ -1,15 +1,17 @@
 #ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_VBAN_HPP
 #define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_VBAN_HPP
 
+#include "wheel.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
 			namespace Control {
 				namespace Updates {
-					template<typename TToolkit, typename TVban>
+					template<typename TToolkit>
 					class Vban {
 					public:
-						using state_t = typename TVban::state_t;
+						using state_t = num_t;
 
 						inline explicit Vban(TToolkit &toolkit)
 							: _toolkit{ toolkit } {
@@ -24,6 +26,7 @@ namespace Voicemeeter {
 						Vban & operator=(Vban const &) = delete;
 						Vban & operator=(Vban &&) = delete;
 
+						template<typename TVban>
 						inline void operator()(TVban &control, state_t state) const {
 							glyph.set_FrameColor(
 								state
