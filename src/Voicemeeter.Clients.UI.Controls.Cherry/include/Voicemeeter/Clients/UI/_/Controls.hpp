@@ -1061,17 +1061,17 @@ namespace Voicemeeter {
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
 						> const &enabled) {
-						constexpr num_t PanelH{ push(32) };
+						constexpr num_t PanelH{ push(40) };
 						constexpr num_t PanelPaddingL{ push(1) };
 						constexpr num_t PanelPaddingT{ 0 };
 						constexpr num_t PanelPaddingR{ 0 };
 						constexpr num_t PanelPaddingB{ 0 };
-						constexpr num_t VbanH{ PanelH };
-						constexpr num_t VbanW{ push(64) };
-						constexpr num_t KnobW{ PanelH };
+						constexpr num_t VbanH{ PanelH }; // 22
+						constexpr num_t VbanW{ push(71) }; // 39
 						constexpr num_t KnobH{ PanelH };
-						constexpr num_t PlugH{ push(12) };
-						constexpr num_t PlugW{ PanelH };
+						constexpr num_t KnobW{ PanelH };
+						constexpr num_t PlugH{ push(19) };
+						constexpr num_t PlugW{ push(41) };
 						constexpr num_t PlugPaddingL{ 0 };
 						constexpr num_t PlugPaddingT{ push(2) };
 						constexpr num_t PlugPaddingR{ 0 };
