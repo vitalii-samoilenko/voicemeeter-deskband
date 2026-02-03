@@ -44,26 +44,29 @@ namespace Voicemeeter {
 			public:
 				using Canvas = Canvas<TPalette, TTheme, TTimer>;
 
-				GraphicsBuilder(GraphicsBuilder const &) = delete;
-				GraphicsBuilder(GraphicsBuilder &&) = delete;
+				CanvasBuilder(CanvasBuilder const &) = delete;
+				CanvasBuilder(CanvasBuilder &&) = delete;
 
-				inline ~GraphicsBuilder() = default;
+				inline ~CanvasBuilder() = default;
 
-				GraphicsBuilder & operator=(GraphicsBuilder const &) = delete;
-				GraphicsBuilder & operator=(GraphicsBuilder &&) = delete;
+				CanvasBuilder & operator=(CanvasBuilder const &) = delete;
+				CanvasBuilder & operator=(CanvasBuilder &&) = delete;
 
-				inline void set_hWnd(HWND value) {
+				inline CanvasBuilder & set_hWnd(HWND value) {
 					_hWnd = value;
+					return *this;
 				};
-				inline void set_hModule(HMODULE value) {
+				inline CanvasBuilder & set_hModule(HMODULE value) {
 					_hModule = value;
+					return *this;
 				};
-				inline void set_Timer(TTimer &value) {
+				inline CanvasBuilder & set_Timer(TTimer &value) {
 					_timer = &value;
+					return *this;
 				};
 
 			protected:
-				inline GraphicsBuilder() = default;
+				inline CanvasBuilder() = default;
 
 				inline ::std::unique_ptr<Canvas> Build(
 					::std::unique_ptr<TPalette> &&palette,
@@ -75,20 +78,17 @@ namespace Voicemeeter {
 						throw ::std::exception{ "Timer is not set" };
 					}
 					auto state = :std::make_unique<
-						Graphics::State>(
-						_hWnd, _hModule);
+						Graphics::State>(_hWnd, _hModule);
 					auto atlas = ::std::make_unique<
-						Graphics::Atlas>(
-						*state);
+						Graphics::Atlas>(*state);
 					auto queue = ::std::make_unique<
 						Graphics::Queue>();
 					auto stopwatch = ::std::make_unique<
 						Graphics::Stopwatch>();
 					auto frame = ::std::make_unique<
-						Graphics::Frame>(
-						*state, *queue, *stopwatch);
-					return ::std::make_unique<Graphics>(
-						*_timer,
+						Graphics::Frame>(*state, *queue, *stopwatch);
+					return ::std::make_unique<
+						Graphics>(*_timer,
 						::std::move(state),
 						::std::move(atlas),
 						::std::move(queue),

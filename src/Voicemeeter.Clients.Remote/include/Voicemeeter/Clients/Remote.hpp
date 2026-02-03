@@ -40,8 +40,6 @@ namespace Voicemeeter {
 			};
 
 		private:
-			friend class RemoteBuilder<TTimer, TMixer>;
-
 			class RemoteTick final {
 			public:
 				inline RemoteTick(
@@ -67,7 +65,10 @@ namespace Voicemeeter {
 				RemoteTick & operator=(RemoteTick &&) = delete;
 
 				inline void operator()() const {
-					_::Remote::Update(_mixer, _client, _runtime);
+					_::Remote::Update(
+						that->_mixer,
+						that->_client,
+						that->_runtime);
 				};
 
 				inline void Set() {
@@ -78,26 +79,29 @@ namespace Voicemeeter {
 				};
 
 			private:
+				Remote *that;
 				TTimer &_timer;
-				TMixer &_mixer;
-				T_VBVMR_INTERFACE &_client;
-				_::Remote::runtime_t _runtime;
 			};
 
+			friend class RemoteBuilder<TTimer, TMixer>;
+			friend class RemoteTick;
+
+			TMixer &_mixer;
 			T_VBVMR_INTERFACE _client;
 			_::Remote::runtime_t _runtime;
-			RemoteTick _remoteTick;
 			_::Remote::bag<TMixer> _tokens;
+			RemoteTick _remoteTick;
 
 			inline Remote(
-				T_VBVMR_INTERFACE &&client,
-				_::Remote::runtime_t runtime,
 				TTimer &timer,
-				TMixer &mixer)
+				TMixer &mixer,
+				T_VBVMR_INTERFACE &&client,
+				_::Remote::runtime_t runtime)
 				: _client{ ::std::move(client) }
 				, _runtime{ runtime }
-				, _remoteTick{ timer, mixer, _client }
-				, _tokens{ _::Remote::Subscribe(mixer, _client, _runtime) } {
+				, _mixer{ mixer }
+				, _tokens{ _::Remote::Subscribe(mixer, _client, _runtime) }
+				, _remoteTick{ this, timer } {
 				_remoteTick.Set();
 			};
 		};
@@ -118,14 +122,17 @@ namespace Voicemeeter {
 			RemoteBuilder & operator=(RemoteBuilder const &) = delete;
 			RemoteBuilder & operator=(Remote &&) = delete;
 
-			inline void set_Timer(TTimer &value) {
+			inline RemoteBuilder & set_Timer(TTimer &value) {
 				_timer = &value;
+				return *this;
 			};
-			inline void set_Mixer(TMixer &value) {
+			inline RemoteBuilder & set_Mixer(TMixer &value) {
 				_mixer = &value;
+				return *this;
 			};
-			inline void set_Type(Remote::Type value) {
+			inline RemoteBuilder & set_Type(Remote::Type value) {
 				_runtime = value;
+				return *this;
 			};
 
 			::std::unique_ptr<Remote> Build() const {
@@ -155,9 +162,8 @@ namespace Voicemeeter {
 					runtime = _runtime;
 				}
 				return ::std::make_unique<
-					Remote>(
-					::std::move(client), runtime,
-					*_timer, *_mixer);
+					Remote>(*_timer, *_mixer,
+					::std::move(client), runtime);
 			};
 
 		private:

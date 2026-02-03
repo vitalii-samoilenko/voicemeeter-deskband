@@ -46,6 +46,22 @@ namespace Voicemeeter {
 				SceneBuilder & operator=(SceneBuilder const &) = delete;
 				SceneBuilder & operator=(SceneBuilder &&) = delete;
 
+				inline TFocusTrackerBuilder & get_FocusTrackerBuilder() {
+					return *this;
+				};
+				inline TPaletteBuilder & get_PaletteBuilder() {
+					return *this;
+				};
+				inline TThemeBuilder & get_ThemeBuilder() {
+					return *this;
+				};
+				inline TCanvasBuilder & get_CanvasBuilder() {
+					return *this;
+				};
+				inline TCompositionBuilder & get_CompositionBuilder() {
+					return *this;
+				};
+
 				inline ::std::unique_ptr<Scene> Build() {
 					auto focusTracker = TFocusTrackerBuilder::Build();
 					auto canvas = TCanvasBuilder::Build(

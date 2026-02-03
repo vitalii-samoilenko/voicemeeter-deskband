@@ -5,16 +5,19 @@
 #include <memory>
 #include <string>
 
+#include "wheel.hpp"
+
 #include "Windows/API.hpp"
 #include "Windows/Timer.hpp"
+
 #include "Voicemeeter/Cherry.hpp"
 #include "Voicemeeter/Clients/Remote.hpp"
-#include "Voicemeeter/Clients/UI/Controls.hpp"
-#include "Voicemeeter/Clients/UI/Graphics.hpp"
+#include "Voicemeeter/Clients/UI/Canvas.hpp"
+#include "Voicemeeter/Clients/UI/Composition.hpp"
+#include "Voicemeeter/Clients/UI/FocusTracker.hpp"
 #include "Voicemeeter/Clients/UI/Palette.hpp"
 #include "Voicemeeter/Clients/UI/Scene.hpp"
 #include "Voicemeeter/Clients/UI/Theme.hpp"
-#include "Voicemeeter/UI/Trackers/Focus.hpp"
 
 #include "Messages.h"
 
@@ -32,7 +35,8 @@ public:
 		, _remoteTimer{ nullptr }
 		, _mixer{ nullptr }
 		, _remote{ nullptr }
-		, _scene{ nullptr } {
+		, _scene{ nullptr }
+		, _dockTick{ nullptr } {
 		::Windows::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 		{
 			RECT parent{};
@@ -97,15 +101,25 @@ public:
 	};
 
 private:
-	using Timer = ::Windows::Timer;
-	using Mixer = ::Voicemeeter::Cherry;
-	using Remote = ::Voicemeeter::Clients::Remote<Timer, Mixer>;
-	using Palette = ::Voicemeeter::Clients::UI::Palette;
-	using Theme = ::Voicemeeter::Clients::UI::Theme;
-	using Canvas = ::Voicemeeter::Clients::UI::Graphics<Palette, Theme, Timer>;
-	using FocusTracker = ::Voicemeeter::UI::Trackers::Focus;
-	using Composition = ::Voicemeeter::Clients::UI::Controls<Timer, Mixer, Canvas, FocusTracker>;
-	using Scene = ::Voicemeeter::Clients::UI::Scene<Canvas, Composition>;
+	using RemoteBuilder = ::Voicemeeter::Clients::RemoteBuilder<
+		::Windows::Timer,
+		::Voicemeeter::Cherry>;
+	using SceneBuilder = ::Voicemeeter::Clients::UI::SceneBuilder<
+		::Voicemeeter::Clients::UI::FocusTrackerBuilder<DeskBandit>,
+		::Voicemeeter::Clients::UI::PaletteBuilder,
+		::Voicemeeter::Clients::UI::ThemeBuilder,
+		::Voicemeeter::Clients::UI::CanvasBuilder<
+			::Voicemeeter::Clients::UI::Palette,
+			::Voicemeeter::Clients::UI::Theme,
+			::Windows::Timer>,
+		::Voicemeeter::Clients::UI::CompositionBuilder<
+			::Windows::Timer,
+			::Voicemeeter::Cherry,
+			::Voicemeeter::Clients::UI::Canvas<
+				::Voicemeeter::Clients::UI::Palette,
+				::Voicemeeter::Clients::UI::Theme,
+				::Windows::Timer>,
+			::Voicemeeter::Clients::UI::FocusTracker<DeskBandit>>>;
 
 	enum class Dock {
 		Left = 0,
@@ -116,21 +130,74 @@ private:
 
 	class DockTick final {
 	public:
+		inline DockTick(
+			DeskBandit *that,
+			::Windows::Timer *timer)
+			: that{ that }
+			, _timer{ timer } {
+
+		};
+		DockTick() = delete;
+		DockTick(DockTick const &) = delete;
+		DockTick(DockTick &&) = delete;
+
+		inline ~DockTick() {
+			Unset();
+		};
+
+		DockTick & operator=(DockTick const &) = delete;
+		DockTick & operator=(DockTick &&) = delete;
+
+		inline void operator()() const {
+			switch (that->_dock) {
+			case Dock::Right: {
+				RECT tray{};
+				::Windows::GetWindowRect(that->_hWndTray, &tray);
+				LONG diff{ tray.left - that->_rc.right };
+				if (!diff) {
+					return;
+				}
+				that->_rc.right += diff;
+				that->_rc.left += diff;
+			} break;
+			default: {
+				Unset();
+			} return;
+			}
+			::Windows::SetWindowPos(
+				that->_hWnd, NULL,
+				that->_rc.left, that->_rc.top,
+				that->_rc.right - that->_rc.left, that->_rc.bottom - that->_rc.top,
+				0U);
+		};
+
+		inline void Set() {
+			_timer.Set(100, *this);
+		};
+		inline void Unset() {
+			_timer.Unset(*this);
+		};
+
 	private:
+		DeskBandit *that;
+		::Windows::Timer &_timer;
 	};
+
+	friend class DockTick;
 
 	HWND _hWndParent;
 	HWND _hWndTray;
 	RECT _rc;
 	Dock _dock;
 	HWND _hWnd;
-	::std::unique_ptr<Timer> _dockTimer;
-	::std::unique_ptr<Timer> _compositionTimer;
-	::std::unique_ptr<Timer> _renderTimer;
-	::std::unique_ptr<Timer> _remoteTimer;
-	::std::unique_ptr<Mixer> _mixer;
-	::std::unique_ptr<Remote> _remote;
-	::std::unique_ptr<Scene> _scene;
+	::std::unique_ptr<::Windows::Timer> _dockTimer;
+	::std::unique_ptr<::Windows::Timer> _compositionTimer;
+	::std::unique_ptr<::Windows::Timer> _renderTimer;
+	::std::unique_ptr<::Windows::Timer> _remoteTimer;
+	::std::unique_ptr<::Voicemeeter::Cherry> _mixer;
+	::std::unique_ptr<RemoteBuilder::Remote> _remote;
+	::std::unique_ptr<SceneBuilder::Scene> _scene;
+	::std::unique_ptr<DockTick> _dockTick;
 
 	inline static LRESULT CALLBACK WndProcW(
 		HWND hWnd,
@@ -158,190 +225,176 @@ private:
 			}
 		};
 		try {
-			DeskBandit *wnd{
+			DeskBandit *that{
 				reinterpret_cast<DeskBandit *>(
 					::Windows::GetWindowLongPtrW(hWnd, GWLP_USERDATA))
 			};
 			switch (uMsg) {
 			case WM_NCCREATE: {
-				wnd = reinterpret_cast<DeskBandit *>(
+				that = reinterpret_cast<DeskBandit *>(
 					reinterpret_cast<LPCREATESTRUCTW>(lParam)
 						->lpCreateParams);
-				wnd->_hWnd = hWnd;
-				::Windows::SetParent(hWnd, wnd->_hWndParent);
-				wnd->_dockTimer = ::std::make_unique<Timer>(hWnd);
-				wnd->_dockTimer->Set(::std::chrono::milliseconds{ 100 },
-					[pWnd]()->bool {
-						switch (pWnd->m_dock) {
-						case Dock::Right: {
-							RECT tray{};
-							::Windows::wGetWindowRect(pWnd->m_hWndTray, &tray);
-							LONG diff{ tray.left - pWnd->m_rc.right };
-							if (!diff) {
-								return true;
-							}
-							pWnd->m_rc.right += diff;
-							pWnd->m_rc.left += diff;
-						} break;
-						default:
-							return false;
-						}
-						::Windows::wSetWindowPos(
-							pWnd->m_hWnd, NULL,
-							pWnd->m_rc.left, pWnd->m_rc.top,
-							pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
-							0U
-						);
-						return true;
-					});
-				pWnd->m_pCompositionTimer.reset(new ::Windows::Timer{ hWnd });
-				pWnd->m_pRenderTimer.reset(new ::Windows::Timer{ hWnd });
-				pWnd->m_pRemoteTimer.reset(new ::Windows::Timer{ hWnd });
-				pWnd->m_lpTimer.emplace(pWnd->m_pDockTimer->get_Id(), pWnd->m_pDockTimer.get());
-				pWnd->m_lpTimer.emplace(pWnd->m_pCompositionTimer->get_Id(), pWnd->m_pCompositionTimer.get());
-				pWnd->m_lpTimer.emplace(pWnd->m_pRenderTimer->get_Id(), pWnd->m_pRenderTimer.get());
-				pWnd->m_lpTimer.emplace(pWnd->m_pRemoteTimer->get_Id(), pWnd->m_pRemoteTimer.get());
-				pWnd->m_pMixer.reset(new ::Voicemeeter::Adapters::Multiclient::Cherry{});
-				pWnd->m_pRemote.reset(new ::Voicemeeter::Clients::Remote::Cherry{ *pWnd->m_pRemoteTimer, *pWnd->m_pMixer });
-				DWORD engine{ static_cast<DWORD>(RenderEngine::D3D12) };
-				::Windows::Registry::TryGetValue(HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"RenderEngine", engine);
-				switch (static_cast<RenderEngine>(engine)) {
-				default: {
-					pWnd->m_pRenderTimer->Set(::std::chrono::milliseconds{ USER_TIMER_MINIMUM },
-						[pWnd]()->bool {
-							pWnd->m_pD3d12Scene->Render();
-							return true;
-						});
-					::Voicemeeter::Clients::UI::D3D12::Cherry builder{
-						hWnd, NULL,
-						*pWnd,
-						*pWnd->m_pCompositionTimer,
-						*pWnd->m_pMixer
-					};
-					//builder
-					//	.WithTheme(::Voicemeeter::UI::Cherry::Graphics::Theme::Light())
-					//	.WithMarginPosition({ 4., 4. })
-					//	.WithMarginSize({ 4., 4. });
-					if (pWnd->m_pRemote->get_Type() == ::Voicemeeter::Clients::Remote::Type::Voicemeeter) {
-						builder
-							.WithNetwork(false)
-							.WithIgnoredStrip(3)
-							.WithIgnoredStrip(5);
-					}
-					pWnd->m_pD3d12Scene = builder
-						.Build();
-					pWnd->m_pScene = pWnd->m_pD3d12Scene.get();
-				} break;
+				that->_hWnd = hWnd;
+				::Windows::SetParent(hWnd, that->_hWndParent);
+				that->_dockTimer = ::std::make_unique<
+					::Windows::Timer>(hWnd);
+				that->_compositionTimer = ::std::make_unique<
+					::Windows::Timer>(hWnd);
+				that->_renderTimer = ::std::make_unique<
+					::Windows::Timer(hWnd);
+				that->_remoteTimer = ::std::make_unique<
+					::Windows::Timer>(hWnd);
+				that->_mixer = ::std::make_unique<
+					::Voicemeeter::Cherry>();
+				{
+					RemoteBuilder remoteBuilder{};
+					remoteBuilder
+						.set_Timer(*that->_remoteTimer)
+						.set_Mixer(*that->_mixer);
+					that->_remote = remoteBuilder.Build();
 				}
-				pWnd->m_pScene->Rescale({
-					static_cast<double>(pWnd->m_rc.right - pWnd->m_rc.left),
-					static_cast<double>(pWnd->m_rc.bottom - pWnd->m_rc.top)
-				});
-				const ::std::valarray<double>& vertex{ pWnd->m_pScene->get_Size() };
-				pWnd->m_rc.right = pWnd->m_rc.left + static_cast<LONG>(::std::ceil(vertex[0]));
-				//::Windows::wSetWindowPos(
-				//	pWnd->m_hWnd, NULL,
-				//	pWnd->m_rc.left, pWnd->m_rc.top,
-				//	pWnd->m_rc.right - pWnd->m_rc.left, pWnd->m_rc.bottom - pWnd->m_rc.top,
-				//	0U
-				//);
-				::Windows::wSetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+				{
+					SceneBuilder sceneBuilder{};
+					sceneBuilder.get_FocusTrackerBuilder()
+						.set_InputTracker(*that);
+					sceneBuilder.get_ThemeBuilder()
+						.set_Warning(vector_t{ push(215), push(215), push(215), push(255) })
+						.set_Neutral(vector_t{ push(215), push(215), push(215), push(255) });
+					sceneBuilder.get_CanvasBuilder()
+						.set_hWnd(hWnd)
+						.set_Timer(*that->_renderTimer);
+					sceneBuilder.get_CompositionBuilder()
+						.set_Timer(*that->_compositionTimer)
+						.set_Mixer(*that->_mixer);
+					if (that->_remote->get_Type() == RemoteBuilder::Remote::Type::Voicemeeter) {
+						sceneBuilder.get_CompositionBuilder()
+							.set_Vban(false)
+							.set_Enabled<::Voicemeeter::Cherry::Strips::A2>(false)
+							.set_Enabled<::Voicemeeter::Cherry::Strips::B2>(false);
+					}
+					that->_scene = sceneBuilder.Build();
+					that->_scene->Rescale(vector_t{
+						push(static_cast<num_t>(that->m_rc.right - that->m_rc.left)),
+						push(static_cast<num_t>(that->m_rc.bottom - that->m_rc.top))
+					});
+					vector_t const &vertex{ that->_scene->get_Size() };
+					that->_rc.right = that->_rc.left + static_cast<LONG>(ceil(vertex[0]));
+					::Windows::SetWindowPos(
+						hWnd, NULL,
+						that->_rc.left, that->_rc.top,
+						that->_rc.right - that->_rc.left, that->_rc.bottom - that->_rc.top,
+						0U);
+					::Windows::SetWindowLongPtrW(hWnd, GWLP_USERDATA,
+						reinterpret_cast<LONG_PTR>(that));
+				}
+				that->_dockTick = ::std::make_unique<
+					DockTick>(*that->_dockTimer);
+				that->_dockTick->Set();
 			} break;
 			case WM_DESTROY: {
-				PostQuitMessage(0);
+				::PostQuitMessage(0);
 			} return OK;
 			case WM_TIMER: {
-				pWnd->m_lpTimer[static_cast<UINT_PTR>(wParam)]
-					->Elapse();
+				UINT_PTR id{ static_cast<UINT_PTR>(wParam) };
+				::Windows::Timer &target{
+					id == that->_renderTimer->get_Id()
+						? *that->_renderTimer
+						: id == that->_remoteTimer->get_Id()
+							? *that->_remoteTimer
+							: id == that->_dockTimer->get_Id()
+								? *that->_dockTimer
+								: id == that->_compositionTimer->get_Id()
+									? *that->_compositionTimer
+									: throw ::std::exception{ "Unknown timer" }
+				};
+				target.Elapse();
 			} return OK;
 			case WM_PAINT: {
 				PAINTSTRUCT ps;
-				HDC hdc = ::Windows::wBeginPaint(hWnd, &ps);
-				pWnd->m_pScene->Redraw(
-					::std::valarray<double>{
-						static_cast<double>(ps.rcPaint.left),
-						static_cast<double>(ps.rcPaint.top)
+				HDC hdc = ::Windows::BeginPaint(hWnd, &ps);
+				that->_scene->Redraw(
+					vector_t{
+						static_cast<num_t>(ps.rcPaint.left),
+						static_cast<num_t>(ps.rcPaint.top)
 					},
-					(ps.rcPaint.right && ps.rcPaint.bottom
-						? ::std::valarray<double>{
-							static_cast<double>(ps.rcPaint.right),
-							static_cast<double>(ps.rcPaint.bottom)
-						} : pWnd->m_pScene->get_Size())
-				);
-				EndPaint(hWnd, &ps);
+					ps.rcPaint.right && ps.rcPaint.bottom
+						? vector_t{
+							static_cast<num_t>(ps.rcPaint.right),
+							static_cast<num_t>(ps.rcPaint.bottom)
+						}
+						: that->_scene->get_Size());
+				::EndPaint(hWnd, &ps);
 			} return OK;
 			case WM_LBUTTONDOWN: {
-				pWnd->m_pScene->MouseLDown({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseLDown(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_LBUTTONDBLCLK: {
-				pWnd->m_pScene->MouseLDouble({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseLDouble(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MBUTTONDOWN: {
-				pWnd->m_pScene->MouseMDown({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseMDown(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MBUTTONDBLCLK: {
-				pWnd->m_pScene->MouseMDouble({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseMDouble(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_RBUTTONDOWN: {
-				pWnd->m_pScene->MouseRDown({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseRDown(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_RBUTTONDBLCLK: {
-				pWnd->m_pScene->MouseRDouble({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseRDouble(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MOUSEWHEEL: {
 				POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-				::Windows::wScreenToClient(hWnd, &point);
-				pWnd->m_pScene->MouseWheel({
-					static_cast<double>(point.x),
-					static_cast<double>(point.y)
+				::Windows::ScreenToClient(hWnd, &point);
+				that->_scene->MouseWheel(vector_t{
+						static_cast<num_t>(point.x),
+						static_cast<num_t>(point.y)
 				}, GET_WHEEL_DELTA_WPARAM(wParam));
 			} return OK;
 			case WM_MOUSEMOVE: {
-				pWnd->m_pScene->MouseMove({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseMove(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_LBUTTONUP: {
-				pWnd->m_pScene->MouseLUp({
-					static_cast<double>(GET_X_LPARAM(lParam)),
-					static_cast<double>(GET_Y_LPARAM(lParam))
+				that->_scene->MouseLUp(vector_t{
+					static_cast<num_t>(GET_X_LPARAM(lParam)),
+					static_cast<num_t>(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			}
 		}
-		catch (const ::Windows::Error& e) {
+		catch (::Windows::Error const &e) {
 			log(e.what());
-
 			return shutdown(e.code());
 		}
-		catch (const ::std::exception& e) {
+		catch (::std::exception const &e) {
 			log(e.what());
-
 			return shutdown(MSG_ERR_GENERAL);
 		}
 		catch (...) {
 			return shutdown(MSG_ERR_GENERAL);
 		}
-		return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+		return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 	};
 };
 

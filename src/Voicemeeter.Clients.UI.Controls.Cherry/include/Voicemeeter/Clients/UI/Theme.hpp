@@ -24,32 +24,41 @@ namespace Voicemeeter {
 				ThemeBuilder & operator=(ThemeBuilder const &) = delete;
 				ThemeBuilder & operator=(ThemeBuilder &&) = delete;
 
-				inline void set_Inactive(vector_t const &value) {
+				inline ThemeBuilder & set_Inactive(vector_t const &value) {
 					_prototype.Inactive = value;
+					return *this;
 				};
-				inline void set_Active(vector_t const &value) {
+				inline ThemeBuilder & set_Active(vector_t const &value) {
 					_prototype.Active = value;
+					return *this;
 				};
-				inline void set_Warning(vector_t const &value) {
+				inline ThemeBuilder & set_Warning(vector_t const &value) {
 					_prototype.Warning = value;
+					return *this;
 				};
-				inline void set_Error(vector_t const &value) {
+				inline ThemeBuilder & set_Error(vector_t const &value) {
 					_prototype.Error = value;
+					return *this;
 				};
-				inline void set_Information(vector_t const &value) {
+				inline ThemeBuilder & set_Information(vector_t const &value) {
 					_prototype.Information = value;
+					return *this;
 				};
-				inline void set_Neutral(vector_t const &value) {
+				inline ThemeBuilder & set_Neutral(vector_t const &value) {
 					_prototype.Neutral = value;
+					return *this;
 				};
-				inline void set_EqLow(vector_t const &value) {
+				inline ThemeBuilder & set_EqLow(vector_t const &value) {
 					_prototype.EqLow = value;
+					return *this;
 				};
-				inline void set_EqMedium(vector_t const &value) {
+				inline ThemeBuilder & set_EqMedium(vector_t const &value) {
 					_prototype.EqMedium = value;
+					return *this;
 				};
-				inline void set_EqHigh(vector_t const &value) {
+				inline ThemeBuilder & set_EqHigh(vector_t const &value) {
 					_prototype.EqHigh = value;
+					return *this;
 				};
 
 			protected:
@@ -57,8 +66,7 @@ namespace Voicemeeter {
 
 				inline ::std::unique_ptr<Theme> Build() {
 					return ::std::make_unique<
-						Theme>(
-						_prototype);
+						Theme>(_prototype);
 				};
 
 			private:

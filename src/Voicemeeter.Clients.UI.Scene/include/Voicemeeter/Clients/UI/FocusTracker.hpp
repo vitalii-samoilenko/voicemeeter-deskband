@@ -25,8 +25,9 @@ namespace Voicemeeter {
 				FocusTrackerBuilder & operator=(FocusTrackerBuilder const &) = delete;
 				FocusTrackerBuilder & operator=(FocusTrackerBuilder &&) = delete;
 
-				inline void set_InputTracker(TInputTracker &value) {
+				inline FocusTrackerBuilder & set_InputTracker(TInputTracker &value) {
 					_inputTracker = &value;
+					return *this;
 				};
 
 			protected:
@@ -37,8 +38,7 @@ namespace Voicemeeter {
 						throw ::std::exception{ "Focus tracker is not set" };
 					}
 					return ::std::make_unique<
-						FocusTracker>(
-						*_inputTracker);
+						FocusTracker>(*_inputTracker);
 				};
 
 			private:
