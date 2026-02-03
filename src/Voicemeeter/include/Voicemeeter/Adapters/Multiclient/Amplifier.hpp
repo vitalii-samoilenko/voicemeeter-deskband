@@ -15,7 +15,7 @@ namespace Voicemeeter {
 			public:
 				using TToken = typename TAmplifier::token;
 
-				template<typename... Args>
+				template<typename ...Args>
 				inline explicit Amplifier(Args &&...args)
 					: TAmplifier{ ::std::forward<Args>(args) ... }
 					, _callbacks{} {
@@ -50,10 +50,12 @@ namespace Voicemeeter {
 					inline token(token &&) = default;
 
 					inline ~token() {
-						if (!TToken::_clientId) {
+						if (!TToken::clientId()) {
 							return;
 						}
-						_callbacks.erase(TToken::_clientId);
+						TToken::that<Amplifier>()
+							->_callbacks.erase(
+								TToken::clientId());
 					};
 
 					token & operator=(token const &) = delete;
@@ -61,30 +63,20 @@ namespace Voicemeeter {
 
 					template<typename Fn>
 					inline on_gain(Fn &&callback) {
-						_callbacks[TToken::_clientId]
-							= ::std::forward<Fn>(callback);
+						TToken::that<Amplifier>()
+							->_callbacks[TToken::clientId()]
+								= ::std::forward<Fn>(callback);
 					};
 
-				private:
+				protected:
 					friend class Amplifier;
 
-					::std::unordered_map<
-						void const *,
-						::std::function<void(num_t)>
-					> &_callbacks;
-
-					inline token(
-						void const *clientId,
-						Amplifier &target)
-						: TToken{ clientId, target }
-						, _callbacks{ target._callbacks } {
-
-					};
+					using TToken::TToken;
 				};
 
 				template<typename TClient>
 				token Subscribe() {
-					return token{ &typeid(TClient), *this };
+					return token{ &typeid(TClient), this };
 				};
 
 			private:

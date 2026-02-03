@@ -8,7 +8,7 @@ namespace Voicemeeter {
 		template<typename TBus>
 		class Mute : public TBus {
 		public:
-			template<typename... Args>
+			template<typename ...Args>
 			inline explicit Mute(Args &&...args)
 				: TBus{ ::std::forward<Args>(args) ... }
 				, _mute{ false } {

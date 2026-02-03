@@ -10,7 +10,7 @@ namespace Voicemeeter {
 		template<typename TBus>
 		class Amplifier : public TBus {
 		public:
-			template<typename... Args>
+			template<typename ...Args>
 			inline explicit Amplifier(Args &&...args)
 				: TBus{ ::std::forward<Args>(args) ... }
 				, _gain{ 0 } {

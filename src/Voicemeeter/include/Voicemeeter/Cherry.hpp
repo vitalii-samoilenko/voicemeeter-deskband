@@ -8,12 +8,11 @@
 #include "Voicemeeter/Adapters/Amplifier.hpp"
 #include "Voicemeeter/Adapters/Mixer.hpp"
 #include "Voicemeeter/Adapters/Multiclient/Amplifier.hpp"
-#include "Voicemeeter/Adapters/Multiclient/Bus.hpp"
 #include "Voicemeeter/Adapters/Multiclient/Channel.hpp"
-#include "Voicemeeter/Adapters/Multiclient/Layout.hpp"
 #include "Voicemeeter/Adapters/Multiclient/Mixer.hpp"
 #include "Voicemeeter/Adapters/Multiclient/Mute.hpp"
 #include "Voicemeeter/Adapters/Multiclient/Network.hpp"
+#include "Voicemeeter/Adapters/Multiclient/Token.hpp"
 #include "Voicemeeter/Adapters/Mute.hpp"
 #include "Voicemeeter/Adapters/Network.hpp"
 #include "Voicemeeter/Bus.hpp"
@@ -23,10 +22,10 @@ namespace Voicemeeter {
 	namespace Layouts {
 		class Cherry {
 		public:
-			template<typename... TChannels>
+			template<typename ...TChannels>
 			using Strip = Adapters::Multiclient::Mute<
 				Adapters::Multiclient::Amplifier<
-				Adapters::Multiclient::Bus<
+				Adapters::Multiclient::Token<
 					Adapters::Mute<
 					Adapters::Amplifier<
 					Adapters::Bus<
@@ -34,7 +33,9 @@ namespace Voicemeeter {
 					>>>
 				>>>;
 			using Channel = Adapters::Multiclient::Channel<
-				Channel>;
+				Adapters::Multiclient::Token<
+					Channel
+				>>;
 			using PIStrip = Strip<
 				Channel,
 				Channel>;
@@ -78,7 +79,7 @@ namespace Voicemeeter {
 			static constexpr size_t InputSize{ V - P + 1 };
 			static constexpr size_t OutputSize{ B2 - A1 + 1 };
 
-			template<typename... Args>
+			template<typename ...Args>
 			inline explicit Cherry(Args &&...args)
 				: _strips{ ::std::forward<Args>(args) ... } {
 
@@ -110,7 +111,7 @@ namespace Voicemeeter {
 
 	using Cherry = Adapters::Multiclient::Network<
 		Adapters::Multiclient::Mixer<
-		Adapters::Multiclient::Layout<
+		Adapters::Multiclient::Token<
 			Adapters::Network<
 			Adapters::Mixer<
 				Layouts::Cherry

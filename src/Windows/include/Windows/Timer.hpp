@@ -1,7 +1,6 @@
 #ifndef WINDOWS_TIMER_HPP
 #define WINDOWS_TIMER_HPP
 
-#include <chrono>
 #include <memory>
 #include <utility>
 
@@ -32,7 +31,8 @@ namespace Windows {
 
 		template<typename TTick>
 		inline void Set(num_t duration, TTick &target) {
-			SetTimer(_hWnd, get_Id(), static_cast<UINT>(duration), NULL);
+			SetTimer(_hWnd, get_Id(),
+				static_cast<UINT>(duration), NULL);
 			_target = ::std::make_unique<
 				Tick<TTick>>(
 				target);

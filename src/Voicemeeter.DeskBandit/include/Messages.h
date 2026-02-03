@@ -1,0 +1,7 @@
+#ifndef MESSAGES_H
+#define MESSAGES_H
+
+#define CPT_ERROR ((DWORD)0x20000001L)
+#define MSG_ERR_GENERAL ((DWORD)0x20000002L)
+
+#endif

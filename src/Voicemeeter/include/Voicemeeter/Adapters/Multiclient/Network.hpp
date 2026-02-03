@@ -13,7 +13,7 @@ namespace Voicemeeter {
 			public:
 				using TToken = typename TNetwork::token;
 
-				template<typename... Args>
+				template<typename ...Args>
 				inline explicit Network(Args &&...args)
 					: TNetwork{ ::std::forward(args) ... }
 					, _callbacks{} {
@@ -48,10 +48,12 @@ namespace Voicemeeter {
 					inline token(token &&) = default;
 
 					inline ~token() {
-						if (!TToken::_clientId) {
+						if (!TToken::clientId()) {
 							return;
 						}
-						_callbacks.erase(TToken::_clientId);
+						TToken::that<Network>()
+							->_callbacks.erase(
+								TToken::clientId());
 					};
 
 					token & operator=(token const &) = delete;
@@ -59,25 +61,15 @@ namespace Voicemeeter {
 
 					template<typename Fn>
 					inline on_vban(Fn &&callback) {
-						_callbacks[TToken::_clientId]
-							= ::std::forward<Fn>(callback);
+						TToken::that<Network>()
+							->_callbacks[TToken::clientId()]
+								= ::std::forward<Fn>(callback);
 					};
 
-				private:
+				protected:
 					friend class Network;
 
-					::std::unordered_map<
-						void const *,
-						::std::function<void(bool)>
-					> &_callbacks;
-
-					inline token(
-						void const *clientId,
-						Network &target)
-						: TToken{ clientId, target }
-						, _callbacks{ target._callbacks } {
-
-					};
+					using TToken::TToken;
 				};
 
 				template<typename TClient>

@@ -5,10 +5,10 @@
 #include <utility>
 
 namespace Voicemeeter {
-	template<typename... TChannels>
+	template<typename ...TChannels>
 	class Bus {
 	public:
-		template<typename... Args>
+		template<typename ...Args>
 		inline explicit Bus(Args &&...args)
 			: _channels{ ::std::forward<Args>(args) ... } {
 

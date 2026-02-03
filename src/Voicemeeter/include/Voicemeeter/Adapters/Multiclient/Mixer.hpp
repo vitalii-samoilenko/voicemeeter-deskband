@@ -15,7 +15,7 @@ namespace Voicemeeter {
 				using TToken = typename TMixer::token;
 				using TLayout = Mixer;
 
-				template<typename... Args>
+				template<typename ...Args>
 				inline explicit Mixer(Args &&...args)
 					: TMixer{ ::std::forward<Args>(args) ... }
 					, _callbacks{} {
@@ -62,10 +62,12 @@ namespace Voicemeeter {
 					inline token(token &&) = default;
 
 					inline ~token() {
-						if (!TToken::_clientId) {
+						if (!TToken::clientId()) {
 							return;
 						}
-						_callbacks.erase(TToken::_clientId);
+						TToken::that<Mixer>()
+							->_callbacks.erase(
+								TToken::clientId());
 					};
 
 					token & operator=(token const &) = delete;
@@ -74,32 +76,17 @@ namespace Voicemeeter {
 					template<typename TLayout::Strips From, typename TLayout::Strips To,
 						typename Fn>
 					inline on_plug(Fn &&callback) {
-						_callbacks[TToken::_clientId][
-							From * TLayout::OutputSize
-							+ To - TLayout::InputSize
-						] = ::std::forward<Fn>(callback);
+						TToken::that<Mixer>()
+							-> _callbacks[TToken::clientId()][
+								From * TLayout::OutputSize
+								+ To - TLayout::InputSize
+							] = ::std::forward<Fn>(callback);
 					};
 
-				private:
+				protected:
 					friend class Mixer;
 
-					TLayout &_layout;
-					::std::unordered_map<
-						void const *,
-						::std::array<
-							::std::function<void(bool)>,
-							TLayout::InputSize
-							* TLayout::OutputSize
-					>> &_callbacks;
-
-					inline token(
-						void const *clientId,
-						Mixer &target)
-						: TToken{ clientId, target }
-						, _layout{ target }
-						, _callbacks{ callbacks } {
-
-					};
+					using TToken::TToken;
 				};
 
 				template<typename TClient>

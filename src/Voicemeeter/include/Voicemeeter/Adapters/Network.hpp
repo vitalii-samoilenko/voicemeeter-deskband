@@ -8,7 +8,7 @@ namespace Voicemeeter {
 		template<typename TMixer>
 		class Network : public TMixer {
 		public:
-			template<typename... Args>
+			template<typename ...Args>
 			inline explicit Network(Args &&...args)
 				: TMixer{ ::std::forward<Args>(args) ... }
 				, _vban{ false } {

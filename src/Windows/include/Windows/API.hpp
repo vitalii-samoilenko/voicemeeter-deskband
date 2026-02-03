@@ -505,7 +505,7 @@ namespace Windows {
 		return code;
 	};
 
-	inline LSTATUS RegGetValue(
+	inline LSTATUS RegGetValueW(
 	  _In_ HKEY hkey,
 	  _In_opt_ LPCWSTR  lpSubKey,
 	  _In_opt_ LPCWSTR  lpValue,

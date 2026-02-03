@@ -9,7 +9,7 @@ namespace Voicemeeter {
 		template<typename TLayout>
 		class Mixer : public TLayout {
 		public:
-			template<typename... Args>
+			template<typename ...Args>
 			inline explicit Mixer(Args &&...args)
 				: TLayout{ ::std::forward<Args>(args) ... } {
 
