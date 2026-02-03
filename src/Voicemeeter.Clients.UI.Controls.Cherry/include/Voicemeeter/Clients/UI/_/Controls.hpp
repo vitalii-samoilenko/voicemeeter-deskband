@@ -242,7 +242,7 @@ namespace Voicemeeter {
 						template<typename TControl>
 						class ToggleVisibility : public TControl {
 						public:
-							template<typename... Args>
+							template<typename ...Args>
 							inline ToggleVisibility(
 								bool on,
 								Args &&...args)
@@ -529,7 +529,7 @@ namespace Voicemeeter {
 						TFocusTracker
 					> {
 					public:
-						template<typename... Args>
+						template<typename ...Args>
 						inline CherryComposition(
 							bag<TMixer> &&tokens,
 							Args &&...args)
@@ -550,7 +550,7 @@ namespace Voicemeeter {
 						bag<TMixer> _tokens;
 					};
 
-					template<typename... TTokens>
+					template<typename ...TTokens>
 					class caggregator {
 					public:
 						inline explicit caggregator(TTokens &&...tokens)
@@ -856,10 +856,10 @@ namespace Voicemeeter {
 					};
 					template<
 						typename TMixer,
-						typename TMixer::Strips From,
-						typename TMixer::Strips To>
+						typename TMixer::Strips From, typename TMixer::Strips To>
 					inline void UpdatePlug(TMixer &mixer, UI::States::Plug const &state) {
-						mixer.set_Plug<From, To, bag<TMixer>>(state.toggle);
+						mixer.set_Plug<bag<TMixer>,
+							From, To>(state.toggle);
 					};
 					template<Cherry::Strips From>
 					inline void PickAndUpdatePlug<Cherry>(Cherry &mixer, UI::States::Plug const &state) {

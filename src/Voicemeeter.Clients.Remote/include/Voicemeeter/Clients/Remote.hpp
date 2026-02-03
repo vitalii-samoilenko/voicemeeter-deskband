@@ -154,8 +154,10 @@ namespace Voicemeeter {
 				if (_runtime < runtime) {
 					runtime = _runtime;
 				}
-				return ::std::make_unique<Remote>(
-					::std::move(client), runtime, *_timer, *_mixer);
+				return ::std::make_unique<
+					Remote>(
+					::std::move(client), runtime,
+					*_timer, *_mixer);
 			};
 
 		private:

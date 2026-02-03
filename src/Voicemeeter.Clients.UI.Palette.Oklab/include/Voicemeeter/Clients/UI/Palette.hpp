@@ -23,7 +23,8 @@ namespace Voicemeeter {
 
 			protected:
 				inline ::std::unique_ptr<Palette> Build() {
-					return ::std::make_unique<Palette>();
+					return ::std::make_unique<
+						Palette>();
 				};
 			}
 		}

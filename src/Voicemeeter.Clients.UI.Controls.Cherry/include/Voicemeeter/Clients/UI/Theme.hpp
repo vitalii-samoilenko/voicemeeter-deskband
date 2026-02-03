@@ -14,7 +14,8 @@ namespace Voicemeeter {
 
 			class ThemeBuilder {
 			public:
-				inline ThemeBuilder() = default;
+				using Theme = Theme;
+
 				ThemeBuilder(ThemeBuilder const &) = delete;
 				ThemeBuilder(ThemeBuilder &&) = delete;
 
@@ -35,9 +36,6 @@ namespace Voicemeeter {
 				inline void set_Error(vector_t const &value) {
 					_prototype.Error = value;
 				};
-				inline void set_Ok(vector_t const &value) {
-					_prototype.Ok = value;
-				};
 				inline void set_Information(vector_t const &value) {
 					_prototype.Information = value;
 				};
@@ -47,16 +45,19 @@ namespace Voicemeeter {
 				inline void set_EqLow(vector_t const &value) {
 					_prototype.EqLow = value;
 				};
-				inline void set_EqNormal(vector_t const &value) {
-					_prototype.EqNormal = value;
+				inline void set_EqMedium(vector_t const &value) {
+					_prototype.EqMedium = value;
 				};
 				inline void set_EqHigh(vector_t const &value) {
 					_prototype.EqHigh = value;
 				};
 
 			protected:
+				inline ThemeBuilder() = default;
+
 				inline ::std::unique_ptr<Theme> Build() {
-					return ::std::make_unique<Theme>(
+					return ::std::make_unique<
+						Theme>(
 						_prototype);
 				};
 

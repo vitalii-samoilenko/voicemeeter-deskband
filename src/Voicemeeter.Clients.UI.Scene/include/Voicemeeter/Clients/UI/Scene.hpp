@@ -11,27 +11,31 @@ namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			template<
+				typename TFocusTracker,
 				typename TCanvas,
 				typename TComposition>
 			using Scene = UI::Scene<
-				UI::Trackers::Focus,
+				TFocusTracker,
 				TCanvas,
 				TComposition>;
 
 			template<
-				TPaletteBuilder,
-				TThemeBuilder,
-				TGraphicsBuilder,
-				TControlsBuilder>
+				typename TFocusTrackerBuilder,
+				typename TPaletteBuilder,
+				typename TThemeBuilder,
+				typename TCanvasBuilder,
+				typename TCompositionBuilder>
 			class SceneBuilder
-				: public TPaletteBuilder
+				: public TFocusTrackerBuilder
+				, public TPaletteBuilder
 				, public TThemeBiulder
-				, public TGraphicsBuilder
-				, public TControlsBuilder {
+				, public TCanvasBuilder
+				, public TCompositionBuilder {
 			public:
 				using Scene = Scene<
-					typename TGraphicsBuilder::Graphics,
-					typename TControlsBuilder::Controls>;
+					typename TFocusTrackerBuilder::FocusTracker,
+					typename TCanvasBuilder::Canvas,
+					typename TCompositionBuilder::Composition>;
 
 				inline SceneBuilder() = default;
 				SceneBuilder(SceneBuilder const &) = delete;
@@ -43,13 +47,14 @@ namespace Voicemeeter {
 				SceneBuilder & operator=(SceneBuilder &&) = delete;
 
 				inline ::std::unique_ptr<Scene> Build() {
-					auto canvas = TGraphicsBuilder::Build(
+					auto focusTracker = TFocusTrackerBuilder::Build();
+					auto canvas = TCanvasBuilder::Build(
 						TPaletteBuilder::Build(),
 						TThemeBuilder::Build());
-					auto focusTracker = ::std::make_unique<UI::Trackers::Focus>();
 					auto composition = TControlsBuilder::Build(
 						*canvas, *focusTracker);
-					return ::std::make_unique<Scene>(
+					return ::std::make_unique<
+						Scene>(
 						::std::move(focusTracker),
 						::std::move(canvas),
 						::std::move(composition));

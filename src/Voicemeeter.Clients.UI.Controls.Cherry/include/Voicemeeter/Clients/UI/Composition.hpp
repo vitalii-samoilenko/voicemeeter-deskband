@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_CLIENTS_UI_CONTROLS_HPP
-#define VOICEMEETER_CLIENTS_UI_CONTROLS_HPP
+#ifndef VOICEMEETER_CLIENTS_UI_COMPOSITION_HPP
+#define VOICEMEETER_CLIENTS_UI_COMPOSITION_HPP
 
 #include <bitset>
 #include <exception>
@@ -16,7 +16,7 @@ namespace Voicemeeter {
 				typename TMixer,
 				typename TToolkit,
 				typename TFocusTracker>
-			using Controls = _::Controls::Composition<
+			using Composition = _::Controls::Composition<
 				TTimer,
 				TMixer,
 				TToolkit,
@@ -27,11 +27,11 @@ namespace Voicemeeter {
 				typename TMixer,
 				typename TToolkit,
 				typename TFocusTracker>
-			class ControlsBuilder {
+			class CompositionBuilder {
 			public:
 				using TLayout = TMixer;
 
-				using Controls = Controls<
+				using Composition = Composition<
 					TTimer,
 					TMixer,
 					TToolkit,
@@ -68,7 +68,7 @@ namespace Voicemeeter {
 			protected:
 				inline ControlsBuilder() = default;
 
-				inline ::std::unique_ptr<Controls> Build(
+				inline ::std::unique_ptr<Composition> Build(
 					TToolkit &toolkit,
 					TFocusTracker &focusTracker) {
 					if (!_timer) {

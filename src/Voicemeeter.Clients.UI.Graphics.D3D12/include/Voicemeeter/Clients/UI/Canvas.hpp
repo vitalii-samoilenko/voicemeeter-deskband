@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_CLIENTS_UI_GRAPHICS_HPP
-#define VOICEMEETER_CLIENTS_UI_GRAPHICS_HPP
+#ifndef VOICEMEETER_CLIENTS_UI_CANVAS_HPP
+#define VOICEMEETER_CLIENTS_UI_CANVAS_HPP
 
 #include <exception>
 #include <memory>
@@ -21,7 +21,7 @@ namespace Voicemeeter {
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
-			using Graphics = UI::Adapters::Canvas<
+			using Canvas = UI::Adapters::Canvas<
 				UI::Graphics::Toolkit<
 					UI::Graphics::State,
 					UI::Graphics::Atlas<
@@ -40,9 +40,9 @@ namespace Voicemeeter {
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
-			class GraphicsBuilder {
+			class CanvasBuilder {
 			public:
-				using Graphics = Graphics<TPalette, TTheme, TTimer>;
+				using Canvas = Canvas<TPalette, TTheme, TTimer>;
 
 				GraphicsBuilder(GraphicsBuilder const &) = delete;
 				GraphicsBuilder(GraphicsBuilder &&) = delete;
@@ -65,7 +65,7 @@ namespace Voicemeeter {
 			protected:
 				inline GraphicsBuilder() = default;
 
-				inline ::std::unique_ptr<Graphics> Build(
+				inline ::std::unique_ptr<Canvas> Build(
 					::std::unique_ptr<TPalette> &&palette,
 					::std::unique_ptr<TTheme> &&theme) {
 					if (_hWnd == NULL) {
@@ -74,24 +74,19 @@ namespace Voicemeeter {
 					if (!_timer) {
 						throw ::std::exception{ "Timer is not set" };
 					}
-					::std::unique_ptr<Graphics::State> state{
-						::std::make_unique<Graphics::State>(
-							_hWnd, _hModule)
-					};
-					::std::unique_ptr<Graphics::Atlas> atlas{
-						::std::make_unique<Graphics::Atlas>(
-							*state)
-					};
-					::std::unique_ptr<Graphics::Queue> queue{
-						::std::make_unique<Graphics::Queue>()
-					};
-					::std::unique_ptr<Graphics::Stopwatch> stopwatch{
-						::std::make_unique<Graphics::Stopwatch>()
-					};
-					::std::unique_ptr<Graphics::Frame> frame{
-						::std::make_unique<Graphics::Frame>(
-							*state, *queue, *stopwatch)
-					};
+					auto state = :std::make_unique<
+						Graphics::State>(
+						_hWnd, _hModule);
+					auto atlas = ::std::make_unique<
+						Graphics::Atlas>(
+						*state);
+					auto queue = ::std::make_unique<
+						Graphics::Queue>();
+					auto stopwatch = ::std::make_unique<
+						Graphics::Stopwatch>();
+					auto frame = ::std::make_unique<
+						Graphics::Frame>(
+						*state, *queue, *stopwatch);
 					return ::std::make_unique<Graphics>(
 						*_timer,
 						::std::move(state),
