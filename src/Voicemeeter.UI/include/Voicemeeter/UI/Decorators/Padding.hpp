@@ -14,7 +14,7 @@ namespace Voicemeeter {
 				typename TScale>
 			class Padding : public TComponent {
 			public:
-				template<typename... Args>
+				template<typename ...Args>
 				inline Padding(
 					vector_t &&basePaddingPoint,
 					vector_t &&basePaddingVertex,

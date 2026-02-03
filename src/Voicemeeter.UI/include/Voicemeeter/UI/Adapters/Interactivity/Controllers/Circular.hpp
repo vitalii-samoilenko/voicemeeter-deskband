@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					public:
 						using state_t = typename TStateControl::state_t;
 
-						template<typename... Args>
+						template<typename ...Args>
 						inline Circular(
 							state_t const &min,
 							state_t const &max,

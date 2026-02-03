@@ -28,10 +28,9 @@ namespace Voicemeeter {
 					slot() = delete;
 					slot(slot const &) = delete;
 					inline slot(slot &&other)
-						: _items{ other._items }
+						: that{ other.that }
 						, _i{ other._i }
 						, _itemId{ other._itemId } {
-						other._i = 0;
 						other._itemId = nullptr;
 					};
 
@@ -44,25 +43,28 @@ namespace Voicemeeter {
 					inline void overwrite(TBundle &target) {
 						if (_itemId == &typeid(TBundle)) {
 							return;
-						} else if (_itemId == nullptr) {
-							_i = _items.size();
-							_items.emplace_back(nullptr);
+						} else if (!_itemId) {
+							_i = that->
+								_items.size();
+							that->
+								_items.emplace_back(nullptr);
 						}
-						_items[_i] = ::std::make_unique<
-							Adapters::Bundle<TBundle>>(
-							target);
+						that->
+							_items[_i] = ::std::make_unique<
+								Adapters::Bundle<TBundle>>(
+								target);
 						_itemId = &typeid(TBundle);
 					};
 
 				private:
 					friend class Queue;
 
-					::std::vector<::std::unique_ptr<Adapters::IBundle>> &_items;
+					Queue *that;
 					size_t _i;
 					void const *_itemId;
 
-					inline explicit slot(Queue &target)
-						: _items{ target._items }
+					inline explicit slot(Queue *that)
+						: that{ that }
 						, _i{ 0 }
 						, _itemId{ nullptr } {
 
@@ -81,7 +83,7 @@ namespace Voicemeeter {
 				};
 
 				inline slot reserve() {
-					return slot{ *this };
+					return slot{ this };
 				};
 
 			private:

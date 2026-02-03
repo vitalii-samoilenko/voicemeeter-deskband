@@ -18,7 +18,7 @@ namespace Voicemeeter {
 				public:
 					using context_t = TValue;
 
-					template<typename... Args>
+					template<typename ...Args>
 					inline explicit Context(Args &&...args)
 						: TBundle{ ::std::forward<Args>(args) ... } {
 
@@ -46,10 +46,10 @@ namespace Voicemeeter {
 					typename TBundle,
 					typename TToolkit,
 					typename TFrame,
-					typename... TSubSpaces>
+					typename ...TSubSpaces>
 				class Animated : public TBundle {
 				public:
-					template<typename... Args>
+					template<typename ...Args>
 					inline Animated(
 						TToolkit &toolkit,
 						TSubSpaces &&...subSpaces,

@@ -11,7 +11,7 @@ namespace Voicemeeter {
 			template<typename TComponent>
 			class HitTest : public TComponent {
 			public:
-				template<typename... Args>
+				template<typename ...Args>
 				inline explicit HitTest(Args &&...args)
 					: TComponent{ ::std::forward<Args>(args) ... } {
 

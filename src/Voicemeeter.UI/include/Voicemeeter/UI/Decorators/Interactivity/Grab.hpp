@@ -16,7 +16,7 @@ namespace Voicemeeter {
 					typename TFocusTracker>
 				class Grab : public TComponent {
 				public:
-					template<typename... Args>
+					template<typename ...Args>
 					inline explicit Grab(
 						TFocusTracker &focusTracker,
 						Args &&...args)

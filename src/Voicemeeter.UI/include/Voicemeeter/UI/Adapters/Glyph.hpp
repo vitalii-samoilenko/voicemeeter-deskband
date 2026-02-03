@@ -13,7 +13,7 @@ namespace Voicemeeter {
 				typename TScale>
 			class Glyph : public TBundle {
 			public:
-				template<typename... Args>
+				template<typename ...Args>
 				inline Glyph(
 					vector_t &&baseVertex,
 					TScale &&scale = TScale{},

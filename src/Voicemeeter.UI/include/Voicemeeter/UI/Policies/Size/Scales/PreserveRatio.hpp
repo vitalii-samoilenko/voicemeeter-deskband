@@ -13,7 +13,7 @@ namespace Voicemeeter {
 					struct PreserveRatio {
 						template<
 							typename V,
-							typename... Vs>
+							typename ...Vs>
 						inline auto operator()(
 							V const &dst, Vs const &&...srcs) const {
 							num_t nom{ 0 };

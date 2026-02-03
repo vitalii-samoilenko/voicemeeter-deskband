@@ -15,7 +15,7 @@ namespace Voicemeeter {
 			template<
 				typename TDirection,
 				typename TScale,
-				typename... TComponents>
+				typename ...TComponents>
 			class Stack {
 			public:
 				inline Stack(

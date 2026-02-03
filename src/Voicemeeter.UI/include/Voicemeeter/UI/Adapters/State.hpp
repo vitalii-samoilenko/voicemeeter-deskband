@@ -16,7 +16,7 @@ namespace Voicemeeter {
 			public:
 				using state_t = TValue;
 
-				template<typename... Args>
+				template<typename ...Args>
 				inline State(
 					TNotify &&notify = TNotify{},
 					TUpdate &&update = TUpdate{},

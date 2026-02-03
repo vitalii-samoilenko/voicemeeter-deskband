@@ -14,7 +14,7 @@ namespace Voicemeeter {
 				template<typename TCircularControl>
 				class Carousel : public TCircularControl {
 				public:
-					template<typename... Args>
+					template<typename ...Args>
 					inline explicit Carousel(Args &&...args)
 						: TCircularControl{ ::std::forward<Args>(args) ... } {
 

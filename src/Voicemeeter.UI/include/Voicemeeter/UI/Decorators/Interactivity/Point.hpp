@@ -16,7 +16,7 @@ namespace Voicemeeter {
 					typename TFocusTracker>
 				class Point : public TComponent {
 				public:
-					template<typename... Args>
+					template<typename ...Args>
 					inline explicit Point(
 						TFocusTracker &focusTracker,
 						Args &&...args)

@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_BUS_HPP
-#define VOICEMEETER_ADAPTERS_MULTICLIENT_BUS_HPP
+#ifndef VOICEMEETER_ADAPTERS_MULTICLIENT_TOKEN_HPP
+#define VOICEMEETER_ADAPTERS_MULTICLIENT_TOKEN_HPP
 
 #include <utility>
 
@@ -49,9 +49,9 @@ namespace Voicemeeter {
 					inline void const * clientId() const {
 						return _clientId;
 					};
-					template<typename T>
-					inline T * that() const {
-						return reinterpret_cast<T *>(_that);
+					template<typename TThat>
+					inline TThat * that() const {
+						return reinterpret_cast<TThat *>(_that);
 					};
 
 				private:
