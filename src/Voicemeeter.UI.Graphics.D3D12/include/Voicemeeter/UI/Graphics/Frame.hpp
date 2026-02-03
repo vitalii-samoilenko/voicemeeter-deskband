@@ -194,8 +194,8 @@ namespace Voicemeeter {
 				};
 				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
 					RECT rect{
-						ceil(point[0]), ceil(point[1]),
-						ceil(vertex[0]), ceil(vertex[1])
+						floor(point[0]), ceil(point[1]),
+						floor(vertex[0]), ceil(vertex[1])
 					};
 					::Windows::InvalidateRect(
 						_state.get_hWnd(), &rect, FALSE);

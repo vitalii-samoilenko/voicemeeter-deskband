@@ -17,13 +17,13 @@ namespace Voicemeeter {
 					typename TDirection>
 				class StripKnob : public TStripKnob {
 				public:
-					template<typename... Args>
+					template<typename ...Args>
 					inline StripKnob(
 						TTimer &timer,
 						TDirection &&direction = TDirection{},
 						Args &&...args)
 						: TStripKnob{ ::std::forward<Args>(args) ... }
-						, _releaseTick{ timer, *this }
+						, _releaseTick{ this, timer }
 						, _direction{ ::std::move(direction) }
 						, _initPoint{ 0, 0 } {
 
@@ -89,10 +89,10 @@ namespace Voicemeeter {
 					class ReleaseTick final {
 					public:
 						inline ReleaseTick(
-							TTimer &timer,
-							TStripKnob &stripKnob)
-							: _timer{ timer }
-							, _stripKnob{ stripKnob } {
+							StripKnob *that,
+							TTimer &timer)
+							: that{ that }
+							, _timer{ timer } {
 
 						};
 						ReleaseTick() = delete;
@@ -108,7 +108,7 @@ namespace Voicemeeter {
 
 						inline void operator()() const {
 							Unset();
-							_stripKnob.set_HoldState(false);
+							that->set_HoldState(false);
 						};
 
 						inline void Set() {
@@ -119,8 +119,8 @@ namespace Voicemeeter {
 						};
 
 					private:
+						StripKnob *that;
 						TTimer &_timer;
-						TStripKnob &_stripKnob;
 					};
 
 					ReleaseTick _releaseTick;

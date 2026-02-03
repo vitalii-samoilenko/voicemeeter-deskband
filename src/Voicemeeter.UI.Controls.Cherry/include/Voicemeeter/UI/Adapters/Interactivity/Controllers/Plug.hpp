@@ -15,7 +15,7 @@ namespace Voicemeeter {
 					public:
 						using state_t = typename TStateControl::state_t;
 
-						template<typename... Args>
+						template<typename ...Args>
 						inline Plug(Args &&...args)
 							: TStateControl{ ::std::forward<Args>(args) ... } {
 

@@ -60,7 +60,7 @@ namespace Voicemeeter {
 									} else {
 										targetVertex[3] = AnimationLength;
 										targetRgba = _toolkit.get_Theme()
-											.Ok;
+											.Active;
 									}
 								} else if (5 < state.level) {
 									if (700 < state.level) {
@@ -71,7 +71,7 @@ namespace Voicemeeter {
 										} else {
 											targetVertex[1] = AnimationLength;
 											targetRgba = _toolkit.get_Theme()
-												.EqNormal;
+												.EqMedium;
 										}
 									} else {
 										targetVertex[0] = AnimationLength;
