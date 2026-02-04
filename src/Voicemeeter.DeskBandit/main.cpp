@@ -1,11 +1,11 @@
-#define _USE_MATH_DEFINES
-
 #include <memory>
 
-#include "Windows/Wrappers.h"
-#include "Windows/ErrorMessageBox.h"
+#include "Windows/API.hpp"
+#include "Windows/ErrorMessageBox.hpp"
 
-#include "Windows/DeskBandit.h"
+#include "DeskBandit.hpp"
+
+#include "Messages.h"
 
 int WINAPI wWinMain(
 	_In_ HINSTANCE hInstance,
@@ -13,28 +13,24 @@ int WINAPI wWinMain(
 	_In_ LPWSTR lpCmdLine,
 	_In_ int nShowCmd
 ) {
-	::std::unique_ptr<::Voicemeeter::Windows::DeskBandit> pWnd{ nullptr };
+	::std::unique_ptr<DeskBandit> deskBandit{ nullptr };
 	try {
-		pWnd.reset(new ::Voicemeeter::Windows::DeskBandit{ hInstance });
-
-		pWnd->Show(nShowCmd);
+		deskBandit = ::std::make_unique<
+			DeskBandit>(hInstance);
+		deskBandit->Show(nShowCmd);
 	}
-	catch (const ::Windows::Error& e) {
-		::Windows::ErrorMessageBox(e.code());
-
+	catch (::Windows::Error const &e) {
+		::Windows::ErrorMessageBox(NULL, CPT_ERROR, e.code());
 		return -1;
 	}
 	catch (...) {
-		::Windows::ErrorMessageBox(MSG_ERR_GENERAL);
-
+		::Windows::ErrorMessageBox(NULL, CPT_ERROR, MSG_ERR_GENERAL);
 		return -1;
 	}
-
 	MSG msg{};
-	while (GetMessageW(&msg, NULL, 0, 0) != FALSE) {
-		TranslateMessage(&msg);
-		DispatchMessageW(&msg);
+	while (::GetMessageW(&msg, NULL, 0, 0) != FALSE) {
+		::TranslateMessage(&msg);
+		::DispatchMessageW(&msg);
 	}
-
 	return 0;
 }
