@@ -217,7 +217,7 @@ namespace Voicemeeter {
 					{
 						typename TLoader::resource atlas{
 							loader.LoadResource(
-								Layouts::Loader::Bit::Atlas)
+								Layouts::Loader::bit::Atlas)
 						};
 						D3D12_HEAP_PROPERTIES textureHeapProps{
 							D3D12_HEAP_TYPE_DEFAULT,
@@ -428,11 +428,11 @@ namespace Voicemeeter {
 						::Microsoft::WRL::ComPtr<ID3DBlob> pixelShader{ nullptr };
 						typename TLoader::resource vertexCode{
 							loader.LoadResource(
-								Layouts::Loader::Hlsl::Vertex)
+								Layouts::Loader::hlsl::Vertex)
 						};
 						typename TLoader::resource pixelCode{
 							loader.LoadResource(
-								Layouts::Loader::Hlsl::Pixel)
+								Layouts::Loader::hlsl::Pixel)
 						};
 						UINT compileFlags{ 0 };
 #ifndef NDEBUG

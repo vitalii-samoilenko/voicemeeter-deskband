@@ -18,31 +18,34 @@ namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			template<
+				typename TLoader,
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
 			using Canvas = UI::Adapters::Canvas<
 				UI::Graphics::Toolkit<
-					UI::Graphics::State,
+					TLoader,
+					UI::Graphics::State<TLoader>,
 					UI::Graphics::Atlas<
-						UI::Graphics::State>,
+						UI::Graphics::State<TLoader>>,
 					UI::Graphics::Queue,
 					UI::Graphics::Stopwatch,
 					TPalette,
 					TTheme
 					UI::Graphics::Frame<
-						UI::Graphics::State,
+						UI::Graphics::State<TLoader>,
 						UI::Graphics::Queue,
 						UI::Graphics::Stopwatch>>,
 				TTimer>;
 
 			template<
+				typename TLoader,
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
 			class CanvasBuilder {
 			public:
-				using Canvas = Canvas<TPalette, TTheme, TTimer>;
+				using Canvas = Canvas<TLoader, TPalette, TTheme, TTimer>;
 
 				CanvasBuilder(CanvasBuilder const &) = delete;
 				CanvasBuilder(CanvasBuilder &&) = delete;
@@ -56,10 +59,6 @@ namespace Voicemeeter {
 					_hWnd = value;
 					return *this;
 				};
-				inline CanvasBuilder & set_hModule(HMODULE value) {
-					_hModule = value;
-					return *this;
-				};
 				inline CanvasBuilder & set_Timer(TTimer &value) {
 					_timer = &value;
 					return *this;
@@ -69,6 +68,7 @@ namespace Voicemeeter {
 				inline CanvasBuilder() = default;
 
 				inline ::std::unique_ptr<Canvas> Build(
+					::std::unique_ptr<TLoader> &&loader,
 					::std::unique_ptr<TPalette> &&palette,
 					::std::unique_ptr<TTheme> &&theme) {
 					if (_hWnd == NULL) {
@@ -78,7 +78,7 @@ namespace Voicemeeter {
 						throw ::std::exception{ "Timer is not set" };
 					}
 					auto state = :std::make_unique<
-						Graphics::State>(_hWnd, _hModule);
+						Graphics::State>(_hWnd, *loader);
 					auto atlas = ::std::make_unique<
 						Graphics::Atlas>(*state);
 					auto queue = ::std::make_unique<
@@ -89,6 +89,7 @@ namespace Voicemeeter {
 						Graphics::Frame>(*state, *queue, *stopwatch);
 					return ::std::make_unique<
 						Graphics>(*_timer,
+						::std::move(loader),
 						::std::move(state),
 						::std::move(atlas),
 						::std::move(queue),
@@ -100,7 +101,6 @@ namespace Voicemeeter {
 
 			private:
 				HWND _hWnd;
-				HMODULE _hModule;
 				TTimer *_timer;
 			};
 		}

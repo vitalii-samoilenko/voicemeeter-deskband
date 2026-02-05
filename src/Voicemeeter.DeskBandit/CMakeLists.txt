@@ -24,6 +24,7 @@ target_link_libraries(Voicemeeter.DeskBandit PRIVATE
 		Voicemeeter::Clients::Remote
 		Voicemeeter::Clients::UI::Controls
 		Voicemeeter::Clients::UI::Graphics
+		Voicemeeter::Clients::UI::Loader
 		Voicemeeter::Clients::UI::Palette
 		Voicemeeter::Clients::UI::Scene)
 target_include_directories(Voicemeeter.DeskBandit PRIVATE include)

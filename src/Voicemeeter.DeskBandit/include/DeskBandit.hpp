@@ -15,6 +15,7 @@
 #include "Voicemeeter/Clients/UI/Canvas.hpp"
 #include "Voicemeeter/Clients/UI/Composition.hpp"
 #include "Voicemeeter/Clients/UI/FocusTracker.hpp"
+#include "Voicemeeter/Clients/UI/Loader.hpp"
 #include "Voicemeeter/Clients/UI/Palette.hpp"
 #include "Voicemeeter/Clients/UI/Scene.hpp"
 #include "Voicemeeter/Clients/UI/Theme.hpp"
@@ -106,9 +107,11 @@ private:
 		::Voicemeeter::Cherry>;
 	using SceneBuilder = ::Voicemeeter::Clients::UI::SceneBuilder<
 		::Voicemeeter::Clients::UI::FocusTrackerBuilder<DeskBandit>,
+		::Voicemeeter::Clients::UI::LoaderBuilder,
 		::Voicemeeter::Clients::UI::PaletteBuilder,
 		::Voicemeeter::Clients::UI::ThemeBuilder,
 		::Voicemeeter::Clients::UI::CanvasBuilder<
+			::Voicemeeter::Clients::UI::Loader,
 			::Voicemeeter::Clients::UI::Palette,
 			::Voicemeeter::Clients::UI::Theme,
 			::Windows::Timer>,
@@ -116,6 +119,7 @@ private:
 			::Windows::Timer,
 			::Voicemeeter::Cherry,
 			::Voicemeeter::Clients::UI::Canvas<
+				::Voicemeeter::Clients::UI::Loader,
 				::Voicemeeter::Clients::UI::Palette,
 				::Voicemeeter::Clients::UI::Theme,
 				::Windows::Timer>,
@@ -218,7 +222,10 @@ private:
 			WCHAR temp[MAX_PATH];
 			if (::GetTempPathW(MAX_PATH, temp)) {
 				::std::wstring path{ temp };
-				::std::fstream log{ path.append(L"Voicemeeter.DeskBand.log"), log.out | log.app };
+				::std::fstream log{
+					path.append(L"Voicemeeter.DeskBand.log"),
+					::std::ios::out | ::std::ios::app
+				};
 				if (log.is_open()) {
 					log << message << ::std::endl;
 				}

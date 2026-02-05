@@ -21,12 +21,14 @@ namespace Voicemeeter {
 
 			template<
 				typename TFocusTrackerBuilder,
+				typename TLoaderBuilder,
 				typename TPaletteBuilder,
 				typename TThemeBuilder,
 				typename TCanvasBuilder,
 				typename TCompositionBuilder>
 			class SceneBuilder
 				: public TFocusTrackerBuilder
+				, public TLoaderBuilder
 				, public TPaletteBuilder
 				, public TThemeBiulder
 				, public TCanvasBuilder
@@ -49,6 +51,9 @@ namespace Voicemeeter {
 				inline TFocusTrackerBuilder & get_FocusTrackerBuilder() {
 					return *this;
 				};
+				inline TLoaderBuilder & get_LoaderBuilder() {
+					return *this;
+				};
 				inline TPaletteBuilder & get_PaletteBuilder() {
 					return *this;
 				};
@@ -65,6 +70,7 @@ namespace Voicemeeter {
 				inline ::std::unique_ptr<Scene> Build() {
 					auto focusTracker = TFocusTrackerBuilder::Build();
 					auto canvas = TCanvasBuilder::Build(
+						TLoaderBuilder::Build(),
 						TPaletteBuilder::Build(),
 						TThemeBuilder::Build());
 					auto composition = TControlsBuilder::Build(
