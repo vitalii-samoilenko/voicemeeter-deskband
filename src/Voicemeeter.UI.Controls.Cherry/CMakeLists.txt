@@ -9,6 +9,4 @@ target_link_libraries(voicemeeter_ui_controls_cherry INTERFACE
 	Voicemeeter::UI::Layouts)
 target_include_directories(voicemeeter_ui_controls_cherry INTERFACE include)
 
-if(CONTROLS STREQUAL Cherry)
-	add_library(Voicemeeter::UI::Controls ALIAS voicemeeter_ui_controls_cherry)
-endif()
+add_library(Voicemeeter::UI::Controls ALIAS voicemeeter_ui_controls_cherry)

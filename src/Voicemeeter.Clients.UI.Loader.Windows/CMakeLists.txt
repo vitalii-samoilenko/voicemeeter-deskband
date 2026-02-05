@@ -9,6 +9,4 @@ target_link_libraries(voicemeeter_clients_ui_loader_windows INTERFACE
 	Voicemeeter::UI::Loader)
 target_include_directories(voicemeeter_clients_ui_loader_windows INTERFACE include)
 
-if(LOADER STREQUAL Windows)
-	add_library(Voicemeeter::Clients::UI::Loader ALIAS voicemeeter_clients_ui_loader_windows)
-endif()
+add_library(Voicemeeter::Clients::UI::Loader ALIAS voicemeeter_clients_ui_loader_windows)

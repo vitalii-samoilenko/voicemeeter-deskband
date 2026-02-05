@@ -10,6 +10,4 @@ target_link_libraries(voicemeeter_clients_ui_graphics_d3d12 INTERFACE
 	Voicemeeter::UI::Graphics)
 target_include_directories(voicemeeter_clients_ui_graphics_d3d12 INTERFACE include)
 
-if(GRAPHICS STREQUAL D3D12)
-	add_library(Voicemeeter::Clients::UI::Graphics ALIAS voicemeeter_clients_ui_graphics_d3d12)
-endif()
+add_library(Voicemeeter::Clients::UI::Graphics ALIAS voicemeeter_clients_ui_graphics_d3d12)

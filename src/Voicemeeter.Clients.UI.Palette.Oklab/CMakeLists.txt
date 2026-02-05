@@ -7,6 +7,4 @@ target_compile_features(voicemeeter_clients_ui_palette_oklab INTERFACE cxx_std_1
 target_link_libraries(voicemeeter_clients_ui_palette_oklab INTERFACE Voicemeeter::UI::Palette)
 target_include_directories(voicemeeter_clients_ui_palette_oklab INTERFACE include)
 
-if(PALETTE STREQUAL Oklab)
-	add_library(Voicemeeter::Clients::UI::Palette ALIAS voicemeeter_clients_ui_palette_oklab)
-endif()
+add_library(Voicemeeter::Clients::UI::Palette ALIAS voicemeeter_clients_ui_palette_oklab)

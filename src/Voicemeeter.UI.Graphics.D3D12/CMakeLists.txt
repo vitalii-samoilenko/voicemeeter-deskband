@@ -10,11 +10,8 @@ target_link_libraries(voicemeeter_ui_graphics_d3d12 INTERFACE
 	Voicemeeter::UI::Layouts)
 target_include_directories(voicemeeter_ui_graphics_d3d12 INTERFACE include)
 
+add_library(Voicemeeter::UI::Graphics ALIAS voicemeeter_ui_graphics_d3d12)
+
 list(APPEND LOADER_FILES ${PROJECT_SOURCE_DIR}/export/Vertex.hlsl)
 list(APPEND LOADER_FILES ${PROJECT_SOURCE_DIR}/export/Pixel.hlsl)
-
-if(GRAPHICS STREQUAL D3D12)
-	add_library(Voicemeeter::UI::Graphics ALIAS voicemeeter_ui_graphics_d3d12)
-
-	set(LOADER_FILES ${LOADER_FILES} PARENT_SCOPE)
-endif()
+set(LOADER_FILES ${LOADER_FILES} PARENT_SCOPE)
