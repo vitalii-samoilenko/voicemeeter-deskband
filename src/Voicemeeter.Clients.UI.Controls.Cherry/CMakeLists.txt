@@ -7,10 +7,9 @@ if(CONTROLS STREQUAL Cherry)
 	add_library(Voicemeeter::Clients::UI::Controls ALIAS voicemeeter_clients_ui_controls_cherry)
 endif()
 target_compile_features(voicemeeter_clients_ui_controls_cherry INTERFACE cxx_std_17)
-target_link_libraries(voicemeeter_clients_ui_controls_cherry
-	INTERFACE
-		wheel
-		Voicemeeter
-		Voicemeeter::UI
-		Voicemeeter::UI::Controls)
+target_link_libraries(voicemeeter_clients_ui_controls_cherry INTERFACE
+	wheel
+	Voicemeeter
+	Voicemeeter::UI
+	Voicemeeter::UI::Controls)
 target_include_directories(voicemeeter_clients_ui_controls_cherry INTERFACE include)

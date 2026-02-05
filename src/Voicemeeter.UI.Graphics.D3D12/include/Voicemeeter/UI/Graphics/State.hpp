@@ -14,17 +14,18 @@
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 
-#include "Atlas.h"
-#include "Loader.h"
+#include "Voicemeeter/UI/Layouts/Atlas.hpp"
+#include "Voicemeeter/UI/Layouts/Loader.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
 		namespace Graphics {
+			template<typename TLoader>
 			class State final {
 			public:
 				inline State(
 					HWND hWnd,
-					HMODULE hModule)
+					TLoader &loader)
 					: _hWnd{ hWnd }
 					, _d3dDevice{ nullptr }
 					, _commandQueue{ nullptr }
@@ -214,15 +215,9 @@ namespace Voicemeeter {
 					}
 					::Microsoft::WRL::ComPtr<ID3D12Resource> textureUploadBuffer{ nullptr };
 					{
-						HRSRC hAtlas{
-							::Windows::FindResourceW(hModule,
-								MAKEINTRESOURCE(IDR_BIT_ATLAS),
-								MAKEINTRESOURCE(IDT_BIT))
-						};
-						BYTE *src{
-							reinterpret_cast<BYTE *>(
-								::Windows::LockResource(
-									::Windows::LoadResource(hModule, hAtlas)))
+						typename TLoader::resource atlas{
+							loader.LoadResource(
+								Layouts::Loader::Bit::Atlas)
 						};
 						D3D12_HEAP_PROPERTIES textureHeapProps{
 							D3D12_HEAP_TYPE_DEFAULT,
@@ -233,7 +228,7 @@ namespace Voicemeeter {
 						D3D12_RESOURCE_DESC textureDesc{
 							D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 							0,
-							ATLAS_W, ATLAS_H, 1, 1,
+							pop(Layouts::Atlas::Width), pop(Layouts::Atlas::Height), 1, 1,
 							DXGI_FORMAT_R32_FLOAT,
 							DXGI_SAMPLE_DESC{
 								1, 0
@@ -247,7 +242,7 @@ namespace Voicemeeter {
 								nullptr,
 								IID_PPV_ARGS(&_texture)
 						), "Texture creation failed");
-						UINT rowSize{ ATLAS_W * 4 };
+						UINT rowSize{ pop(Layouts::Atlas::Width) * 4 };
 						UINT srcRowPitch{ rowSize };
 						UINT remainder{ rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT };
 						UINT dstRowPitch{
@@ -257,7 +252,7 @@ namespace Voicemeeter {
 						};
 						textureHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 						textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-						textureDesc.Width = dstRowPitch * ATLAS_H;
+						textureDesc.Width = dstRowPitch * pop(Layouts::Atlas::Height);
 						textureDesc.Height = 1;
 						textureDesc.Format = DXGI_FORMAT_UNKNOWN;
 						textureDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
@@ -276,7 +271,9 @@ namespace Voicemeeter {
 							reinterpret_cast<void **>(&dst)
 						), "Upload buffer map failed");
 						for (UINT row{ 0 }; row < ATLAS_H; ++row) {
-							memcpy(dst + dstRowPitch * row, src + srcRowPitch * row, rowSize);
+							memcpy(dst + dstRowPitch * row,
+								reinterpret_cast<BYTE *>(atlas.data) + srcRowPitch * row,
+								rowSize);
 						}
 						textureUploadBuffer->Unmap(0, nullptr);
 						D3D12_TEXTURE_COPY_LOCATION srcLoc{
@@ -286,7 +283,7 @@ namespace Voicemeeter {
 								0,
 								D3D12_SUBRESOURCE_FOOTPRINT{
 									DXGI_FORMAT_R32_FLOAT,
-									ATLAS_W, ATLAS_H, 1,
+									pop(Layouts::Atlas::Width), pop(Layouts::Atlas::Height), 1,
 									dstRowPitch
 								}
 							}
@@ -429,24 +426,20 @@ namespace Voicemeeter {
 					{
 						::Microsoft::WRL::ComPtr<ID3DBlob> vertexShader{ nullptr };
 						::Microsoft::WRL::ComPtr<ID3DBlob> pixelShader{ nullptr };
-						HRSRC hVertexCode{
-							::Windows::FindResourceW(hModule,
-								MAKEINTRESOURCE(IDR_HLSL_VERTEX),
-								MAKEINTRESOURCE(IDT_HLSL))
+						typename TLoader::resource vertexCode{
+							loader.LoadResource(
+								Layouts::Loader::Hlsl::Vertex)
 						};
-						HRSRC hPixelCode{
-							::Windows::FindResourceW(hModule,
-								MAKEINTRESOURCE(IDR_HLSL_PIXEL),
-								MAKEINTRESOURCE(IDT_HLSL))
+						typename TLoader::resource pixelCode{
+							loader.LoadResource(
+								Layouts::Loader::Hlsl::Pixel)
 						};
 						UINT compileFlags{ 0 };
 #ifndef NDEBUG
 						compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 						::Windows::ThrowIfFailed(::D3DCompile(
-							::Windows::LockResource(
-								::Windows::LoadResource(hModule, hVertexCode)),
-							::Windows::SizeofResource(hModule, hVertexCode),
+							vertexCode.data, vertexCode.size,
 							NULL,
 							nullptr, nullptr,
 							"Main", "vs_5_0",
@@ -454,9 +447,7 @@ namespace Voicemeeter {
 							&vertexShader, nullptr
 						), "Vertex shader compilation failed");
 						::Windows::ThrowIfFailed(::D3DCompile(
-							::Windows::LockResource(
-								::Windows::LoadResource(hModule, hPixelCode)),
-							::Windows::SizeofResource(hModule, hPixelCode),
+							pixelCode.data, pixelCode.size,
 							NULL,
 							nullptr, nullptr,
 							"Main", "ps_5_0",

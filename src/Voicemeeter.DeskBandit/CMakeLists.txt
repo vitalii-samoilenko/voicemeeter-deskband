@@ -17,8 +17,7 @@ if(MSVC)
 	target_link_options(Voicemeeter.DeskBandit PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/Resources.res)
 endif()
 target_compile_features(Voicemeeter.DeskBandit PRIVATE cxx_std_17)
-target_link_libraries(Voicemeeter.DeskBandit
-	PRIVATE
+target_link_libraries(Voicemeeter.DeskBandit PRIVATE
 		wheel
 		Windows
 		Voicemeeter

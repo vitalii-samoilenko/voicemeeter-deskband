@@ -6,7 +6,7 @@
 
 #include "wheel.hpp"
 
-#include "Atlas.h"
+#include "Voicemeeter/UI/Layouts/Atlas.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -22,12 +22,12 @@ namespace Voicemeeter {
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
 						, _frameAtlasPoint{
-							push(ATLAS_VBAN_FRAME_X),
-							push(ATLAS_VBAN_FRAME_Y)
+							Layouts::Atlas::Vban::Frame::X,
+							Layouts::Atlas::Vban::Frame::Y
 						}
 						, _frameAtlasVertex{
-							push(ATLAS_VBAN_FRAME_W),
-							push(ATLAS_VBAN_FRAME_H)
+							Layouts::Atlas::Vban::Frame::Width,
+							Layouts::Atlas::Vban::Frame::Height
 						}
 						, _frameRgba{ 0, 0, 0, 0 } {
 

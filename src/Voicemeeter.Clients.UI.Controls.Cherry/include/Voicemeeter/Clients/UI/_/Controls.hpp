@@ -42,6 +42,72 @@
 #include "Voicemeeter/UI/States/StripKnob.hpp"
 
 namespace Voicemeeter {
+	namespace UI {
+		namespace Layouts {
+			namespace Cherry {
+				namespace Panel {
+					constexpr num_t Height{ push(40) };
+					namespace Padding {
+						constexpr num_t Left{ push(1) };
+						constexpr num_t Top{ 0 };
+						constexpr num_t Right{ 0 };
+						constexpr num_t Bottom{ 0 };
+					}
+				}
+				namespace Vban {
+					constexpr num_t Height{ Panel::Height }; // 22
+					constexpr num_t Width{ push(71) }; // 39
+				}
+				namespace Knob {
+					constexpr num_t Height{ Panel::Height };
+					constexpr num_t Width{ Panel::Height };
+				}
+				namespace Plug {
+					constexpr num_t Height{ push(19) };
+					constexpr num_t Width{ push(41) };
+					namespace Padding {
+						constexpr num_t Left{ 0 };
+						constexpr num_t Top{ push(2) };
+						constexpr num_t Right{ 0 };
+						constexpr num_t Bottom{ 0 };
+					}
+				}
+				namespace Mixer {
+					namespace Block {
+						constexpr num_t Height{ Plug::Height + Plug::Padding::Top + Plug::Height };
+						constexpr num_t Width{ Plug::Width };
+					}
+				}
+				namespace Input {
+					namespace Block {
+						constexpr num_t Height{ Panel::Height };
+						constexpr num_t Width{ Knob::Width + 2 * (Panel::Padding::Left + Mixer::Block::Width) };
+					}
+					namespace Section {
+						constexpr num_t Height{ Panel::Height };
+						constexpr num_t Width{ Input::Block::Width + Panel::Padding::Left + Input::Block::Width };
+					}
+				}
+				namespace Output {
+					namespace Section {
+						constexpr num_t Height{ Panel::Height };
+						constexpr num_t Width{ Knob::Width + 3 * (Panel::Padding::Left + Knob::Width) };
+					}
+				}
+				namespace Panel {
+					constexpr num_t Width{
+						Panel::Padding::Left + Vban::Width
+						+ Panel::Padding::Left + Input::Section::Width
+						+ Panel::Padding::Left + Output::Section::Width
+						+ Panel::Padding::Left
+					};
+				}
+			}
+		}
+	}
+}
+
+namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			namespace _ {
@@ -1061,35 +1127,6 @@ namespace Voicemeeter {
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
 						> const &enabled) {
-						constexpr num_t PanelH{ push(40) };
-						constexpr num_t PanelPaddingL{ push(1) };
-						constexpr num_t PanelPaddingT{ 0 };
-						constexpr num_t PanelPaddingR{ 0 };
-						constexpr num_t PanelPaddingB{ 0 };
-						constexpr num_t VbanH{ PanelH }; // 22
-						constexpr num_t VbanW{ push(71) }; // 39
-						constexpr num_t KnobH{ PanelH };
-						constexpr num_t KnobW{ PanelH };
-						constexpr num_t PlugH{ push(19) };
-						constexpr num_t PlugW{ push(41) };
-						constexpr num_t PlugPaddingL{ 0 };
-						constexpr num_t PlugPaddingT{ push(2) };
-						constexpr num_t PlugPaddingR{ 0 };
-						constexpr num_t PlugPaddingB{ 0 };
-						constexpr num_t MixerBlockH{ PlugH + PlugPaddingT + PlugH };
-						constexpr num_t MixerBlockW{ PlugW };
-						constexpr num_t InputBlockH{ PanelH };
-						constexpr num_t InputBlockW{ KnobW + 2 * (PanelPaddingL + MixerBlockW) };
-						constexpr num_t InputSectionH{ PanelH };
-						constexpr num_t InputSectionW{ InputBlockW + PanelPaddingL + InputBlockW };
-						constexpr num_t OutputSectionH{ PanelH };
-						constexpr num_t OutputSectionW{ KnobW + 3 * (PanelPaddingL + KnobW) };
-						constexpr num_t PanelW{
-							PanelPaddingL + VbanW
-							+ PanelPaddingL + InputSectionW
-							+ PanelPaddingL + OutputSectionW
-							+ PanelPaddingL
-						};
 						num_t enabledInputs{
 							static_cast<num_t>(
 								enabled.test(flags::offset + Cherry::Strips::P))
@@ -1114,8 +1151,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							enabled.test(flags::vban),
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							0, 1, 1,
@@ -1127,7 +1170,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Vban<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Vban<TToolkit>{ toolkit }
 							},
-							vector_t{ VbanW, VbanH },
+							vector_t{
+								UI::Layouts::Cherry::Vban::Width,
+								UI::Layouts::Cherry::Vban::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1151,7 +1197,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{ KnobW, KnobH },
+							vector_t{
+								UI::Layouts::Cherry::Knob::Width,
+								UI::Layouts::Cherry::Knob::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
@@ -1175,7 +1224,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{ KnobW, KnobH },
+							vector_t{
+								UI::Layouts::Cherry::Knob::Width,
+								UI::Layouts::Cherry::Knob::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
@@ -1199,7 +1251,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{ KnobW, KnobH },
+							vector_t{
+								UI::Layouts::Cherry::Knob::Width,
+								UI::Layouts::Cherry::Knob::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
@@ -1217,8 +1272,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							timer,
@@ -1231,7 +1292,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{ KnobW, KnobH },
+							vector_t{
+								UI::Layouts::Cherry::Knob::Width,
+								UI::Layouts::Cherry::Knob::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
@@ -1249,8 +1313,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							2 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							timer,
@@ -1263,7 +1333,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{ KnobW, KnobH },
+							vector_t{
+								UI::Layouts::Cherry::Knob::Width,
+								UI::Layouts::Cherry::Knob::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
@@ -1281,8 +1354,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							3 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							timer,
@@ -1295,7 +1374,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{ KnobW, KnobH },
+							vector_t{
+								UI::Layouts::Cherry::Knob::Width,
+								UI::Layouts::Cherry::Knob::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
@@ -1317,7 +1399,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1335,8 +1420,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledOutputs,
-							vector_t{ PlugPaddingL, PlugPaddingT },
-							vector_t{ PlugPaddingR, PlugPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Left,
+								UI::Layouts::Cherry::Plug::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Right,
+								UI::Layouts::Cherry::Plug::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
@@ -1347,7 +1438,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1369,7 +1463,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1387,8 +1484,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							3 < enabledOutputs,
-							vector_t{ PlugPaddingL, PlugPaddingT },
-							vector_t{ PlugPaddingR, PlugPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Left,
+								UI::Layouts::Cherry::Plug::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Right,
+								UI::Layouts::Cherry::Plug::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
@@ -1399,7 +1502,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1421,7 +1527,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1439,8 +1548,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledOutputs,
-							vector_t{ PlugPaddingL, PlugPaddingT },
-							vector_t{ PlugPaddingR, PlugPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Left,
+								UI::Layouts::Cherry::Plug::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Right,
+								UI::Layouts::Cherry::Plug::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
@@ -1451,7 +1566,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1473,7 +1591,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1491,8 +1612,14 @@ namespace Voicemeeter {
 							>>
 						>(
 							3 < enabledOutputs,
-							vector_t{ PlugPaddingL, PlugPaddingT },
-							vector_t{ PlugPaddingR, PlugPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Left,
+								UI::Layouts::Cherry::Plug::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Plug::Padding::Right,
+								UI::Layouts::Cherry::Plug::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
@@ -1503,7 +1630,10 @@ namespace Voicemeeter {
 								UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{ PlugW, PlugH },
+							vector_t{
+								UI::Layouts::Cherry::Plug::Width,
+								UI::Layouts::Cherry::Plug::Height
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 1, 1 },
@@ -1656,10 +1786,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ MixerBlockW, MixerBlockH },
+							vector_t{
+								UI::Layouts::Cherry::Mixer::Block::Width,
+								UI::Layouts::Cherry::Mixer::Block::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 1 }.
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o1),
@@ -1676,10 +1815,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							2 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ MixerBlockW, MixerBlockH },
+							vector_t{
+								UI::Layouts::Cherry::Mixer::Block::Width,
+								UI::Layouts::Cherry::Mixer::Block::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 1 }.
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o3),
@@ -1690,7 +1838,10 @@ namespace Voicemeeter {
 								TToolkit,
 								TFocusTracker>
 						>(
-							vector_t{ InputBlockW, InputBlockH },
+							vector_t{
+								UI::Layouts::Cherry::Input::Block::Width,
+								UI::Layouts::Cherry::Input::Block::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 0 },
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1),
@@ -1707,10 +1858,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ MixerBlockW, MixerBlockH },
+							vector_t{
+								UI::Layouts::Cherry::Mixer::Block::Width,
+								UI::Layouts::Cherry::Mixer::Block::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 1 }.
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2o1),
@@ -1727,10 +1887,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							2 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ MixerBlockW, MixerBlockH },
+							vector_t{
+								UI::Layouts::Cherry::Mixer::Block::Width,
+								UI::Layouts::Cherry::Mixer::Block::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 1 }.
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2o3),
@@ -1746,10 +1915,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledInputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ InputBlockW, InputBlockH },
+							vector_t{
+								UI::Layouts::Cherry::Input::Block::Width,
+								UI::Layouts::Cherry::Input::Block::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 0 },
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2),
@@ -1766,10 +1944,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledInputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ InputSectionW, InputSectionH },
+							vector_t{
+								UI::Layouts::Cherry::Input::Section::Width,
+								UI::Layouts::Cherry::Input::Section::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 0 },
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o1o2o3o4),
@@ -1785,10 +1972,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledOutputs,
-							vector_t{ PanelPaddingL, PanelPaddingT },
-							vector_t{ PanelPaddingR, PanelPaddingB },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ OutputSectionW, OutputSectionH },
+							vector_t{
+								UI::Layouts::Cherry::Output::Section::Width,
+								UI::Layouts::Cherry::Output::Section::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 0 },
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(o1),
@@ -1803,10 +1999,19 @@ namespace Voicemeeter {
 								TFocusTracker>
 						>(
 							::std::move(tokens),
-							vector_t{ PanelPaddingR, PanelPaddingB },
-							vector_t{ PanelPaddingL, PanelPaddingT },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Right,
+								UI::Layouts::Cherry::Panel::Padding::Bottom
+							},
+							vector_t{
+								UI::Layouts::Cherry::Panel::Padding::Left,
+								UI::Layouts::Cherry::Panel::Padding::Top
+							},
 							UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{ PanelW, PanelH },
+							vector_t{
+								UI::Layouts::Cherry::Panel::Width,
+								UI::Layouts::Cherry::Panel::Height
+							},
 							UI::Policies::Orientation::Directions::Axis{ 0 },
 							UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(vban),

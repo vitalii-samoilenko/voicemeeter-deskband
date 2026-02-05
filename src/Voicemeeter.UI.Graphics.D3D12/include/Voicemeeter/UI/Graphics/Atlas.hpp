@@ -8,7 +8,7 @@
 #include "Windows/API.hpp"
 #include <d3d12.h>
 
-#include "Voicemeeter/UI/Definitions/Atlas.hpp"
+#include "Voicemeeter/UI/Layouts/Atlas.hpp"
 
 namespace Voicemeeter {
 	namespace UI {
@@ -63,10 +63,10 @@ namespace Voicemeeter {
 						static_cast<FLOAT>(color[1]) / One,
 						static_cast<FLOAT>(color[2]) / One,
 						static_cast<FLOAT>(color[3]) / One,
-						static_cast<FLOAT>(srcPoint[0]) / push(ATLAS_W),
-						static_cast<FLOAT>(srcPoint[1]) / push(ATLAS_H),
-						static_cast<FLOAT>(srcVertex[0]) / push(ATLAS_W),
-						static_cast<FLOAT>(srcVertex[1]) / push(ATLAS_H)
+						static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width,
+						static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height,
+						static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width,
+						static_cast<FLOAT>(srcVertex[1]) / Layouts::Atlas::Height
 					};
 					_state.get_CommandList(frame)
 						->SetGraphicsRoot32BitConstants(
