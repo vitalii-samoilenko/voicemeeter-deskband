@@ -51,7 +51,7 @@ namespace Voicemeeter {
 								}
 								control.set_AnimationSize(targetVertex);
 								auto animationVertex = control.get_AnimationSize()
-									- control.get_AnimationPoint();
+									- control.get_AnimationPosition();
 								control.set_AnimationContext(context_t{
 									_toolkit.get_Palette()
 										.Interpolate(targetRgba, control.get_FrameColor()),
@@ -84,7 +84,7 @@ namespace Voicemeeter {
 							template<typename TPlug>
 							inline void operator()(TPlug &control) const {
 								auto animationVertex = control.get_AnimationSize()
-									- control.get_AnimationPoint();
+									- control.get_AnimationPosition();
 								num_t remaining2{
 									sum(animationVertex * animationVertex)
 								};

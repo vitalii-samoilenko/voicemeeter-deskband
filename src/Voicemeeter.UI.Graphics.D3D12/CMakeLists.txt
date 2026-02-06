@@ -9,6 +9,11 @@ target_link_libraries(voicemeeter_ui_graphics_d3d12 INTERFACE
 	Windows
 	Voicemeeter::UI::Layouts)
 target_include_directories(voicemeeter_ui_graphics_d3d12 INTERFACE include)
+target_link_options(voicemeeter_ui_graphics_d3d12 INTERFACE
+	d3d12.lib
+	d3dcompiler.lib
+	dcomp.lib
+	dxgi.lib)
 
 add_library(Voicemeeter::UI::Graphics ALIAS voicemeeter_ui_graphics_d3d12)
 

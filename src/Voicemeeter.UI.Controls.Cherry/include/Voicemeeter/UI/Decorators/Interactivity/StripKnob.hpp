@@ -107,7 +107,7 @@ namespace Voicemeeter {
 						ReleaseTick & operator=(ReleaseTick const &) = delete;
 						ReleaseTick & operator=(ReleaseTick &&) = delete;
 
-						inline void operator()() const {
+						inline void operator()() {
 							Unset();
 							that->set_HoldState(false);
 						};

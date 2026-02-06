@@ -58,7 +58,7 @@ namespace Windows {
 			ITick(ITick const &) = delete;
 			ITick(ITick &&) = delete;
 
-			virtual ~ITick() = 0;
+			virtual ~ITick() {};
 
 			ITick & operator=(ITick const &) = delete;
 			ITick & operator=(ITick &&) = delete;

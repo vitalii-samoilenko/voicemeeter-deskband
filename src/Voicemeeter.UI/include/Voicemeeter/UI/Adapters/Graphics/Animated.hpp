@@ -32,14 +32,14 @@ namespace Voicemeeter {
 					Context & operator=(Context &&) = delete;
 
 					inline context_t const & get_AnimationContext() const {
-						return _value;
+						return _slot.value();
 					};
 					inline void set_AnimationContext(context_t const &value) {
-						_value = value;
+						_slot = value;
 					};
 
 				private:
-					::std::optional<context_t> _value;
+					::std::optional<context_t> _slot;
 				};
 
 				template<
@@ -57,7 +57,7 @@ namespace Voicemeeter {
 						Args &&...args)
 						: TBundle{ ::std::forward<Args>(args) ... }
 						, _toolkit{ toolkit }
-						, _point((subSpaces.size() + ...), 0)
+						, _point(0, (subSpaces.size() + ...))
 						, _vertex{ _point }
 						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces) ... }
 						, _frame{ ::std::move(frame) } {
@@ -93,7 +93,7 @@ namespace Voicemeeter {
 							&point = _point,
 							&vertex = _vertex
 						](TSubSpaces &...subSpaces)->void {
-							num_t taveled{
+							num_t traveled{
 								toolkit.get_Stopwatch()
 									.get_Elapsed()
 							};
@@ -106,19 +106,19 @@ namespace Voicemeeter {
 							auto animationVertex2 = animationVertex * animationVertex;
 							num_t distance2{ 0 };
 							num_t rI{ 0 };
-							(((distance2 = sum(animationVertex2[subSpaces]))
+							(((distance2 = sum(vector_t{ animationVertex2[subSpaces] }))
 							,(rI = traveled2 < distance2
 								? sqrt(push(distance2) / traveled2)
 								: One)
 							,(point[subSpaces] = (
-									point[subSpaces] * (rI - One)
-									+ push(vertex[subSpaces])
+									vector_t{ point[subSpaces] } * (rI - One)
+									+ push(vector_t{ vertex[subSpaces] })
 								) / rI))
 							, ...);
 						}, _subSpaces);
 						_frame(*this);
 						TBundle::operator()();
-						if (_point == _vertex) {
+						if (min(_point == _vertex)) {
 							return;
 						}
 						Enqueue();

@@ -82,7 +82,7 @@ namespace Voicemeeter {
 							template<typename TVban>
 							inline void operator()(TVban &control) const {
 								auto animationVertex = control.get_AnimationSize()
-									- control.get_AnimationPoint();
+									- control.get_AnimationPosition();
 								num_t remaining2{
 									sum(animationVertex * animationVertex)
 								};

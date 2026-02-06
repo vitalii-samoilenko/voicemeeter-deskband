@@ -32,6 +32,7 @@ namespace Voicemeeter {
 				inline void FillSDF(
 					vector_t const &dstPoint, vector_t const &dstVertex,
 					vector_t const &srcPoint, vector_t const &srcVertex,
+					vector_t const &color,
 					bool blend = false) const {
 					size_t frame{
 						_state.get_SwapChain()
@@ -51,10 +52,10 @@ namespace Voicemeeter {
 					_state.get_CommandList(frame)
 						->RSSetViewports(1, &viewport);
 					D3D12_RECT scissor{
-						static_cast<LONG>(floor(point[0])),
-						static_cast<LONG>(floor(point[1])),
-						static_cast<LONG>(ceil(point[0] + vertex[0])),
-						static_cast<LONG>(ceil(point[1] + vertex[1]))
+						static_cast<LONG>(floor(dstPoint[0])),
+						static_cast<LONG>(floor(dstPoint[1])),
+						static_cast<LONG>(ceil(dstPoint[0] + dstVertex[0])),
+						static_cast<LONG>(ceil(dstPoint[1] + dstVertex[1]))
 					};
 					_state.get_CommandList(frame)
 						->RSSetScissorRects(1, &scissor);

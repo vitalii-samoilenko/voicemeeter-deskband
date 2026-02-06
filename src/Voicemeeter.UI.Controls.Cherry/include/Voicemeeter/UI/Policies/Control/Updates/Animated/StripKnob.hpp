@@ -82,7 +82,7 @@ namespace Voicemeeter {
 								control.set_AnimationSize(targetVertex);
 								control.set_IndicatorAngle(state.degree);
 								auto animationVertex = control.get_AnimationSize()
-									- control.get_AnimationPoint();
+									- control.get_AnimationPosition();
 								control.set_AnimationContext(context_t{
 									_toolkit.get_Palette()
 										.Interpolate(targetRgba, control.get_FrameColor()),
@@ -115,7 +115,7 @@ namespace Voicemeeter {
 							template<typename TStripKnob>
 							inline void operator()(TStripKnob &control) const {
 								auto animationVertex = control.get_AnimationSize()
-									- control.get_AnimationPoint();
+									- control.get_AnimationPosition();
 								num_t remaining2{
 									sum(animationVertex * animationVertex)
 								};

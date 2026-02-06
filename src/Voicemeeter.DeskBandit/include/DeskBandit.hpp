@@ -242,6 +242,8 @@ private:
 				that = reinterpret_cast<DeskBandit *>(
 					reinterpret_cast<LPCREATESTRUCTW>(lParam)
 						->lpCreateParams);
+				::Windows::SetWindowLongPtrW(hWnd, GWLP_USERDATA,
+					reinterpret_cast<LONG_PTR>(that));
 				that->_hWnd = hWnd;
 				::Windows::SetParent(hWnd, that->_hWndParent);
 				that->_dockTimer = ::std::make_unique<
@@ -292,8 +294,6 @@ private:
 						that->_rc.left, that->_rc.top,
 						that->_rc.right - that->_rc.left, that->_rc.bottom - that->_rc.top,
 						0U);
-					::Windows::SetWindowLongPtrW(hWnd, GWLP_USERDATA,
-						reinterpret_cast<LONG_PTR>(that));
 				}
 				that->_dockTick = ::std::make_unique<
 					DockTick>(that, *that->_dockTimer);
@@ -304,18 +304,18 @@ private:
 			} return OK;
 			case WM_TIMER: {
 				UINT_PTR id{ static_cast<UINT_PTR>(wParam) };
-				::Windows::Timer &target{
+				::Windows::Timer *target{
 					id == that->_renderTimer->get_Id()
-						? *that->_renderTimer
+						? that->_renderTimer.get()
 						: id == that->_remoteTimer->get_Id()
-							? *that->_remoteTimer
+							? that->_remoteTimer.get()
 							: id == that->_dockTimer->get_Id()
-								? *that->_dockTimer
+								? that->_dockTimer.get()
 								: id == that->_compositionTimer->get_Id()
-									? *that->_compositionTimer
+									? that->_compositionTimer.get()
 									: throw ::std::exception{ "Unknown timer" }
 				};
-				target.Elapse();
+				target->Elapse();
 			} return OK;
 			case WM_PAINT: {
 				PAINTSTRUCT ps;

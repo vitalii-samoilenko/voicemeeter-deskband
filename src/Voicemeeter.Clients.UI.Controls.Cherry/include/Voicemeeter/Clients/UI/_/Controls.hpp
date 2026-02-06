@@ -397,7 +397,6 @@ namespace Voicemeeter {
 													::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
 												TToolkit,
 												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
-												slice_t,
 												slice_t>,
 											::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 										>>,
@@ -982,7 +981,7 @@ namespace Voicemeeter {
 						typename TStripKnob>
 					inline void SubscribeStripKnob(TStripKnob &stripKnob, bag<TMixer> &tokens) {
 						using state_t = typename TStripKnob::state_t;
-						state_t state{ stripKnob.get_State() };
+						state_t state{};
 						state.target = Target;
 						stripKnob.set_State(state);
 						tokens.get_Strip<Target>()
@@ -1052,7 +1051,7 @@ namespace Voicemeeter {
 						typename TPlug>
 					inline void SubscribePlug(TPlug &plug, bag<TMixer> &tokens) {
 						using state_t = typename TPlug::state_t;
-						state_t state{ plug.get_State() };
+						state_t state{};
 						state.from = From;
 						state.to = To;
 						plug.set_State(state);

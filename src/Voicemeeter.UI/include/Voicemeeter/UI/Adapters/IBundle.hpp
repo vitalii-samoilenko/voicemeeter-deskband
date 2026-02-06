@@ -9,7 +9,7 @@ namespace Voicemeeter {
 				IBundle(IBundle const &) = delete;
 				IBundle(IBundle &&) = delete;
 
-				virtual ~IBundle() = 0;
+				virtual ~IBundle() {};
 
 				IBundle & operator=(IBundle const &) = delete;
 				IBundle & operator=(IBundle &&) = delete;

@@ -112,7 +112,7 @@ namespace Voicemeeter {
 				IComponent(IComponent const &) = delete;
 				IComponent(IComponent &&) = delete;
 
-				virtual ~IComponent() = 0;
+				virtual ~IComponent() {};
 
 				IComponent & operator=(IComponent const &) = delete;
 				IComponent & operator=(IComponent &&) = delete;

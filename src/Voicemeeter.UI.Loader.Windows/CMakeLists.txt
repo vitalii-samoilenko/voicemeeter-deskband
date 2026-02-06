@@ -31,7 +31,9 @@ add_custom_command(
 	OUTPUT Loader.res
 	DEPENDS Loader.rc
 	VERBATIM)
-target_link_options(voicemeeter_ui_loader_windows INTERFACE Loader.res)
+add_custom_target(run.rc.generator DEPENDS Loader.res)
+add_dependencies(voicemeeter_ui_loader_windows run.rc.generator)
+target_link_options(voicemeeter_ui_loader_windows INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/Loader.res)
 
 add_executable(rc.hpp.generator)
 target_sources(rc.hpp.generator PRIVATE rc.hpp.cpp)

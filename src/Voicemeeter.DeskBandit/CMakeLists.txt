@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(Voicemeeter.DeskBandit VERSION 0.9 LANGUAGES CXX)
 
-add_executable(Voicemeeter.DeskBandit)
+add_executable(Voicemeeter.DeskBandit WIN32)
 target_sources(Voicemeeter.DeskBandit PRIVATE main.cpp)
 target_compile_features(Voicemeeter.DeskBandit PRIVATE cxx_std_17)
 target_link_libraries(Voicemeeter.DeskBandit PRIVATE
@@ -32,22 +32,32 @@ add_custom_command(
 		&& mc -b -c ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
 	OUTPUT
 		Messages.h
-		Messages_English_US.bin
+		Messages.rc
 	DEPENDS Messages.mc
 	VERBATIM)
 target_sources(Voicemeeter.DeskBandit PRIVATE
 	FILE_SET generated TYPE HEADERS
 	BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
 	FILES ${CMAKE_CURRENT_BINARY_DIR}/Messages.h)
+add_custom_command(
+	COMMAND ${BUILD_TOOLS_INSTALLATION_PATH}/VC/Auxiliary/Build/vcvarsall.bat x64
+		&& rc Messages.rc
+	OUTPUT Messages.res
+	DEPENDS Messages.rc
+	VERBATIM)
+add_custom_target(run.rc.Messages.rc DEPENDS Messages.res)
+add_dependencies(Voicemeeter.DeskBandit run.rc.Messages.rc)
+target_link_options(Voicemeeter.DeskBandit PRIVATE Messages.res)
 
 add_custom_command(
 	COMMAND ${BUILD_TOOLS_INSTALLATION_PATH}/VC/Auxiliary/Build/vcvarsall.bat x64
-		&& rc ${CMAKE_CURRENT_SOURCE_DIR}/Resources.rc
-	OUTPUT Resources.res
-	DEPENDS
-		Messages_English_US.bin
-		Resources.rc
+		&& rc /fo ${CMAKE_CURRENT_BINARY_DIR}/Version.res
+			${CMAKE_CURRENT_SOURCE_DIR}/Version.rc
+	OUTPUT Version.res
+	DEPENDS Version.rc
 	VERBATIM)
-target_link_options(Voicemeeter.DeskBandit PRIVATE Resources.res)
+add_custom_target(run.rc.Version.rc DEPENDS Version.res)
+add_dependencies(Voicemeeter.DeskBandit run.rc.Version.rc)
+target_link_options(Voicemeeter.DeskBandit PRIVATE Version.res)
 
 install(TARGETS Voicemeeter.DeskBandit)

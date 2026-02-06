@@ -17,7 +17,7 @@ namespace Voicemeeter {
 
 						template<typename ...Args>
 						inline Plug(Args &&...args)
-							: TStateControl{ ::std::forward<Args>(args) ... } {
+							: TPlug{ ::std::forward<Args>(args) ... } {
 
 						};
 						Plug(Plug const &) = delete;

@@ -22,7 +22,7 @@ namespace Voicemeeter {
 					TUpdate &&update = TUpdate{},
 					Args &&...args)
 					: TControl{ ::std::forward<Args>(args) ... }
-					, _value{}
+					, _slot{}
 					, _update{ ::std::move(update) }
 					, _notify{ ::std::move(notify) } {
 

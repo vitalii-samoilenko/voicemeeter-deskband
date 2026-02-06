@@ -123,7 +123,7 @@ namespace Voicemeeter {
 					using slot_t = typename TToolkit::Queue::slot;
 
 					inline slot_t & get_Slot() {
-						return _slot;
+						return _slot.value();
 					};
 
 				private:
