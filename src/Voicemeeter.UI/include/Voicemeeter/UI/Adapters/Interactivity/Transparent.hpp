@@ -27,9 +27,10 @@ namespace Voicemeeter {
 					Transparent & operator=(Transparent const &) = delete;
 					Transparent & operator=(Transparent &&) = delete;
 
-					inline void Focus(Focus mode) {
+					inline void set_Focus(Focus value) {
 
 					};
+
 					inline bool MouseLDown(vector_t const &point) {
 						return false;
 					};

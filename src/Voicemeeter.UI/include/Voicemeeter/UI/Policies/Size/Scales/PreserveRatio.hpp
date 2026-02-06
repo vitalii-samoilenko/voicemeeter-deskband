@@ -15,11 +15,11 @@ namespace Voicemeeter {
 							typename V,
 							typename ...Vs>
 						inline auto operator()(
-							V const &dst, Vs const &&...srcs) const {
+							V const &dst, Vs &&...srcs) const {
 							num_t nom{ 0 };
 							num_t denom{ 0 };
 							{
-								auto src = srcs + ...;
+								auto src = (srcs + ...);
 								num_t r{ Inf };
 								num_t rI{ -Inf };
 								for (size_t i{ 0 }; i < dst.size(); ++i) {

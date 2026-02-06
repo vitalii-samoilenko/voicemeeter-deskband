@@ -37,13 +37,13 @@ namespace Voicemeeter {
 					TToolkit,
 					TFocusTracker>;
 
-				ControlsBuilder(ControlsBuilder const &) = delete;
-				ControlsBuilder(ControlsBuilder &&) = delete;
+				CompositionBuilder(CompositionBuilder const &) = delete;
+				CompositionBuilder(CompositionBuilder &&) = delete;
 
-				inline ~ControlsBuilder() = default;
+				inline ~CompositionBuilder() = default;
 
-				ControlsBuilder & operator=(ControlsBuilder const &) = delete;
-				ControlsBuilder & operator=(ControlsBuilder &&) = delete;
+				CompositionBuilder & operator=(CompositionBuilder const &) = delete;
+				CompositionBuilder & operator=(CompositionBuilder &&) = delete;
 
 				inline CompositionBuilder & set_Timer(TTimer &value) {
 					_timer = &value;
@@ -71,7 +71,7 @@ namespace Voicemeeter {
 				};
 
 			protected:
-				inline ControlsBuilder()
+				inline CompositionBuilder()
 					: _timer{ nullptr }
 					, _mixer{ nullptr }
 					, _enabled{} {
@@ -96,7 +96,7 @@ namespace Voicemeeter {
 				TTimer *_timer;
 				TMixer *_mixer;
 				::std::bitset<
-					_::Controls::flag::offset
+					_::Controls::flags::offset
 					+ TLayout::InputSize
 					+ TLayout::OutputSize
 				> _enabled;

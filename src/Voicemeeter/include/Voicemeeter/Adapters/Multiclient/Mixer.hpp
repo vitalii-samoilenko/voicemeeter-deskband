@@ -36,8 +36,6 @@ namespace Voicemeeter {
 						return;
 					}
 					TMixer::set_Plug<From, To>(value);
-					size_t i{ TLayout::get_Index(input) };
-					size_t j{ TLayout::get_Index(output) };
 					for (auto &[clientId, clientCallbacks] : _callbacks) {
 						if (clientId == &typeid(TClient)) {
 							continue;

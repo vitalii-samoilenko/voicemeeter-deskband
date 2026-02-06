@@ -37,13 +37,14 @@ namespace Voicemeeter {
 					StripKnob & operator=(StripKnob const &) = delete;
 					StripKnob & operator=(StripKnob &&) = delete;
 
-					inline void Focus(Focus mode) {
-						if (mode != Focus::None) {
+					inline void set_Focus(Focus value) {
+						if (value != Focus::None) {
 							return;
 						}
 						_releaseTick.Unset();
 						TStripKnob::set_HoldState(false);
 					};
+
 					inline bool MouseLDown(vector_t const &point) {
 						_releaseTick.Unset();
 						TStripKnob::set_HoldState(true);

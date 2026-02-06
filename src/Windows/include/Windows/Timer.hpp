@@ -31,7 +31,7 @@ namespace Windows {
 
 		template<typename TTick>
 		inline void Set(num_t duration, TTick &target) {
-			SetTimer(_hWnd, get_Id(),
+			::Windows::SetTimer(_hWnd, get_Id(),
 				static_cast<UINT>(duration), NULL);
 			_target = ::std::make_unique<
 				Tick<TTick>>(
@@ -43,7 +43,7 @@ namespace Windows {
 			if (_targetId != &target) {
 				return;
 			}
-			KillTimer(_hWnd, get_Id());
+			::Windows::KillTimer(_hWnd, get_Id());
 			_target = nullptr;
 			_targetId = nullptr;
 		};

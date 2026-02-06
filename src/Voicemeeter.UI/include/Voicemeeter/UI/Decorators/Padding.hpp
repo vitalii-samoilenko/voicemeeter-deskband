@@ -50,7 +50,7 @@ namespace Voicemeeter {
 				inline void Rescale(vector_t const &vertex) {
 					vector_t point{ get_Position() };
 					::std::tie(_paddingPoint, ::std::ignore, _paddingVertex) = _scale(vertex,
-							_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
+						_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
 					TComponent::Rescale(vertex - _paddingPoint - _paddingVertex);
 					Move(point);
 				};

@@ -235,7 +235,7 @@ namespace Voicemeeter {
 					mixer.get_Strip<Target>()
 						.set_Mute<bag<TMixer>>(0.01F < value);
 				};
-				template<typename TMixer, typename TMixer::Strips Target, size_t ...Channel>
+				template<typename TMixer, typename TMixer::Strips Target, size_t ...Channels>
 				inline void UpdateChannels(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime, level_t level) {
 					long key{ 0L };
 					float value{ 0.F };

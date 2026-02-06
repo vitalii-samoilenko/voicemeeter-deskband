@@ -10,7 +10,7 @@
 namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
-			using Loader = UI::Graphics::Loader;
+			using Loader = ::Voicemeeter::UI::Graphics::Loader;
 
 			class LoaderBuilder {
 			public:

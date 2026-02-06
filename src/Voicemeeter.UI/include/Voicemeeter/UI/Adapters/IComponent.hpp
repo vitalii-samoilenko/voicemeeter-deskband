@@ -62,7 +62,7 @@ namespace Voicemeeter {
 			class IScalable {
 			public:
 				IScalable(IScalable const &) = delete;
-				IScalabel(IScalable &&) = delete;
+				IScalable(IScalable &&) = delete;
 
 				IScalable & operator=(IScalable const &) = delete;
 				IScalable & operator=(IScalable &&) = delete;
@@ -85,7 +85,8 @@ namespace Voicemeeter {
 				IInteractive & operator=(IInteractive const &) = delete;
 				IInteractive & operator=(IInteractive &&) = delete;
 
-				virtual void Focus(Focus mode) = 0;
+				virtual void set_Focus(Focus value) = 0;
+
 				virtual bool MouseLDown(vector_t const &point) = 0;
 				virtual bool MouseLDouble(vector_t const &point) = 0;
 				virtual bool MouseLUp(vector_t const &point) = 0;
@@ -146,6 +147,10 @@ namespace Voicemeeter {
 					return _target.get_BaseSize();
 				};
 
+				virtual void set_Focus(Focus value) override {
+					_target.set_Focus(value);
+				};
+
 				virtual void Redraw(vector_t const &point, vector_t const &vertex) override {
 					_target.Redraw(point, vertex);
 				};
@@ -154,9 +159,6 @@ namespace Voicemeeter {
 				};
 				virtual void Rescale(vector_t const &vertex) override {
 					_target.Rescale(vertex);
-				};
-				virtual void Focus(Focus mode) override {
-					_target.Focus(mode);
 				};
 				virtual bool MouseLDown(vector_t const &point) override {
 					return _target.MouseLDown(point);

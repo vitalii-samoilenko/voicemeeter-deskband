@@ -10,7 +10,7 @@ namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			template<typename TInputTracker>
-			using FocusTracker = UI::Trackers::Focus<TInputTracker>;
+			using FocusTracker = ::Voicemeeter::UI::Trackers::Focus<TInputTracker>;
 
 			template<typename TInputTracker>
 			class FocusTrackerBuilder {

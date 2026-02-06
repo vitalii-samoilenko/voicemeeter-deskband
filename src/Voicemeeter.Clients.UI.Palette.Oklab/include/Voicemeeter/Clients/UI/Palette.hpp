@@ -8,7 +8,7 @@
 namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
-			using Palette = UI::Graphics::Palette;
+			using Palette = ::Voicemeeter::UI::Graphics::Palette;
 
 			class PaletteBuilder {
 			public:
@@ -26,7 +26,7 @@ namespace Voicemeeter {
 					return ::std::make_unique<
 						Palette>();
 				};
-			}
+			};
 		}
 	}
 }

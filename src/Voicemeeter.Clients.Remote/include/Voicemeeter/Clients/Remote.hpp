@@ -36,21 +36,16 @@ namespace Voicemeeter {
 
 			inline Type get_Type() const {
 				return _runtime;
-				return value;
 			};
 
 		private:
 			class RemoteTick final {
 			public:
 				inline RemoteTick(
-					TTimer &timer,
-					TMixer &mixer,
-					T_VBVMR_INTERFACE &client,
-					_::Remote::runtime_t runtime)
-					: _timer{ timer }
-					, _mixer{ mixer }
-					, _client{ client }
-					, _runtime{ runtime } {
+					Remote *that,
+					TTimer &timer)
+					: that{ that }
+					, _timer{ timer } {
 
 				};
 				RemoteTick() = delete;
@@ -154,16 +149,19 @@ namespace Voicemeeter {
 					throw ::std::exception{ "Voicemeeter is not started" };
 				}
 				_::Remote::runtime_t runtime{ 0L };
-				if (client.VBVMR_GetVoicemeeterType(&runtime)) {
+				if (client.VBVMR_GetVoicemeeterType(
+					reinterpret_cast<long *>(&runtime))) {
 					client.VBVMR_Logout();
 					throw ::std::exception{ "Could not get Voicemeeter type" };
 				}
 				if (_runtime < runtime) {
 					runtime = _runtime;
 				}
-				return ::std::make_unique<
-					Remote>(*_timer, *_mixer,
-					::std::move(client), runtime);
+				return ::std::unique_ptr<Remote>(
+					new Remote{
+						*_timer, *_mixer,
+						::std::move(client), runtime
+					});
 			};
 
 		private:

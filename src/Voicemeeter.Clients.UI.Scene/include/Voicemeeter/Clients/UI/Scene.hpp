@@ -14,7 +14,7 @@ namespace Voicemeeter {
 				typename TFocusTracker,
 				typename TCanvas,
 				typename TComposition>
-			using Scene = UI::Scene<
+			using Scene = ::Voicemeeter::UI::Scene<
 				TFocusTracker,
 				TCanvas,
 				TComposition>;
@@ -30,7 +30,7 @@ namespace Voicemeeter {
 				: public TFocusTrackerBuilder
 				, public TLoaderBuilder
 				, public TPaletteBuilder
-				, public TThemeBiulder
+				, public TThemeBuilder
 				, public TCanvasBuilder
 				, public TCompositionBuilder {
 			public:
@@ -39,7 +39,15 @@ namespace Voicemeeter {
 					typename TCanvasBuilder::Canvas,
 					typename TCompositionBuilder::Composition>;
 
-				inline SceneBuilder() = default;
+				inline SceneBuilder()
+					: TFocusTrackerBuilder{}
+					, TLoaderBuilder{}
+					, TPaletteBuilder{}
+					, TThemeBuilder{}
+					, TCanvasBuilder{}
+					, TCompositionBuilder{} {
+
+				};
 				SceneBuilder(SceneBuilder const &) = delete;
 				SceneBuilder(SceneBuilder &&) = delete;
 
@@ -73,7 +81,7 @@ namespace Voicemeeter {
 						TLoaderBuilder::Build(),
 						TPaletteBuilder::Build(),
 						TThemeBuilder::Build());
-					auto composition = TControlsBuilder::Build(
+					auto composition = TCompositionBuilder::Build(
 						*canvas, *focusTracker);
 					return ::std::make_unique<
 						Scene>(

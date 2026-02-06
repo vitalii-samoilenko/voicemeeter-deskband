@@ -7,6 +7,7 @@
 #include <limits>
 #include <memory>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 #include "wheel.hpp"
@@ -127,10 +128,30 @@ namespace Voicemeeter {
 
 					template<
 						typename TTimer,
-						typename TMixer,
 						typename TToolkit,
 						typename TFocusTracker>
 					::std::unique_ptr<
+						Composition<
+							TTimer,
+							Cherry,
+							TToolkit,
+							TFocusTracker>
+					> SubscribeCherry(
+						TTimer &timer,
+						Cherry &mixer,
+						TToolkit &toolkit,
+						TFocusTracker &focusTracker,
+						::std::bitset<
+							flags::offset
+							+ Cherry::InputSize
+							+ Cherry::OutputSize
+						> const &enabled);
+					template<
+						typename TTimer,
+						typename TMixer,
+						typename TToolkit,
+						typename TFocusTracker>
+					inline ::std::unique_ptr<
 						Composition<
 							TTimer,
 							TMixer,
@@ -145,7 +166,16 @@ namespace Voicemeeter {
 							flags::offset
 							+ TMixer::InputSize
 							+ TMixer::OutputSize
-						> const &enabled);
+						> const &enabled) {
+						if constexpr (::std::is_same_v<TMixer, Cherry>) {
+							return SubscribeCherry(
+								timer, mixer,
+								toolkit, focusTracker,
+								enabled);
+						} else {
+							return nullptr;
+						}
+					};
 
 					template<typename TMixer>
 					class bag;
@@ -154,27 +184,6 @@ namespace Voicemeeter {
 					void PickAndUpdateStrip(TMixer &mixer, ::Voicemeeter::UI::States::StripKnob const &state);
 					template<typename TMixer>
 					void PickAndUpdatePlug(TMixer &mixer, ::Voicemeeter::UI::States::Plug const &state);
-					template<
-						typename TMixer,
-						typename TMixer::Strips From>
-					void PickAndUpdatePlug(TMixer &mixer, ::Voicemeeter::UI::States::Plug const &state);
-
-					template<
-						typename TMixer,
-						typename TStripKnob>
-					void PickAndSubscribeStripKnob(size_t target,
-						TStripKnob &stripKnob, bag<TMixer> &tokens);
-					template<
-						typename TMixer,
-						typename TPlug>
-					void PickAndSubscribePlug(size_t from, size_t to,
-						TPlug &plug, bag<TMixer> &tokens);
-					template<
-						typename TMixer,
-						typename TMixer::Strips From,
-						typename TPlug>
-					void PickAndSubscribePlug(size_t to,
-						TPlug &plug, bag<TMixer> &tokens);
 
 					namespace Policies {
 						namespace Control {
@@ -922,7 +931,7 @@ namespace Voicemeeter {
 							From, To>(state.toggle);
 					};
 					template<Cherry::Strips From>
-					inline void PickAndUpdatePlug<Cherry>(Cherry &mixer, ::Voicemeeter::UI::States::Plug const &state) {
+					inline void PickAndUpdateCherryPlug(Cherry &mixer, ::Voicemeeter::UI::States::Plug const &state) {
 						switch (state.to) {
 						case Cherry::Strips::A1:
 							UpdatePlug<Cherry,
@@ -950,12 +959,12 @@ namespace Voicemeeter {
 					inline void PickAndUpdatePlug<Cherry>(Cherry &mixer, ::Voicemeeter::UI::States::Plug const &state) {
 						switch (state.from) {
 						case Cherry::Strips::P:
-							PickAndUpdatePlug<Cherry,
+							PickAndUpdateCherryPlug<
 								Cherry::Strips::P>(
 								mixer, state);
 							break;
 						case Cherry::Strips::V:
-							PickAndUpdatePlug<Cherry,
+							PickAndUpdateCherryPlug<
 								Cherry::Strips::V>(
 								mixer, state);
 							break;
@@ -997,7 +1006,7 @@ namespace Voicemeeter {
 							});
 					};
 					template<typename TStripKnob>
-					inline void PickAndSubscribeStripKnob<Cherry, TStripKnob>(size_t target,
+					inline void PickAndSubscribeCherryStripKnob(size_t target,
 						TStripKnob &stripKnob, bag<Cherry> &tokens) {
 						switch (target) {
 						case Cherry::Strips::P:
@@ -1052,9 +1061,9 @@ namespace Voicemeeter {
 							});
 					};
 					template<
-						typename TMixer::Strips From,
+						Cherry::Strips From,
 						typename TPlug>
-					inline void PickAndSubscribePlug<Cherry, From, TPlug>(size_t to,
+					inline void PickAndSubscribeCherryPlug(size_t to,
 						TPlug &plug, bag<Cherry> &tokens) {
 						switch (to) {
 						case Cherry::Strips::A1:
@@ -1080,16 +1089,16 @@ namespace Voicemeeter {
 						}
 					};
 					template<typename TPlug>
-					inline void PickAndSubscribePlug<Cherry, TPlug>(size_t from, size_t to,
+					inline void PickAndSubscribeCherryPlug(size_t from, size_t to,
 						TPlug &plug, bag<Cherry> &tokens) {
 						switch (from) {
 						case Cherry::Strips::P:
-							PickAndSubscribePlug<Cherry,
+							PickAndSubscribeCherryPlug<
 								Cherry::Strips::P>(to,
 								plug, tokens);
 							break;
 						case Cherry::Strips::V:
-							PickAndSubscribePlug<Cherry,
+							PickAndSubscribeCherryPlug<
 								Cherry::Strips::V>(to,
 								plug, tokens);
 							break;
@@ -1106,13 +1115,8 @@ namespace Voicemeeter {
 							Cherry,
 							TToolkit,
 							TFocusTracker>
-					> Subscribe<
-						TTimer,
-						Cherry,
-						TToolkit,
-						TFocusTracker
-					>(
-						TTimer &time,
+					> SubscribeCherry(
+						TTimer &timer,
 						Cherry &mixer,
 						TToolkit &toolkit,
 						TFocusTracker &focusTracker,
@@ -1741,33 +1745,33 @@ namespace Voicemeeter {
 										static_cast<num_t>(value));
 								});
 						}
-						PickAndSubscribeStripKnob<Cherry>(targets[0],
+						PickAndSubscribeCherryStripKnob(targets[0],
 							*i1, tokens);
-						PickAndSubscribeStripKnob<Cherry>(targets[1],
+						PickAndSubscribeCherryStripKnob(targets[1],
 							*i2, tokens);
-						PickAndSubscribeStripKnob<Cherry>(targets[2],
+						PickAndSubscribeCherryStripKnob(targets[2],
 							*o1, tokens);
-						PickAndSubscribeStripKnob<Cherry>(targets[3],
+						PickAndSubscribeCherryStripKnob(targets[3],
 							*o2, tokens);
-						PickAndSubscribeStripKnob<Cherry>(targets[4],
+						PickAndSubscribeCherryStripKnob(targets[4],
 							*o3, tokens);
-						PickAndSubscribeStripKnob<Cherry>(targets[5],
+						PickAndSubscribeCherryStripKnob(targets[5],
 							*o4, tokens);
-						PickAndSubscribePlug<Cherry>(targets[0], targets[2],
+						PickAndSubscribeCherryPlug(targets[0], targets[2],
 							*i1o1, tokens);
-						PickAndSubscribePlug<Cherry>(targets[0], targets[3],
+						PickAndSubscribeCherryPlug(targets[0], targets[3],
 							*i1o2, tokens);
-						PickAndSubscribePlug<Cherry>(targets[0], targets[4],
+						PickAndSubscribeCherryPlug(targets[0], targets[4],
 							*i1o3, tokens);
-						PickAndSubscribePlug<Cherry>(targets[0], targets[5],
+						PickAndSubscribeCherryPlug(targets[0], targets[5],
 							*i1o4, tokens);
-						PickAndSubscribePlug<Cherry>(targets[1], targets[2],
+						PickAndSubscribeCherryPlug(targets[1], targets[2],
 							*i2o1, tokens);
-						PickAndSubscribePlug<Cherry>(targets[1], targets[3],
+						PickAndSubscribeCherryPlug(targets[1], targets[3],
 							*i2o2, tokens);
-						PickAndSubscribePlug<Cherry>(targets[1], targets[4],
+						PickAndSubscribeCherryPlug(targets[1], targets[4],
 							*i2o3, tokens);
-						PickAndSubscribePlug<Cherry>(targets[1], targets[5],
+						PickAndSubscribeCherryPlug(targets[1], targets[5],
 							*i2o4, tokens);
 						auto i1o1o2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
@@ -1797,7 +1801,6 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o1),
 							::std::move(i1o2));
-						};
 						auto i1o3o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
 							::Voicemeeter::UI::Decorators::Padding<
@@ -1869,7 +1872,6 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2o1),
 							::std::move(i2o2));
-						};
 						auto i2o3o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
 							::Voicemeeter::UI::Decorators::Padding<

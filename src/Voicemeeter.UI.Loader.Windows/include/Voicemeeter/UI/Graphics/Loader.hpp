@@ -58,8 +58,8 @@ namespace Voicemeeter {
 					constexpr int IdTypeLoader{ 256 };
 					HRSRC hRsrc{
 						::Windows::FindResourceW(_hModule,
-							MAKEINTRESOURCE(id),
-							MAKEINTRESOURCE(IdTypeLoader))
+							MAKEINTRESOURCEW(id),
+							MAKEINTRESOURCEW(IdTypeLoader))
 					};
 					return resource{
 						::Windows::LockResource(

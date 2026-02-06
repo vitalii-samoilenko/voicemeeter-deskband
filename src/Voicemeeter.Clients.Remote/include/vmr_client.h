@@ -127,12 +127,13 @@ BOOL __cdecl RegistryGetVoicemeeterFolder(char * szDir)
 /*******************************************************************************/
 
 static HMODULE G_H_Module=NULL;
-static T_VBVMR_INTERFACE iVMR;
+//static T_VBVMR_INTERFACE iVMR;
 
 //if we directly link source code (for development only)
 #ifdef VBUSE_LOCALLIB
 
-	long InitializeDLLInterfaces(void)
+//	long InitializeDLLInterfaces(void)
+	long InitializeDLLInterfaces(T_VBVMR_INTERFACE &iVMR)
 	{
 		iVMR.VBVMR_Login					=VBVMR_Login;
 		iVMR.VBVMR_Logout					=VBVMR_Logout;
@@ -177,7 +178,8 @@ static T_VBVMR_INTERFACE iVMR;
 //Dynamic link to DLL in 'C' (regular use)
 #else
 
-	long InitializeDLLInterfaces(void)
+//	long InitializeDLLInterfaces(void)
+	long InitializeDLLInterfaces(T_VBVMR_INTERFACE &iVMR)
 	{
 		char szDllName[1024];
 		memset(&iVMR,0,sizeof(T_VBVMR_INTERFACE));

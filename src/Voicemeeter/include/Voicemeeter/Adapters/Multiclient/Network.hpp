@@ -74,7 +74,7 @@ namespace Voicemeeter {
 
 				template<typename TClient>
 				token Subscribe() {
-					return token{ &typeid(TClient), *this };
+					return token{ &typeid(TClient), this };
 				};
 
 			private:

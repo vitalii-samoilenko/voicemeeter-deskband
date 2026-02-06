@@ -44,6 +44,10 @@ namespace Voicemeeter {
 				return _composition->get_BaseSize();
 			};
 
+			inline void set_Focus(Focus value) {
+				_focusTracker->set_Focus(value);
+			};
+
 			inline void Redraw(vector_t const &point, vector_t const &vertex) {
 				_canvas->Redraw(point, vertex);
 			};
@@ -53,16 +57,13 @@ namespace Voicemeeter {
 			};
 			inline void Rescale(vector_t const &vertex) {
 				_composition->Rescale(vertex);
-				_canvas->Resize(_conposition->get_Size());
+				_canvas->Resize(_composition->get_Size());
 			};
 			inline void Show() {
 				_canvas->Show();
 			};
 			inline void Hide() {
 				_canvas->Hide();
-			};
-			inline void Focus(Focus mode) {
-				_focusTracker->Focus(mode);
 			};
 			inline bool MouseLDown(vector_t const &point) {
 				return _focusTracker->MouseLDown(point)

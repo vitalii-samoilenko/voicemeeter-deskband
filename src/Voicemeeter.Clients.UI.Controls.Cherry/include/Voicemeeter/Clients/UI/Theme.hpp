@@ -10,7 +10,7 @@
 namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
-			using Theme = UI::Graphics::Theme;
+			using Theme = ::Voicemeeter::UI::Graphics::Theme;
 
 			class ThemeBuilder {
 			public:

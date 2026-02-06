@@ -8,6 +8,7 @@
 #include "wheel.hpp"
 
 #include "Windows/API.hpp"
+#include <windowsx.h>
 #include "Windows/Timer.hpp"
 
 #include "Voicemeeter/Cherry.hpp"
@@ -66,7 +67,7 @@ public:
 			wndClass.lpszClassName = L"Voicemeeter";
 			wndClass.style = CS_DBLCLKS;
 			wndClass.lpfnWndProc = WndProcW;
-			wndClass.hCursor = ::Windows::LoadCursorW(NULL, IDC_ARROW);
+			wndClass.hCursor = ::Windows::LoadCursorW(NULL, MAKEINTRESOURCEW(32512));
 			::Windows::RegisterClassW(&wndClass);
 			::Windows::CreateWindowExW(
 				WS_EX_NOREDIRECTIONBITMAP,
@@ -136,7 +137,7 @@ private:
 	public:
 		inline DockTick(
 			DeskBandit *that,
-			::Windows::Timer *timer)
+			::Windows::Timer &timer)
 			: that{ that }
 			, _timer{ timer } {
 
@@ -152,7 +153,7 @@ private:
 		DockTick & operator=(DockTick const &) = delete;
 		DockTick & operator=(DockTick &&) = delete;
 
-		inline void operator()() const {
+		inline void operator()() {
 			switch (that->_dock) {
 			case Dock::Right: {
 				RECT tray{};
@@ -210,7 +211,7 @@ private:
 		LPARAM lParam
 	) {
 		constexpr LRESULT OK{ 0 };
-		auto shutdown = [uMsg](long long errCode)->LRESULT {
+		auto shutdown = [OK, uMsg](long long errCode)->LRESULT {
 			::Windows::ErrorMessageBox(NULL, CPT_ERROR, errCode);
 			if (uMsg == WM_NCCREATE) {
 				return FALSE;
@@ -248,7 +249,7 @@ private:
 				that->_compositionTimer = ::std::make_unique<
 					::Windows::Timer>(hWnd);
 				that->_renderTimer = ::std::make_unique<
-					::Windows::Timer(hWnd);
+					::Windows::Timer>(hWnd);
 				that->_remoteTimer = ::std::make_unique<
 					::Windows::Timer>(hWnd);
 				that->_mixer = ::std::make_unique<
@@ -281,8 +282,8 @@ private:
 					}
 					that->_scene = sceneBuilder.Build();
 					that->_scene->Rescale(vector_t{
-						push(static_cast<num_t>(that->m_rc.right - that->m_rc.left)),
-						push(static_cast<num_t>(that->m_rc.bottom - that->m_rc.top))
+						push(static_cast<num_t>(that->_rc.right - that->_rc.left)),
+						push(static_cast<num_t>(that->_rc.bottom - that->_rc.top))
 					});
 					vector_t const &vertex{ that->_scene->get_Size() };
 					that->_rc.right = that->_rc.left + static_cast<LONG>(ceil(vertex[0]));
@@ -295,7 +296,7 @@ private:
 						reinterpret_cast<LONG_PTR>(that));
 				}
 				that->_dockTick = ::std::make_unique<
-					DockTick>(*that->_dockTimer);
+					DockTick>(that, *that->_dockTimer);
 				that->_dockTick->Set();
 			} break;
 			case WM_DESTROY: {

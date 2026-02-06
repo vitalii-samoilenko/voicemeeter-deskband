@@ -33,9 +33,10 @@ namespace Voicemeeter {
 					Grab & operator=(Grab const &) = delete;
 					Grab & operator=(Grab &&) = delete;
 
-					inline void Focus(Focus mode) {
+					inline void set_Focus(Focus value) {
 
 					};
+
 					inline bool MouseLDown(vector_t const &point) {
 						bool base{ TComponent::MouseLDown(point) };
 						if (base) {

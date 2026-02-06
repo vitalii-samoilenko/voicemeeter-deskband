@@ -50,6 +50,11 @@ namespace Voicemeeter {
 					return _baseVertex;
 				};
 
+				inline void set_Focus(Focus value) {
+					::std::get<0>(_components)
+						->set_Focus(value);
+				};
+
 				inline void Redraw(vector_t const &point, vector_t const &vertex) {
 					::std::apply([
 						&point,
@@ -81,10 +86,6 @@ namespace Voicemeeter {
 						,(point += direction(components->get_Size())))
 						, ...);
 					}, _components);
-				};
-				inline void Focus(Focus mode) {
-					::std::get<0>(_components)
-						->Focus(mode);
 				};
 				inline bool MouseLDown(vector_t const &point) {
 					return ::std::apply([
