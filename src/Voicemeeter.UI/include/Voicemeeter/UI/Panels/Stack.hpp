@@ -69,7 +69,7 @@ namespace Voicemeeter {
 					::std::apply([
 						&direction = _direction,
 						vertex = _vertex
-					](::std::unique_ptr<TComponents> &...components)->void {
+					](::std::unique_ptr<TComponents> &...components) mutable ->void {
 						((components->Rescale(vertex)
 						,(vertex -= direction(components->get_Size())))
 						, ...);
@@ -80,8 +80,8 @@ namespace Voicemeeter {
 				inline void Move(vector_t const &point) {
 					::std::apply([
 						&direction = _direction,
-						point
-					](::std::unique_ptr<TComponents> &...components)->void {
+						point = point
+					](::std::unique_ptr<TComponents> &...components) mutable ->void {
 						((components->Move(point)
 						,(point += direction(components->get_Size())))
 						, ...);

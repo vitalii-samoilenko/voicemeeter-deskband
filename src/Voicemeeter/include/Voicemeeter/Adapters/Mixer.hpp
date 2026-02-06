@@ -31,7 +31,7 @@ namespace Voicemeeter {
 			};
 			template<typename TLayout::Strips From, typename TLayout::Strips To>
 			inline void set_Plug(bool value) {
-				return _plugs[
+				_plugs[
 					From * TLayout::OutputSize
 					+ To - TLayout::InputSize
 				] = value;

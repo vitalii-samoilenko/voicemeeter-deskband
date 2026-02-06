@@ -40,7 +40,7 @@ namespace Voicemeeter {
 					// TODO: test
 					UINT width{ 0 };
 					UINT height{ 0 };
-					::Windows::ThrowIfFailed(_state;get_SwapChain()
+					::Windows::ThrowIfFailed(_state.get_SwapChain()
 						->GetSourceSize(
 							&width, &height
 					), "Could not get swap chain size");
@@ -51,7 +51,7 @@ namespace Voicemeeter {
 				};
 				inline void set_Size(vector_t const &vertex) {
 					// TODO: use source size
-					for (size_t frame{ 0 }; frame < _state.get_Frames(); ++frame) {
+					for (size_t frame{ 0 }; frame < TState::FrameCount; ++frame) {
 						if (_state.get_Fence(frame)
 							->GetCompletedValue() < _state.get_Count(frame)) {
 							::Windows::ThrowIfFailed(_state.get_Fence(frame)
@@ -73,7 +73,7 @@ namespace Voicemeeter {
 							0,
 							nullptr, nullptr
 					), "Swap chain resize failed");
-					for (size_t frame{ 0 }; frame < _state.get_Frames(); ++frame) {
+					for (size_t frame{ 0 }; frame < TState::FrameCount; ++frame) {
 						::Windows::ThrowIfFailed(_state.get_SwapChain()
 							->GetBuffer(
 								static_cast<UINT>(frame),
@@ -185,7 +185,7 @@ namespace Voicemeeter {
 							nullptr,
 							nullptr
 						};
-						::Windows::ThrowIfFailed(_test.get_pSwapChain()
+						::Windows::ThrowIfFailed(_state.get_SwapChain()
 							->Present1(
 								0U, 0U,
 								&params

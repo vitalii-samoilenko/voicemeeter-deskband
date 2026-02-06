@@ -54,7 +54,7 @@ namespace Voicemeeter {
 					bool failed{ true };
 					auto guardEvents = ::estd::make_guard([
 							&failed,
-							&hEvents = _hEvenets,
+							&hEvents = _hEvents,
 							&hEvent = _hEvent
 						]()->void {
 							if (!failed) {
@@ -75,7 +75,7 @@ namespace Voicemeeter {
 						::Windows::ThrowIfFailed(::D3D12GetDebugInterface(
 							IID_PPV_ARGS(&d3dDebug)
 						), "Could not get debug interface");
-						pD3dDebug->EnableDebugLayer();
+						d3dDebug->EnableDebugLayer();
 						dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 						::Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory{ nullptr };
@@ -126,7 +126,7 @@ namespace Voicemeeter {
 							_commandQueue.Get(),
 							&swapChainDesc,
 							nullptr,
-							&pSwapChain
+							&swapChain
 						), "DXGI swap chain creation failed");
 						::Windows::ThrowIfFailed(swapChain.As(
 							&_swapChain
@@ -270,9 +270,9 @@ namespace Voicemeeter {
 							0, &range,
 							reinterpret_cast<void **>(&dst)
 						), "Upload buffer map failed");
-						for (UINT row{ 0 }; row < ATLAS_H; ++row) {
+						for (UINT row{ 0 }; row < pop(Layouts::Atlas::Height); ++row) {
 							memcpy(dst + dstRowPitch * row,
-								reinterpret_cast<BYTE *>(atlas.data) + srcRowPitch * row,
+								reinterpret_cast<BYTE *>(atlas.data()) + srcRowPitch * row,
 								rowSize);
 						}
 						textureUploadBuffer->Unmap(0, nullptr);
@@ -348,7 +348,7 @@ namespace Voicemeeter {
 							IID_PPV_ARGS(&_hRenderTargetHeap)
 						), "RTV heap descriptor creation failed");
 						UINT hRenderTargetSize{
-							_pD3dDevice->GetDescriptorHandleIncrementSize(
+							_d3dDevice->GetDescriptorHandleIncrementSize(
 								D3D12_DESCRIPTOR_HEAP_TYPE_RTV)
 						};
 						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
@@ -378,7 +378,7 @@ namespace Voicemeeter {
 								D3D12_FENCE_FLAG_NONE,
 								IID_PPV_ARGS(&_fences[frame])
 							), "Fence creation failed");
-							_hEvents[frame] = ::Windows::wCreateEventW(NULL, FALSE, FALSE, NULL)
+							_hEvents[frame] = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
 						}
 					}
 					{
@@ -439,7 +439,7 @@ namespace Voicemeeter {
 						compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 						::Windows::ThrowIfFailed(::D3DCompile(
-							vertexCode.data, vertexCode.size,
+							vertexCode.data(), vertexCode.size(),
 							NULL,
 							nullptr, nullptr,
 							"Main", "vs_5_0",
@@ -447,7 +447,7 @@ namespace Voicemeeter {
 							&vertexShader, nullptr
 						), "Vertex shader compilation failed");
 						::Windows::ThrowIfFailed(::D3DCompile(
-							pixelCode.data, pixelCode.size,
+							pixelCode.data(), pixelCode.size(),
 							NULL,
 							nullptr, nullptr,
 							"Main", "ps_5_0",

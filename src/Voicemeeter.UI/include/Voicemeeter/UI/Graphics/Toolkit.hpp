@@ -79,6 +79,9 @@ namespace Voicemeeter {
 				inline Frame & get_Frame() {
 					return *_frame;
 				};
+				inline Frame const & get_Frame() const {
+					return *_frame;
+				};
 
 			private:
 				::std::unique_ptr<Loader> _loader;

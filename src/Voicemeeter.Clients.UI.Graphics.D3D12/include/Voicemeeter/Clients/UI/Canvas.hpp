@@ -77,18 +77,18 @@ namespace Voicemeeter {
 					if (!_timer) {
 						throw ::std::exception{ "Timer is not set" };
 					}
-					auto state = :std::make_unique<
-						Graphics::State>(_hWnd, *loader);
+					auto state = ::std::make_unique<
+						Canvas::State>(_hWnd, *loader);
 					auto atlas = ::std::make_unique<
-						Graphics::Atlas>(*state);
+						Canvas::Atlas>(*state);
 					auto queue = ::std::make_unique<
-						Graphics::Queue>();
+						Canvas::Queue>();
 					auto stopwatch = ::std::make_unique<
-						Graphics::Stopwatch>();
+						Canvas::Stopwatch>();
 					auto frame = ::std::make_unique<
-						Graphics::Frame>(*state, *queue, *stopwatch);
+						Canvas::Frame>(*state, *queue, *stopwatch);
 					return ::std::make_unique<
-						Graphics>(*_timer,
+						Canvas>(*_timer,
 						::std::move(loader),
 						::std::move(state),
 						::std::move(atlas),

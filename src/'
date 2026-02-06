@@ -235,7 +235,7 @@ namespace Voicemeeter {
 
 									inline void operator()(state_t const &state) const {
 										PickAndUpdateStrip<TMixer>(
-											_mixer, state);
+											mixer, state);
 									};
 
 								private:
@@ -262,7 +262,7 @@ namespace Voicemeeter {
 
 									inline void operator()(state_t const &state) const {
 										PickAndUpdatePlug<TMixer>(
-											_mixer, state);
+											mixer, state);
 									};
 
 								private:
@@ -609,7 +609,7 @@ namespace Voicemeeter {
 								&callback = _callback
 							](TTokens &...tokens)->void {
 								size_t temp{ 0 };
-								(tokens.on_level([
+								(tokens.on_Level([
 									&levels = levels,
 									&callback = callback,
 									i = temp++
@@ -1057,7 +1057,7 @@ namespace Voicemeeter {
 						state.to = To;
 						plug.set_State(state);
 						tokens.get_Mixer()
-							.on_plug<From, To>([
+							.on_Plug<From, To>([
 								&plug
 							](bool value)->void {
 								state_t state{ plug.get_State() };

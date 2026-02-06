@@ -18,7 +18,7 @@ namespace Voicemeeter {
 				Stopwatch(Stopwatch const &) = delete;
 				Stopwatch(Stopwatch &&) = delete;
 
-				inline ~Stopwatch() = delete;
+				inline ~Stopwatch() = default;
 
 				Stopwatch & operator=(Stopwatch const &) = delete;
 				Stopwatch & operator=(Stopwatch &&) = delete;

@@ -64,19 +64,19 @@ namespace Voicemeeter {
 					};
 
 					inline void set_FramePosition(vector_t const &point) {
-						OnSet(_framePoint, point, flags::framePoint);
+						OnSetV(_framePoint, point, flags::framePoint);
 					};
 					inline void set_FrameSize(vector_t const &vertex) {
-						OnSet(_frameVertex, vertex, flags::frameVertex);
+						OnSetV(_frameVertex, vertex, flags::frameVertex);
 					};
 					inline void set_FrameColor(vector_t const &rgba) {
-						OnSet(_frameRgba, rgba, flags::frameRgba);
+						OnSetV(_frameRgba, rgba, flags::frameRgba);
 					};
 					inline void set_IndicatorAngle(num_t degree) {
 						OnSet(_indicatorDegree, degree, flags::indicatorDegree);
 					};
 					inline void set_IndicatorColor(vector_t const &rgba) {
-						OnSet(_indicatorRgba, rgba, flags::indicatorRgba);
+						OnSetV(_indicatorRgba, rgba, flags::indicatorRgba);
 					};
 					inline void set_Invalid() {
 						OnInvalidate(flags::renderTarget);
@@ -159,11 +159,19 @@ namespace Voicemeeter {
 						dst = src;
 						OnInvalidate(property);
 					};
+					template<typename V>
+					inline void OnSetV(V &dst, V const &src, flags property) {
+						if (min(src == dst)) {
+							return;
+						}
+						dst = src;
+						OnInvalidate(property);
+					};
 					inline void OnInvalidate(flags property) {
 						if (_changes.none()) {
 							_slot = _toolkit.get_Queue()
 								.reserve();
-							_slot.overwrite(*this);
+							_slot->overwrite(*this);
 						}
 						_changes.set(property);
 					};

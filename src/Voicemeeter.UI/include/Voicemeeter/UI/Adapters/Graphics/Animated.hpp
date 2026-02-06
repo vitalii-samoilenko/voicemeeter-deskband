@@ -80,7 +80,7 @@ namespace Voicemeeter {
 					};
 
 					inline void set_AnimationSize(vector_t const &vertex) {
-						if (_vertex == vertex) {
+						if (min(_vertex == vertex)) {
 							return;
 						}
 						_vertex = vertex;

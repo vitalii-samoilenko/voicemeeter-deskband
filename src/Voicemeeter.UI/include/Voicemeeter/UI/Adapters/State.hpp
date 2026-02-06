@@ -37,16 +37,16 @@ namespace Voicemeeter {
 				State & operator=(State &&) = delete;
 
 				inline state_t const & get_State() const {
-					return _value;
+					return _slot.value();
 				};
 				inline void set_State(state_t const &value) {
-					_value = value;
-					_notify(_value);
-					_update(*this, _value);
+					_slot = value;
+					_notify(_slot.value());
+					_update(*this, _slot.value());
 				};
 
 			private:
-				::std::optional<state_t> _value;
+				::std::optional<state_t> _slot;
 				TNotify _notify;
 				TUpdate _update;
 			};

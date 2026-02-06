@@ -3,6 +3,8 @@
 
 #include "wheel.hpp"
 
+#include "Voicemeeter/UI/States/Plug.hpp"
+
 namespace Voicemeeter {
 	namespace UI {
 		namespace Policies {
@@ -19,7 +21,7 @@ namespace Voicemeeter {
 						class Plug {
 						public:
 							using context_t = PlugContext<TToolkit>;
-							using state_t = num_t;
+							using state_t = States::Plug;
 
 							inline explicit Plug(TToolkit &toolkit)
 								: _toolkit{ toolkit } {
@@ -35,14 +37,14 @@ namespace Voicemeeter {
 							Plug & operator=(Plug &&) = delete;
 
 							template<typename TPlug>
-							inline void operator()(TPlug &control, state_t state) const {
+							inline void operator()(TPlug &control, state_t const &state) const {
 								constexpr num_t AnimationLength{ 200 };
 								vector_t targetVertex{ 0 };
 								vector_t targetRgba{
 									_toolkit.get_Theme()
 										.Inactive
 								};
-								if (state) {
+								if (state.toggle) {
 									targetVertex[0] = AnimationLength;
 									targetRgba = _toolkit.get_Theme()
 										.Active;

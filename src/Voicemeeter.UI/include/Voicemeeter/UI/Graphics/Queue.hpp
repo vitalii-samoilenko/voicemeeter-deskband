@@ -37,7 +37,7 @@ namespace Voicemeeter {
 					inline ~slot() = default;
 
 					slot & operator=(slot const &) = delete;
-					slot & operator=(slot &&) = delete;
+					inline slot & operator=(slot &&) = default;
 
 					template<typename TBundle>
 					inline void overwrite(TBundle &target) {

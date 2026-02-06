@@ -28,7 +28,7 @@ namespace Voicemeeter {
 
 						template<typename TVban>
 						inline void operator()(TVban &control, state_t state) const {
-							glyph.set_FrameColor(
+							control.set_FrameColor(
 								state
 									? _toolkit.get_Theme()
 										.Information
