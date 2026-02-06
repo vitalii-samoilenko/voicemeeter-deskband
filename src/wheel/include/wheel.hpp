@@ -1,7 +1,6 @@
 #ifndef WHEEL_HPP
 #define WHEEL_HPP
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <valarray>
 

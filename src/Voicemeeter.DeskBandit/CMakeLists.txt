@@ -18,9 +18,8 @@ target_link_libraries(Voicemeeter.DeskBandit PRIVATE
 target_include_directories(Voicemeeter.DeskBandit PRIVATE include)
 
 if(MSVC)
-	if(MSVC_TOOLSET_VERSION EQUAL 143)
-		set(BUILD_TOOLS_INSTALLATION_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools")
-	endif()
+	if(MSVC_TOOLSET_VERSION EQUAL 145)
+		set(BUILD_TOOLS_INSTALLATION_PATH "C:/Program Files/Microsoft Visual Studio/18/Community")
 	else()
 		message(FATAL_ERROR "Toolset is not supported")
 	endif()
@@ -33,7 +32,7 @@ add_custom_command(
 		&& mc -b -c ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
 	OUTPUT
 		Messages.h
-		Messages.bin
+		Messages_English_US.bin
 	DEPENDS Messages.mc
 	VERBATIM)
 target_sources(Voicemeeter.DeskBandit PRIVATE
@@ -46,7 +45,7 @@ add_custom_command(
 		&& rc ${CMAKE_CURRENT_SOURCE_DIR}/Resources.rc
 	OUTPUT Resources.res
 	DEPENDS
-		Messages.bin
+		Messages_English_US.bin
 		Resources.rc
 	VERBATIM)
 target_link_options(Voicemeeter.DeskBandit PRIVATE Resources.res)

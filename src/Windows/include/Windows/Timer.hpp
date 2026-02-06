@@ -6,7 +6,7 @@
 
 #include "wheel.hpp"
 
-#include "Windows/API.h"
+#include "Windows/API.hpp"
 
 namespace Windows {
 	class Timer final {

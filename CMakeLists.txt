@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(Voicemeeter VERSION 0.9)
 
-option(LOADER "Choose resource manager: Windows" Windows)
-option(PALETTE "Choose color blender: Oklab" Oklab)
-option(ATLAS "Choose texture set: Cherry" Cherry)
-option(GRAPHICS "Choose rendering engine: D3D12" D3D12)
-option(CONTROLS "Choose widget set: Cherry" Cherry)
+
+set(LOADER Windows)# Choose resource manager: Windows
+set(PALETTE Oklab)# Choose color blender: Oklab
+set(ATLAS Cherry)# Choose texture set: Cherry
+set(GRAPHICS D3D12)# Choose rendering engine: D3D12
+set(CONTROLS Cherry)# Choose widget set: Cherry
 
 if(MSVC)
   add_compile_options(/bigobj)
@@ -21,8 +22,11 @@ elseif(LINUX)
 endif()
 
 add_subdirectory(src/estd)
-add_subdirectory(Voicemeeter)
-add_subdirectory(Voicemeeter.Clients.Remote)
+add_subdirectory(src/Voicemeeter)
+add_subdirectory(src/Voicemeeter.Clients.Remote)
+if(ATLAS STREQUAL Cherry)
+	add_subdirectory(src/Voicemeeter.UI.Atlas.Cherry)
+endif()
 if(CONTROLS STREQUAL Cherry)
 	add_subdirectory(src/Voicemeeter.Clients.UI.Controls.Cherry)
 	add_subdirectory(src/Voicemeeter.UI.Controls.Cherry)
@@ -40,10 +44,8 @@ if(PALETTE STREQUAL Oklab)
 	add_subdirectory(src/Voicemeeter.UI.Palette.Oklab)
 endif()
 add_subdirectory(src/Voicemeeter.Clients.UI.Scene)
+add_subdirectory(src/Voicemeeter.DeskBandit)
 add_subdirectory(src/Voicemeeter.UI)
-if(ATLAS STREQUAL Cherry)
-	add_subdirectory(src/Voicemeeter.UI.Atlas.Cherry)
-endif()
 add_subdirectory(src/Voicemeeter.UI.Layouts)
-add_subdirectory(wheel)
-add_subdirectory(Windows)
+add_subdirectory(src/wheel)
+add_subdirectory(src/Windows)

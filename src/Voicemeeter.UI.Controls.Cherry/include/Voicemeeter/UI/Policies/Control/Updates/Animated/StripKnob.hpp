@@ -94,7 +94,7 @@ namespace Voicemeeter {
 							TToolkit &_toolkit;
 						};
 
-						template<typename TToolkit>>
+						template<typename TToolkit>
 						class StripKnobFrame {
 						public:
 							using context_t = StripKnobContext<TToolkit>;

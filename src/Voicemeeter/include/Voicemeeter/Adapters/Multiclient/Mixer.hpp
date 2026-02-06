@@ -58,7 +58,7 @@ namespace Voicemeeter {
 				class token : public TToken {
 				public:
 					token() = delete;
-					token(token const $) = delete;
+					token(token const &) = delete;
 					inline token(token &&) = default;
 
 					inline ~token() {
@@ -75,7 +75,7 @@ namespace Voicemeeter {
 
 					template<typename TLayout::Strips From, typename TLayout::Strips To,
 						typename Fn>
-					inline on_plug(Fn &&callback) {
+					inline void on_plug(Fn &&callback) {
 						TToken::that<Mixer>()
 							-> _callbacks[TToken::clientId()][
 								From * TLayout::OutputSize

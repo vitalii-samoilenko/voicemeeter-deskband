@@ -27,8 +27,8 @@ namespace Voicemeeter {
 				return static_cast<num_t>(
 					::std::chrono::duration_cast<
 						::std::chrono::milliseconds>(
-						_current - previous)
-							::count);
+						_current - _previous)
+							.count());
 			};
 
 			inline void Lap() {

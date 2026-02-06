@@ -12,12 +12,17 @@ namespace Voicemeeter {
 	namespace Clients {
 		namespace _ {
 			namespace Remote {
+				enum runtime_t : long {
+					Voicemeeter = 1L,
+					Banana = 2L,
+					Potato = 3L
+				};
 				template<typename TMixer>
 				class bag;
 				template<typename TMixer>
-				bag<TMixer> Subscribe(TMixer &mixer, T_VBVMR_INTERFACE &remote);
+				bag<TMixer> Subscribe(TMixer &mixer, T_VBVMR_INTERFACE &remote, runtime_t runtime);
 				template<typename TMixer>
-				void Update(TMixer &mixer, T_VBVMR_INTERFACE &remote);
+				void Update(TMixer &mixer, T_VBVMR_INTERFACE &remote, runtime_t runtime);
 
 				template<>
 				class bag<Cherry> final {
@@ -32,7 +37,7 @@ namespace Voicemeeter {
 					bag & operator=(bag &&) = delete;
 
 				private:
-					friend bag<Cherry> Subscribe<Cherry>(Cherry &, T_VBVMR_INTERFACE &);
+					friend bag<Cherry> Subscribe<Cherry>(Cherry &, T_VBVMR_INTERFACE &, runtime_t);
 
 					Cherry::token _tokenM;
 					Cherry::PIStrip::token _tokenP;
@@ -97,11 +102,6 @@ namespace Voicemeeter {
 					24L, 40L,
 					32L, 48L
 				};
-				enum runtime_t : long {
-					Voicemeeter = 1L,
-					Banana = 2L,
-					Potato = 3L
-				};
 				enum prop_t : size_t {
 					Gain = 0,
 					Mute = 1
@@ -113,77 +113,74 @@ namespace Voicemeeter {
 					Output = 3L
 				};
 
-				template<typename TMixer, typename TMixer::Strips From, typename TMixer::Strips To>
-				char const * ToPlugKey(runtime_t runtime);
-				template<typename TMixer, typename TMixer::Strips Target, prop_t Property>
-				char const * ToStripKey(runtime_t runtime);
-				template<typename TMixer, typename TMixer::Strips Target, size_t Channel>
-				long ToChannelKey(runtime_t runtime);
+				template<typename TMixer>
+				char const * ToPlugKey(runtime_t runtime,
+					typename TMixer::Strips from, typename TMixer::Strips to);
+				template<typename TMixer>
+				char const * ToStripKey(runtime_t runtime,
+					typename TMixer::Strips target, prop_t property);
+				template<typename TMixer>
+				long ToChannelKey(runtime_t runtime,
+					typename TMixer::Strips target, size_t channel);
 
-				template<Cherry::Strips To>
-				inline char const * ToPlugKey<Cherry, Cherry::Strips::P, To>(runtime_t runtime) {
-					return g_keys[1 + To - Cherry::Strips::A1];
+				template<>
+				inline char const * ToPlugKey<Cherry>(runtime_t runtime,
+					Cherry::Strips from, Cherry::Strips to) {
+					switch (from) {
+					case Cherry::Strips::P:
+						return g_keys[1 + to - Cherry::Strips::A1];
+					case Cherry::Strips::V:
+						return g_keys[2 + runtime - Voicemeeter + to - Cherry::Strips::A1];
+					default:
+						return nullptr;
+					}
 				};
-				template<Cherry::Strips To>
-				inline char const * ToPlugKey<Cherry, Cherry::Strips::V, To>(runtime_t runtime) {
-					return g_keys[2 + runtime - Voicemeeter + To - Cherry::Strips::A1];
+				template<>
+				inline char const * ToStripKey<Cherry>(runtime_t runtime,
+					Cherry::Strips target, prop_t property) {
+					switch (target) {
+					case Cherry::Strips::P:
+						return g_keys[17 + property];
+					case Cherry::Strips::V:
+						return g_keys[19 + runtime - Voicemeeter + property];
+					case Cherry::Strips::A1:
+						return g_keys[25 + property];
+					case Cherry::Strips::A2:
+						return g_keys[27 + property];
+					case Cherry::Strips::B1:
+						return g_keys[27 + 2 * (runtime - Voicemeeter) + property];
+					case Cherry::Strips::B2:
+						return g_keys[31 + 2 * (runtime - Voicemeeter) + property];
+					default:
+						return nullptr;
+					}
 				};
-
-				template<prop_t Property>
-				inline char const * ToStripKey<Cherry, Cherry::Strips::P, Property>(runtime_t runtime) {
-					return g_keys[17 + Property]; 
-				};
-				template<prop_t Property>
-				inline char const * ToStripKey<Cherry, Cherry::Strips::V, Property>(runtime_t runtime) {
-					return g_keys[19 + runtime - Voicemeeter + Property];
-				};
-				template<prop_t Property>
-				inline char const * ToStripKey<Cherry, Cherry::Strips::A1, Property>(runtime_t runtime) {
-					return g_keys[25 + Property]
-				};
-				template<prop_t Property>
-				inline char const * ToStripKey<Cherry, Cherry::Strips::A2, Property>(runtime_t runtime) {
-					return g_keys[27 + Property]
-				};
-				template<prop_t Property>
-				inline char const * ToStripKey<Cherry, Cherry::Strips::B1, Property>(runtime_t runtime) {
-					return g_keys[27 + 2 * (runtime - Voicemeeter) + Property];
-				};
-				template<prop_t Property>
-				inline char const * ToStripKey<Cherry, Cherry::Strips::B2, Property>(runtime_t runtime) {
-					return g_keys[31 + 2 * (runtime - Voicemeeter) + Property];
-				};
-
-				template<size_t Channel>
-				inline long ToChannelKey<Cherry, Cherry::Strips::P, Channel>(runtime_t runtime) {
-					return g_c_keys[0] + Channel;
-				};
-				template<size_t Channel>
-				inline long ToChannelKey<Cherry, Cherry::Strips::V, Channel>(runtime_t runtime) {
-					return g_c_keys[1 + runtime - Voicemeeter] + Channel;
-				};
-				template<size_t Channel>
-				inline long ToChannelKey<Cherry, Cherry::Strips::A1, Channel>(runtime_t runtime) {
-					return g_c_keys[4] + Channel;
-				};
-				template<size_t Channel>
-				inline long ToChannelKey<Cherry, Cherry::Strips::A2, Channel>(runtime_t runtime) {
-					return g_c_keys[5] + Channel;
-				};
-				template<size_t Channel>
-				inline long ToChannelKey<Cherry, Cherry::Strips::B1, Channel>(runtime_t runtime) {
-					return g_c_keys[5 + runtime - Voicemeeter] + Channel;
-				};
-				template<size_t Channel>
-				inline long ToChannelKey<Cherry, Cherry::Strips::B2, Channel>(runtime_t runtime) {
-					return g_c_keys[7 + runtime - Voicemeeter] + Channel;
+				template<>
+				inline long ToChannelKey<Cherry>(runtime_t runtime,
+					Cherry::Strips target, size_t channel) {
+					switch (target) {
+					case Cherry::Strips::P:
+						return g_c_keys[0] + channel;
+					case Cherry::Strips::V:
+						return g_c_keys[1 + runtime - Voicemeeter] + channel;
+					case Cherry::Strips::A1:
+						return g_c_keys[4] + channel;
+					case Cherry::Strips::A2:
+						return g_c_keys[5] + channel;
+					case Cherry::Strips::B1:
+						return g_c_keys[5 + runtime - Voicemeeter] + channel;
+					case Cherry::Strips::B2:
+						return g_c_keys[7 + runtime - Voicemeeter] + channel;
+					default:
+						return -1L;
+					}
 				};
 
 				template<typename TMixer, typename TMixer::Strips From, typename TMixer::Strips To>
 				inline void SubscribePlug(typename TMixer::token &token, TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
 					token.on_plug<From, To>([
 						&client,
-						key = ToPlugKey<TMixer, From, To>(runtime)
+						key = ToPlugKey<TMixer>(runtime, From, To)
 					](bool value)->void {
 						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
 							throw ::std::exception{ key };
@@ -195,7 +192,7 @@ namespace Voicemeeter {
 				inline void SubscribeStrip(TToken &token, T_VBVMR_INTERFACE &client, runtime_t runtime) {
 					token.on_gain([
 						&client,
-						key = ToStripKey<TMixer, Target, Gain>(runtime)
+						key = ToStripKey<TMixer>(runtime, Target, Gain)
 					](double value)->void {
 						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
 							throw ::std::exception{ key };
@@ -204,7 +201,7 @@ namespace Voicemeeter {
 					});
 					token.on_mute([
 						&client,
-						key = ToStripKey<TMixer, Target, Mute>(runtime)
+						key = ToStripKey<TMixer>(runtime, Target, Mute)
 					](bool value)->void {
 						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
 							throw ::std::exception{ key };
@@ -215,7 +212,7 @@ namespace Voicemeeter {
 
 				template<typename TMixer, typename TMixer::Strips From, typename TMixer::Strips To>
 				inline void UpdatePlug(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
-					char const *key{ ToPlugKey<TMixer, From, To>(runtime) };
+					char const *key{ ToPlugKey<TMixer>(runtime, From, To) };
 					float value{ 0.F };
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::exception{ key };
@@ -223,31 +220,31 @@ namespace Voicemeeter {
 					mixer.set_Plug<bag<TMixer>, From, To>(0.01F < value);
 				};
 				template<typename TMixer, typename TMixer::Strips Target>
-				inline void UpdateStrip(TMixer &mixer, T_VBVMR_INTERFACE &client, remote_t remote) {
-					char const *key{ ToStripKey<TMixer, Target, Gain>() };
+				inline void UpdateStrip(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
+					char const *key{ ToStripKey<TMixer>(runtime, Target, Gain) };
 					float value{ 0.F };
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::exception{ key };
 					}
 					mixer.get_Strip<Target>()
-						.set_Gain(static_cast<num_t>(value * One));
-					key = ToStripKey(TMixer, Target, Mute>();
+						.set_Gain<bag<TMixer>>(static_cast<num_t>(value * One));
+					key = ToStripKey<TMixer>(runtime, Target, Mute);
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::exception{ key };
 					}
 					mixer.get_Strip<Target>()
-						.set_Mute(0.01F < value);
+						.set_Mute<bag<TMixer>>(0.01F < value);
 				};
 				template<typename TMixer, typename TMixer::Strips Target, size_t ...Channel>
 				inline void UpdateChannels(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime, level_t level) {
 					long key{ 0L };
 					float value{ 0.F };
 					long code{ 0L };
-					(((key = ToChannelKey<TMixer, Target, Channels>(runtime))
+					(((key = ToChannelKey<TMixer>(runtime, Target, Channels))
 					,(code = client.VBVMR_GetLevel(level, key, &value))
 					,(mixer.get_Strip<Target>()
 						.get_Channel<Channels>()
-						.set_Level(code
+						.set_Level<bag<TMixer>>(code
 							? throw ::std::exception{ "level" }
 							: static_cast<num_t>(value * One))))
 					, ...);

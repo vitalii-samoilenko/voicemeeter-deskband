@@ -36,7 +36,7 @@ namespace Voicemeeter {
 					::std::unique_ptr<Palette> &&palette,
 					::std::unique_ptr<Theme> &&theme,
 					::std::unique_ptr<Frame> &&frame)
-					: _loader{ ::std::move(loader} }
+					: _loader{ ::std::move(loader) }
 					, _state{ ::std::move(state) }
 					, _atlas{ ::std::move(atlas) }
 					, _queue{ ::std::move(queue) }

@@ -13,7 +13,7 @@ namespace Voicemeeter {
 					template<typename TPlug>
 					class Plug : public TPlug {
 					public:
-						using state_t = typename TStateControl::state_t;
+						using state_t = typename TPlug::state_t;
 
 						template<typename ...Args>
 						inline Plug(Args &&...args)

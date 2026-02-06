@@ -241,7 +241,7 @@ namespace Windows {
 			::SetWindowLongPtrW(
 				hWnd,
 				nIndex,
-				dwNewLong);
+				dwNewLong)
 		};
 		DWORD code{
 			::GetLastError()
@@ -506,13 +506,13 @@ namespace Windows {
 	};
 
 	inline LSTATUS RegGetValueW(
-	  _In_ HKEY hkey,
+	  _In_ HKEY hKey,
 	  _In_opt_ LPCWSTR  lpSubKey,
 	  _In_opt_ LPCWSTR  lpValue,
 	  _In_opt_ DWORD   dwFlags,
 	  _Out_opt_ LPDWORD pdwType,
 	  _Out_opt_ PVOID   pvData,
-	  _In_out_opt_ LPDWORD pcbData
+	  _Inout_opt_ LPDWORD pcbData
 	) {
 		LSTATUS code{};
 		for (;;) {
@@ -526,10 +526,10 @@ namespace Windows {
 				pcbData);
 			switch (code) {
 			case ERROR_FILE_NOT_FOUND: {
-				if (flag & RRF_SUBKEY_WOW6432KEY) {
+				if (dwFlags & RRF_SUBKEY_WOW6432KEY) {
 					return code;
 				}
-				flag |= RRF_SUBKEY_WOW6432KEY;
+				dwFlags |= RRF_SUBKEY_WOW6432KEY;
 			} break;
 			default: {
 

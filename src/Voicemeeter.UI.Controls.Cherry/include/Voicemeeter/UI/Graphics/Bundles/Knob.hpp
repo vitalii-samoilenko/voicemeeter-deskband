@@ -90,7 +90,7 @@ namespace Voicemeeter {
 						if (_changes.test(flags::framePoint)) {
 							_changes.set(flags::indicatorDegree);
 						}
-						if (_changes.test(flags::indicatorDegree) {
+						if (_changes.test(flags::indicatorDegree)) {
 							vector_t transformI{
 								sinI(_indicatorDegree),
 								cosI(_indicatorDegree)
@@ -138,7 +138,7 @@ namespace Voicemeeter {
 
 					TToolkit &_toolkit;
 					::std::optional<slot_t> _slot;
-					::std::bitset<RenderTarget + 1> _changes;
+					::std::bitset<flags::renderTarget + 1> _changes;
 					vector_t _framePoint;
 					vector_t _frameVertex;
 					vector_t _frameAtlasPoint;

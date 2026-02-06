@@ -22,20 +22,20 @@ namespace Voicemeeter {
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
-			using Canvas = UI::Adapters::Canvas<
-				UI::Graphics::Toolkit<
+			using Canvas = ::Voicemeeter::UI::Adapters::Canvas<
+				::Voicemeeter::UI::Graphics::Toolkit<
 					TLoader,
-					UI::Graphics::State<TLoader>,
-					UI::Graphics::Atlas<
-						UI::Graphics::State<TLoader>>,
-					UI::Graphics::Queue,
-					UI::Graphics::Stopwatch,
+					::Voicemeeter::UI::Graphics::State<TLoader>,
+					::Voicemeeter::UI::Graphics::Atlas<
+						::Voicemeeter::UI::Graphics::State<TLoader>>,
+					::Voicemeeter::UI::Graphics::Queue,
+					::Voicemeeter::UI::Graphics::Stopwatch,
 					TPalette,
-					TTheme
-					UI::Graphics::Frame<
-						UI::Graphics::State<TLoader>,
-						UI::Graphics::Queue,
-						UI::Graphics::Stopwatch>>,
+					TTheme,
+					::Voicemeeter::UI::Graphics::Frame<
+						::Voicemeeter::UI::Graphics::State<TLoader>,
+						::Voicemeeter::UI::Graphics::Queue,
+						::Voicemeeter::UI::Graphics::Stopwatch>>,
 				TTimer>;
 
 			template<

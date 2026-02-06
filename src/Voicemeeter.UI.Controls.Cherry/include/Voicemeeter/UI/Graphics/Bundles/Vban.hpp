@@ -90,15 +90,15 @@ namespace Voicemeeter {
 
 				private:
 					enum flags : size_t {
-						FramePoint = 0,
-						FrameVertex = 1,
-						FrameRgba = 2,
-						RenderTarget = 3
+						framePoint = 0,
+						frameVertex = 1,
+						frameRgba = 2,
+						renderTarget = 3
 					};
 
 					TToolkit &_toolkit;
 					::std::optional<slot_t> _slot;
-					::std::bitset<RenderTarget + 1> _changes;
+					::std::bitset<flags::renderTarget + 1> _changes;
 					vector_t _framePoint;
 					vector_t _frameVertex;
 					vector_t _frameAtlasPoint;

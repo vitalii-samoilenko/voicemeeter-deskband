@@ -15,7 +15,7 @@ namespace Voicemeeter {
 
 						};
 						Axis() = delete;
-						Axis(Axist const &) = delete;
+						Axis(Axis const &) = delete;
 						inline Axis(Axis &&) = default;
 
 						inline ~Axis() = default;

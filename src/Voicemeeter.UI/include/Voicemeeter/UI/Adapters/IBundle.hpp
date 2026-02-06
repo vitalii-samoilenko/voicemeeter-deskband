@@ -17,7 +17,7 @@ namespace Voicemeeter {
 				virtual void operator()() = 0;
 
 			protected:
-				inline IBunle() = default;
+				inline IBundle() = default;
 			};
 
 			template<typename TBundle>

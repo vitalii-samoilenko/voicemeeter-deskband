@@ -46,7 +46,7 @@ namespace Voicemeeter {
 				class token : public TToken {
 				public:
 					token() = delete;
-					token(token const $) = delete;
+					token(token const &) = delete;
 					inline token(token &&) = default;
 
 					inline ~token() {
@@ -62,7 +62,7 @@ namespace Voicemeeter {
 					token & operator=(token &&) = delete;
 
 					template<typename Fn>
-					inline on_level(Fn &&callback) {
+					inline void on_level(Fn &&callback) {
 						TToken::that<Channel>()
 							->_callbacks[TToken::clientId()]
 								= ::std::forward<Fn>(callback);

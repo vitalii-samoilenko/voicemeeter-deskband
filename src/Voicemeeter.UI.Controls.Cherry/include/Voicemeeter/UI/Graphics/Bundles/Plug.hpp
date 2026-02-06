@@ -98,7 +98,7 @@ namespace Voicemeeter {
 
 					TToolkit &_toolkit;
 					::std::optional<slot_t> _slot;
-					::std::bitset<RenderTarget + 1> _changes;
+					::std::bitset<flags::renderTarget + 1> _changes;
 					vector_t _framePoint;
 					vector_t _frameVertex;
 					vector_t _frameAtlasPoint;

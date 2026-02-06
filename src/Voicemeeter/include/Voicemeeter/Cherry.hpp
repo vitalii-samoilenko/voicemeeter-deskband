@@ -28,7 +28,7 @@ namespace Voicemeeter {
 				Adapters::Multiclient::Token<
 					Adapters::Mute<
 					Adapters::Amplifier<
-					Adapters::Bus<
+					Bus<
 						TChannels ...
 					>>>
 				>>>;

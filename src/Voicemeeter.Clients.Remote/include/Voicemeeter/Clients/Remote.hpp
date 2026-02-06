@@ -130,7 +130,7 @@ namespace Voicemeeter {
 				_mixer = &value;
 				return *this;
 			};
-			inline RemoteBuilder & set_Type(Remote::Type value) {
+			inline RemoteBuilder & set_Type(typename Remote::Type value) {
 				_runtime = value;
 				return *this;
 			};

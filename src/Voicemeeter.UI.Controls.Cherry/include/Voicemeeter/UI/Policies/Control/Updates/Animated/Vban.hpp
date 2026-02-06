@@ -18,7 +18,7 @@ namespace Voicemeeter {
 						template<typename TToolkit>
 						class Vban {
 						public:
-							using context_t = Animated<TToolkit>
+							using context_t = VbanContext<TToolkit>;
 							using state_t = num_t;
 
 							inline explicit Vban(TToolkit &toolkit)
