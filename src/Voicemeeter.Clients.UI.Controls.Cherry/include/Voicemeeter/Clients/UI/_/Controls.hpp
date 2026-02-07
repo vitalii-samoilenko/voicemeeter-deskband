@@ -1747,6 +1747,7 @@ namespace Voicemeeter {
 						}
 						bag<Cherry> tokens{ mixer };
 						if (enabled.test(flags::vban)) {
+							vban->set_State(0);
 							tokens.get_Mixer()
 								.on_vban([
 									&control = *vban

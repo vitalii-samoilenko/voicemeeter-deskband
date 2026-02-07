@@ -22,7 +22,7 @@ namespace Voicemeeter {
 					TUpdate &&update = TUpdate{},
 					Args &&...args)
 					: TControl{ ::std::forward<Args>(args) ... }
-					, _slot{}
+					, _value{}
 					, _update{ ::std::move(update) }
 					, _notify{ ::std::move(notify) } {
 
@@ -37,16 +37,16 @@ namespace Voicemeeter {
 				State & operator=(State &&) = delete;
 
 				inline state_t const & get_State() const {
-					return _slot.value();
+					return *_value;
 				};
 				inline void set_State(state_t const &value) {
-					_slot = value;
-					_notify(_slot.value());
-					_update(*this, _slot.value());
+					_value = value;
+					_notify(*_value);
+					_update(*this, *_value);
 				};
 
 			private:
-				::std::optional<state_t> _slot;
+				::std::optional<state_t> _value;
 				TNotify _notify;
 				TUpdate _update;
 			};

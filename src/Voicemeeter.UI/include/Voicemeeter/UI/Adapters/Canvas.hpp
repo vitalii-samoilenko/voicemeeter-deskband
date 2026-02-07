@@ -19,7 +19,8 @@ namespace Voicemeeter {
 					Args &&...args)
 					: TToolkit{ ::std::forward<Args>(args) ... }
 					, _frameTick{ this, timer }
-					, _point{ 0, 0 } {
+					, _point{ 0, 0 }
+					, _vertex{ 0, 0 } {
 
 				};
 				Canvas() = delete;
@@ -35,8 +36,7 @@ namespace Voicemeeter {
 					return _point;
 				};
 				inline vector_t const & get_Size() const {
-					return TToolkit::get_Frame()
-						.get_Size();
+					return _vertex;
 				};
 
 				inline void Redraw(vector_t const &point, vector_t const &vertex) {
@@ -46,6 +46,7 @@ namespace Voicemeeter {
 				inline void Resize(vector_t const &vertex) {
 					TToolkit::get_Frame()
 						.set_Size(vertex);
+					_vertex = vertex;
 				};
 				inline void Show() {
 					_frameTick.Set();
@@ -94,6 +95,7 @@ namespace Voicemeeter {
 
 				FrameTick _frameTick;
 				vector_t _point;
+				vector_t _vertex;
 			};
 		}
 	}

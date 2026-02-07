@@ -30,8 +30,8 @@ namespace Voicemeeter {
 				Atlas & operator=(Atlas &&) = delete;
 
 				inline void FillSDF(
-					vector_t const &dstPoint, vector_t const &dstVertex,
 					vector_t const &srcPoint, vector_t const &srcVertex,
+					vector_t const &dstPoint, vector_t const &dstVertex,
 					vector_t const &color,
 					bool blend = false) const {
 					size_t frame{
@@ -60,10 +60,10 @@ namespace Voicemeeter {
 					_state.get_CommandList(frame)
 						->RSSetScissorRects(1, &scissor);
 					::std::array<FLOAT, 8> constants{
-						static_cast<FLOAT>(color[0]) / One,
-						static_cast<FLOAT>(color[1]) / One,
-						static_cast<FLOAT>(color[2]) / One,
-						static_cast<FLOAT>(color[3]) / One,
+						static_cast<FLOAT>(color[0]) / push(255),
+						static_cast<FLOAT>(color[1]) / push(255),
+						static_cast<FLOAT>(color[2]) / push(255),
+						static_cast<FLOAT>(color[3]) / push(255),
 						static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width,
 						static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height,
 						static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width,

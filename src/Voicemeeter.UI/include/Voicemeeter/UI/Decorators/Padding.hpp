@@ -1,7 +1,6 @@
 #ifndef VOICEMEETER_UI_DECORATORS_PADDING_HPP
 #define VOICEMEETER_UI_DECORATORS_PADDING_HPP
 
-#include <tuple>
 #include <utility>
 
 #include "wheel.hpp"
@@ -21,8 +20,9 @@ namespace Voicemeeter {
 					TScale &&scale = TScale{},
 					Args &&...args)
 					: TComponent{ ::std::forward<Args>(args) ... }
-					, _paddingPoint{ 0, 0 }
-					, _paddingVertex{ 0, 0 }
+					, _point{ 0, 0 }
+					, _vertex{ 0, 0 }
+					, _baseVertex{ basePaddingPoint + TComponent::get_BaseSize() + basePaddingVertex }
 					, _basePaddingPoint{ ::std::move(basePaddingPoint) }
 					, _basePaddingVertex{ ::std::move(basePaddingVertex) }
 					, _scale{ ::std::move(scale) } {
@@ -38,29 +38,32 @@ namespace Voicemeeter {
 				Padding & operator=(Padding &&) = delete;
 
 				inline vector_t const & get_Position() const {
-					return TComponent::get_Position() - _paddingPoint;
+					return _point;
 				};
 				inline vector_t const & get_Size() const {
-					return _paddingPoint + TComponent::get_Size() + _paddingVertex;
+					return _vertex;
 				};
 				inline vector_t const & get_BaseSize() const {
-					return _basePaddingPoint + TComponent::get_BaseSize() + _basePaddingVertex;
+					return _baseVertex;
 				};
 
 				inline void Rescale(vector_t const &vertex) {
-					vector_t point{ get_Position() };
-					::std::tie(_paddingPoint, ::std::ignore, _paddingVertex) = _scale(vertex,
+					auto [paddingPoint, remainder, paddingVertex] = _scale(vertex,
 						_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
-					TComponent::Rescale(vertex - _paddingPoint - _paddingVertex);
-					Move(point);
+					TComponent::Rescale(remainder);
+					_vertex = paddingPoint + TComponent::get_Size() + paddingVertex;
+					TComponent::Move(_point + paddingPoint);
 				};
 				inline void Move(vector_t const &point) {
-					TComponent::Move(point + _paddingPoint);
+					vector_t paddingPoint{ TComponent::get_Position() - _point };
+					TComponent::Move(point + paddingPoint);
+					_point = point;
 				};
 
 			private:
-				vector_t _paddingPoint;
-				vector_t _paddingVertex;
+				vector_t _point;
+				vector_t _vertex;
+				vector_t _baseVertex;
 				vector_t _basePaddingPoint;
 				vector_t _basePaddingVertex;
 				TScale _scale;

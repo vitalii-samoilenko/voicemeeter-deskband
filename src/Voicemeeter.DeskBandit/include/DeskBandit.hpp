@@ -48,9 +48,10 @@ public:
 		}
 		{
 			DWORD dock{ 0UL };
+			DWORD size{ sizeof(DWORD) };
 			if (::Windows::RegGetValueW(
 				HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock",
-				RRF_RT_REG_DWORD, NULL, &dock, NULL) == ERROR_SUCCESS) {
+				RRF_RT_DWORD, NULL, &dock, &size) == ERROR_SUCCESS) {
 				switch (dock) {
 				case 0UL:
 					_dock = Dock::Left;
@@ -301,6 +302,13 @@ private:
 			} break;
 			case WM_DESTROY: {
 				::PostQuitMessage(0);
+			} return OK;
+			case WM_SHOWWINDOW: {
+				if (wParam == FALSE) {
+					that->_scene->Hide();
+				} else {
+					that->_scene->Show();
+				}
 			} return OK;
 			case WM_TIMER: {
 				UINT_PTR id{ static_cast<UINT_PTR>(wParam) };
