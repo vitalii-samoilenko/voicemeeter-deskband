@@ -1,7 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 #define VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 
-#include <limits>
+#include <exception>
 #include <tuple>
 
 #include "wheel.hpp"
@@ -17,24 +17,17 @@ namespace Voicemeeter {
 							typename ...Vs>
 						inline auto operator()(
 							V const &dst, Vs &&...srcs) const {
-							num_t nom{ 0 };
-							num_t denom{ 0 };
-							{
-								auto src = (srcs + ...);
-								double r{ ::std::numeric_limits<double>::infinity() };
-								for (size_t i{ 0 }; i < dst.size(); ++i) {
-									num_t tom{ dst[i] };
-									num_t tenom{ src[i] };
-									double temp{ static_cast<double>(tom) / tenom };
-									if (temp < r) {
-										r = temp;
-										nom = tom;
-										denom = tenom;
-									}
+							auto src = (srcs + ...);
+							for (size_t i{ 0 }; i < dst.size(); ++i) {
+								num_t nom{ dst[i] };
+								num_t denom{ src[i] };
+								if (max(dst < src * nom / denom)) {
+									continue;
 								}
+								return ::std::make_tuple(
+									srcs * nom / denom ...);
 							}
-							return ::std::make_tuple(
-								srcs * nom / denom ...);
+							throw ::std::exception{ "Logic error" };
 						};
 					};
 				}
