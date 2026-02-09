@@ -27,8 +27,8 @@ namespace Voicemeeter {
 						Vban & operator=(Vban &&) = delete;
 
 						template<typename TVban>
-						inline void operator()(TVban &control, state_t state) const {
-							control.set_FrameColor(
+						inline void operator()(TVban *that, state_t state) const {
+							that->set_FrameColor(
 								state
 									? _toolkit.get_Theme()
 										.Information

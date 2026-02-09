@@ -40,7 +40,7 @@ namespace Voicemeeter {
 					inline slot & operator=(slot &&) = default;
 
 					template<typename TBundle>
-					inline void overwrite(TBundle &target) {
+					inline void overwrite(TBundle &item) {
 						if (_itemId == &typeid(TBundle)) {
 							return;
 						} else if (!_itemId) {
@@ -52,7 +52,7 @@ namespace Voicemeeter {
 						that->
 							_items[_i] = ::std::make_unique<
 								Adapters::Bundle<TBundle>>(
-								target);
+								&item);
 						_itemId = &typeid(TBundle);
 					};
 
@@ -89,7 +89,9 @@ namespace Voicemeeter {
 			private:
 				friend class slot;
 
-				::std::vector<::std::unique_ptr<Adapters::IBundle>> _items;
+				::std::vector<
+					::std::unique_ptr<Adapters::IBundle>
+				> _items;
 			};
 		}
 	}

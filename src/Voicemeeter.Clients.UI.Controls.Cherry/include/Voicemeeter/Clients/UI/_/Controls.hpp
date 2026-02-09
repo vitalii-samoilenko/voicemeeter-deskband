@@ -297,11 +297,11 @@ namespace Voicemeeter {
 									ToggleAnimation & operator=(ToggleAnimation &&) = delete;
 
 									template<typename TControl>
-									inline void operator()(TControl &control, state_t const &state) const {
+									inline void operator()(TControl *that, state_t const &state) const {
 										if (_on) {
-											_animated(control, state);
+											_animated(that, state);
 										} else {
-											_instant(control, state);
+											_instant(that, state);
 										}
 									};
 

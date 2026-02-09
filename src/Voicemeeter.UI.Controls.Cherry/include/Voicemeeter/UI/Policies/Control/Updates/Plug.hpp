@@ -29,8 +29,8 @@ namespace Voicemeeter {
 						Plug & operator=(Plug &&) = delete;
 
 						template<typename TPlug>
-						inline void operator()(TPlug &control, state_t const &state) const {
-							control.set_FrameColor(
+						inline void operator()(TPlug *that, state_t const &state) const {
+							that->set_FrameColor(
 								state.toggle
 									? _toolkit.get_Theme()
 										.Active

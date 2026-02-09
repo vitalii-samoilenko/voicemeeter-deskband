@@ -23,8 +23,8 @@ namespace Voicemeeter {
 			template<typename TBundle>
 			class Bundle final : public IBundle {
 			public:
-				inline explicit Bundle(TBundle &target)
-					: _target{ target } {
+				inline explicit Bundle(TBundle *that)
+					: that{ that } {
 
 				};
 				Bundle() = delete;
@@ -37,11 +37,11 @@ namespace Voicemeeter {
 				Bundle & operator=(Bundle &&) = delete;
 
 				virtual void operator()() override {
-					_target();
+					that->operator()();
 				};
 
 			private:
-				TBundle &_target;
+				TBundle *that;
 			};
 		}
 	}

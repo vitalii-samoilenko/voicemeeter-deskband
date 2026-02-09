@@ -63,20 +63,40 @@ namespace Voicemeeter {
 						return _frameRgba;
 					};
 
-					inline void set_FramePosition(vector_t const &point) {
-						OnSetV(_framePoint, point, flags::framePoint);
+					inline void set_FramePosition(vector_t const &value) {
+						if (min(_framePoint == value)) {
+							return;
+						}
+						_framePoint = value;
+						OnInvalidate(flags::framePoint);
 					};
-					inline void set_FrameSize(vector_t const &vertex) {
-						OnSetV(_frameVertex, vertex, flags::frameVertex);
+					inline void set_FrameSize(vector_t const &value) {
+						if (min(_frameVertex == value)) {
+							return;
+						}
+						_frameVertex = value;
+						OnInvalidate(flags::frameVertex);
 					};
-					inline void set_FrameColor(vector_t const &rgba) {
-						OnSetV(_frameRgba, rgba, flags::frameRgba);
+					inline void set_FrameColor(vector_t const &value) {
+						if (min(_frameRgba == value)) {
+							return;
+						}
+						_frameRgba = value;
+						OnInvalidate(flags::frameRgba);
 					};
-					inline void set_IndicatorAngle(num_t degree) {
-						OnSet(_indicatorDegree, degree, flags::indicatorDegree);
+					inline void set_IndicatorAngle(num_t value) {
+						if (_indicatorDegree == value) {
+							return;
+						}
+						_indicatorDegree = value;
+						OnInvalidate(flags::indicatorDegree);
 					};
-					inline void set_IndicatorColor(vector_t const &rgba) {
-						OnSetV(_indicatorRgba, rgba, flags::indicatorRgba);
+					inline void set_IndicatorColor(vector_t const &value) {
+						if (min(_indicatorRgba == value)) {
+							return;
+						}
+						_indicatorRgba = value;
+						OnInvalidate(flags::indicatorRgba);
 					};
 					inline void set_Invalid() {
 						OnInvalidate(flags::renderTarget);
@@ -151,22 +171,6 @@ namespace Voicemeeter {
 					vector_t _indicatorAtlasVertex;
 					vector_t _indicatorRgba;
 
-					template<typename T>
-					inline void OnSet(T &dst, T const &src, flags property) {
-						if (src == dst) {
-							return;
-						}
-						dst = src;
-						OnInvalidate(property);
-					};
-					template<typename V>
-					inline void OnSetV(V &dst, V const &src, flags property) {
-						if (min(src == dst)) {
-							return;
-						}
-						dst = src;
-						OnInvalidate(property);
-					};
 					inline void OnInvalidate(flags property) {
 						if (_changes.none()) {
 							_slot = _toolkit.get_Queue()

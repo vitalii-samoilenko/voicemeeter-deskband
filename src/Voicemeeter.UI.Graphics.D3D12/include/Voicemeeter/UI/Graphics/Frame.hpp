@@ -24,7 +24,9 @@ namespace Voicemeeter {
 					: _state{ state }
 					, _queue{ queue }
 					, _stopwatch{ stopwatch }
-					, _first{ true } {
+					, _first{ true }
+					, _invalidFrom{ Inf, Inf }
+					, _invalidTo{ 0, 0 } {
 
 				};
 				Frame() = delete;
@@ -51,6 +53,7 @@ namespace Voicemeeter {
 						}
 						*_state.geta_RenderTarget(frame) = nullptr;
 					}
+					// TODO: ResizeBuffers1
 					::Windows::ThrowIfFailed(_state.get_SwapChain()
 						->ResizeBuffers(
 							0,
@@ -151,8 +154,36 @@ namespace Voicemeeter {
 						->Signal(
 							_state.get_Fence(frame),
 							_state.inc_Count(frame));
+					// TODO: drop
+					if (_first) {
+						::Windows::ThrowIfFailed(_state.get_SwapChain()
+							->Present(
+								0, 0
+						), "Presentation failed");
+						_first = false;
+					} else {
+						RECT rect{
+							ceil(_invalidFrom[0]), ceil(_invalidFrom[1]),
+							ceil(_invalidTo[0]), ceil(_invalidTo[1])
+						};
+						DXGI_PRESENT_PARAMETERS params{
+							1, &rect,
+							nullptr,
+							nullptr
+						};
+						::Windows::ThrowIfFailed(_state.get_SwapChain()
+							->Present1(
+								0U, 0U,
+								&params
+						), "Presentation failed");
+					}
+					_invalidFrom[0] = Inf;
+					_invalidFrom[1] = Inf;
+					_invalidTo[0] = 0;
+					_invalidTo[1] = 0;
 				};
 				inline void Present(vector_t const &point, vector_t const &vertex) {
+				/*
 					// TODO: bitblt
 					if (_first) {
 						::Windows::ThrowIfFailed(_state.get_SwapChain()
@@ -177,16 +208,24 @@ namespace Voicemeeter {
 								&params
 						), "Presentation failed");
 					}
+				*/
 				};
 				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
+					auto lessFrom = point < _invalidFrom;
+					auto toPoint = point + vertex;
+					auto greaterTo = _invalidTo < toPoint;
+					_invalidFrom[lessFrom] = point[lessFrom];
+					_invalidTo[greaterTo] = toPoint[greaterTo];
+				/*
 					RECT rect{
 						floor(point[0]), ceil(point[1]),
 						floor(vertex[0]), ceil(vertex[1])
 					};
 					::Windows::InvalidateRect(
 						_state.get_hWnd(), &rect, FALSE);
-					//::Windows::UpdateWindow(
-					//	_state.get_hWnd());
+					::Windows::UpdateWindow(
+						_state.get_hWnd());
+				*/
 				};
 
 			private:
@@ -194,6 +233,8 @@ namespace Voicemeeter {
 				TQueue &_queue;
 				TStopwatch &_stopwatch;
 				bool _first;
+				vector_t _invalidFrom;
+				vector_t _invalidTo;
 			};
 		}
 	}

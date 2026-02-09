@@ -63,7 +63,7 @@ namespace Voicemeeter {
 						if (!_trackedId) {
 							_tracked = ::std::make_unique<
 								Adapters::Component<TComponent>>(
-								target);
+								&target);
 							_trackedId = &target;
 						}
 						_tracked->set_Focus(value);

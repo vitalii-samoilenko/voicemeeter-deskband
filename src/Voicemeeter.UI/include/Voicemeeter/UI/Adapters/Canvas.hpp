@@ -44,9 +44,9 @@ namespace Voicemeeter {
 						.Present(point, vertex);
 				};
 				inline void Resize(vector_t const &vertex) {
+					_vertex = vertex;
 					TToolkit::get_Frame()
 						.set_Size(vertex);
-					_vertex = vertex;
 				};
 				inline void Show() {
 					_frameTick.Set();

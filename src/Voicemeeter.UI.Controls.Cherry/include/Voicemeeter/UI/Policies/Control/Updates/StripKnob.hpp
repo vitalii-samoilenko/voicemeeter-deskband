@@ -27,8 +27,8 @@ namespace Voicemeeter {
 						StripKnob & operator=(StripKnob &&) = delete;
 
 						template<typename TStripKnob>
-						inline void operator()(TStripKnob &control, state_t const &state) const {
-							control.set_FrameColor(
+						inline void operator()(TStripKnob *that, state_t const &state) const {
+							that->set_FrameColor(
 								state.toggle
 									? _toolkit.get_Theme()
 										.Warning
@@ -50,7 +50,7 @@ namespace Voicemeeter {
 												: _toolkit.get_Theme()
 													.Inactive
 							);
-							control.set_IndicatorAngle(state.degree);
+							that->set_IndicatorAngle(state.degree);
 						};
 
 					private:

@@ -27,8 +27,8 @@ namespace Voicemeeter {
 					token() = delete;
 					token(token const &) = delete;
 					inline token(token &&other)
-						: _clientId{ other._clientId }
-						, _that{ other._that } {
+						: _that{ other._that }
+						, _clientId{ other._clientId } {
 						other._clientId = nullptr;
 					};
 
@@ -39,24 +39,24 @@ namespace Voicemeeter {
 
 				protected:
 					inline token(
-						void const *clientId,
-						void *that)
-						: _clientId{ clientId }
-						, _that{ that } {
+						void *that,
+						void const *clientId)
+						: _that{ that }
+						, _clientId{ clientId } {
 
 					};
 
-					inline void const * clientId() const {
-						return _clientId;
-					};
 					template<typename TThat>
 					inline TThat * that() const {
 						return reinterpret_cast<TThat *>(_that);
 					};
+					inline void const * clientId() const {
+						return _clientId;
+					};
 
 				private:
-					void const *_clientId;
 					void *_that;
+					void const *_clientId;
 				};
 			};
 		}

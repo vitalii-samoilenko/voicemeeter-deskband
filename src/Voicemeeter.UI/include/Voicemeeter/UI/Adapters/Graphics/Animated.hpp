@@ -21,7 +21,7 @@ namespace Voicemeeter {
 					template<typename ...Args>
 					inline explicit Context(Args &&...args)
 						: TBundle{ ::std::forward<Args>(args) ... }
-						, _value{} {
+						, _context{} {
 
 					};
 					Context(Context const &) = delete;
@@ -33,14 +33,14 @@ namespace Voicemeeter {
 					Context & operator=(Context &&) = delete;
 
 					inline context_t const & get_AnimationContext() const {
-						return *_value;
+						return _context.value();
 					};
 					inline void set_AnimationContext(context_t const &value) {
-						_value = value;
+						_context = value;
 					};
 
 				private:
-					::std::optional<context_t> _value;
+					::std::optional<context_t> _context;
 				};
 
 				template<
@@ -117,7 +117,7 @@ namespace Voicemeeter {
 								) / rI))
 							, ...);
 						}, _subSpaces);
-						_frame(*this);
+						_frame(this);
 						TBundle::operator()();
 						if (min(_point == _vertex)) {
 							return;

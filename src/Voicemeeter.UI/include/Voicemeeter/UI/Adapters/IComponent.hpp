@@ -124,8 +124,8 @@ namespace Voicemeeter {
 			template<typename TComponent>
 			class Component final : public IComponent {
 			public:
-				inline explicit Component(TComponent &target)
-					: _target{ target } {
+				inline explicit Component(TComponent *that)
+					: that{ that } {
 
 				};
 				Component() = delete;
@@ -138,58 +138,58 @@ namespace Voicemeeter {
 				Component & operator=(Component &&) = delete;
 
 				virtual vector_t const & get_Position() const override {
-					return _target.get_Position();
+					return that->get_Position();
 				};
 				virtual vector_t const & get_Size() const override {
-					return _target.get_Size();
+					return that->get_Size();
 				};
 				virtual vector_t const & get_BaseSize() const override {
-					return _target.get_BaseSize();
+					return that->get_BaseSize();
 				};
 
 				virtual void set_Focus(Focus value) override {
-					_target.set_Focus(value);
+					that->set_Focus(value);
 				};
 
 				virtual void Redraw(vector_t const &point, vector_t const &vertex) override {
-					_target.Redraw(point, vertex);
+					that->Redraw(point, vertex);
 				};
 				virtual void Move(vector_t const &point) override {
-					_target.Move(point);
+					that->Move(point);
 				};
 				virtual void Rescale(vector_t const &vertex) override {
-					_target.Rescale(vertex);
+					that->Rescale(vertex);
 				};
 				virtual bool MouseLDown(vector_t const &point) override {
-					return _target.MouseLDown(point);
+					return that->MouseLDown(point);
 				};
 				virtual bool MouseLDouble(vector_t const &point) override {
-					return _target.MouseLDouble(point);
+					return that->MouseLDouble(point);
 				};
 				virtual bool MouseLUp(vector_t const &point) override {
-					return _target.MouseLUp(point);
+					return that->MouseLUp(point);
 				};
 				virtual bool MouseMDown(vector_t const &point) override {
-					return _target.MouseMDown(point);
+					return that->MouseMDown(point);
 				};
 				virtual bool MouseMDouble(vector_t const &point) override {
-					return _target.MouseMDouble(point);
+					return that->MouseMDouble(point);
 				};
 				virtual bool MouseRDown(vector_t const &point) override {
-					return _target.MouseRDown(point);
+					return that->MouseRDown(point);
 				};
 				virtual bool MouseRDouble(vector_t const &point) override {
-					return _target.MouseRDouble(point);
+					return that->MouseRDouble(point);
 				};
 				virtual bool MouseWheel(vector_t const &point, num_t delta) override {
-					return _target.MouseWheel(point, delta);
+					return that->MouseWheel(point, delta);
 				};
 				virtual bool MouseMove(vector_t const &point) override {
-					return _target.MouseMove(point);
+					return that->MouseMove(point);
 				};
 
 			private:
-				TComponent &_target;
+				TComponent *that;
 			};
 		}
 	}

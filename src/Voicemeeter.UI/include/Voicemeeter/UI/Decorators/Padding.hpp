@@ -48,16 +48,15 @@ namespace Voicemeeter {
 				};
 
 				inline void Rescale(vector_t const &vertex) {
-					auto [paddingPoint, remainder, paddingVertex] = _scale(vertex,
+					auto [paddingPoint, _, paddingVertex] = _scale(vertex,
 						_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
-					TComponent::Rescale(remainder);
-					_vertex = paddingPoint + TComponent::get_Size() + paddingVertex;
+					TComponent::Rescale(vertex - paddingPoint - paddingVertex);
 					TComponent::Move(_point + paddingPoint);
+					_vertex = paddingPoint + TComponent::get_Size() + paddingVertex;
 				};
 				inline void Move(vector_t const &point) {
-					vector_t paddingPoint{ TComponent::get_Position() - _point };
-					TComponent::Move(point + paddingPoint);
 					_point = point;
+					TComponent::Move(point + TComponent::get_Position() - _point);
 				};
 
 			private:
