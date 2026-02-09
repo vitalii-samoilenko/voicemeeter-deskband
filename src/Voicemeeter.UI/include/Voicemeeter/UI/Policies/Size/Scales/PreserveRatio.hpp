@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 #define VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 
+#include <limits>
 #include <tuple>
 
 #include "wheel.hpp"
@@ -20,26 +21,15 @@ namespace Voicemeeter {
 							num_t denom{ 0 };
 							{
 								auto src = (srcs + ...);
-								num_t r{ Inf };
-								num_t rI{ -Inf };
+								double r{ ::std::numeric_limits<double>::infinity() };
 								for (size_t i{ 0 }; i < dst.size(); ++i) {
 									num_t tom{ dst[i] };
 									num_t tenom{ src[i] };
-									if (tom < tenom) {
-										r = 0;
-										num_t temp{ push(tenom) / tom };
-										if (rI < temp) {
-											rI = temp;
-											nom = tom;
-											denom = tenom;
-										}
-									} else {
-										num_t temp{ push(tom) / tenom };
-										if (temp < r) {
-											r = temp;
-											nom = tom;
-											denom = tenom;
-										}
+									double temp{ static_cast<double>(tom) / tenom };
+									if (temp < r) {
+										r = temp;
+										nom = tom;
+										denom = tenom;
 									}
 								}
 							}

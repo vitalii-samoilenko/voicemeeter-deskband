@@ -66,7 +66,7 @@ inline num_t max(V const &v) {
 };
 template<typename V>
 inline num_t min(V const &v) {
-	return v.max();
+	return v.min();
 };
 
 #endif

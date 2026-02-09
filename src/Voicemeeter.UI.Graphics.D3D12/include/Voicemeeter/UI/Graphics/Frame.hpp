@@ -163,7 +163,7 @@ namespace Voicemeeter {
 						_first = false;
 					} else {
 						RECT rect{
-							ceil(_invalidFrom[0]), ceil(_invalidFrom[1]),
+							floor(_invalidFrom[0]), floor(_invalidFrom[1]),
 							ceil(_invalidTo[0]), ceil(_invalidTo[1])
 						};
 						DXGI_PRESENT_PARAMETERS params{

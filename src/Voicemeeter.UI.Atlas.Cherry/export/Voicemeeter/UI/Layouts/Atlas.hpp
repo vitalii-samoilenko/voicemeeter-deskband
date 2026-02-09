@@ -11,8 +11,8 @@ namespace Voicemeeter {
 					constexpr num_t Width{ push(26) };
 					constexpr num_t Height{ push(17) };
 				}
-				constexpr num_t Width{ 8 * Block::Width };
-				constexpr num_t Height{ 14 * Block::Height };
+				constexpr num_t Width{ 8 * Block::Width + One };
+				constexpr num_t Height{ 14 * Block::Height + One };
 				namespace Knob {
 					namespace Frame {
 						constexpr num_t X{ 4 * Block::Width };
@@ -39,8 +39,8 @@ namespace Voicemeeter {
 					namespace Frame {
 						constexpr num_t X{ 0 * Block::Width };
 						constexpr num_t Y{ 0 * Block::Height };
-						constexpr num_t Width{ push(39) };
-						constexpr num_t Height{ push(22) };
+						constexpr num_t Width{ push(85) }; // 39
+						constexpr num_t Height{ push(48) }; // 22
 					}
 				}
 			}

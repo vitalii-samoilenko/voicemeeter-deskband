@@ -330,71 +330,71 @@ private:
 				HDC hdc = ::Windows::BeginPaint(hWnd, &ps);
 				that->_scene->Redraw(
 					vector_t{
-						static_cast<num_t>(ps.rcPaint.left),
-						static_cast<num_t>(ps.rcPaint.top)
+						push(static_cast<num_t>(ps.rcPaint.left)),
+						push(static_cast<num_t>(ps.rcPaint.top))
 					},
 					ps.rcPaint.right && ps.rcPaint.bottom
 						? vector_t{
-							static_cast<num_t>(ps.rcPaint.right),
-							static_cast<num_t>(ps.rcPaint.bottom)
+							push(static_cast<num_t>(ps.rcPaint.right)),
+							push(static_cast<num_t>(ps.rcPaint.bottom))
 						}
 						: that->_scene->get_Size());
 				::EndPaint(hWnd, &ps);
 			} return OK;
 			case WM_LBUTTONDOWN: {
 				that->_scene->MouseLDown(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_LBUTTONDBLCLK: {
 				that->_scene->MouseLDouble(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_MBUTTONDOWN: {
 				that->_scene->MouseMDown(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_MBUTTONDBLCLK: {
 				that->_scene->MouseMDouble(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_RBUTTONDOWN: {
 				that->_scene->MouseRDown(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_RBUTTONDBLCLK: {
 				that->_scene->MouseRDouble(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_MOUSEWHEEL: {
 				POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 				::Windows::ScreenToClient(hWnd, &point);
 				that->_scene->MouseWheel(vector_t{
-						static_cast<num_t>(point.x),
-						static_cast<num_t>(point.y)
+					push(static_cast<num_t>(point.x)),
+					push(static_cast<num_t>(point.y))
 				}, GET_WHEEL_DELTA_WPARAM(wParam));
 			} return OK;
 			case WM_MOUSEMOVE: {
 				that->_scene->MouseMove(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			case WM_LBUTTONUP: {
 				that->_scene->MouseLUp(vector_t{
-					static_cast<num_t>(GET_X_LPARAM(lParam)),
-					static_cast<num_t>(GET_Y_LPARAM(lParam))
+					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
+					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
 				});
 			} return OK;
 			}

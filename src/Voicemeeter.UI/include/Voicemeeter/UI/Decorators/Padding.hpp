@@ -55,8 +55,8 @@ namespace Voicemeeter {
 					_vertex = paddingPoint + TComponent::get_Size() + paddingVertex;
 				};
 				inline void Move(vector_t const &point) {
-					_point = point;
 					TComponent::Move(point + TComponent::get_Position() - _point);
+					_point = point;
 				};
 
 			private:

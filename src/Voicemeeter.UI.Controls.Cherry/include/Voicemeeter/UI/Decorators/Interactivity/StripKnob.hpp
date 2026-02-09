@@ -25,7 +25,8 @@ namespace Voicemeeter {
 						: TStripKnob{ ::std::forward<Args>(args) ... }
 						, _releaseTick{ this, timer }
 						, _direction{ ::std::move(direction) }
-						, _initPoint{ 0, 0 } {
+						, _initPoint{ 0, 0 }
+						, _focus{ Focus::None } {
 
 					};
 					StripKnob() = delete;
@@ -38,6 +39,7 @@ namespace Voicemeeter {
 					StripKnob & operator=(StripKnob &&) = delete;
 
 					inline void set_Focus(Focus value) {
+						_focus = value;
 						if (value != Focus::None) {
 							return;
 						}
@@ -80,9 +82,11 @@ namespace Voicemeeter {
 						return true;
 					};
 					inline bool MouseMove(vector_t const &point) {
-						TStripKnob::add_GainState(
-							sum(_direction(point - _initPoint)));
-						_initPoint = point;
+						if (_focus == Focus::Fixed) {
+							TStripKnob::add_GainState(
+								sum(_direction(point - _initPoint)));
+							_initPoint = point;
+						}
 						return true;
 					};
 
@@ -127,6 +131,7 @@ namespace Voicemeeter {
 					ReleaseTick _releaseTick;
 					TDirection _direction;
 					vector_t _initPoint;
+					Focus _focus;
 				};
 			}
 		}
