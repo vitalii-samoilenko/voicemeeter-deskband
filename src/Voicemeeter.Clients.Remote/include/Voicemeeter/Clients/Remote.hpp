@@ -108,7 +108,12 @@ namespace Voicemeeter {
 		public:
 			using Remote = Remote<TTimer, TMixer>;
 
-			inline RemoteBuilder() = default;
+			inline RemoteBuilder()
+				: _timer{ nullptr }
+				, _mixer{ nullptr }
+				, _runtime{ _::Remote::runtime_t::Potato } {
+
+			};
 			RemoteBuilder(RemoteBuilder const &) = delete;
 			RemoteBuilder(RemoteBuilder &&) = delete;
 
