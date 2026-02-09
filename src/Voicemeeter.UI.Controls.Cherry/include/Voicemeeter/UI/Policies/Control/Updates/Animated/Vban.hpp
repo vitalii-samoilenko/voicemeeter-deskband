@@ -52,7 +52,7 @@ namespace Voicemeeter {
 									- that->get_AnimationPosition();
 								that->set_AnimationContext(context_t{
 									_toolkit.get_Palette()
-										.Interpolate(*targetRgba, that->get_FrameColor()),
+										.Interpolate(that->get_FrameColor(), *targetRgba),
 									sum(animationVertex * animationVertex)
 								});
 							};
@@ -90,9 +90,10 @@ namespace Voicemeeter {
 									that->get_AnimationContext()
 								};
 								num_t rI{
-										remaining2
-											? sqrt(push(context.distance2) / remaining2)
-											: One
+									sqrt(
+										push(context.distance2)
+										/ (context.distance2 - remaining2)
+									)
 								};
 								that->set_FrameColor(
 									context.path.pick(rI));
