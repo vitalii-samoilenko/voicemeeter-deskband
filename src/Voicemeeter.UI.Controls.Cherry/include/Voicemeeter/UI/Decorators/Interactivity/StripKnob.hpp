@@ -78,7 +78,7 @@ namespace Voicemeeter {
 					};
 					inline bool MouseWheel(vector_t const &point, num_t delta) {
 						_releaseTick.Set();
-						TStripKnob::add_GainState(delta);
+						TStripKnob::add_GainState(delta * 6);
 						return true;
 					};
 					inline bool MouseMove(vector_t const &point) {

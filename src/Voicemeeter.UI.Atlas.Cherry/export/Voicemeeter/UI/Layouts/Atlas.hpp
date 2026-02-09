@@ -23,8 +23,8 @@ namespace Voicemeeter {
 					namespace Indicator{
 						constexpr num_t X{ 6 * Block::Width + One };
 						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ push(6) };
-						constexpr num_t Height{ push(6) };
+						constexpr num_t Width{ push(11) / 2 };
+						constexpr num_t Height{ push(11) / 2 };
 					}
 				}
 				namespace Plug {

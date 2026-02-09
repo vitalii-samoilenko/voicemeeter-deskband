@@ -194,7 +194,7 @@ namespace Voicemeeter {
 						&client,
 						key = ToStripKey<TMixer>(runtime, Target, Gain)
 					](double value)->void {
-						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
+						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value) / (3.75F * One))) {
 							throw ::std::exception{ key };
 						}
 						g_dirty = true;
@@ -227,7 +227,7 @@ namespace Voicemeeter {
 						throw ::std::exception{ key };
 					}
 					mixer.get_Strip<Target>()
-						.set_Gain<bag<TMixer>>(static_cast<num_t>(value * One));
+						.set_Gain<bag<TMixer>>(static_cast<num_t>(value * 3.75F * One));
 					key = ToStripKey<TMixer>(runtime, Target, Mute);
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::exception{ key };

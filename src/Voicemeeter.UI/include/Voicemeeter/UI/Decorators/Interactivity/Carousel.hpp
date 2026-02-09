@@ -27,10 +27,6 @@ namespace Voicemeeter {
 					Carousel & operator=(Carousel const &) = delete;
 					Carousel & operator=(Carousel &&) = delete;
 
-					inline void set_Focus(Focus value) {
-
-					};
-
 					inline bool MouseLDown(vector_t const &point) {
 						TCircularControl::set_NextState();
 						return true;

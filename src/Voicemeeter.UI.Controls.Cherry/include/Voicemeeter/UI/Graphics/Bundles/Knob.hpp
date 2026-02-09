@@ -112,14 +112,14 @@ namespace Voicemeeter {
 						}
 						if (_changes.test(flags::indicatorDegree)) {
 							vector_t transformI{
-								sinI(_indicatorDegree),
-								cosI(_indicatorDegree)
+								sinI(-_indicatorDegree + push(90)),
+								cosI(-_indicatorDegree + push(90))
 							};
 							auto frameR = _frameVertex / 2;
 							auto center = _framePoint + frameR;
 							auto indicatorR = frameR * 4 / 5;
 							_indicatorPoint = center
-								+ indicatorR / transformI
+								+ push(indicatorR) / transformI
 								- _indicatorVertex / 2;
 						}
 						_changes.reset();

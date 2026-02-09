@@ -33,10 +33,6 @@ namespace Voicemeeter {
 					Point & operator=(Point const &) = delete;
 					Point & operator=(Point &&) = delete;
 
-					inline void set_Focus(Focus value) {
-
-					};
-
 					inline bool MouseLDown(vector_t const &point) {
 						bool base{ TComponent::MouseLDown(point) };
 						if (base) {
