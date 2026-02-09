@@ -43,15 +43,15 @@ namespace Voicemeeter {
 						};
 						return vector_t{
 							denormalize(
-								::ok_color::srgb_transfer_function_inv(
+								::ok_color::srgb_transfer_function(
 									target.r)),
 							denormalize(
-								::ok_color::srgb_transfer_function_inv(
-									target.r)),
+								::ok_color::srgb_transfer_function(
+									target.g)),
 							denormalize(
-								::ok_color::srgb_transfer_function_inv(
-									target.r)),
-							(_fromA * (rI - One) + _toA) / rI
+								::ok_color::srgb_transfer_function(
+									target.b)),
+							(_fromA * (rI - One) + push(_toA)) / rI
 						};
 					};
 
@@ -69,22 +69,22 @@ namespace Voicemeeter {
 						: _from{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									::ok_color::srgb_transfer_function(
+									::ok_color::srgb_transfer_function_inv(
 										normalize(from[0])),
-									::ok_color::srgb_transfer_function(
+									::ok_color::srgb_transfer_function_inv(
 										normalize(from[1])),
-									::ok_color::srgb_transfer_function(
+									::ok_color::srgb_transfer_function_inv(
 										normalize(from[2]))
 								})
 						}
 						, _to{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									::ok_color::srgb_transfer_function(
+									::ok_color::srgb_transfer_function_inv(
 										normalize(to[0])),
-									::ok_color::srgb_transfer_function(
+									::ok_color::srgb_transfer_function_inv(
 										normalize(to[1])),
-									::ok_color::srgb_transfer_function(
+									::ok_color::srgb_transfer_function_inv(
 										normalize(to[2]))
 								})
 						}
