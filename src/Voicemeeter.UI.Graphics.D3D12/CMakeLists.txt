@@ -17,6 +17,10 @@ target_link_options(voicemeeter_ui_graphics_d3d12 INTERFACE
 
 add_library(Voicemeeter::UI::Graphics ALIAS voicemeeter_ui_graphics_d3d12)
 
-list(APPEND LOADER_FILES ${PROJECT_SOURCE_DIR}/export/Vertex.hlsl)
-list(APPEND LOADER_FILES ${PROJECT_SOURCE_DIR}/export/Pixel.hlsl)
+if(ATLAS STREQUAL Cherry)
+	list(APPEND LOADER_FILES ${PROJECT_SOURCE_DIR}/export/Vertex.hlsl)
+	list(APPEND LOADER_FILES ${PROJECT_SOURCE_DIR}/export/Pixel.hlsl)
+else()
+	message(FATAL_ERROR "Atlas is unsupported")
+endif()
 set(LOADER_FILES ${LOADER_FILES} PARENT_SCOPE)

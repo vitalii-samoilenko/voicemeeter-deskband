@@ -5,6 +5,8 @@
 #include <exception>
 #include <memory>
 
+#include "wheel.hpp"
+
 #include "Voicemeeter/Clients/UI/_/Controls.hpp"
 #include "Voicemeeter/UI/Adapters/IComponent.hpp"
 
@@ -69,12 +71,22 @@ namespace Voicemeeter {
 						value);
 					return *this;
 				};
+				inline CompositionBuilder & set_PaddingPosition(vector_t const &value) {
+					_paddingPoint = value;
+					return *this;
+				};
+				inline CompositionBuilder & set_PaddingSize(vector_t const &value) {
+					_paddingVertex = value;
+					return *this;
+				};
 
 			protected:
 				inline CompositionBuilder()
 					: _timer{ nullptr }
 					, _mixer{ nullptr }
-					, _enabled{} {
+					, _enabled{}
+					, _paddingPoint{ 0, 0 }
+					, _paddingVertex{ 0, 0 } {
 					_enabled.set();
 				};
 
@@ -89,7 +101,7 @@ namespace Voicemeeter {
 					}
 					return _::Controls::Subscribe(
 						*_timer, *_mixer, toolkit, focusTracker,
-						_enabled);
+						_enabled, _paddingPoint, _paddingVertex);
 				};
 
 			private:
@@ -100,6 +112,8 @@ namespace Voicemeeter {
 					+ TLayout::InputSize
 					+ TLayout::OutputSize
 				> _enabled;
+				vector_t _paddingPoint;
+				vector_t _paddingVertex;
 			};
 		}
 	}

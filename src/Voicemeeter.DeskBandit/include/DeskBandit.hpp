@@ -276,7 +276,9 @@ private:
 						.set_Timer(*that->_renderTimer);
 					sceneBuilder.get_CompositionBuilder()
 						.set_Timer(*that->_compositionTimer)
-						.set_Mixer(*that->_mixer);
+						.set_Mixer(*that->_mixer)
+						.set_PaddingPosition(vector_t{ push(3), push(4) })
+						.set_PaddingSize(vector_t{ push(3), push(4) });
 					if (that->_remote->get_Type() == RemoteBuilder::Remote::Type::Voicemeeter) {
 						sceneBuilder.get_CompositionBuilder()
 							.set_Vban(false)

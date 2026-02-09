@@ -145,7 +145,9 @@ namespace Voicemeeter {
 							flags::offset
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
-						> const &enabled);
+						> const &enabled,
+						vector_t const &paddingPoint,
+						vector_t const &paddingVertex);
 					template<
 						typename TTimer,
 						typename TMixer,
@@ -166,12 +168,13 @@ namespace Voicemeeter {
 							flags::offset
 							+ TMixer::InputSize
 							+ TMixer::OutputSize
-						> const &enabled) {
+						> const &enabled,
+						vector_t const &paddingPoint,
+						vector_t const &paddingVertex) {
 						if constexpr (::std::is_same_v<TMixer, Cherry>) {
 							return SubscribeCherry(
-								timer, mixer,
-								toolkit, focusTracker,
-								enabled);
+								timer, mixer, toolkit, focusTracker,
+								enabled, paddingPoint, paddingVertex);
 						} else {
 							return nullptr;
 						}
@@ -593,7 +596,14 @@ namespace Voicemeeter {
 						};
 						caggregator() = delete;
 						caggregator(caggregator const &) = delete;
-						inline caggregator(caggregator &&) = default;
+						inline caggregator(caggregator &&other)
+							: _tokens{ ::std::move(other._tokens) }
+							, _levels{ ::std::move(other._levels) } {
+							if (other._callback) {
+								on_maxLevel(
+									::std::move(other._callback));
+							}
+						};
 
 						inline ~caggregator() = default;
 
@@ -609,8 +619,8 @@ namespace Voicemeeter {
 							](TTokens &...tokens)->void {
 								size_t temp{ 0 };
 								(tokens.on_level([
-									&levels = levels,
-									&callback = callback,
+									&levels,
+									&callback,
 									i = temp++
 								](num_t value)->void {
 									num_t before{ max(levels) };
@@ -1128,7 +1138,9 @@ namespace Voicemeeter {
 							flags::offset
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
-						> const &enabled) {
+						> const &enabled,
+						vector_t const &paddingPoint,
+						vector_t const &paddingVertex) {
 						num_t enabledInputs{
 							static_cast<num_t>(
 								enabled.test(flags::offset + Cherry::Strips::P))
@@ -2009,11 +2021,11 @@ namespace Voicemeeter {
 							vector_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
-							},
+							} + paddingPoint,
 							vector_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
-							},
+							} + paddingVertex,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Width,
