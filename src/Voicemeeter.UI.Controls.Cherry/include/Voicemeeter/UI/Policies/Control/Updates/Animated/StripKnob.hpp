@@ -81,6 +81,9 @@ namespace Voicemeeter {
 								}
 								that->set_AnimationSize(targetVertex);
 								that->set_IndicatorAngle(state.degree);
+								that->set_Label(state.hold
+									? 8 + floor(ans(state.degree * 4 / 15))
+									: state.target);
 								auto animationVertex = that->get_AnimationSize()
 									- that->get_AnimationPosition();
 								that->set_AnimationContext(context_t{
@@ -123,13 +126,15 @@ namespace Voicemeeter {
 									that->get_AnimationContext()
 								};
 								num_t rI{
-									sqrt(
-										push(context.distance2)
-										/ (context.distance2 - remaining2)
-									)
+									context.distance2
+										? sqrt(
+											push(context.distance2)
+											/ (context.distance2 - remaining2)
+										) : One
 								};
-								that->set_FrameColor(
-									context.path.pick(rI));
+								vector_t targetRgba{ context.path.pick(rI) };
+								that->set_FrameColor(targetRgba);
+								that->set_LabelColor(targetRgba);
 							};
 
 						private:

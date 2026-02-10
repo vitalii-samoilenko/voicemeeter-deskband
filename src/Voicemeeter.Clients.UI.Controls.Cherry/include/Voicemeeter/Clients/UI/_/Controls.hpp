@@ -1661,6 +1661,8 @@ namespace Voicemeeter {
 						if (1 < enabledInputs) {
 							i2->set_FrameColor(toolkit.get_Theme()
 								.Inactive);
+							i2->set_LabelColor(toolkit.get_Theme()
+								.Inactive);
 							i2->set_IndicatorColor(toolkit.get_Theme()
 								.Neutral);
 							if (3 < enabledOutputs) {
@@ -1690,6 +1692,8 @@ namespace Voicemeeter {
 						}
 						if (0 < enabledInputs) {
 							i1->set_FrameColor(toolkit.get_Theme()
+								.Inactive);
+							i1->set_LabelColor(toolkit.get_Theme()
 								.Inactive);
 							i1->set_IndicatorColor(toolkit.get_Theme()
 								.Neutral);
@@ -1721,11 +1725,15 @@ namespace Voicemeeter {
 						if (3 < enabledOutputs) {
 							o4->set_FrameColor(toolkit.get_Theme()
 								.Inactive);
+							o4->set_LabelColor(toolkit.get_Theme()
+								.Inactive);
 							o4->set_IndicatorColor(toolkit.get_Theme()
 								.Neutral);
 						}
 						if (2 < enabledOutputs) {
 							o3->set_FrameColor(toolkit.get_Theme()
+								.Inactive);
+							o3->set_LabelColor(toolkit.get_Theme()
 								.Inactive);
 							o3->set_IndicatorColor(toolkit.get_Theme()
 								.Neutral);
@@ -1733,11 +1741,15 @@ namespace Voicemeeter {
 						if (1 < enabledOutputs) {
 							o2->set_FrameColor(toolkit.get_Theme()
 								.Inactive);
+							o2->set_LabelColor(toolkit.get_Theme()
+								.Inactive);
 							o2->set_IndicatorColor(toolkit.get_Theme()
 								.Neutral);
 						}
 						if (0 < enabledOutputs) {
 							o1->set_FrameColor(toolkit.get_Theme()
+								.Inactive);
+							o1->set_LabelColor(toolkit.get_Theme()
 								.Inactive);
 							o1->set_IndicatorColor(toolkit.get_Theme()
 								.Neutral);

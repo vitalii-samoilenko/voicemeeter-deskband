@@ -30,6 +30,9 @@ inline constexpr num_t ceil(num_t n) {
 	return floor(n + One - 1);
 };
 
+inline num_t ans(num_t n) {
+	return ::std::abs(n);
+};
 inline num_t sqrt(num_t n) {
 	return static_cast<num_t>(
 		::std::sqrt(push(n)));

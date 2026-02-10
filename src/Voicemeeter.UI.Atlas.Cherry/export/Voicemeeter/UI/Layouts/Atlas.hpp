@@ -28,6 +28,10 @@ namespace Voicemeeter {
 						constexpr num_t Width{ push(11) / 2 };
 						constexpr num_t Height{ push(11) / 2 };
 					}
+					namespace Label {
+						constexpr num_t X{ 0 * Block::Width + One };
+						constexpr num_t Y{ 4 * Block::Height + One };
+					}
 				}
 				namespace Plug {
 					namespace Frame {

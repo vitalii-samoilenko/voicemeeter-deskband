@@ -41,7 +41,19 @@ namespace Voicemeeter {
 							Layouts::Atlas::Knob::Indicator::Width,
 							Layouts::Atlas::Knob::Indicator::Height
 						}
-						, _indicatorRgba{ 0, 0, 0, 0 } {
+						, _indicatorRgba{ 0, 0, 0, 0 }
+						, _label{ 0 }
+						, _labelPoint{ 0, 0 }
+						, _labelVertex{ 0, 0 }
+						, _labelAtlasPoint{
+							Layouts::Atlas::Knob::Label::X,
+							Layouts::Atlas::Knob::Label::Y
+						}
+						, _labelAtlasVertex{
+							Layouts::Atlas::Block::Width,
+							Layouts::Atlas::Block::Height
+						}
+						, _labelRgba{ 0, 0, 0, 0 } {
 
 					};
 					Knob() = delete;
@@ -64,21 +76,21 @@ namespace Voicemeeter {
 					};
 
 					inline void set_FramePosition(vector_t const &value) {
-						if (min(_framePoint == value)) {
+						if (all(_framePoint == value)) {
 							return;
 						}
 						_framePoint = value;
 						OnInvalidate(flags::framePoint);
 					};
 					inline void set_FrameSize(vector_t const &value) {
-						if (min(_frameVertex == value)) {
+						if (all(_frameVertex == value)) {
 							return;
 						}
 						_frameVertex = value;
 						OnInvalidate(flags::frameVertex);
 					};
 					inline void set_FrameColor(vector_t const &value) {
-						if (min(_frameRgba == value)) {
+						if (all(_frameRgba == value)) {
 							return;
 						}
 						_frameRgba = value;
@@ -92,11 +104,25 @@ namespace Voicemeeter {
 						OnInvalidate(flags::indicatorDegree);
 					};
 					inline void set_IndicatorColor(vector_t const &value) {
-						if (min(_indicatorRgba == value)) {
+						if (all(_indicatorRgba == value)) {
 							return;
 						}
 						_indicatorRgba = value;
 						OnInvalidate(flags::indicatorRgba);
+					};
+					inline void set_Label(size_t value) {
+						if (_label == value) {
+							return;
+						}
+						_label = value;
+						OnInvalidate(flags::label);
+					};
+					inline void set_LabelColor(vector_t const &value) {
+						if (all(_labelRgba == value)) {
+							return;
+						}
+						_labelRgba = value;
+						OnInvalidate(flags::labelRgba);
 					};
 					inline void set_Invalid() {
 						OnInvalidate(flags::renderTarget);
@@ -105,9 +131,13 @@ namespace Voicemeeter {
 					inline void operator()() {
 						if (_changes.test(flags::frameVertex)) {
 							_indicatorVertex = _frameVertex / 10;
+							_labelVertex[0] = _frameVertex[0] / 2;
+							_labelVertex[1] = _frameVertex[1] / 4;
 							_changes.set(flags::framePoint);
 						}
 						if (_changes.test(flags::framePoint)) {
+							_labelPoint[0] = _framePoint[0] + _frameVertex[0] / 4;
+							_labelPoint[1] = _framePoint[1] + _frameVertex[1] / 3;
 							_changes.set(flags::indicatorDegree);
 						}
 						if (_changes.test(flags::indicatorDegree)) {
@@ -122,19 +152,29 @@ namespace Voicemeeter {
 								+ push(indicatorR) / transformI
 								- _indicatorVertex / 2;
 						}
+						if (_changes.test(flags::label)) {
+							_labelAtlasPoint[0] = Layouts::Atlas::Knob::Label::X
+								+ Layouts::Atlas::Block::Width * (_label % Layouts::Atlas::Bidth);
+							_labelAtlasPoint[1] = Layouts::Atlas::Knob::Label::Y
+								+ Layouts::Atlas::Block::Height * (_label / Layouts::Atlas::Bidth);
+						}
 						_changes.reset();
 						_slot.reset();
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
-								_frameRgba);
+								_frameRgba, false);
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_indicatorAtlasPoint, _indicatorAtlasVertex,
 								_indicatorPoint, _indicatorVertex,
-								_indicatorRgba,
-								true);
+								_indicatorRgba, true);
+						_toolkit.get_Atlas()
+							.FillSDF(
+								_labelAtlasPoint, _labelAtlasVertex,
+								_labelPoint, _labelVertex,
+								_labelRgba, true);
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};
@@ -153,7 +193,9 @@ namespace Voicemeeter {
 						frameRgba = 2,
 						indicatorDegree = 3,
 						indicatorRgba = 4,
-						renderTarget = 5
+						label = 5,
+						labelRgba = 6,
+						renderTarget = 7
 					};
 
 					TToolkit &_toolkit;
@@ -170,6 +212,12 @@ namespace Voicemeeter {
 					vector_t _indicatorAtlasPoint;
 					vector_t _indicatorAtlasVertex;
 					vector_t _indicatorRgba;
+					size_t _label;
+					vector_t _labelPoint;
+					vector_t _labelVertex;
+					vector_t _labelAtlasPoint;
+					vector_t _labelAtlasVertex;
+					vector_t _labelRgba;
 
 					inline void OnInvalidate(flags property) {
 						if (_changes.none()) {

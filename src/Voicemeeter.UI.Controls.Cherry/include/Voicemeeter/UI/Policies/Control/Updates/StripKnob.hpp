@@ -1,6 +1,8 @@
 #ifndef VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_STRIPKNOB_HPP
 #define VOICEMEETER_UI_POLICIES_CONTROL_UPDATES_STRIPKNOB_HPP
 
+#include "wheel.hpp"
+
 #include "Voicemeeter/UI/States/StripKnob.hpp"
 
 namespace Voicemeeter {
@@ -28,29 +30,34 @@ namespace Voicemeeter {
 
 						template<typename TStripKnob>
 						inline void operator()(TStripKnob *that, state_t const &state) const {
-							that->set_FrameColor(
+							vector_t const *targetRgba{
 								state.toggle
-									? _toolkit.get_Theme()
+									? &_toolkit.get_Theme()
 										.Warning
 									: state.hold
 										? 0 < state.degree
-											? _toolkit.get_Theme()
+											? &_toolkit.get_Theme()
 												.Error
-											: _toolkit.get_Theme()
+											: &_toolkit.get_Theme()
 												.Active
 										: 700 < state.level
 											? 1000 < state.level
-												? _toolkit.get_Theme()
+												? &_toolkit.get_Theme()
 													.EqHigh
-												: _toolkit.get_Theme()
+												: &_toolkit.get_Theme()
 													.EqMedium
 											: 5 < state.level
-												? _toolkit.get_Theme()
+												? &_toolkit.get_Theme()
 													.EqLow
-												: _toolkit.get_Theme()
+												: &_toolkit.get_Theme()
 													.Inactive
-							);
+							};
+							that->set_FrameColor(*targetRgba);
+							that->set_LabelColor(*targetRgba);
 							that->set_IndicatorAngle(state.degree);
+							that->set_Label(state.hold
+								? 8 + floor(ans(state.degree * 4 / 15))
+								: state.target);
 						};
 
 					private:

@@ -90,10 +90,11 @@ namespace Voicemeeter {
 									that->get_AnimationContext()
 								};
 								num_t rI{
-									sqrt(
-										push(context.distance2)
-										/ (context.distance2 - remaining2)
-									)
+									context.distance2
+										? sqrt(
+											push(context.distance2)
+											/ (context.distance2 - remaining2)
+										) : One
 								};
 								that->set_FrameColor(
 									context.path.pick(rI));

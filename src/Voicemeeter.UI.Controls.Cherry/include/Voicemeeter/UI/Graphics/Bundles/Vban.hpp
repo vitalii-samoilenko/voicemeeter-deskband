@@ -52,21 +52,21 @@ namespace Voicemeeter {
 					};
 
 					inline void set_FramePosition(vector_t const &value) {
-						if (min(_framePoint == value)) {
+						if (all(_framePoint == value)) {
 							return;
 						}
 						_framePoint = value;
 						OnInvalidate(flags::framePoint);
 					};
 					inline void set_FrameSize(vector_t const &value) {
-						if (min(_frameVertex == value)) {
+						if (all(_frameVertex == value)) {
 							return;
 						}
 						_frameVertex = value;
 						OnInvalidate(flags::frameVertex);
 					};
 					inline void set_FrameColor(vector_t const &value) {
-						if (min(_frameRgba == value)) {
+						if (all(_frameRgba == value)) {
 							return;
 						}
 						_frameRgba = value;
@@ -88,7 +88,7 @@ namespace Voicemeeter {
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
-								_frameRgba);
+								_frameRgba, false);
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

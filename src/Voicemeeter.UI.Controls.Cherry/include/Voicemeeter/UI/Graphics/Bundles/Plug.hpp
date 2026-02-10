@@ -116,7 +116,7 @@ namespace Voicemeeter {
 							_labelAtlasPoint[0] = Layouts::Atlas::Plug::Label::X
 								+ Layouts::Atlas::Block::Width * (_label % Layouts::Atlas::Bidth);
 							_labelAtlasPoint[1] = Layouts::Atlas::Plug::Label::Y
-								+ Layouts::Atlas::Block::Height * (_label / Layouts::Atlas::Beight);
+								+ Layouts::Atlas::Block::Height * (_label / Layouts::Atlas::Bidth);
 						}
 						_changes.reset();
 						_slot.reset();
