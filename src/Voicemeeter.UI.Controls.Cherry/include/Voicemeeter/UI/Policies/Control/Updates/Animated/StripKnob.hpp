@@ -15,6 +15,8 @@ namespace Voicemeeter {
 						struct StripKnobContext {
 							typename TToolkit::Palette::gradient path;
 							num_t distance2;
+							size_t target;
+							size_t gain;
 						};
 
 						template<typename TToolkit>
@@ -39,14 +41,20 @@ namespace Voicemeeter {
 							template<typename TStripKnob>
 							inline void operator()(TStripKnob *that, state_t const &state) const {
 								constexpr num_t AnimationLength{ 200 };
+								constexpr num_t AnimationLengthH{ AnimationLength / 2 };
 								vector_t targetVertex{
 									0, 0, 0,
 									0, 0,
+									0,
 									0
 								};
 								vector_t const *targetRgba{
 									&_toolkit.get_Theme()
 										.Inactive
+								};
+								size_t gain{
+									static_cast<size_t>(
+										8 + floor(ans(state.degree * 4 / 15)))
 								};
 								if (state.toggle) {
 									targetVertex[5] = AnimationLength;
@@ -79,17 +87,23 @@ namespace Voicemeeter {
 											.EqLow;
 									}
 								}
+								if (state.hold) {
+									targetVertex[6] = AnimationLength;
+								}
 								that->set_AnimationSize(targetVertex);
 								that->set_IndicatorAngle(state.degree);
-								that->set_Label(state.hold
-									? 8 + floor(ans(state.degree * 4 / 15))
-									: state.target);
+								num_t shifted{ that->get_AnimationPosition()[6] - AnimationLengthH };
+								that->set_Label(shifted < 0
+									? state.target
+									: gain);
 								auto animationVertex = that->get_AnimationSize()
 									- that->get_AnimationPosition();
+								auto animationVertex2 = animationVertex * animationVertex;
 								that->set_AnimationContext(context_t{
 									_toolkit.get_Palette()
 										.Interpolate(that->get_FrameColor(), *targetRgba),
-									sum(animationVertex * animationVertex)
+									sum(vector_t{ animationVertex2[slice_t{ 0, 6, 1 }] }),
+									state.target, gain
 								});
 							};
 
@@ -117,10 +131,13 @@ namespace Voicemeeter {
 
 							template<typename TStripKnob>
 							inline void operator()(TStripKnob *that) const {
+								constexpr num_t AnimationLength{ 200 };
+								constexpr num_t AnimationLengthH{ AnimationLength / 2 };
 								auto animationVertex = that->get_AnimationSize()
 									- that->get_AnimationPosition();
+								auto animationVertex2 = animationVertex * animationVertex;
 								num_t remaining2{
-									sum(animationVertex * animationVertex)
+									sum(vector_t{ animationVertex2[slice_t{ 0, 6, 1 }] })
 								};
 								context_t const &context{
 									that->get_AnimationContext()
@@ -134,6 +151,11 @@ namespace Voicemeeter {
 								};
 								vector_t targetRgba{ context.path.pick(rI) };
 								that->set_FrameColor(targetRgba);
+								num_t shifted{ that->get_AnimationPosition()[6] - AnimationLengthH };
+								that->set_Label(shifted < 0
+									? context.target
+									: context.gain);
+								targetRgba[3] = push(255) * ans(shifted) / AnimationLengthH;
 								that->set_LabelColor(targetRgba);
 							};
 

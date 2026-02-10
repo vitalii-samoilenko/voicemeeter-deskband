@@ -400,7 +400,7 @@ namespace Voicemeeter {
 													::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
 												TToolkit,
 												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
-												slice_t>,
+												slice_t, slice_t>,
 											::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 										>>,
 										::Voicemeeter::UI::States::StripKnob,
@@ -1219,6 +1219,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
+							slice_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2 = ::std::make_unique<
@@ -1246,6 +1247,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
+							slice_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o1 = ::std::make_unique<
@@ -1273,6 +1275,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
+							slice_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o2 = ::std::make_unique<
@@ -1314,6 +1317,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
+							slice_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o3 = ::std::make_unique<
@@ -1355,6 +1359,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
+							slice_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o4 = ::std::make_unique<
@@ -1396,6 +1401,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							slice_t{ 0, 6, 1 },
+							slice_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o1 = ::std::make_unique<
