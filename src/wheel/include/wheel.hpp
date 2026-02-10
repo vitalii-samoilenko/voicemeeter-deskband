@@ -68,5 +68,13 @@ template<typename V>
 inline num_t min(V const &v) {
 	return v.min();
 };
+template<typename V>
+inline num_t any(V const &v) {
+	return max(v);
+};
+template<typename V>
+inline num_t all(V const &v) {
+	return min(v);
+};
 
 #endif

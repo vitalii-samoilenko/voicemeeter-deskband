@@ -30,13 +30,15 @@ namespace Voicemeeter {
 
 						template<typename TPlug>
 						inline void operator()(TPlug *that, state_t const &state) const {
-							that->set_FrameColor(
+							vector_t const *targetRgba{
 								state.toggle
-									? _toolkit.get_Theme()
+									? &_toolkit.get_Theme()
 										.Active
-									: _toolkit.get_Theme()
+									: &_toolkit.get_Theme()
 										.Inactive
-							);
+							};
+							that->set_FrameColor(*targetRgba);
+							that->set_LabelColor(*targetRgba);
 						};
 
 					private:

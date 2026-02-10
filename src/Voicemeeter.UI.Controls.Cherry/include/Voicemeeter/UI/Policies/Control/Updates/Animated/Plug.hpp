@@ -97,8 +97,9 @@ namespace Voicemeeter {
 										/ (context.distance2 - remaining2)
 									)
 								};
-								that->set_FrameColor(
-									context.path.pick(rI));
+								vector_t targetRgba{ context.path.pick(rI) };
+								that->set_FrameColor(targetRgba);
+								that->set_LabelColor(targetRgba);
 							};
 
 						private:

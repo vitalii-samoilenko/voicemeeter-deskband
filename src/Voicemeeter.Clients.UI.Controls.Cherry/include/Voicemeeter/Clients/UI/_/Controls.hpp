@@ -1065,6 +1065,7 @@ namespace Voicemeeter {
 						state.from = From;
 						state.to = To;
 						plug.set_State(state);
+						plug.set_Label(state.to);
 						tokens.get_Mixer()
 							.on_plug<From, To>([
 								&plug
@@ -1665,17 +1666,25 @@ namespace Voicemeeter {
 							if (3 < enabledOutputs) {
 								i2o4->set_FrameColor(toolkit.get_Theme()
 									.Inactive);
+								i2o4->set_LabelColor(toolkit.get_Theme()
+									.Inactive);
 							}
 							if (2 < enabledOutputs) {
 								i2o3->set_FrameColor(toolkit.get_Theme()
+									.Inactive);
+								i2o3->set_LabelColor(toolkit.get_Theme()
 									.Inactive);
 							}
 							if (1 < enabledOutputs) {
 								i2o2->set_FrameColor(toolkit.get_Theme()
 									.Inactive);
+								i2o2->set_LabelColor(toolkit.get_Theme()
+									.Inactive);
 							}
 							if (0 < enabledOutputs) {
 								i2o1->set_FrameColor(toolkit.get_Theme()
+									.Inactive);
+								i2o1->set_LabelColor(toolkit.get_Theme()
 									.Inactive);
 							}
 						}
@@ -1687,17 +1696,25 @@ namespace Voicemeeter {
 							if (3 < enabledOutputs) {
 								i1o4->set_FrameColor(toolkit.get_Theme()
 									.Inactive);
+								i1o4->set_LabelColor(toolkit.get_Theme()
+									.Inactive);
 							}
 							if (2 < enabledOutputs) {
 								i1o3->set_FrameColor(toolkit.get_Theme()
+									.Inactive);
+								i1o3->set_LabelColor(toolkit.get_Theme()
 									.Inactive);
 							}
 							if (1 < enabledOutputs) {
 								i1o2->set_FrameColor(toolkit.get_Theme()
 									.Inactive);
+								i1o2->set_LabelColor(toolkit.get_Theme()
+									.Inactive);
 							}
 							if (0 < enabledOutputs) {
 								i1o1->set_FrameColor(toolkit.get_Theme()
+									.Inactive);
+								i1o1->set_LabelColor(toolkit.get_Theme()
 									.Inactive);
 							}
 						}
