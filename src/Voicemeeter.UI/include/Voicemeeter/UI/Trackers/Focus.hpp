@@ -31,6 +31,12 @@ namespace Voicemeeter {
 				Focus & operator=(Focus &&) = delete;
 
 				template<typename TComponent>
+				inline UI::Focus get_Track(TComponent &target) const {
+					return _trackedId == &target
+						? _mode
+						: UI::Focus::None;
+				};
+				template<typename TComponent>
 				inline void set_Track(TComponent &target, UI::Focus value) {
 					if (_trackedId == &target) {
 						if (_mode == value) {
@@ -63,6 +69,18 @@ namespace Voicemeeter {
 						_tracked->set_Focus(value);
 					}
 					_mode = value;
+				};
+				template<typename TComponent>
+				inline void up_Track(TComponent &target, UI::Focus value) {
+					if (get_Track(target) < value) {
+						set_Track(target, value);
+					}
+				};
+				template<typename TComponent>
+				inline void down_Track(TComponent &target, UI::Focus value) {
+					if (value < get_Track(target)) {
+						set_Track(target, value);
+					}
 				};
 
 				inline void set_Focus(UI::Focus value) {

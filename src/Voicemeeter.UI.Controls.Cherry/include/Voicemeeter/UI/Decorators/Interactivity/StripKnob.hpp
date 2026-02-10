@@ -26,7 +26,7 @@ namespace Voicemeeter {
 						, _releaseTick{ this, timer }
 						, _direction{ ::std::move(direction) }
 						, _initPoint{ 0, 0 }
-						, _focus{ Focus::None } {
+						, _hold{ false } {
 
 					};
 					StripKnob() = delete;
@@ -39,12 +39,16 @@ namespace Voicemeeter {
 					StripKnob & operator=(StripKnob &&) = delete;
 
 					inline void set_Focus(Focus value) {
-						_focus = value;
-						if (value != Focus::None) {
+						switch (value) {
+						case Focus::Fixed:
+							_hold = true;
 							return;
+						case Focus::None:
+							_releaseTick.Unset();
+							TStripKnob::set_HoldState(false);
+							break;
 						}
-						_releaseTick.Unset();
-						TStripKnob::set_HoldState(false);
+						_hold = false;
 					};
 
 					inline bool MouseLDown(vector_t const &point) {
@@ -82,7 +86,7 @@ namespace Voicemeeter {
 						return true;
 					};
 					inline bool MouseMove(vector_t const &point) {
-						if (_focus == Focus::Fixed) {
+						if (_hold) {
 							TStripKnob::add_GainState(
 								sum(_direction(point - _initPoint)));
 							_initPoint = point;
@@ -131,7 +135,7 @@ namespace Voicemeeter {
 					ReleaseTick _releaseTick;
 					TDirection _direction;
 					vector_t _initPoint;
-					Focus _focus;
+					bool _hold;
 				};
 			}
 		}
