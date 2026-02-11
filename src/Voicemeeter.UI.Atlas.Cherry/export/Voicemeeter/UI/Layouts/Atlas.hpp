@@ -7,9 +7,10 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Layouts {
 			namespace Atlas {
+				constexpr num_t Factor{ 2 };
 				namespace Block {
-					constexpr num_t Width{ push(26) };
-					constexpr num_t Height{ push(17) };
+					constexpr num_t Width{ Factor * push(26) };
+					constexpr num_t Height{ Factor * push(17) };
 				}
 				constexpr num_t Bidth{ 8 };
 				constexpr num_t Beight{ 14 };
@@ -19,14 +20,14 @@ namespace Voicemeeter {
 					namespace Frame {
 						constexpr num_t X{ 4 * Block::Width + One };
 						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ push(48) };
-						constexpr num_t Height{ push(48) };
+						constexpr num_t Width{ Factor * push(48) };
+						constexpr num_t Height{ Factor * push(48) };
 					}
 					namespace Indicator{
 						constexpr num_t X{ 6 * Block::Width + One };
 						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ push(11) / 2 };
-						constexpr num_t Height{ push(11) / 2 };
+						constexpr num_t Width{ Factor * push(11) / 2 };
+						constexpr num_t Height{ Factor * push(11) / 2 };
 					}
 					namespace Label {
 						constexpr num_t X{ 0 * Block::Width + One };
@@ -37,8 +38,8 @@ namespace Voicemeeter {
 					namespace Frame {
 						constexpr num_t X{ 6 * Block::Width + One };
 						constexpr num_t Y{ 1 * Block::Height + One };
-						constexpr num_t Width{ push(41 * 24) / 20 };
-						constexpr num_t Height{ push(19 * 24) / 20 };
+						constexpr num_t Width{ Factor * push(41 * 24) / 20 };
+						constexpr num_t Height{ Factor * push(19 * 24) / 20 };
 					}
 					namespace Label {
 						constexpr num_t X{ 0 * Block::Width + One };
@@ -49,8 +50,8 @@ namespace Voicemeeter {
 					namespace Frame {
 						constexpr num_t X{ 0 * Block::Width + One };
 						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ push(39 * 48) / 22 };
-						constexpr num_t Height{ push(22 * 48) / 22 };
+						constexpr num_t Width{ Factor * push(39 * 48) / 22 };
+						constexpr num_t Height{ Factor * push(22 * 48) / 22 };
 					}
 				}
 			}
