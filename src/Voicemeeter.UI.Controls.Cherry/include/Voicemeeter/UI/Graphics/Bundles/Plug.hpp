@@ -120,6 +120,7 @@ namespace Voicemeeter {
 						}
 						_changes.reset();
 						_slot.reset();
+						/*
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
@@ -130,6 +131,7 @@ namespace Voicemeeter {
 								_labelAtlasPoint, _labelAtlasVertex,
 								_labelPoint, _labelVertex,
 								_labelRgba, true);
+						*/
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

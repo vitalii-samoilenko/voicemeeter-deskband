@@ -7,6 +7,7 @@ target_compile_features(voicemeeter_clients_ui_graphics_d3d12 INTERFACE cxx_std_
 target_link_libraries(voicemeeter_clients_ui_graphics_d3d12 INTERFACE
 	Windows
 	Voicemeeter::UI
+	Voicemeeter::UI::Atlas
 	Voicemeeter::UI::Graphics)
 target_include_directories(voicemeeter_clients_ui_graphics_d3d12 INTERFACE include)
 

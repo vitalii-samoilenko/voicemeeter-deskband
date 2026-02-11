@@ -165,6 +165,7 @@ namespace Voicemeeter {
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba, false);
+						/*
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_indicatorAtlasPoint, _indicatorAtlasVertex,
@@ -175,6 +176,7 @@ namespace Voicemeeter {
 								_labelAtlasPoint, _labelAtlasVertex,
 								_labelPoint, _labelVertex,
 								_labelRgba, true);
+						*/
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

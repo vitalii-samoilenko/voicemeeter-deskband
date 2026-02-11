@@ -7,22 +7,27 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Layouts {
 			namespace Atlas {
-				constexpr num_t Factor{ 2 };
-				namespace Block {
-					constexpr num_t Width{ Factor * push(26) };
-					constexpr num_t Height{ Factor * push(17) };
+				constexpr num_t Factor{ 1 };
+				namespace Range {
+					constexpr num_t X{ 2 };
+					constexpr num_t Y{ 2 };
 				}
-				constexpr num_t Bidth{ 8 };
-				constexpr num_t Beight{ 14 };
-				constexpr num_t Width{ Bidth * Block::Width + One };
-				constexpr num_t Height{ Beight * Block::Height + One };
+				namespace Block {
+					constexpr num_t Width{ push(32) };
+					constexpr num_t Height{ push(16) };
+				}
+				constexpr num_t Bidth{ 3 };
+				constexpr num_t Beight{ 2 };
+				constexpr num_t Width{ Bidth * Block::Width };
+				constexpr num_t Height{ Beight * Block::Height };
 				namespace Knob {
 					namespace Frame {
-						constexpr num_t X{ 4 * Block::Width + One };
-						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ Factor * push(48) };
-						constexpr num_t Height{ Factor * push(48) };
+						constexpr num_t X{ 0 * Block::Width };
+						constexpr num_t Y{ 0 * Block::Height };
+						constexpr num_t Width{ push(32) };
+						constexpr num_t Height{ push(32) };
 					}
+// -------------------------------------------------------------
 					namespace Indicator{
 						constexpr num_t X{ 6 * Block::Width + One };
 						constexpr num_t Y{ 0 * Block::Height + One };

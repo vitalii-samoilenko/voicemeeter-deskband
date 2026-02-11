@@ -32,8 +32,7 @@ namespace Voicemeeter {
 				inline void FillSDF(
 					vector_t const &srcPoint, vector_t const &srcVertex,
 					vector_t const &dstPoint, vector_t const &dstVertex,
-					vector_t const &color,
-					bool blend = false) const {
+					vector_t const &color, bool blend = false) const {
 					size_t frame{
 						_state.get_SwapChain()
 							->GetCurrentBackBufferIndex()
@@ -59,20 +58,28 @@ namespace Voicemeeter {
 					};
 					_state.get_CommandList(frame)
 						->RSSetScissorRects(1, &scissor);
-					::std::array<FLOAT, 8> constants{
+					::std::array<FLOAT, 9> constants{
 						static_cast<FLOAT>(color[0]) / push(255),
 						static_cast<FLOAT>(color[1]) / push(255),
 						static_cast<FLOAT>(color[2]) / push(255),
 						static_cast<FLOAT>(color[3]) / push(255),
+						::std::min(
+							static_cast<FLOAT>(Layouts::Atlas::Range::X * dstVertex[0]) / srcVertex[0],
+							static_cast<FLOAT>(Layouts::Atlas::Range::Y * dstVertex[1]) / srcVertex[1]),
 						static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width,
 						static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height,
-						static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width,
-						static_cast<FLOAT>(srcVertex[1]) / Layouts::Atlas::Height
+						static_cast<FLOAT>(srcPoint[0] + srcVertex[0]) / Layouts::Atlas::Width,
+						static_cast<FLOAT>(srcPoint[1] + srcVertex[1]) / Layouts::Atlas::Height
 					};
 					_state.get_CommandList(frame)
 						->SetGraphicsRoot32BitConstants(
 							1,
-							static_cast<UINT>(constants.size()), constants.data(),
+							5U, &constants[0],
+							0);
+					_state.get_CommandList(frame)
+						->SetGraphicsRoot32BitConstants(
+							2,
+							4U, &constants[5],
 							0);
 					_state.get_CommandList(frame)
 						->DrawInstanced(4, 1, 0, 0);

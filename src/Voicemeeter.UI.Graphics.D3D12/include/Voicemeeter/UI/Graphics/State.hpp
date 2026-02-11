@@ -229,7 +229,7 @@ namespace Voicemeeter {
 							D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 							0,
 							pop(Layouts::Atlas::Width), pop(Layouts::Atlas::Height), 1, 1,
-							DXGI_FORMAT_R32_FLOAT,
+							DXGI_FORMAT_R32G32B32_FLOAT,
 							DXGI_SAMPLE_DESC{
 								1, 0
 							},
@@ -242,7 +242,7 @@ namespace Voicemeeter {
 								nullptr,
 								IID_PPV_ARGS(&_texture)
 						), "Texture creation failed");
-						UINT rowSize{ pop(Layouts::Atlas::Width) * 4 };
+						UINT rowSize{ pop(Layouts::Atlas::Width) * 4 * 3 };
 						UINT srcRowPitch{ rowSize };
 						UINT remainder{ rowSize % D3D12_TEXTURE_DATA_PITCH_ALIGNMENT };
 						UINT dstRowPitch{
@@ -282,7 +282,7 @@ namespace Voicemeeter {
 							D3D12_PLACED_SUBRESOURCE_FOOTPRINT{
 								0,
 								D3D12_SUBRESOURCE_FOOTPRINT{
-									DXGI_FORMAT_R32_FLOAT,
+									DXGI_FORMAT_R32G32B32_FLOAT,
 									pop(Layouts::Atlas::Width), pop(Layouts::Atlas::Height), 1,
 									dstRowPitch
 								}
@@ -320,7 +320,7 @@ namespace Voicemeeter {
 							IID_PPV_ARGS(&_hTextureHeap)
 						), "SRV heap descriptor creation failed");
 						D3D12_SHADER_RESOURCE_VIEW_DESC hTextureDesc{
-							DXGI_FORMAT_R32_FLOAT,
+							DXGI_FORMAT_R32G32B32_FLOAT,
 							D3D12_SRV_DIMENSION_TEXTURE2D,
 							D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING
 						};
@@ -388,15 +388,19 @@ namespace Voicemeeter {
 							0, 0,
 							0
 						};
-						::std::array<D3D12_ROOT_PARAMETER, 2> params{};
+						::std::array<D3D12_ROOT_PARAMETER, 3> params{};
 						params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 						params[0].DescriptorTable.NumDescriptorRanges = 1;
 						params[0].DescriptorTable.pDescriptorRanges = &hTextureRange;
 						params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 						params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 						params[1].Constants.ShaderRegister = 0;
-						params[1].Constants.Num32BitValues = 8;
+						params[1].Constants.Num32BitValues = 5;
 						params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+						params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+						params[2].Constants.ShaderRegister = 0;
+						params[2].Constants.Num32BitValues = 4;
+						params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 						D3D12_STATIC_SAMPLER_DESC samplerDesc{
 							D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT,
 							D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER,
@@ -454,6 +458,13 @@ namespace Voicemeeter {
 							compileFlags, 0,
 							&pixelShader, nullptr
 						), "Pixel shader compilation failed");
+						::std::array<D3D12_INPUT_ELEMENT_DESC, 2> inputDescs{};
+						inputDescs[0].SemanticName = "POSITION";
+						inputDescs[0].Format = DXGI_FORMAT_R32G32_FLOAT;
+						inputDescs[0].InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
+						inputDescs[1].SemanticName = "SV_VertexID";
+						inputDescs[1].Format = DXGI_FORMAT_R32_UINT;
+						inputDescs[1].InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 						D3D12_INPUT_ELEMENT_DESC positionDesc{
 							"POSITION", 0,
 							DXGI_FORMAT_R32G32_FLOAT,
@@ -500,7 +511,7 @@ namespace Voicemeeter {
 								D3D12_DEPTH_STENCILOP_DESC{}, D3D12_DEPTH_STENCILOP_DESC{}
 							},
 							D3D12_INPUT_LAYOUT_DESC{
-								&positionDesc, 1
+								&inputDescs[0], 2U
 							},
 							D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED,
 							D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,

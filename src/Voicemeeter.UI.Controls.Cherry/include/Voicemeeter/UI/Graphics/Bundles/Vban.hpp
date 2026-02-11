@@ -84,11 +84,13 @@ namespace Voicemeeter {
 						}
 						_changes.reset();
 						_slot.reset();
+						/*
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba, false);
+						*/
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

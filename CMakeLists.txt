@@ -5,7 +5,7 @@ project(Voicemeeter VERSION 0.9)
 
 set(LOADER Windows)# Choose resource manager: Windows
 set(PALETTE Oklab)# Choose color blender: Oklab
-set(ATLAS Cherry)# Choose texture set: Cherry
+set(ATLAS Msdfgen)# Choose texture set: Msdfgen
 set(GRAPHICS D3D12)# Choose rendering engine: D3D12
 set(CONTROLS Cherry)# Choose widget set: Cherry
 
@@ -24,8 +24,8 @@ endif()
 add_subdirectory(src/estd)
 add_subdirectory(src/Voicemeeter)
 add_subdirectory(src/Voicemeeter.Clients.Remote)
-if(ATLAS STREQUAL Cherry)
-	add_subdirectory(src/Voicemeeter.UI.Atlas.Cherry)
+if(ATLAS STREQUAL Msdfgen)
+	add_subdirectory(src/Voicemeeter.UI.Atlas.Msdfgen)
 endif()
 if(CONTROLS STREQUAL Cherry)
 	add_subdirectory(src/Voicemeeter.Clients.UI.Controls.Cherry)

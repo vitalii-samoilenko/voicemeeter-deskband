@@ -1,12 +1,18 @@
 struct VSOutput {
 	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
+	float2 coord : TEXCOORD;
 };
 
-VSOutput Main(float4 position : POSITION) {
+float4 g_coord : register(c0);
+
+VSOutput Main(float4 position : POSITION, uint id : SV_VertexID) {
 	VSOutput output;
 	output.position = position;
-	output.uv = (position + 1) / 2;
-	output.uv.y = 1 - output.uv.y;
+	output.coord.x = id < 2
+		? g_coord.x
+		: g_coord.z;
+	output.coord.y = id % 2
+		? g_coord.w
+		: g_coord.y;
 	return output;
 }
