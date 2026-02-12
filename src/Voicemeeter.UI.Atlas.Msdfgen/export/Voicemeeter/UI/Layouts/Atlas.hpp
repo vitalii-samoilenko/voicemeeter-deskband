@@ -7,16 +7,15 @@ namespace Voicemeeter {
 	namespace UI {
 		namespace Layouts {
 			namespace Atlas {
-				constexpr num_t Factor{ 1 };
 				namespace Range {
 					constexpr num_t X{ 2 };
 					constexpr num_t Y{ 2 };
 				}
 				namespace Block {
 					constexpr num_t Width{ push(41) };
-					constexpr num_t Height{ push(20) };
+					constexpr num_t Height{ push(22) };
 				}
-				constexpr num_t Bidth{ 3 };
+				constexpr num_t Bidth{ 5 };
 				constexpr num_t Beight{ 2 };
 				constexpr num_t Width{ Bidth * Block::Width };
 				constexpr num_t Height{ Beight * Block::Height };
@@ -27,12 +26,11 @@ namespace Voicemeeter {
 						constexpr num_t Width{ push(40) };
 						constexpr num_t Height{ push(40) };
 					}
-// -------------------------------------------------------------
 					namespace Indicator{
-						constexpr num_t X{ 6 * Block::Width + One };
-						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ Factor * push(11) / 2 };
-						constexpr num_t Height{ Factor * push(11) / 2 };
+						constexpr num_t X{ 1 * Block::Width };
+						constexpr num_t Y{ 1 * Block::Height };
+						constexpr num_t Width{ push(19) };
+						constexpr num_t Height{ push(19) };
 					}
 					namespace Label {
 						constexpr num_t X{ 0 * Block::Width + One };
@@ -53,10 +51,10 @@ namespace Voicemeeter {
 				}
 				namespace Vban {
 					namespace Frame {
-						constexpr num_t X{ 0 * Block::Width + One };
-						constexpr num_t Y{ 0 * Block::Height + One };
-						constexpr num_t Width{ Factor * push(39 * 48) / 22 };
-						constexpr num_t Height{ Factor * push(22 * 48) / 22 };
+						constexpr num_t X{ 2 * Block::Width };
+						constexpr num_t Y{ 0 * Block::Height };
+						constexpr num_t Width{ push(78) };
+						constexpr num_t Height{ push(44) };
 					}
 				}
 			}
