@@ -12,11 +12,23 @@ add_custom_command(
 	COMMAND ${MSDFGEN_PATH} msdf
 		-shapedesc ${PROJECT_SOURCE_DIR}/shapes/knob_frame.desc
 		-o knob_frame.bit
-		-dimensions 32 32
+		-dimensions 40 40
 		-format fl32
 		-autoframe
-		-testrender knob_frame.test.png 1000 1000
+		-testrender knob_frame.test.png 800 800
+	DEPENDS shapes/knob_frame.desc
 	OUTPUT knob_frame.bit
+	VERBATIM)
+add_custom_command(
+	COMMAND ${MSDFGEN_PATH} msdf
+		-shapedesc ${PROJECT_SOURCE_DIR}/shapes/plug_frame.desc
+		-o plug_frame.bit
+		-dimensions 41 19
+		-format fl32
+		-autoframe
+		-testrender plug_frame.test.png 820 380
+	DEPENDS shapes/plug_frame.desc
+	OUTPUT plug_frame.bit
 	VERBATIM)
 add_executable(atlas.generator)
 target_sources(atlas.generator PRIVATE atlas.cpp)
@@ -27,6 +39,7 @@ add_custom_command(
 	DEPENDS
 		atlas.generator
 		knob_frame.bit
+		plug_frame.bit
 	VERBATIM)
 add_custom_target(run.atlas.generator DEPENDS Atlas.bit)
 add_dependencies(voicemeeter_ui_atlas_msdfgen run.atlas.generator)

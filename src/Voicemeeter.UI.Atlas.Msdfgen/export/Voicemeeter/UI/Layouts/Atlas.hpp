@@ -13,8 +13,8 @@ namespace Voicemeeter {
 					constexpr num_t Y{ 2 };
 				}
 				namespace Block {
-					constexpr num_t Width{ push(32) };
-					constexpr num_t Height{ push(16) };
+					constexpr num_t Width{ push(41) };
+					constexpr num_t Height{ push(20) };
 				}
 				constexpr num_t Bidth{ 3 };
 				constexpr num_t Beight{ 2 };
@@ -24,8 +24,8 @@ namespace Voicemeeter {
 					namespace Frame {
 						constexpr num_t X{ 0 * Block::Width };
 						constexpr num_t Y{ 0 * Block::Height };
-						constexpr num_t Width{ push(32) };
-						constexpr num_t Height{ push(32) };
+						constexpr num_t Width{ push(40) };
+						constexpr num_t Height{ push(40) };
 					}
 // -------------------------------------------------------------
 					namespace Indicator{
@@ -41,10 +41,10 @@ namespace Voicemeeter {
 				}
 				namespace Plug {
 					namespace Frame {
-						constexpr num_t X{ 6 * Block::Width + One };
-						constexpr num_t Y{ 1 * Block::Height + One };
-						constexpr num_t Width{ Factor * push(41 * 24) / 20 };
-						constexpr num_t Height{ Factor * push(19 * 24) / 20 };
+						constexpr num_t X{ 1 * Block::Width };
+						constexpr num_t Y{ 0 * Block::Height };
+						constexpr num_t Width{ push(41) };
+						constexpr num_t Height{ push(19) };
 					}
 					namespace Label {
 						constexpr num_t X{ 0 * Block::Width + One };
