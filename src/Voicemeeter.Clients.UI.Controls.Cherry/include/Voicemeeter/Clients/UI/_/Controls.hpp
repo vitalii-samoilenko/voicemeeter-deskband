@@ -382,37 +382,37 @@ namespace Voicemeeter {
 							>>>,
 							TFocusTracker
 						>>;
-						template<
-							typename TTimer,
-							typename TMixer,
-							typename TToolkit,
-							typename TFocusTracker>
-						using StripKnob = ::Voicemeeter::UI::Decorators::HitTest<
-							::Voicemeeter::UI::Decorators::Interactivity::Grab<
-								::Voicemeeter::UI::Decorators::Interactivity::StripKnob<
-									::Voicemeeter::UI::Adapters::Interactivity::Controllers::StripKnob<
-									::Voicemeeter::UI::Adapters::State<
-										::Voicemeeter::UI::Adapters::Interactivity::Transparent<
-										::Voicemeeter::UI::Adapters::Glyph<
-											::Voicemeeter::UI::Adapters::Graphics::Animated<
-												::Voicemeeter::UI::Adapters::Graphics::Context<
-													::Voicemeeter::UI::Graphics::Bundles::Knob<TToolkit>,
-													::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
-												TToolkit,
-												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
-												slice_t, slice_t>,
-											::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
-										>>,
-										::Voicemeeter::UI::States::StripKnob,
-										Policies::Control::Notifications::StripKnob<TMixer>,
-										Policies::Control::Updates::ToggleAnimation<
-											::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-											::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>
+					template<
+						typename TTimer,
+						typename TMixer,
+						typename TToolkit,
+						typename TFocusTracker>
+					using StripKnob = ::Voicemeeter::UI::Decorators::HitTest<
+						::Voicemeeter::UI::Decorators::Interactivity::Grab<
+							::Voicemeeter::UI::Decorators::Interactivity::StripKnob<
+								::Voicemeeter::UI::Adapters::Interactivity::Controllers::StripKnob<
+								::Voicemeeter::UI::Adapters::State<
+									::Voicemeeter::UI::Adapters::Interactivity::Transparent<
+									::Voicemeeter::UI::Adapters::Glyph<
+										::Voicemeeter::UI::Adapters::Graphics::Animated<
+											::Voicemeeter::UI::Adapters::Graphics::Context<
+												::Voicemeeter::UI::Graphics::Bundles::Knob<TToolkit>,
+												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
+											TToolkit,
+											::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
+											slice_t, slice_t>,
+										::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 									>>,
-									TTimer,
-									::Voicemeeter::UI::Policies::Orientation::Directions::Axis>,
-								TFocusTracker
-							>>;
+									::Voicemeeter::UI::States::StripKnob,
+									Policies::Control::Notifications::StripKnob<TMixer>,
+									Policies::Control::Updates::ToggleAnimation<
+										::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+										::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>
+								>>,
+								TTimer,
+								::Voicemeeter::UI::Policies::Orientation::Directions::Axis>,
+							TFocusTracker
+						>>;
 					template<
 						typename TTimer,
 						typename TMixer,
@@ -481,7 +481,7 @@ namespace Voicemeeter {
 								TToolkit,
 								TFocusTracker>,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
-					>>>;
+						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
@@ -502,7 +502,7 @@ namespace Voicemeeter {
 								TToolkit,
 								TFocusTracker>,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
-					>>>;
+						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
@@ -530,7 +530,7 @@ namespace Voicemeeter {
 								TToolkit,
 								TFocusTracker>,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
-					>>>;
+						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
@@ -549,7 +549,7 @@ namespace Voicemeeter {
 								TToolkit,
 								TFocusTracker>,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
-					>>>;
+						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,

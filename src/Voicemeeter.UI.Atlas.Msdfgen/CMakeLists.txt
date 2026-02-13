@@ -12,10 +12,12 @@ add_custom_command(
 	COMMAND ${MSDFGEN_PATH} msdf
 		-shapedesc ${PROJECT_SOURCE_DIR}/shapes/knob_frame.desc
 		-o knob_frame.bit
-		-dimensions 40 40
-		-format fl32
-		-autoframe
-		-testrender knob_frame.test.png 800 800
+		-dimensions 50 50
+		-pxrange 4
+		-translate 1 1
+		-scale 1
+		-format binfloat
+		-testrender knob_frame.test.png 1000 1000
 	DEPENDS shapes/knob_frame.desc
 	OUTPUT knob_frame.bit
 	VERBATIM)
@@ -23,10 +25,12 @@ add_custom_command(
 	COMMAND ${MSDFGEN_PATH} msdf
 		-shapedesc ${PROJECT_SOURCE_DIR}/shapes/plug_frame.desc
 		-o plug_frame.bit
-		-dimensions 41 19
-		-format fl32
-		-autoframe
-		-testrender plug_frame.test.png 820 380
+		-dimensions 43 21
+		-pxrange 4
+		-scale 1
+		-translate 1 1
+		-format binfloat
+		-testrender plug_frame.test.png 860 420
 	DEPENDS shapes/plug_frame.desc
 	OUTPUT plug_frame.bit
 	VERBATIM)
@@ -34,10 +38,12 @@ add_custom_command(
 	COMMAND ${MSDFGEN_PATH} msdf
 		-shapedesc ${PROJECT_SOURCE_DIR}/shapes/knob_indicator.desc
 		-o knob_indicator.bit
-		-dimensions 19 19
-		-format fl32
-		-autoframe
-		-testrender knob_indicator.test.png 380 380
+		-dimensions 24 24
+		-pxrange 4
+		-scale 1
+		-translate 1 1
+		-format binfloat
+		-testrender knob_indicator.test.png 480 480
 	DEPENDS shapes/knob_indicator.desc
 	OUTPUT knob_indicator.bit
 	VERBATIM)
@@ -45,10 +51,12 @@ add_custom_command(
 	COMMAND ${MSDFGEN_PATH} msdf
 		-shapedesc ${PROJECT_SOURCE_DIR}/shapes/vban_frame.desc
 		-o vban_frame.bit
-		-dimensions 78 44
-		-format fl32
-		-autoframe
-		-testrender vban_frame.test.png 1560 880
+		-dimensions 80 46
+		-pxrange 4
+		-scale 1
+		-translate 1 1
+		-format binfloat
+		-testrender vban_frame.test.png 1600 920
 	DEPENDS shapes/vban_frame.desc
 	OUTPUT vban_frame.bit
 	VERBATIM)

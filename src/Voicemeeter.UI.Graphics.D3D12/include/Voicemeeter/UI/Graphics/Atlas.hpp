@@ -64,8 +64,8 @@ namespace Voicemeeter {
 						static_cast<FLOAT>(color[2]) / push(255),
 						static_cast<FLOAT>(color[3]) / push(255),
 						::std::min(
-							static_cast<FLOAT>(Layouts::Atlas::Range::X * dstVertex[0]) / srcVertex[0],
-							static_cast<FLOAT>(Layouts::Atlas::Range::Y * dstVertex[1]) / srcVertex[1]),
+							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[0]) / srcVertex[0],
+							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[1]) / srcVertex[1]),
 						static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width,
 						static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height,
 						static_cast<FLOAT>(srcPoint[0] + srcVertex[0]) / Layouts::Atlas::Width,

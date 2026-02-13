@@ -8,7 +8,8 @@ target_link_libraries(voicemeeter_clients_ui_controls_cherry INTERFACE
 	wheel
 	Voicemeeter
 	Voicemeeter::UI
-	Voicemeeter::UI::Controls)
+	Voicemeeter::UI::Controls
+	Voicemeeter::UI::Layouts)
 target_include_directories(voicemeeter_clients_ui_controls_cherry INTERFACE include)
 
 add_library(Voicemeeter::Clients::UI::Controls ALIAS voicemeeter_clients_ui_controls_cherry)

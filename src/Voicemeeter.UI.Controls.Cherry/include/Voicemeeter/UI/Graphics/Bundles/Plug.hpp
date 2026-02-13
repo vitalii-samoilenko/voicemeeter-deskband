@@ -38,8 +38,8 @@ namespace Voicemeeter {
 							Layouts::Atlas::Plug::Label::Y
 						}
 						, _labelAtlasVertex{
-							Layouts::Atlas::Block::Width,
-							Layouts::Atlas::Block::Height
+							0,
+							0
 						}
 						, _labelRgba{ 0, 0, 0, 0 } {
 
@@ -114,9 +114,9 @@ namespace Voicemeeter {
 						}
 						if (_changes.test(flags::label)) {
 							_labelAtlasPoint[0] = Layouts::Atlas::Plug::Label::X
-								+ Layouts::Atlas::Block::Width * (_label % Layouts::Atlas::Bidth);
+								+ 0 * (_label % 1);
 							_labelAtlasPoint[1] = Layouts::Atlas::Plug::Label::Y
-								+ Layouts::Atlas::Block::Height * (_label / Layouts::Atlas::Bidth);
+								+ 0 * (_label / 1);
 						}
 						_changes.reset();
 						_slot.reset();

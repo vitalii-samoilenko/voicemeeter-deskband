@@ -8,53 +8,47 @@ namespace Voicemeeter {
 		namespace Layouts {
 			namespace Atlas {
 				namespace Range {
-					constexpr num_t X{ 2 };
-					constexpr num_t Y{ 2 };
+					constexpr num_t Width{ 4 };
+					constexpr num_t Height{ 4 };
 				}
-				namespace Block {
-					constexpr num_t Width{ push(41) };
-					constexpr num_t Height{ push(22) };
-				}
-				constexpr num_t Bidth{ 5 };
-				constexpr num_t Beight{ 2 };
-				constexpr num_t Width{ Bidth * Block::Width };
-				constexpr num_t Height{ Beight * Block::Height };
+				constexpr num_t Width{ push(173) };
+				constexpr num_t Height{ push(50) };
 				namespace Knob {
 					namespace Frame {
-						constexpr num_t X{ 0 * Block::Width };
-						constexpr num_t Y{ 0 * Block::Height };
-						constexpr num_t Width{ push(40) };
-						constexpr num_t Height{ push(40) };
+						constexpr num_t X{ 0 };
+						constexpr num_t Y{ 0 };
+						constexpr num_t Width{ push(1 + 48 + 1) };
+						constexpr num_t Height{ push(1 + 48 + 1) };
 					}
 					namespace Indicator{
-						constexpr num_t X{ 1 * Block::Width };
-						constexpr num_t Y{ 1 * Block::Height };
-						constexpr num_t Width{ push(19) };
-						constexpr num_t Height{ push(19) };
+						constexpr num_t X{ push(50) };
+						constexpr num_t Y{ push(22) };
+						constexpr num_t Width{ push(1 + 11 * 4 / 2 + 1) };
+						constexpr num_t Height{ push(1 + 11 * 4 / 2 + 1) };
 					}
 					namespace Label {
-						constexpr num_t X{ 0 * Block::Width + One };
-						constexpr num_t Y{ 4 * Block::Height + One };
+						constexpr num_t X{ 0 };
+						constexpr num_t Y{ 4 };
 					}
 				}
 				namespace Plug {
 					namespace Frame {
-						constexpr num_t X{ 1 * Block::Width };
-						constexpr num_t Y{ 0 * Block::Height };
-						constexpr num_t Width{ push(41) };
-						constexpr num_t Height{ push(19) };
+						constexpr num_t X{ push(50) };
+						constexpr num_t Y{ 0 };
+						constexpr num_t Width{ push(1 + 41 + 1) };
+						constexpr num_t Height{ push(1 + 19 + 1) };
 					}
 					namespace Label {
-						constexpr num_t X{ 0 * Block::Width + One };
-						constexpr num_t Y{ 3 * Block::Height + One };
+						constexpr num_t X{ 0 };
+						constexpr num_t Y{ 3 };
 					}
 				}
 				namespace Vban {
 					namespace Frame {
-						constexpr num_t X{ 2 * Block::Width };
-						constexpr num_t Y{ 0 * Block::Height };
-						constexpr num_t Width{ push(78) };
-						constexpr num_t Height{ push(44) };
+						constexpr num_t X{ push(93) };
+						constexpr num_t Y{ 0 };
+						constexpr num_t Width{ push(1 + 39 * 2 + 1) };
+						constexpr num_t Height{ push(1 + 22 * 2 + 1) };
 					}
 				}
 			}
