@@ -46,7 +46,7 @@ namespace Voicemeeter {
 				namespace Vban {
 					namespace Frame {
 						constexpr num_t X{ push(93 + 1) };
-						constexpr num_t Y{ 0 };
+						constexpr num_t Y{ push(0 + 1) };
 						constexpr num_t Width{ push(39 * 2) };
 						constexpr num_t Height{ push(22 * 2) };
 					}
