@@ -43,18 +43,18 @@ namespace Voicemeeter {
 								_state.get_BlendState());
 					}
 					D3D12_VIEWPORT viewport{
-						static_cast<FLOAT>(dstPoint[0]) / One,
-						static_cast<FLOAT>(dstPoint[1]) / One,
-						static_cast<FLOAT>(dstVertex[0]) / One,
-						static_cast<FLOAT>(dstVertex[1]) / One
+						static_cast<FLOAT>(pop(floor(dstPoint[0]))),
+						static_cast<FLOAT>(pop(floor(dstPoint[1]))),
+						static_cast<FLOAT>(pop(ceil(dstVertex[0]))),
+						static_cast<FLOAT>(pop(ceil(dstVertex[1])))
 					};
 					_state.get_CommandList(frame)
 						->RSSetViewports(1, &viewport);
 					D3D12_RECT scissor{
-						static_cast<LONG>(floor(dstPoint[0])),
-						static_cast<LONG>(floor(dstPoint[1])),
-						static_cast<LONG>(ceil(dstPoint[0] + dstVertex[0])),
-						static_cast<LONG>(ceil(dstPoint[1] + dstVertex[1]))
+						static_cast<LONG>(pop(floor(dstPoint[0]))),
+						static_cast<LONG>(pop(floor(dstPoint[1]))),
+						static_cast<LONG>(pop(ceil(dstPoint[0] + dstVertex[0]))),
+						static_cast<LONG>(pop(ceil(dstPoint[1] + dstVertex[1])))
 					};
 					_state.get_CommandList(frame)
 						->RSSetScissorRects(1, &scissor);
@@ -66,10 +66,14 @@ namespace Voicemeeter {
 						::std::min(
 							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[0]) / srcVertex[0],
 							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[1]) / srcVertex[1]),
-						static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width,
-						static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height,
-						static_cast<FLOAT>(srcPoint[0] + srcVertex[0]) / Layouts::Atlas::Width,
-						static_cast<FLOAT>(srcPoint[1] + srcVertex[1]) / Layouts::Atlas::Height
+						static_cast<FLOAT>(dstVertex[0] * srcPoint[0] - frac(dstPoint[0]) * srcVertex[0])
+							/ (Layouts::Atlas::Width * dstVertex[0]),
+						static_cast<FLOAT>(dstVertex[1] * srcPoint[1] - frac(dstPoint[1]) * srcVertex[1])
+							/ (Layouts::Atlas::Height * dstVertex[1]),
+						static_cast<FLOAT>(dstVertex[0] * (srcPoint[0] + srcVertex[0]) + frac(dstVertex[0]) * srcVertex[0])
+							/ (Layouts::Atlas::Width * dstVertex[0]),
+						static_cast<FLOAT>(dstVertex[1] * (srcPoint[1] + srcVertex[1]) + frac(dstVertex[1]) * srcVertex[1])
+							/ (Layouts::Atlas::Height * dstVertex[1])
 					};
 					_state.get_CommandList(frame)
 						->SetGraphicsRoot32BitConstants(

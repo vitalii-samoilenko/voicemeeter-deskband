@@ -291,7 +291,7 @@ private:
 						push(static_cast<num_t>(that->_rc.bottom - that->_rc.top))
 					});
 					vector_t const &vertex{ that->_scene->get_Size() };
-					that->_rc.right = that->_rc.left + static_cast<LONG>(ceil(vertex[0]));
+					that->_rc.right = that->_rc.left + static_cast<LONG>(pop(ceil(vertex[0])));
 					::Windows::SetWindowPos(
 						hWnd, NULL,
 						that->_rc.left, that->_rc.top,

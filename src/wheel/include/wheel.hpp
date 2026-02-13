@@ -7,6 +7,7 @@
 using num_t = int32_t;
 
 #define _PRECISION 6
+#define _INT_MASK 0b11111111111111111111111111000000
 #define _MAX_SQRT 46340
 
 inline constexpr num_t push(num_t n) {
@@ -23,11 +24,17 @@ inline constexpr bool is_safe(num_t n) {
 constexpr num_t One{ push(1) };
 constexpr num_t Inf{ _MAX_SQRT * _MAX_SQRT + 1 };
 
-inline constexpr num_t floor(num_t n) {
-	return pop(n);
+inline constexpr num_t trunc(num_t n) {
+	return n & _INT_MASK;
+};
+inline constexpr num_t frac(num_t n) {
+	return n - trunc(n);
 };
 inline constexpr num_t ceil(num_t n) {
-	return floor(n + One - 1);
+	return trunc(n + One - 1);
+};
+inline constexpr num_t floor(num_t n) {
+	return -ceil(-n);
 };
 
 inline num_t ans(num_t n) {

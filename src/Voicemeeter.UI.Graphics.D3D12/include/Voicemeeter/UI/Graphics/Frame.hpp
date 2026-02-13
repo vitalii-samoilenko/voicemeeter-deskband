@@ -57,8 +57,8 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(_state.get_SwapChain()
 						->ResizeBuffers(
 							0,
-							static_cast<UINT>(ceil(vertex[0])),
-							static_cast<UINT>(ceil(vertex[1])),
+							static_cast<UINT>(pop(ceil(vertex[0]))),
+							static_cast<UINT>(pop(ceil(vertex[1]))),
 							DXGI_FORMAT_UNKNOWN,
 							0
 					), "Swap chain resize failed");
@@ -163,8 +163,8 @@ namespace Voicemeeter {
 						_first = false;
 					} else {
 						RECT rect{
-							floor(_invalidFrom[0]), floor(_invalidFrom[1]),
-							ceil(_invalidTo[0]), ceil(_invalidTo[1])
+							pop(floor(_invalidFrom[0])), pop(floor(_invalidFrom[1])),
+							pop(ceil(_invalidTo[0])), pop(ceil(_invalidTo[1]))
 						};
 						DXGI_PRESENT_PARAMETERS params{
 							1, &rect,
