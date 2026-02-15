@@ -22,7 +22,6 @@ namespace Voicemeeter {
 					constexpr num_t Height{ push(42) };
 					constexpr num_t Stride{ 3 };
 					constexpr num_t Descender{ push(796678) / 100000 };
-					constexpr num_t Ascender{ Height - Descender };
 					constexpr num_t Capital{ push(284574) / 10000 };
 				}
 				constexpr num_t Width{ push(258) };
