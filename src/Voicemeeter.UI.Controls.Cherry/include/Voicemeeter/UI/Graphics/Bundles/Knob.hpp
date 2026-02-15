@@ -22,8 +22,10 @@ namespace Voicemeeter {
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
 						, _frameAtlasPoint{
-							Layouts::Atlas::Knob::Frame::X,
+							Layouts::Atlas::Knob::Frame::X
+							+ Layouts::Atlas::Offset::Width,
 							Layouts::Atlas::Knob::Frame::Y
+							+ Layouts::Atlas::Offset::Height
 						}
 						, _frameAtlasVertex{
 							Layouts::Atlas::Knob::Frame::Width,
@@ -34,8 +36,10 @@ namespace Voicemeeter {
 						, _indicatorPoint{ 0, 0 }
 						, _indicatorVertex{ 0, 0 }
 						, _indicatorAtlasPoint{
-							Layouts::Atlas::Knob::Indicator::X,
+							Layouts::Atlas::Knob::Indicator::X
+							+ Layouts::Atlas::Offset::Width,
 							Layouts::Atlas::Knob::Indicator::Y
+							+ Layouts::Atlas::Offset::Height
 						}
 						, _indicatorAtlasVertex{
 							Layouts::Atlas::Knob::Indicator::Width,
@@ -46,8 +50,10 @@ namespace Voicemeeter {
 						, _labelPoint{ 0, 0 }
 						, _labelVertex{ 0, 0 }
 						, _labelAtlasPoint{
-							Layouts::Atlas::Knob::Label::X,
+							Layouts::Atlas::Knob::Label::X
+							+ Layouts::Atlas::Offset::Width,
 							Layouts::Atlas::Knob::Label::Y
+							+ Layouts::Atlas::Offset::Height
 						}
 						, _labelAtlasVertex{
 							0,

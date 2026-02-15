@@ -22,8 +22,10 @@ namespace Voicemeeter {
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
 						, _frameAtlasPoint{
-							Layouts::Atlas::Plug::Frame::X,
+							Layouts::Atlas::Plug::Frame::X
+							+ Layouts::Atlas::Offset::Width,
 							Layouts::Atlas::Plug::Frame::Y
+							+ Layouts::Atlas::Offset::Height
 						}
 						, _frameAtlasVertex{
 							Layouts::Atlas::Plug::Frame::Width,
@@ -34,12 +36,14 @@ namespace Voicemeeter {
 						, _labelPoint{ 0, 0 }
 						, _labelVertex{ 0, 0 }
 						, _labelAtlasPoint{
-							Layouts::Atlas::Plug::Label::X,
+							Layouts::Atlas::Plug::Label::X
+							+ Layouts::Atlas::Offset::Width,
 							Layouts::Atlas::Plug::Label::Y
+							+ Layouts::Atlas::Offset::Height
 						}
 						, _labelAtlasVertex{
-							0,
-							0
+							Layouts::Atlas::Text::Width,
+							Layouts::Atlas::Text::Height
 						}
 						, _labelRgba{ 0, 0, 0, 0 } {
 
@@ -104,19 +108,28 @@ namespace Voicemeeter {
 
 					inline void operator()() {
 						if (_changes.test(flags::frameVertex)) {
-							_labelVertex[0] = _frameVertex[0] / 2;
-							_labelVertex[1] = _frameVertex[1] * 4 / 5;
+							_labelVertex[0] = _frameVertex[1] * 3 / 2;
+							_labelVertex[1] = _frameVertex[1] * 3 / 4;
 							_changes.set(flags::framePoint);
 						}
 						if (_changes.test(flags::framePoint)) {
 							_labelPoint[0] = _framePoint[0] + _frameVertex[0] * 3 / 10;
-							_labelPoint[1] = _framePoint[1] + _frameVertex[1] / 10;
+							_labelPoint[1] = _framePoint[1] + _frameVertex[1] / 8;
 						}
 						if (_changes.test(flags::label)) {
 							_labelAtlasPoint[0] = Layouts::Atlas::Plug::Label::X
-								+ 0 * (_label % 1);
+								+ (
+										Layouts::Atlas::Offset::Width
+										+ Layouts::Atlas::Text::Width
+										+ Layouts::Atlas::Offset::Width
+									) * (_label % Layouts::Atlas::Plug::Label::Stride)
+								+ Layouts::Atlas::Offset::Width;
 							_labelAtlasPoint[1] = Layouts::Atlas::Plug::Label::Y
-								+ 0 * (_label / 1);
+								+ (
+										Layouts::Atlas::Offset::Height
+										+ Layouts::Atlas::Text::Height
+										+ Layouts::Atlas::Offset::Height
+									) * (_label / Layouts::Atlas::Plug::Label::Stride);
 						}
 						_changes.reset();
 						_slot.reset();
@@ -125,13 +138,11 @@ namespace Voicemeeter {
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba, false);
-						/*
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_labelAtlasPoint, _labelAtlasVertex,
 								_labelPoint, _labelVertex,
 								_labelRgba, true);
-						*/
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

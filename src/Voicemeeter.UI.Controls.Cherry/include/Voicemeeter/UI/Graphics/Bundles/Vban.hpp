@@ -22,8 +22,10 @@ namespace Voicemeeter {
 						, _framePoint{ 0, 0 }
 						, _frameVertex{ 0, 0 }
 						, _frameAtlasPoint{
-							Layouts::Atlas::Vban::Frame::X,
+							Layouts::Atlas::Vban::Frame::X
+							+ Layouts::Atlas::Offset::Width,
 							Layouts::Atlas::Vban::Frame::Y
+							+ Layouts::Atlas::Offset::Height
 						}
 						, _frameAtlasVertex{
 							Layouts::Atlas::Vban::Frame::Width,
