@@ -1,11 +1,14 @@
 #include <fstream>
+#include <string>
 #include <vector>
 
 constexpr size_t PixelSize{ 3 * sizeof(float) };
 //constexpr size_t Width{ 173 };
-constexpr size_t Width{ 198 };
+constexpr size_t TextWidth{ 86 };
+constexpr size_t TextHeight{ 44 };
+constexpr size_t Width{ TextWidth * 3 };
 //constexpr size_t Height{ 50 };
-constexpr size_t Height{ 118 };
+constexpr size_t Height{ 50 + TextHeight * 2 + TextHeight * 72 / 3 };
 constexpr size_t RowStride{ PixelSize * Width };
 constexpr size_t Size{ Height * RowStride };
 
@@ -47,28 +50,35 @@ int main(int argc, char const *argv[]) {
 		80, 46);
 	combine(atlas,
 		"P.bit",
-		0 * 66, 50 + 0 * 34,
-		66, 34);
+		0 * TextWidth, 50 + 0 * TextHeight,
+		TextWidth, TextHeight);
 	combine(atlas,
 		"V.bit",
-		1 * 66, 50 + 0 * 34,
-		66, 34);
+		1 * TextWidth, 50 + 0 * TextHeight,
+		TextWidth, TextHeight);
 	combine(atlas,
 		"A1.bit",
-		2 * 66, 50 + 0 * 34,
-		66, 34);
+		2 * TextWidth, 50 + 0 * TextHeight,
+		TextWidth, TextHeight);
 	combine(atlas,
 		"A2.bit",
-		0 * 66, 50 + 1 * 34,
-		66, 34);
+		0 * TextWidth, 50 + 1 * TextHeight,
+		TextWidth, TextHeight);
 	combine(atlas,
 		"B1.bit",
-		1 * 66, 50 + 1 * 34,
-		66, 34);
+		1 * TextWidth, 50 + 1 * TextHeight,
+		TextWidth, TextHeight);
 	combine(atlas,
 		"B2.bit",
-		2 * 66, 50 + 1 * 34,
-		66, 34);
+		2 * TextWidth, 50 + 1 * TextHeight,
+		TextWidth, TextHeight);
+	for (size_t i{ 0 }; i < 70 + 1; ++i) {
+		::std::string bit{ ::std::to_string(i) + ".bit" };
+		combine(atlas,
+			bit.c_str(),
+			(i % 3) * TextWidth, 50 + ((6 + i) / 3) * TextHeight,
+			TextWidth, TextHeight);
+	}
 	{
 		::std::fstream out{
 			"Atlas.bit",

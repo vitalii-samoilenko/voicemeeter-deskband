@@ -21,8 +21,6 @@ elseif(LINUX)
   set(CMAKE_EXE_LINKER_FLAGS "--static -static-libgcc -static-libstdc++")
 endif()
 
-add_subdirectory(third_party)
-
 add_subdirectory(src/estd)
 add_subdirectory(src/Voicemeeter)
 add_subdirectory(src/Voicemeeter.Clients.Remote)

@@ -15,12 +15,15 @@ namespace Voicemeeter {
 					constexpr num_t Width{ push(1) };
 					constexpr num_t Height{ push(1) };
 				}
-				namespace Text {
-					constexpr num_t Width{ push(64) };
-					constexpr num_t Height{ push(32) };
+				namespace Label {
+					constexpr num_t X{ push(0) };
+					constexpr num_t Y{ push(50) };
+					constexpr num_t Width{ push(84) };
+					constexpr num_t Height{ push(42) };
+					constexpr num_t Stride{ 3 };
 				}
-				constexpr num_t Width{ push(198) };
-				constexpr num_t Height{ push(118) };
+				constexpr num_t Width{ push(258) };
+				constexpr num_t Height{ push(1194) };
 				namespace Knob {
 					namespace Frame {
 						constexpr num_t X{ push(0) };
@@ -34,10 +37,6 @@ namespace Voicemeeter {
 						constexpr num_t Width{ push(11 * 4 / 2) };
 						constexpr num_t Height{ push(11 * 4 / 2) };
 					}
-					namespace Label {
-						constexpr num_t X{ push(0) };
-						constexpr num_t Y{ push(4) };
-					}
 				}
 				namespace Plug {
 					namespace Frame {
@@ -45,11 +44,6 @@ namespace Voicemeeter {
 						constexpr num_t Y{ push(0) };
 						constexpr num_t Width{ push(41) };
 						constexpr num_t Height{ push(19) };
-					}
-					namespace Label {
-						constexpr num_t X{ push(0) };
-						constexpr num_t Y{ push(50) };
-						constexpr num_t Stride{ 3 };
 					}
 				}
 				namespace Vban {

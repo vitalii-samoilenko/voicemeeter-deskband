@@ -50,14 +50,14 @@ namespace Voicemeeter {
 						, _labelPoint{ 0, 0 }
 						, _labelVertex{ 0, 0 }
 						, _labelAtlasPoint{
-							Layouts::Atlas::Knob::Label::X
+							Layouts::Atlas::Label::X
 							+ Layouts::Atlas::Offset::Width,
-							Layouts::Atlas::Knob::Label::Y
+							Layouts::Atlas::Label::Y
 							+ Layouts::Atlas::Offset::Height
 						}
 						, _labelAtlasVertex{
-							0,
-							0
+							Layouts::Atlas::Label::Width,
+							Layouts::Atlas::Label::Height
 						}
 						, _labelRgba{ 0, 0, 0, 0 } {
 
@@ -159,10 +159,19 @@ namespace Voicemeeter {
 								- _indicatorVertex / 2;
 						}
 						if (_changes.test(flags::label)) {
-							_labelAtlasPoint[0] = Layouts::Atlas::Knob::Label::X
-								+ 0 * (_label % 1);
-							_labelAtlasPoint[1] = Layouts::Atlas::Knob::Label::Y
-								+ 0 * (_label / 1);
+							_labelAtlasPoint[0] = Layouts::Atlas::Label::X
+								+ (
+										Layouts::Atlas::Offset::Width
+										+ Layouts::Atlas::Label::Width
+										+ Layouts::Atlas::Offset::Width
+									) * (_label % Layouts::Atlas::Label::Stride)
+								+ Layouts::Atlas::Offset::Width;
+							_labelAtlasPoint[1] = Layouts::Atlas::Label::Y
+								+ (
+										Layouts::Atlas::Offset::Height
+										+ Layouts::Atlas::Label::Height
+										+ Layouts::Atlas::Offset::Height
+									) * (_label / Layouts::Atlas::Label::Stride);
 						}
 						_changes.reset();
 						_slot.reset();
@@ -176,13 +185,11 @@ namespace Voicemeeter {
 								_indicatorAtlasPoint, _indicatorAtlasVertex,
 								_indicatorPoint, _indicatorVertex,
 								_indicatorRgba, true);
-						/*
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_labelAtlasPoint, _labelAtlasVertex,
 								_labelPoint, _labelVertex,
 								_labelRgba, true);
-						*/
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

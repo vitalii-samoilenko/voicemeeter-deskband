@@ -56,7 +56,7 @@ namespace Voicemeeter {
 							that->set_LabelColor(*targetRgba);
 							that->set_IndicatorAngle(state.degree);
 							that->set_Label(state.hold
-								? 8 + floor(ans(state.degree * 4 / 15))
+								? 6 + pop(floor(ans(state.degree * 4 / 15)))
 								: state.target);
 						};
 

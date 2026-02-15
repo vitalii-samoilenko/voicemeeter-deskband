@@ -54,7 +54,7 @@ namespace Voicemeeter {
 								};
 								size_t gain{
 									static_cast<size_t>(
-										8 + floor(ans(state.degree * 4 / 15)))
+										6 + pop(floor(ans(state.degree * 4 / 15))))
 								};
 								if (state.toggle) {
 									targetVertex[5] = AnimationLength;

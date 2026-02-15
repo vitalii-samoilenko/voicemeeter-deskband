@@ -2,23 +2,18 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <regex>
 #include <sstream>
 #include <string>
 
-#include "re2/re2.h"
+constexpr size_t Height{ 42 };
+constexpr size_t Width{ 2 * Height  };
 
-size_t Width{ 64 };
-size_t Height{ 32 };
-
-::RE2 g_coord{ R"((?<x>(?:-)?\d+(?:\.\d+)?), (?<y>(?:-)?\d+(?:\.\d+)?))" };
+::std::regex g_coord{ R"(((?:-)?\d+(?:\.\d+)?), ((?:-)?\d+(?:\.\d+)?))" };
 double g_asc{};
 double g_desc{};
 double g_scale{};
 ::std::array<double, 255> g_adv{};
-::std::array<double, 255> g_left{};
-::std::array<double, 255> g_bottom{};
-::std::array<double, 255> g_right{};
-::std::array<double, 255> g_top{};
 ::std::array<double, 255 * 255> g_kern{};
 
 void rescale(char c,
@@ -40,17 +35,16 @@ void rescale(char c,
 	};
 	::std::string line{};
 	while (::std::getline(input, line)) {
-		::std::string xs{};
-		::std::string ys{};
-		if (::RE2::PartialMatch(line, g_coord, &xs, &ys)) {
-			double x{ ::std::atof(xs.c_str()) };
-			double y{ ::std::atof(ys.c_str()) };
+		::std::smatch match{};
+		if (::std::regex_search(line, match, g_coord)) {
+			double x{ ::std::atof(match[1].str().c_str()) };
+			double y{ ::std::atof(match[2].str().c_str()) };
 			::std::ostringstream re{};
 			re << ::std::setprecision(15)
 				<< (x * g_scale + offset)
 				<< ", "
 				<< ((y - g_desc) * g_scale);
-			::RE2::Replace(&line, g_coord, re.str());
+			line = match.prefix().str() + re.str() + match.suffix().str();
 		}
 		output << line;
 	}
@@ -60,7 +54,7 @@ void combine_and_rescale(char c1, char c2,
 	double width12{
 		g_adv[c1]
 		+ g_adv[c2]
-		+ g_kern[c2 * 255 + c1]
+		+ g_kern[c1 * 255 + c2]
 	};
 	double offset{
 		(
@@ -88,32 +82,30 @@ void combine_and_rescale(char c1, char c2,
 	};
 	::std::string line{};
 	while (::std::getline(input1, line)) {
-		::std::string xs{};
-		::std::string ys{};
-		if (::RE2::PartialMatch(line, g_coord, &xs, &ys)) {
-			double x{ ::std::atof(xs.c_str()) };
-			double y{ ::std::atof(ys.c_str()) };
+		::std::smatch match{};
+		if (::std::regex_search(line, match, g_coord)) {
+			double x{ ::std::atof(match[1].str().c_str()) };
+			double y{ ::std::atof(match[2].str().c_str()) };
 			::std::ostringstream re{};
 			re << ::std::setprecision(15)
 				<< (x * g_scale + offset)
 				<< ", "
 				<< ((y - g_desc) * g_scale);
-			::RE2::Replace(&line, g_coord, re.str());
+			line = match.prefix().str() + re.str() + match.suffix().str();
 		}
 		output << line;
 	}
 	while (::std::getline(input2, line)) {
-		::std::string xs{};
-		::std::string ys{};
-		if (::RE2::PartialMatch(line, g_coord, &xs, &ys)) {
-			double x{ ::std::atof(xs.c_str()) };
-			double y{ ::std::atof(ys.c_str()) };
+		::std::smatch match{};
+		if (::std::regex_search(line, match, g_coord)) {
+			double x{ ::std::atof(match[1].str().c_str()) };
+			double y{ ::std::atof(match[2].str().c_str()) };
 			::std::ostringstream re{};
 			re << ::std::setprecision(15)
-				<< ((x + g_adv[c1] + g_kern[c2 * 255 + c1]) * g_scale + offset)
+				<< ((x + g_adv[c1] + g_kern[c1 * 255 + c2]) * g_scale + offset)
 				<< ", "
 				<< ((y - g_desc) * g_scale);
-			::RE2::Replace(&line, g_coord, re.str());
+			line = match.prefix().str() + re.str() + match.suffix().str();
 		}
 		output << line;
 	}
@@ -129,13 +121,9 @@ int main(int argc, char const *argv[]) {
 		input >> g_asc >> g_desc;
 		g_scale = Height / (g_asc - g_desc);
 		size_t c;
-		double a, l, b, r, t;
-		while (input >> c >> a >> l >> b >> r >> t) {
+		double a;
+		while (input >> c >> a) {
 			g_adv[c] = a;
-			g_left[c] = l;
-			g_bottom[c] = b;
-			g_right[c] = r;
-			g_top[c] = t;
 		}
 	}
 	{
@@ -156,7 +144,9 @@ int main(int argc, char const *argv[]) {
 	combine_and_rescale('A', '2', baseDir);
 	combine_and_rescale('B', '1', baseDir);
 	combine_and_rescale('B', '2', baseDir);
-	rescale('0', baseDir);
+	for (char c{ '0' }; c < '9' + 1; ++c) {
+		rescale(c, baseDir);
+	}
 	for (char c1{ '1' }; c1 < '6' + 1; ++c1) {
 		rescale(c1, baseDir);
 		for (char c2{ '0' };  c2 < '9' + 1; ++c2) {
