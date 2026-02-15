@@ -3,6 +3,7 @@
 
 #include "wheel.hpp"
 
+#include "Voicemeeter/UI/Layouts/Atlas.hpp"
 #include "Voicemeeter/UI/States/StripKnob.hpp"
 
 namespace Voicemeeter {
@@ -56,7 +57,8 @@ namespace Voicemeeter {
 							that->set_LabelColor(*targetRgba);
 							that->set_IndicatorAngle(state.degree);
 							that->set_Label(state.hold
-								? 6 + pop(floor(ans(state.degree * 4 / 15)))
+								? Layouts::Atlas::Label::Names
+									+ pop(floor(ans(state.degree * 4 / 15)))
 								: state.target);
 						};
 

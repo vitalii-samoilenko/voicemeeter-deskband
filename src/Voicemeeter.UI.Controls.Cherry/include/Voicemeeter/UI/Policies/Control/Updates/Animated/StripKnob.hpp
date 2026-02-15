@@ -3,6 +3,7 @@
 
 #include "wheel.hpp"
 
+#include "Voicemeeter/UI/Layouts/Atlas.hpp"
 #include "Voicemeeter/UI/States/StripKnob.hpp"
 
 namespace Voicemeeter {
@@ -54,7 +55,8 @@ namespace Voicemeeter {
 								};
 								size_t gain{
 									static_cast<size_t>(
-										6 + pop(floor(ans(state.degree * 4 / 15))))
+										Layouts::Atlas::Label::Names
+										+ pop(floor(ans(state.degree * 4 / 15))))
 								};
 								if (state.toggle) {
 									targetVertex[5] = AnimationLength;
