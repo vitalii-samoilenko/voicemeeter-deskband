@@ -136,7 +136,7 @@ namespace Voicemeeter {
 
 					inline void operator()() {
 						if (_changes.test(flags::frameVertex)) {
-							_indicatorVertex = _frameVertex / 10;
+							_indicatorVertex = _frameVertex * 11 / 96;
 							_labelVertex[1] = (
 									Layouts::Atlas::Label::Height * 10
 									* _frameVertex[1]
@@ -162,16 +162,16 @@ namespace Voicemeeter {
 							_changes.set(flags::indicatorDegree);
 						}
 						if (_changes.test(flags::indicatorDegree)) {
-							vector_t transformI{
-								sinI(-_indicatorDegree + push(90)),
-								cosI(-_indicatorDegree + push(90))
-							};
-							auto frameR = _frameVertex / 2;
-							auto center = _framePoint + frameR;
-							auto indicatorR = frameR * 4 / 5;
-							_indicatorPoint = center
-								+ push(indicatorR) / transformI
-								- _indicatorVertex / 2;
+							_indicatorPoint = (
+									2 * _framePoint
+									+ _frameVertex
+									- _indicatorVertex
+								) / 2
+								+ (_frameVertex * push(31) / 96)
+								/ vector_t{
+									sinI(-_indicatorDegree + push(90)),
+									cosI(-_indicatorDegree + push(90))
+								};
 						}
 						if (_changes.test(flags::label)) {
 							_labelAtlasPoint[0] = Layouts::Atlas::Label::X
