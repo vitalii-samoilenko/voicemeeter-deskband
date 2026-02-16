@@ -94,38 +94,23 @@ template<typename V,
 inline auto pop(V const &v) {
 	return v >> _wheel_Precision;
 };
-template<typename V,
-	::std::enable_if_t<
-		!::std::is_integral_v<V>,
-		bool> = true>
+template<typename V>
 inline num_t sum(V const &v) {
 	return v.sum();
 };
-template<typename V,
-	::std::enable_if_t<
-		!::std::is_integral_v<V>,
-		bool> = true>
+template<typename V>
 inline num_t max(V const &v) {
 	return v.max();
 };
-template<typename V,
-	::std::enable_if_t<
-		!::std::is_integral_v<V>,
-		bool> = true>
+template<typename V>
 inline num_t min(V const &v) {
 	return v.min();
 };
-template<typename V,
-	::std::enable_if_t<
-		!::std::is_integral_v<V>,
-		bool> = true>
+template<typename V>
 inline num_t any(V const &v) {
 	return max(v);
 };
-template<typename V,
-	::std::enable_if_t<
-		!::std::is_integral_v<V>,
-		bool> = true>
+template<typename V>
 inline num_t all(V const &v) {
 	return min(v);
 };

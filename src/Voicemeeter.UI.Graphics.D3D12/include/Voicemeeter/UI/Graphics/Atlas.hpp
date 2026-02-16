@@ -56,6 +56,8 @@ namespace Voicemeeter {
 						static_cast<LONG>(pop(ceil(dstPoint[0] + dstVertex[0]))),
 						static_cast<LONG>(pop(ceil(dstPoint[1] + dstVertex[1])))
 					};
+					FLOAT u{ static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width };
+					FLOAT v{ static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height };
 					_state.get_CommandList(frame)
 						->RSSetScissorRects(1, &scissor);
 					::std::array<FLOAT, 9> constants{
@@ -66,16 +68,14 @@ namespace Voicemeeter {
 						::std::min(
 							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[0]) / srcVertex[0],
 							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[1]) / srcVertex[1]),
-						static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width
-						- static_cast<FLOAT>(frac(dstPoint[0]) * srcVertex[0])
+						u - static_cast<FLOAT>(frac(dstPoint[0]) * srcVertex[0])
 						/ (Layouts::Atlas::Width * dstVertex[0]),
-						static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height
-						- static_cast<FLOAT>(frac(dstPoint[1]) * srcVertex[1])
+						v - static_cast<FLOAT>(frac(dstPoint[1]) * srcVertex[1])
 						/ (Layouts::Atlas::Height * dstVertex[1]),
-						static_cast<FLOAT>(srcPoint[0] + srcVertex[0]) / Layouts::Atlas::Width 
+						u + static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width 
 						+ static_cast<FLOAT>(frac(dstVertex[0]) * srcVertex[0])
 						/ (Layouts::Atlas::Width * dstVertex[0]),
-						static_cast<FLOAT>(srcPoint[1] + srcVertex[1]) / Layouts::Atlas::Height
+						v + static_cast<FLOAT>(srcVertex[1]) / Layouts::Atlas::Height
 						+ static_cast<FLOAT>(frac(dstVertex[1]) * srcVertex[1])
 						/ (Layouts::Atlas::Height * dstVertex[1])
 					};

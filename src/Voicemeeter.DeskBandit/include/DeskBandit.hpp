@@ -337,8 +337,8 @@ private:
 					},
 					ps.rcPaint.right && ps.rcPaint.bottom
 						? vector_t{
-							push(ps.rcPaint.right),
-							push(ps.rcPaint.bottom)
+							push(ps.rcPaint.right - ps.rcPaint.left),
+							push(ps.rcPaint.bottom - ps.rcPaint.top)
 						}
 						: that->_scene->get_Size());
 				::EndPaint(hWnd, &ps);

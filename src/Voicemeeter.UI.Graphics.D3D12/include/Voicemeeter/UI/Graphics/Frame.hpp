@@ -154,38 +154,20 @@ namespace Voicemeeter {
 						->Signal(
 							_state.get_Fence(frame),
 							_state.inc_Count(frame));
-					// TODO: drop
-					if (_first) {
-						::Windows::ThrowIfFailed(_state.get_SwapChain()
-							->Present(
-								0, 0
-						), "Presentation failed");
-						_first = false;
-					} else {
-						RECT rect{
-							static_cast<LONG>(pop(floor(_invalidFrom[0]))),
-							static_cast<LONG>(pop(floor(_invalidFrom[1]))),
-							static_cast<LONG>(pop(ceil(_invalidTo[0]))),
-							static_cast<LONG>(pop(ceil(_invalidTo[1])))
-						};
-						DXGI_PRESENT_PARAMETERS params{
-							1, &rect,
-							nullptr,
-							nullptr
-						};
-						::Windows::ThrowIfFailed(_state.get_SwapChain()
-							->Present1(
-								0U, 0U,
-								&params
-						), "Presentation failed");
-					}
+					RECT rect{
+						static_cast<LONG>(pop(floor(_invalidFrom[0]))),
+						static_cast<LONG>(pop(floor(_invalidFrom[1]))),
+						static_cast<LONG>(pop(ceil(_invalidTo[0]))),
+						static_cast<LONG>(pop(ceil(_invalidTo[1])))
+					};
+					::Windows::InvalidateRect(
+						_state.get_hWnd(), &rect, FALSE);
 					_invalidFrom[0] = Inf;
 					_invalidFrom[1] = Inf;
 					_invalidTo[0] = 0;
 					_invalidTo[1] = 0;
 				};
 				inline void Present(vector_t const &point, vector_t const &vertex) {
-				/*
 					// TODO: bitblt
 					if (_first) {
 						::Windows::ThrowIfFailed(_state.get_SwapChain()
@@ -196,8 +178,10 @@ namespace Voicemeeter {
 					} else {
 						auto toPoint = point + vertex;
 						RECT rect{
-							ceil(point[0]), ceil(point[1]),
-							ceil(toPoint[0]), ceil(toPoint[1])
+							static_cast<LONG>(pop(floor(point[0]))),
+							static_cast<LONG>(pop(floor(point[1]))),
+							static_cast<LONG>(pop(ceil(toPoint[0]))),
+							static_cast<LONG>(pop(ceil(toPoint[1])))
 						};
 						DXGI_PRESENT_PARAMETERS params{
 							1, &rect,
@@ -210,7 +194,6 @@ namespace Voicemeeter {
 								&params
 						), "Presentation failed");
 					}
-				*/
 				};
 				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
 					auto lessFrom = point < _invalidFrom;
@@ -218,16 +201,6 @@ namespace Voicemeeter {
 					auto greaterTo = _invalidTo < toPoint;
 					_invalidFrom[lessFrom] = point[lessFrom];
 					_invalidTo[greaterTo] = toPoint[greaterTo];
-				/*
-					RECT rect{
-						floor(point[0]), ceil(point[1]),
-						floor(vertex[0]), ceil(vertex[1])
-					};
-					::Windows::InvalidateRect(
-						_state.get_hWnd(), &rect, FALSE);
-					::Windows::UpdateWindow(
-						_state.get_hWnd());
-				*/
 				};
 
 			private:
