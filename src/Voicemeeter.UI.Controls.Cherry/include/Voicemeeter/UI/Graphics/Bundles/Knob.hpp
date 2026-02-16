@@ -137,21 +137,20 @@ namespace Voicemeeter {
 					inline void operator()() {
 						if (_changes.test(flags::frameVertex)) {
 							_indicatorVertex = _frameVertex * 11 / 96;
-							_labelVertex[1] = (
-									Layouts::Atlas::Label::Height * 10
-									* _frameVertex[1]
-								) / (Layouts::Atlas::Label::Capital * 42);
+							_labelVertex[1] = _frameVertex[1]
+								* Layouts::Atlas::Label::Height * 10
+								/ (Layouts::Atlas::Label::Capital * 42);
 							_labelVertex[0] = 2 * _labelVertex[1];
 							_changes.set(flags::framePoint);
 						}
 						if (_changes.test(flags::framePoint)) {
-							_labelPoint[0] = (
-									2 * _framePoint[0]
-									+ _frameVertex[0] - _labelVertex[0]
+							_labelPoint[0] = _framePoint[0]
+								+ (
+									_frameVertex[0] - _labelVertex[0]
 								) / 2;
-							_labelPoint[1] = (
-									Layouts::Atlas::Label::Capital * 42 * _framePoint[1]
-									+ _frameVertex[1] * (
+							_labelPoint[1] = _framePoint[1]
+								+ (
+									_frameVertex[1] * (
 										Layouts::Atlas::Label::Capital * 26
 										- (
 											Layouts::Atlas::Label::Height
@@ -162,10 +161,9 @@ namespace Voicemeeter {
 							_changes.set(flags::indicatorDegree);
 						}
 						if (_changes.test(flags::indicatorDegree)) {
-							_indicatorPoint = (
-									2 * _framePoint
-									+ _frameVertex
-									- _indicatorVertex
+							_indicatorPoint = _framePoint
+								+ (
+									_frameVertex - _indicatorVertex
 								) / 2
 								+ (_frameVertex * push(31) / 96)
 								/ vector_t{

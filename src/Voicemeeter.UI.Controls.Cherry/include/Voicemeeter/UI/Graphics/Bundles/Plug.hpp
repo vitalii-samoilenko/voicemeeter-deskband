@@ -108,17 +108,17 @@ namespace Voicemeeter {
 
 					inline void operator()() {
 						if (_changes.test(flags::frameVertex)) {
-							_labelVertex[1] = (
-									_frameVertex[1] * Layouts::Atlas::Label::Height * 12
-								) / (Layouts::Atlas::Label::Capital * 19);
+							_labelVertex[1] = _frameVertex[1]
+								* Layouts::Atlas::Label::Height * 12
+								/ (Layouts::Atlas::Label::Capital * 19);
 							_labelVertex[0] = 2 * _labelVertex[1];
 							_changes.set(flags::framePoint);
 						}
 						if (_changes.test(flags::framePoint)) {
-							_labelPoint[0] = (41 * _framePoint[0] + 7 * _frameVertex[0]) / 41;
-							_labelPoint[1] = (
-									Layouts::Atlas::Label::Capital * 38 * _framePoint[1]
-									+ _frameVertex[1] * (
+							_labelPoint[0] = _framePoint[0] + 7 * _frameVertex[0] / 41;
+							_labelPoint[1] = _framePoint[1]
+								+ (
+										_frameVertex[1] * (
 										Layouts::Atlas::Label::Capital * 31
 										- (
 												Layouts::Atlas::Label::Height

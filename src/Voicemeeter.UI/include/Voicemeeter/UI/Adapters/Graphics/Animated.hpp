@@ -58,7 +58,7 @@ namespace Voicemeeter {
 						Args &&...args)
 						: TBundle{ ::std::forward<Args>(args) ... }
 						, _toolkit{ toolkit }
-						, _point(0, (subSpaces.size() + ...))
+						, _point(Zero, (subSpaces.size() + ...))
 						, _vertex{ _point }
 						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces) ... }
 						, _frame{ ::std::move(frame) } {

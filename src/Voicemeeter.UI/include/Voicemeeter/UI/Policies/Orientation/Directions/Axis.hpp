@@ -25,7 +25,7 @@ namespace Voicemeeter {
 
 						template<typename V>
 						inline auto operator()(V const &src) const {
-							vector_t dst(0, src.size());
+							vector_t dst(Zero, src.size());
 							dst[_i] = src[_i];
 							return dst;
 						};

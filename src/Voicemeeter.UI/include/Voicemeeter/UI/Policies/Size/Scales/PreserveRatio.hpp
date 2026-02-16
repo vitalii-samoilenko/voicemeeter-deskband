@@ -21,7 +21,7 @@ namespace Voicemeeter {
 							for (size_t i{ 0 }; i < dst.size(); ++i) {
 								num_t nom{ dst[i] };
 								num_t denom{ src[i] };
-								if (max(dst < src * nom / denom)) {
+								if (any(dst < src * nom / denom)) {
 									continue;
 								}
 								return ::std::make_tuple(

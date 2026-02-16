@@ -3,24 +3,38 @@
 
 #include <cmath>
 #include <valarray>
+#include <type_traits>
 
-using num_t = int32_t;
+using num_t = int64_t;
 
-#define _PRECISION 6
-#define _INT_MASK 0b11111111111111111111111111000000
+#define _PRECISION 8
+#define _INT_MASK 0b1111111111111111111111111111111111111111111111111111111100000000
+/*
+#define _INT_MASK 0b11111111111111111111111100000000
+*/
 #define _MAX_SQRT 46340
 
-inline constexpr num_t push(num_t n) {
-	return n << _PRECISION;
+template<typename T,
+	::std::enable_if_t<
+		::std::is_integral_v<T>,
+		bool> = true>
+inline constexpr num_t push(T n) {
+	return static_cast<num_t>(n) << _PRECISION;
 };
-inline constexpr num_t pop(num_t n) {
-	return n >> _PRECISION;
+template<typename T,
+	::std::enable_if_t<
+		::std::is_integral_v<T>,
+		bool> = true>
+inline constexpr num_t pop(T n) {
+	return static_cast<num_t>(n) >> _PRECISION;
 };
+
 inline constexpr bool is_safe(num_t n) {
 	return -(_MAX_SQRT + 1) < n
 		&& n < _MAX_SQRT + 1;
 };
 
+constexpr num_t Zero{ 0 };
 constexpr num_t One{ push(1) };
 constexpr num_t Inf{ _MAX_SQRT * _MAX_SQRT + 1 };
 
@@ -58,31 +72,52 @@ inline num_t cosI(num_t n) {
 using vector_t = ::std::valarray<num_t>;
 using slice_t = ::std::slice;
 
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline auto push(V const &v) {
 	return v << _PRECISION;
 };
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline auto pop(V const &v) {
 	return v >> _PRECISION;
 };
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline num_t sum(V const &v) {
 	return v.sum();
 };
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline num_t max(V const &v) {
 	return v.max();
 };
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline num_t min(V const &v) {
 	return v.min();
 };
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline num_t any(V const &v) {
 	return max(v);
 };
-template<typename V>
+template<typename V,
+	::std::enable_if_t<
+		!::std::is_integral_v<V>,
+		bool> = true>
 inline num_t all(V const &v) {
 	return min(v);
 };

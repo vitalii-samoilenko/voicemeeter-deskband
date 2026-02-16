@@ -591,7 +591,7 @@ namespace Voicemeeter {
 						inline explicit caggregator(TTokens &&...tokens)
 							: _tokens{ ::std::move(tokens) ... }
 							, _callback{}
-							, _levels(0, sizeof...(TTokens)) {
+							, _levels(Zero, sizeof...(TTokens)) {
 
 						};
 						caggregator() = delete;
