@@ -115,7 +115,8 @@ namespace Voicemeeter {
 							_changes.set(flags::framePoint);
 						}
 						if (_changes.test(flags::framePoint)) {
-							_labelPoint[0] = _framePoint[0] + 7 * _frameVertex[0] / 41;
+							_labelPoint[0] = _framePoint[0]
+								+ 7 * _frameVertex[0] / 41;
 							_labelPoint[1] = _framePoint[1]
 								+ (
 										_frameVertex[1] * (

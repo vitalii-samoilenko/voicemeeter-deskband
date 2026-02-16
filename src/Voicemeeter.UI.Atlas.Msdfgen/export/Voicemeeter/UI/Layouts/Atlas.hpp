@@ -18,12 +18,17 @@ namespace Voicemeeter {
 				namespace Label {
 					constexpr num_t X{ push(0) };
 					constexpr num_t Y{ push(50) };
-					constexpr num_t Stride{ 3 };
-					constexpr num_t Names{ 6 };
+					constexpr size_t Stride{ 3 };
+					constexpr size_t Names{ 6 };
 					constexpr num_t Width{ push(84) };
 					constexpr num_t Height{ push(42) };
-					constexpr num_t Descender{ push(796678) / 100000 };
-					constexpr num_t Capital{ push(284574) / 10000 };
+#ifdef WHEEL_EXTENDED_PRECISION
+					constexpr num_t Descender{ push(79667832167832) / 10000000000000 };
+					constexpr num_t Capital{ push(28457360820997) / 1000000000000 };
+#else
+					constexpr num_t Descender{ push(7966783) / 1000000 };
+					constexpr num_t Capital{ push(2845736) / 100000 };
+#endif
 				}
 				constexpr num_t Width{ push(258) };
 				constexpr num_t Height{ push(1194) };

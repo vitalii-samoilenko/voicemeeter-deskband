@@ -12,6 +12,8 @@ namespace Voicemeeter {
 			namespace Control {
 				namespace Updates {
 					namespace Animated {
+						constexpr num_t _StripKnob_AnimationLength{ 200 };
+
 						template<typename TToolkit>
 						struct StripKnobContext {
 							typename TToolkit::Palette::gradient path;
@@ -41,8 +43,6 @@ namespace Voicemeeter {
 
 							template<typename TStripKnob>
 							inline void operator()(TStripKnob *that, state_t const &state) const {
-								constexpr num_t AnimationLength{ 200 };
-								constexpr num_t AnimationLengthH{ AnimationLength / 2 };
 								vector_t targetVertex{
 									0, 0, 0,
 									0, 0,
@@ -54,47 +54,46 @@ namespace Voicemeeter {
 										.Inactive
 								};
 								size_t gain{
-									static_cast<size_t>(
-										Layouts::Atlas::Label::Names
-										+ pop(floor(ans(state.degree * 4 / 15))))
+									Layouts::Atlas::Label::Names
+									+ pop(floor(ans(state.degree * 4 / 15)))
 								};
 								if (state.toggle) {
-									targetVertex[5] = AnimationLength;
+									targetVertex[5] = _StripKnob_AnimationLength;
 									targetRgba = &_toolkit.get_Theme()
 										.Warning;
 								} else if (state.hold) {
 									if (0 < state.degree) {
-										targetVertex[4] = AnimationLength;
+										targetVertex[4] = _StripKnob_AnimationLength;
 										targetRgba = &_toolkit.get_Theme()
 											.Error;
 									} else {
-										targetVertex[3] = AnimationLength;
+										targetVertex[3] = _StripKnob_AnimationLength;
 										targetRgba = &_toolkit.get_Theme()
 											.Active;
 									}
 								} else if (5 < state.level) {
 									if (700 < state.level) {
 										if (1000 < state.level) {
-											targetVertex[2] = AnimationLength;
+											targetVertex[2] = _StripKnob_AnimationLength;
 											targetRgba = &_toolkit.get_Theme()
 												.EqHigh;
 										} else {
-											targetVertex[1] = AnimationLength;
+											targetVertex[1] = _StripKnob_AnimationLength;
 											targetRgba = &_toolkit.get_Theme()
 												.EqMedium;
 										}
 									} else {
-										targetVertex[0] = AnimationLength;
+										targetVertex[0] = _StripKnob_AnimationLength;
 										targetRgba = &_toolkit.get_Theme()
 											.EqLow;
 									}
 								}
 								if (state.hold) {
-									targetVertex[6] = AnimationLength;
+									targetVertex[6] = _StripKnob_AnimationLength;
 								}
 								that->set_AnimationSize(targetVertex);
 								that->set_IndicatorAngle(state.degree);
-								num_t shifted{ that->get_AnimationPosition()[6] - AnimationLengthH };
+								num_t shifted{ that->get_AnimationPosition()[6] - _StripKnob_AnimationLength / 2 };
 								that->set_Label(shifted < 0
 									? state.target
 									: gain);
@@ -133,8 +132,6 @@ namespace Voicemeeter {
 
 							template<typename TStripKnob>
 							inline void operator()(TStripKnob *that) const {
-								constexpr num_t AnimationLength{ 200 };
-								constexpr num_t AnimationLengthH{ AnimationLength / 2 };
 								auto animationVertex = that->get_AnimationSize()
 									- that->get_AnimationPosition();
 								auto animationVertex2 = animationVertex * animationVertex;
@@ -153,11 +150,11 @@ namespace Voicemeeter {
 								};
 								vector_t targetRgba{ context.path.pick(rI) };
 								that->set_FrameColor(targetRgba);
-								num_t shifted{ that->get_AnimationPosition()[6] - AnimationLengthH };
+								num_t shifted{ that->get_AnimationPosition()[6] - _StripKnob_AnimationLength / 2 };
 								that->set_Label(shifted < 0
 									? context.target
 									: context.gain);
-								targetRgba[3] = push(255) * ans(shifted) / AnimationLengthH;
+								targetRgba[3] = push(255) * ans(shifted) / (_StripKnob_AnimationLength / 2);
 								that->set_LabelColor(targetRgba);
 							};
 

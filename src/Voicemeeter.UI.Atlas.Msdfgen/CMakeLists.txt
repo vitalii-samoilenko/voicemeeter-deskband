@@ -169,7 +169,7 @@ if(GENERATE_ATLAS)
 			${PROJECT_BINARY_DIR}/B2.bit
 			${NUMBERS_BIT}
 		VERBATIM)
-	add_custom_target(run.atlas.generator DEPENDS Atlas.bit)
+	add_custom_target(run.atlas.generator DEPENDS ${PROJECT_BINARY_DIR}/Atlas.bit)
 	add_dependencies(voicemeeter_ui_atlas_msdfgen run.atlas.generator)
 
 	list(APPEND LOADER_FILES ${PROJECT_BINARY_DIR}/Atlas.bit)

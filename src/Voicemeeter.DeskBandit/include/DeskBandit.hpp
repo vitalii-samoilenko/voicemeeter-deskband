@@ -277,8 +277,8 @@ private:
 					sceneBuilder.get_CompositionBuilder()
 						.set_Timer(*that->_compositionTimer)
 						.set_Mixer(*that->_mixer)
-						.set_PaddingPosition(vector_t{ push(3), push(4) })
-						.set_PaddingSize(vector_t{ push(3), push(4) });
+						.set_PaddingPosition(vector_t{ push(3), push(3) })
+						.set_PaddingSize(vector_t{ push(3), push(3) });
 					if (that->_remote->get_Type() == RemoteBuilder::Remote::Type::Voicemeeter) {
 						sceneBuilder.get_CompositionBuilder()
 							.set_Vban(false)
@@ -287,8 +287,8 @@ private:
 					}
 					that->_scene = sceneBuilder.Build();
 					that->_scene->Rescale(vector_t{
-						push(static_cast<num_t>(that->_rc.right - that->_rc.left)),
-						push(static_cast<num_t>(that->_rc.bottom - that->_rc.top))
+						push(that->_rc.right - that->_rc.left),
+						push(that->_rc.bottom - that->_rc.top)
 					});
 					vector_t const &vertex{ that->_scene->get_Size() };
 					that->_rc.right = that->_rc.left + static_cast<LONG>(pop(ceil(vertex[0])));
@@ -332,71 +332,71 @@ private:
 				HDC hdc = ::Windows::BeginPaint(hWnd, &ps);
 				that->_scene->Redraw(
 					vector_t{
-						push(static_cast<num_t>(ps.rcPaint.left)),
-						push(static_cast<num_t>(ps.rcPaint.top))
+						push(ps.rcPaint.left),
+						push(ps.rcPaint.top)
 					},
 					ps.rcPaint.right && ps.rcPaint.bottom
 						? vector_t{
-							push(static_cast<num_t>(ps.rcPaint.right)),
-							push(static_cast<num_t>(ps.rcPaint.bottom))
+							push(ps.rcPaint.right),
+							push(ps.rcPaint.bottom)
 						}
 						: that->_scene->get_Size());
 				::EndPaint(hWnd, &ps);
 			} return OK;
 			case WM_LBUTTONDOWN: {
 				that->_scene->MouseLDown(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_LBUTTONDBLCLK: {
 				that->_scene->MouseLDouble(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MBUTTONDOWN: {
 				that->_scene->MouseMDown(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MBUTTONDBLCLK: {
 				that->_scene->MouseMDouble(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_RBUTTONDOWN: {
 				that->_scene->MouseRDown(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_RBUTTONDBLCLK: {
 				that->_scene->MouseRDouble(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MOUSEWHEEL: {
 				POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 				::Windows::ScreenToClient(hWnd, &point);
 				that->_scene->MouseWheel(vector_t{
-					push(static_cast<num_t>(point.x)),
-					push(static_cast<num_t>(point.y))
+					push(point.x),
+					push(point.y)
 				}, GET_WHEEL_DELTA_WPARAM(wParam));
 			} return OK;
 			case WM_MOUSEMOVE: {
 				that->_scene->MouseMove(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_LBUTTONUP: {
 				that->_scene->MouseLUp(vector_t{
-					push(static_cast<num_t>(GET_X_LPARAM(lParam))),
-					push(static_cast<num_t>(GET_Y_LPARAM(lParam)))
+					push(GET_X_LPARAM(lParam)),
+					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			}

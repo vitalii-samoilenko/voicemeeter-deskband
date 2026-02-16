@@ -48,16 +48,22 @@ namespace Voicemeeter {
 			namespace Cherry {
 				namespace Panel {
 					constexpr num_t Height{ push(40) };
-					namespace Padding {
+					namespace Advance {
 						constexpr num_t Left{ push(1) };
 						constexpr num_t Top{ 0 };
 						constexpr num_t Right{ 0 };
 						constexpr num_t Bottom{ 0 };
 					}
+					namespace Padding {
+						constexpr num_t Left{ 0 };
+						constexpr num_t Top{ push(1) };
+						constexpr num_t Right{ Advance::Left };
+						constexpr num_t Bottom{ push(1) };
+					}
 				}
 				namespace Vban {
-					constexpr num_t Height{ Panel::Height }; // 22
-					constexpr num_t Width{ push(71) }; // 39
+					constexpr num_t Height{ Panel::Height };
+					constexpr num_t Width{ Panel::Height * 39 / 22 };
 				}
 				namespace Knob {
 					constexpr num_t Height{ Panel::Height };
@@ -66,41 +72,58 @@ namespace Voicemeeter {
 				namespace Plug {
 					constexpr num_t Height{ push(19) };
 					constexpr num_t Width{ push(41) };
-					namespace Padding {
-						constexpr num_t Left{ 0 };
-						constexpr num_t Top{ push(2) };
-						constexpr num_t Right{ 0 };
-						constexpr num_t Bottom{ 0 };
-					}
 				}
 				namespace Mixer {
 					namespace Block {
-						constexpr num_t Height{ Plug::Height + Plug::Padding::Top + Plug::Height };
+						namespace Advance {
+							constexpr num_t Left{ 0 };
+							constexpr num_t Top{ push(2) };
+							constexpr num_t Right{ 0 };
+							constexpr num_t Bottom{ 0 };
+						}
+						constexpr num_t Height{ Plug::Height + Advance::Top + Plug::Height };
 						constexpr num_t Width{ Plug::Width };
 					}
 				}
 				namespace Input {
 					namespace Block {
+						namespace Advance {
+							constexpr num_t Left{ push(1) };
+							constexpr num_t Top{ 0 };
+							constexpr num_t Right{ 0 };
+							constexpr num_t Bottom{ 0 };
+						}
 						constexpr num_t Height{ Panel::Height };
-						constexpr num_t Width{ Knob::Width + 2 * (Panel::Padding::Left + Mixer::Block::Width) };
+						constexpr num_t Width{ Knob::Width + 2 * (Advance::Left + Mixer::Block::Width) };
 					}
 					namespace Section {
+						namespace Advance {
+							constexpr num_t Left{ push(1) };
+							constexpr num_t Top{ 0 };
+							constexpr num_t Right{ 0 };
+							constexpr num_t Bottom{ 0 };
+						}
 						constexpr num_t Height{ Panel::Height };
-						constexpr num_t Width{ Input::Block::Width + Panel::Padding::Left + Input::Block::Width };
+						constexpr num_t Width{ Input::Block::Width + Advance::Left + Input::Block::Width };
 					}
 				}
 				namespace Output {
 					namespace Section {
+						namespace Advance {
+							constexpr num_t Left{ push(1) };
+							constexpr num_t Top{ 0 };
+							constexpr num_t Right{ 0 };
+							constexpr num_t Bottom{ 0 };
+						}
 						constexpr num_t Height{ Panel::Height };
-						constexpr num_t Width{ Knob::Width + 3 * (Panel::Padding::Left + Knob::Width) };
+						constexpr num_t Width{ Knob::Width + 3 * (Advance::Left + Knob::Width) };
 					}
 				}
 				namespace Panel {
 					constexpr num_t Width{
-						Panel::Padding::Left + Vban::Width
-						+ Panel::Padding::Left + Input::Section::Width
-						+ Panel::Padding::Left + Output::Section::Width
-						+ Panel::Padding::Left
+						Advance::Left + Vban::Width
+						+ Advance::Left + Input::Section::Width
+						+ Advance::Left + Output::Section::Width
 					};
 				}
 			}
@@ -900,7 +923,7 @@ namespace Voicemeeter {
 						mixer.get_Strip<Target>()
 							.set_Mute<bag<TMixer>>(state.toggle);
 						mixer.get_Strip<Target>()
-							.set_Gain<bag<TMixer>>(state.degree);
+							.set_Gain<bag<TMixer>>(state.degree * 4 / 15);
 					};
 					template<>
 					inline void PickAndUpdateStrip<Cherry>(Cherry &mixer, ::Voicemeeter::UI::States::StripKnob const &state) {
@@ -999,7 +1022,7 @@ namespace Voicemeeter {
 								&stripKnob
 							](num_t value)->void {
 								state_t state{ stripKnob.get_State() };
-								state.degree = value;
+								state.degree = value * 15 / 4;
 								stripKnob.set_State(state);
 							});
 						tokens.get_Strip<Target>()
@@ -1167,12 +1190,12 @@ namespace Voicemeeter {
 						>(
 							enabled.test(flags::vban),
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1291,12 +1314,12 @@ namespace Voicemeeter {
 						>(
 							1 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1333,12 +1356,12 @@ namespace Voicemeeter {
 						>(
 							2 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1375,12 +1398,12 @@ namespace Voicemeeter {
 						>(
 							3 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1442,12 +1465,12 @@ namespace Voicemeeter {
 						>(
 							1 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1506,12 +1529,12 @@ namespace Voicemeeter {
 						>(
 							3 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1570,12 +1593,12 @@ namespace Voicemeeter {
 						>(
 							1 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1634,12 +1657,12 @@ namespace Voicemeeter {
 						>(
 							3 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
@@ -1843,12 +1866,12 @@ namespace Voicemeeter {
 						>(
 							0 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -1871,12 +1894,12 @@ namespace Voicemeeter {
 						>(
 							2 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -1914,12 +1937,12 @@ namespace Voicemeeter {
 						>(
 							0 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -1942,12 +1965,12 @@ namespace Voicemeeter {
 						>(
 							2 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -1970,12 +1993,12 @@ namespace Voicemeeter {
 						>(
 							1 < enabledInputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -1999,12 +2022,12 @@ namespace Voicemeeter {
 						>(
 							0 < enabledInputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -2027,12 +2050,12 @@ namespace Voicemeeter {
 						>(
 							0 < enabledOutputs,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
 							},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
@@ -2054,11 +2077,11 @@ namespace Voicemeeter {
 						>(
 							::std::move(tokens),
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Bottom
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
 							} + paddingPoint,
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
+								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
 							} + paddingVertex,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},

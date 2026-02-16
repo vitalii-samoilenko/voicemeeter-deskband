@@ -24,11 +24,13 @@ namespace Voicemeeter {
 				Stopwatch & operator=(Stopwatch &&) = delete;
 
 			inline num_t get_Elapsed() const {
-				return static_cast<num_t>(
-					::std::chrono::duration_cast<
-						::std::chrono::milliseconds>(
-						_current - _previous)
-							.count());
+				auto elapsed = ::std::chrono::duration_cast<
+					::std::chrono::milliseconds>(
+					_current - _previous)
+						.count();
+				return elapsed < Inf
+					? static_cast<num_t>(elapsed)
+					: Inf;
 			};
 
 			inline void Lap() {

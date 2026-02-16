@@ -145,9 +145,7 @@ namespace Voicemeeter {
 						}
 						if (_changes.test(flags::framePoint)) {
 							_labelPoint[0] = _framePoint[0]
-								+ (
-									_frameVertex[0] - _labelVertex[0]
-								) / 2;
+								+ (_frameVertex[0] - _labelVertex[0]) / 2;
 							_labelPoint[1] = _framePoint[1]
 								+ (
 									_frameVertex[1] * (
@@ -162,13 +160,11 @@ namespace Voicemeeter {
 						}
 						if (_changes.test(flags::indicatorDegree)) {
 							_indicatorPoint = _framePoint
-								+ (
-									_frameVertex - _indicatorVertex
-								) / 2
+								+ (_frameVertex - _indicatorVertex) / 2
 								+ (_frameVertex * push(31) / 96)
 								/ vector_t{
-									sinI(-_indicatorDegree + push(90)),
-									cosI(-_indicatorDegree + push(90))
+									sinI(push(90) - _indicatorDegree),
+									cosI(push(90) - _indicatorDegree)
 								};
 						}
 						if (_changes.test(flags::label)) {

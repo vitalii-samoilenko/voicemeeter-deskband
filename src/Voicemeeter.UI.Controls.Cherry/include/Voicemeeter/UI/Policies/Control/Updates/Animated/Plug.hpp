@@ -11,6 +11,8 @@ namespace Voicemeeter {
 			namespace Control {
 				namespace Updates {
 					namespace Animated {
+						constexpr num_t _Plug_AnimationLength{ 200 };
+
 						template<typename TToolkit>
 						struct PlugContext {
 							typename TToolkit::Palette::gradient path;
@@ -38,14 +40,13 @@ namespace Voicemeeter {
 
 							template<typename TPlug>
 							inline void operator()(TPlug *that, state_t const &state) const {
-								constexpr num_t AnimationLength{ 200 };
 								vector_t targetVertex{ 0 };
 								vector_t const *targetRgba{
 									&_toolkit.get_Theme()
 										.Inactive
 								};
 								if (state.toggle) {
-									targetVertex[0] = AnimationLength;
+									targetVertex[0] = _Plug_AnimationLength;
 									targetRgba = &_toolkit.get_Theme()
 										.Active;
 								}

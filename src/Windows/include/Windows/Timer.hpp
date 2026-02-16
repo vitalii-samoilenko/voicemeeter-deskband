@@ -35,7 +35,7 @@ namespace Windows {
 				static_cast<UINT>(duration), NULL);
 			_target = ::std::make_unique<
 				Tick<TTick>>(
-				target);
+				&target);
 			_targetId = &target;
 		};
 		template<typename TTick>
@@ -72,8 +72,8 @@ namespace Windows {
 		template<typename TTick>
 		class Tick final : public ITick {
 		public:
-			inline explicit Tick(TTick &target)
-				: _target{ target } {
+			inline explicit Tick(TTick *that)
+				: that{ that } {
 
 			};
 			Tick() = delete;
@@ -86,11 +86,11 @@ namespace Windows {
 			Tick & operator=(Tick &&) = delete;
 
 			virtual void operator()() override {
-				_target();
+				that->operator()();
 			};
 
 		private:
-			TTick &_target;
+			TTick *that;
 		};
 
 		HWND _hWnd;

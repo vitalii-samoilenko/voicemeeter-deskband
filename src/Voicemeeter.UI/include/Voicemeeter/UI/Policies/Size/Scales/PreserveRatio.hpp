@@ -1,7 +1,7 @@
 #ifndef VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 #define VOICEMEETER_UI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
 
-#include <exception>
+#include <stdexcept>
 #include <tuple>
 
 #include "wheel.hpp"
@@ -27,7 +27,7 @@ namespace Voicemeeter {
 								return ::std::make_tuple(
 									srcs * nom / denom ...);
 							}
-							throw ::std::exception{ "Logic error" };
+							throw ::std::runtime_error{ "Scaling error" };
 						};
 					};
 				}

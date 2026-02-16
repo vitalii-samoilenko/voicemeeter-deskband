@@ -7,15 +7,15 @@
 #include <type_traits>
 #include <valarray>
 
-#ifdef _WHEEL_EXTENDED_PRECISION
+#ifdef WHEEL_EXTENDED_PRECISION
 using num_t = int64_t;
 using unum_t = uint64_t;
-constexpr int _wheel_Precision{ 8 };
+constexpr int _wheel_Precision{ 14 };
 constexpr num_t _wheel_Msqrt{ 3037000499 };
 #else
 using num_t = int32_t;
 using unum_t = uint32_t;
-constexpr int _wheel_Precision{ 6 };
+constexpr int _wheel_Precision{ 7 };
 constexpr num_t _wheel_Msqrt{ 46340 };
 #endif
 
@@ -129,6 +129,5 @@ template<typename V,
 inline num_t all(V const &v) {
 	return min(v);
 };
-}
 
 #endif

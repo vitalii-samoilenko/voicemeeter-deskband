@@ -1,7 +1,7 @@
 #ifndef VOICEMEETER_CLIENTS___REMOTE_HPP
 #define VOICEMEETER_CLIENTS___REMOTE_HPP
 
-#include <exception>
+#include <stdexcept>
 
 #include "wheel.hpp"
 
@@ -183,7 +183,7 @@ namespace Voicemeeter {
 						key = ToPlugKey<TMixer>(runtime, From, To)
 					](bool value)->void {
 						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
-							throw ::std::exception{ key };
+							throw ::std::runtime_error{ key };
 						}
 						g_dirty = true;
 					});
@@ -193,9 +193,9 @@ namespace Voicemeeter {
 					token.on_gain([
 						&client,
 						key = ToStripKey<TMixer>(runtime, Target, Gain)
-					](double value)->void {
-						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value * 4) / push(15))) {
-							throw ::std::exception{ key };
+					](num_t value)->void {
+						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value) / One)) {
+							throw ::std::runtime_error{ key };
 						}
 						g_dirty = true;
 					});
@@ -204,7 +204,7 @@ namespace Voicemeeter {
 						key = ToStripKey<TMixer>(runtime, Target, Mute)
 					](bool value)->void {
 						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
-							throw ::std::exception{ key };
+							throw ::std::runtime_error{ key };
 						}
 						g_dirty = true;
 					});
@@ -215,7 +215,7 @@ namespace Voicemeeter {
 					char const *key{ ToPlugKey<TMixer>(runtime, From, To) };
 					float value{ 0.F };
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
-						throw ::std::exception{ key };
+						throw ::std::runtime_error{ key };
 					}
 					mixer.set_Plug<bag<TMixer>, From, To>(0.01F < value);
 				};
@@ -224,13 +224,13 @@ namespace Voicemeeter {
 					char const *key{ ToStripKey<TMixer>(runtime, Target, Gain) };
 					float value{ 0.F };
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
-						throw ::std::exception{ key };
+						throw ::std::runtime_error{ key };
 					}
 					mixer.get_Strip<Target>()
-						.set_Gain<bag<TMixer>>(static_cast<num_t>(value * push(15) / 4));
+						.set_Gain<bag<TMixer>>(static_cast<num_t>(value * One));
 					key = ToStripKey<TMixer>(runtime, Target, Mute);
 					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
-						throw ::std::exception{ key };
+						throw ::std::runtime_error{ key };
 					}
 					mixer.get_Strip<Target>()
 						.set_Mute<bag<TMixer>>(0.01F < value);
@@ -245,7 +245,7 @@ namespace Voicemeeter {
 					,(mixer.get_Strip<Target>()
 						.get_Channel<Channels>()
 						.set_Level<bag<TMixer>>(code
-							? throw ::std::exception{ "level" }
+							? throw ::std::runtime_error{ "level" }
 							: static_cast<num_t>(value * One))))
 					, ...);
 				};
@@ -282,7 +282,7 @@ namespace Voicemeeter {
 							&client
 						](bool value)->void {
 							if (client.VBVMR_SetParameterFloat(const_cast<char *>(g_keys[0]), static_cast<float>(value))) {
-								throw ::std::exception{ g_keys[0] };
+								throw ::std::runtime_error{ g_keys[0] };
 							}
 							g_dirty = true;
 						});
@@ -311,7 +311,7 @@ namespace Voicemeeter {
 				inline void Update<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
 					long temp{ client.VBVMR_IsParametersDirty() };
 					if (temp < 0) {
-						throw ::std::exception{ "Could not check Voicemeeter" };
+						throw ::std::runtime_error{ "Could not check Voicemeeter" };
 					}
 					bool dirty{ temp && !g_dirty };
 					g_dirty = false;
@@ -357,7 +357,7 @@ namespace Voicemeeter {
 						if (dirty) {
 							float value{ 0.F };
 							if (client.VBVMR_GetParameterFloat(const_cast<char *>(g_keys[0]), &value)) {
-								throw ::std::exception{ g_keys[0] };
+								throw ::std::runtime_error{ g_keys[0] };
 							}
 							mixer.set_Vban<bag<Cherry>>(0.01F < value);
 							UpdatePlug<Cherry,
