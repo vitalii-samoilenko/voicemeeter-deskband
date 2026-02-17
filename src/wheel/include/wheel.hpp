@@ -76,6 +76,12 @@ inline num_t cosI(num_t n) {
 		/ ::std::cos(
 			n * M_PI / push(180)));
 };
+inline constexpr num_t min(num_t a, num_t b) {
+	return ::std::min(a, b);
+};
+inline constexpr num_t max(num_t a, num_t b) {
+	return ::std::max(a, b);
+};
 
 using vector_t = ::std::valarray<num_t>;
 using slice_t = ::std::slice;

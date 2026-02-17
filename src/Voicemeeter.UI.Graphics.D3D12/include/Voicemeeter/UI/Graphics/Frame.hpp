@@ -53,12 +53,11 @@ namespace Voicemeeter {
 						}
 						*_state.geta_RenderTarget(frame) = nullptr;
 					}
-					// TODO: ResizeBuffers1
 					::Windows::ThrowIfFailed(_state.get_SwapChain()
 						->ResizeBuffers(
 							0,
-							static_cast<UINT>(pop(ceil(vertex[0]))),
-							static_cast<UINT>(pop(ceil(vertex[1]))),
+							static_cast<UINT>(pop(ceil(max(vertex[0], push(8))))),
+							static_cast<UINT>(pop(ceil(max(vertex[1], push(8))))),
 							DXGI_FORMAT_UNKNOWN,
 							0
 					), "Swap chain resize failed");
@@ -169,6 +168,10 @@ namespace Voicemeeter {
 				};
 				inline void Present(vector_t const &point, vector_t const &vertex) {
 					// TODO: bitblt
+					size_t frame{
+						_state.get_SwapChain()
+							->GetCurrentBackBufferIndex()
+					};
 					if (_first) {
 						::Windows::ThrowIfFailed(_state.get_SwapChain()
 							->Present(
@@ -194,6 +197,10 @@ namespace Voicemeeter {
 								&params
 						), "Presentation failed");
 					}
+					_state.get_CommandQueue()
+						->Signal(
+							_state.get_Fence(frame),
+							_state.inc_Count(frame));
 				};
 				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
 					auto lessFrom = point < _invalidFrom;

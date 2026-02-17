@@ -39,13 +39,7 @@ public:
 		, _remote{ nullptr }
 		, _scene{ nullptr }
 		, _dockTick{ nullptr } {
-		::Windows::SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-		{
-			RECT parent{};
-			::Windows::GetWindowRect(_hWndParent, &parent);
-			_rc.bottom = parent.bottom - parent.top;
-			_rc.right = parent.right - parent.left;
-		}
+		::Windows::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 		{
 			DWORD dock{ 0UL };
 			DWORD size{ sizeof(DWORD) };
@@ -159,11 +153,10 @@ private:
 			case Dock::Right: {
 				RECT tray{};
 				::Windows::GetWindowRect(that->_hWndTray, &tray);
-				LONG diff{ tray.left - that->_rc.right };
+				LONG diff{ tray.left - that->_rc.left - that->_rc.right };
 				if (!diff) {
 					return;
 				}
-				that->_rc.right += diff;
 				that->_rc.left += diff;
 			} break;
 			default: {
@@ -173,7 +166,7 @@ private:
 			::Windows::SetWindowPos(
 				that->_hWnd, NULL,
 				that->_rc.left, that->_rc.top,
-				that->_rc.right - that->_rc.left, that->_rc.bottom - that->_rc.top,
+				that->_rc.right, that->_rc.bottom,
 				0U);
 		};
 
@@ -286,16 +279,21 @@ private:
 							.set_Enabled<::Voicemeeter::Cherry::Strips::B2>(false);
 					}
 					that->_scene = sceneBuilder.Build();
+				}
+				{
+					RECT parent;
+					::Windows::GetWindowRect(that->_hWndParent, &parent);
 					that->_scene->Rescale(vector_t{
-						push(that->_rc.right - that->_rc.left),
-						push(that->_rc.bottom - that->_rc.top)
+						push(parent.right - parent.left),
+						push(parent.bottom - parent.top)
 					});
 					vector_t const &vertex{ that->_scene->get_Size() };
-					that->_rc.right = that->_rc.left + static_cast<LONG>(pop(ceil(vertex[0])));
+					that->_rc.right = static_cast<LONG>(pop(ceil(vertex[0])));
+					that->_rc.bottom = static_cast<LONG>(pop(ceil(vertex[1])));
 					::Windows::SetWindowPos(
-						hWnd, NULL,
+						that->_hWnd, NULL,
 						that->_rc.left, that->_rc.top,
-						that->_rc.right - that->_rc.left, that->_rc.bottom - that->_rc.top,
+						that->_rc.right, that->_rc.bottom,
 						0U);
 				}
 				that->_dockTick = ::std::make_unique<
@@ -328,20 +326,20 @@ private:
 				target->Elapse();
 			} return OK;
 			case WM_PAINT: {
-				PAINTSTRUCT ps;
-				HDC hdc = ::Windows::BeginPaint(hWnd, &ps);
-				that->_scene->Redraw(
-					vector_t{
-						push(ps.rcPaint.left),
-						push(ps.rcPaint.top)
-					},
-					ps.rcPaint.right && ps.rcPaint.bottom
-						? vector_t{
+				if (::GetUpdateRect(hWnd, NULL, FALSE)) {
+					PAINTSTRUCT ps;
+					HDC hdc{ ::Windows::BeginPaint(hWnd, &ps) };
+					that->_scene->Redraw(
+						vector_t{
+							push(ps.rcPaint.left),
+							push(ps.rcPaint.top)
+						},
+						vector_t{
 							push(ps.rcPaint.right - ps.rcPaint.left),
 							push(ps.rcPaint.bottom - ps.rcPaint.top)
-						}
-						: that->_scene->get_Size());
-				::EndPaint(hWnd, &ps);
+						});
+					::EndPaint(hWnd, &ps);
+				}
 			} return OK;
 			case WM_LBUTTONDOWN: {
 				that->_scene->MouseLDown(vector_t{
@@ -398,6 +396,11 @@ private:
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
+			} return OK;
+			case WM_KEYDOWN: {
+				if (LOWORD(wParam) == 'C' && ::GetKeyState(VK_CONTROL)) {
+					::PostQuitMessage(0);
+				}
 			} return OK;
 			}
 		}

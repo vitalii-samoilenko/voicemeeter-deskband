@@ -356,6 +356,18 @@ namespace Windows {
 		}
 		return code;
 	};
+	inline DPI_AWARENESS_CONTEXT SetThreadDpiAwarenessContext(
+		_In_ DPI_AWARENESS_CONTEXT value
+	) {
+		DPI_AWARENESS_CONTEXT old{
+			::SetThreadDpiAwarenessContext(
+				value)
+		};
+		if (old == NULL) {
+			throw Error{ "Failed to set thread DPI awareness" };
+		}
+		return old;
+	};
 
 	inline BOOL AdjustWindowRectExForDpi(
 		_Inout_ LPRECT lpRect,
