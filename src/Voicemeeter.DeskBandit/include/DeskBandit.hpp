@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "wheel.hpp"
@@ -40,22 +41,6 @@ public:
 		, _scene{ nullptr }
 		, _dockTick{ nullptr } {
 		::Windows::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-		{
-			DWORD dock{ 0UL };
-			DWORD size{ sizeof(DWORD) };
-			if (::Windows::RegGetValueW(
-				HKEY_CURRENT_USER, LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock",
-				RRF_RT_DWORD, NULL, &dock, &size) == ERROR_SUCCESS) {
-				switch (dock) {
-				case 0UL:
-					_dock = Dock::Left;
-					break;
-				case 3UL:
-					_dock = Dock::Right;
-					break;
-				}
-			}
-		}
 		{
 			WNDCLASSW wndClass{};
 			wndClass.hInstance = hInstance;
@@ -126,6 +111,32 @@ private:
 		MidLeft = 1,
 		MidRight = 2,
 		Right = 3
+	};
+
+	struct _config_Mixer {
+		::std::optional<DWORD> Vban;
+		::std::optional<DWORD> P;
+		::std::optional<DWORD> V;
+		::std::optional<DWORD> A1;
+		::std::optional<DWORD> A2;
+		::std::optional<DWORD> B1;
+		::std::optional<DWORD> B2;
+	};
+	struct _config_Theme {
+		::std::optional<DWORD> Inactive;
+		::std::optional<DWORD> Active;
+		::std::optional<DWORD> Warning;
+		::std::optional<DWORD> Error;
+		::std::optional<DWORD> Information;
+		::std::optional<DWORD> Neutral;
+		::std::optional<DWORD> EqLow;
+		::std::optional<DWORD> EqMedium;
+		::std::optional<DWORD> EqHigh;
+	};
+	struct _config_DeskBand {
+		::std::optional<DWORD> Dock;
+		_config_Mixer Mixer;
+		_config_Theme Theme;
 	};
 
 	class DockTick final {
@@ -233,6 +244,35 @@ private:
 			};
 			switch (uMsg) {
 			case WM_NCCREATE: {
+				_config_DeskBand config{};
+				{
+					auto loadValue = [](LPCWSTR lpSubKey, LPCWSTR lpValue, ::std::optional<DWORD> &target)->void {
+						DWORD value{ 0UL };
+						DWORD size{ sizeof(DWORD) };
+						if (::Windows::RegGetValueW(
+							HKEY_CURRENT_USER, lpSubKey, lpValue,
+							RRF_RT_DWORD, NULL, &value, &size) == ERROR_SUCCESS) {
+							target = value;
+						}
+					};
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock", config.Dock);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"Vban", config.Mixer.Vban);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"P", config.Mixer.P);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"V", config.Mixer.V);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"A1", config.Mixer.A1);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"A2", config.Mixer.A2);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"B1", config.Mixer.B1);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"B2", config.Mixer.B2);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"Inactive", config.Theme.Inactive);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"Active", config.Theme.Active);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"Warning", config.Theme.Warning);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"Error", config.Theme.Error);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"Information", config.Theme.Information);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"Neutral", config.Theme.Neutral);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"EqLow", config.Theme.EqLow);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"EqMedium", config.Theme.EqMedium);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Theme)", L"EqHigh", config.Theme.EqHigh);
+				}
 				that = reinterpret_cast<DeskBandit *>(
 					reinterpret_cast<LPCREATESTRUCTW>(lParam)
 						->lpCreateParams);
@@ -240,6 +280,13 @@ private:
 					reinterpret_cast<LONG_PTR>(that));
 				that->_hWnd = hWnd;
 				::Windows::SetParent(hWnd, that->_hWndParent);
+				if (config.Dock) {
+					switch (*(config.Dock)) {
+					case 3:
+						that->_dock = Dock::Right;
+						break;
+					}
+				}
 				that->_dockTimer = ::std::make_unique<
 					::Windows::Timer>(hWnd);
 				that->_compositionTimer = ::std::make_unique<
@@ -272,6 +319,28 @@ private:
 						.set_Mixer(*that->_mixer)
 						.set_PaddingPosition(vector_t{ push(3), push(3) })
 						.set_PaddingSize(vector_t{ push(3), push(3) });
+					sceneBuilder.get_CompositionBuilder()
+						.set_Vban(
+							config.Mixer.Vban
+							&& 0 < *(config.Mixer.Vban))
+						.set_Enabled<::Voicemeeter::Cherry::Strips::P>(
+							config.Mixer.P
+							&& 0 < *(config.Mixer.P))
+						.set_Enabled<::Voicemeeter::Cherry::Strips::V>(
+							config.Mixer.V
+							&& 0 < *(config.Mixer.V))
+						.set_Enabled<::Voicemeeter::Cherry::Strips::A1>(
+							config.Mixer.A1
+							&& 0 < *(config.Mixer.A1))
+						.set_Enabled<::Voicemeeter::Cherry::Strips::A2>(
+							config.Mixer.A2
+							&& 0 < *(config.Mixer.A2))
+						.set_Enabled<::Voicemeeter::Cherry::Strips::B1>(
+							config.Mixer.B1
+							&& 0 < *(config.Mixer.B1))
+						.set_Enabled<::Voicemeeter::Cherry::Strips::B2>(
+							config.Mixer.B2
+							&& 0 < *(config.Mixer.B2));
 					if (that->_remote->get_Type() == RemoteBuilder::Remote::Type::Voicemeeter) {
 						sceneBuilder.get_CompositionBuilder()
 							.set_Vban(false)
