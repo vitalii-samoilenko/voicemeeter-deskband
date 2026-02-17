@@ -151,7 +151,6 @@ namespace Voicemeeter {
 					}
 					::Microsoft::WRL::ComPtr<ID3D12Resource> squareUploadBuffer{ nullptr };
 					{
-						// TODO: vertex identifier for texture alignment
 						::std::array<FLOAT, 2 * 4> square{
 							-1.F, -1.F,
 							-1.F, 1.F,

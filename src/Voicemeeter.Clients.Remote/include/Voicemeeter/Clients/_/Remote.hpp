@@ -142,7 +142,7 @@ namespace Voicemeeter {
 					case Cherry::Strips::P:
 						return g_keys[17 + property];
 					case Cherry::Strips::V:
-						return g_keys[19 + runtime - Voicemeeter + property];
+						return g_keys[19 + 2 * (runtime - Voicemeeter) + property];
 					case Cherry::Strips::A1:
 						return g_keys[25 + property];
 					case Cherry::Strips::A2:

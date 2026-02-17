@@ -139,7 +139,7 @@ namespace Voicemeeter {
 					enum flags : size_t {
 						animated = 0,
 						vban = 1,
-						offset = 1
+						offset = 2
 					};
 
 					template<
