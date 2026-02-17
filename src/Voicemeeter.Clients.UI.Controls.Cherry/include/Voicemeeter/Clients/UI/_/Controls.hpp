@@ -1917,7 +1917,9 @@ namespace Voicemeeter {
 								TFocusTracker>
 						>(
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Width,
+								i1->get_BaseSize()[0]
+								+ (0 < enabledOutputs) * i1o1o2->get_BaseSize()[0]
+								+ (2 < enabledOutputs) * i1o3o4->get_BaseSize()[0],
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2002,7 +2004,9 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Width,
+								i2->get_BaseSize()[0]
+								+ (0 < enabledOutputs) * i2o1o2->get_BaseSize()[0]
+								+ (2 < enabledOutputs) * i2o3o4->get_BaseSize()[0],
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2031,7 +2035,8 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Width,
+								i1o1o2o3o4->get_BaseSize()[0]
+								+ (1 < enabledInputs) * i2o1o2o3o4->get_BaseSize()[0],
 								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2059,7 +2064,10 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Width,
+								o1->get_BaseSize()[0]
+								+ (1 < enabledOutputs) * o2->get_BaseSize()[0]
+								+ (2 < enabledOutputs) * o3->get_BaseSize()[0]
+								+ (3 < enabledOutputs) * o4->get_BaseSize()[0],
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2086,7 +2094,9 @@ namespace Voicemeeter {
 							} + paddingVertex,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							vector_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Width,
+								enabled.test(flags::vban) * vban->get_BaseSize()[0]
+								+ (0 < enabledInputs) * i1i2->get_BaseSize()[0]
+								+ (0 < enabledOutputs) * o1o2o3o4->get_BaseSize()[0],
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
