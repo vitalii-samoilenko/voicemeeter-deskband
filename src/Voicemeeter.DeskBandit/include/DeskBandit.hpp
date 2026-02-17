@@ -305,44 +305,108 @@ private:
 					that->_remote = remoteBuilder.Build();
 				}
 				{
+					auto toColor = [](DWORD rrggbbaa)->vector_t {
+						WORD rrgg{ HIWORD(rrggbbaa) };
+						WORD bbaa{ LOWORD(rrggbbaa) };
+						return vector_t{
+							push(HIBYTE(rrgg)),
+							push(LOBYTE(rrgg)),
+							push(HIBYTE(bbaa)),
+							push(LOBYTE(bbaa))
+						};
+					};
 					SceneBuilder sceneBuilder{};
 					sceneBuilder.get_FocusTrackerBuilder()
 						.set_InputTracker(*that);
-					sceneBuilder.get_ThemeBuilder()
+					SceneBuilder::ThemeBuilder &themeBuilder{
+						sceneBuilder.get_ThemeBuilder()
+					};
+					themeBuilder
 						.set_Warning(vector_t{ push(215), push(215), push(215), push(255) })
 						.set_Neutral(vector_t{ push(215), push(215), push(215), push(255) });
+					if (config.Theme.Inactive) {
+						themeBuilder.set_Inactive(toColor(
+							*(config.Theme.Inactive)));
+					}
+					if (config.Theme.Active) {
+						themeBuilder.set_Active(toColor(
+							*(config.Theme.Active)));
+					}
+					if (config.Theme.Warning) {
+						themeBuilder.set_Warning(toColor(
+							*(config.Theme.Warning)));
+					}
+					if (config.Theme.Error) {
+						themeBuilder.set_Error(toColor(
+							*(config.Theme.Error)));
+					}
+					if (config.Theme.Information) {
+						themeBuilder.set_Information(toColor(
+							*(config.Theme.Information)));
+					}
+					if (config.Theme.Neutral) {
+						themeBuilder.set_Neutral(toColor(
+							*(config.Theme.Neutral)));
+					}
+					if (config.Theme.EqLow) {
+						themeBuilder.set_EqLow(toColor(
+							*(config.Theme.EqLow)));
+					}
+					if (config.Theme.EqMedium) {
+						themeBuilder.set_EqMedium(toColor(
+							*(config.Theme.EqMedium)));
+					}
+					if (config.Theme.EqHigh) {
+						themeBuilder.set_EqHigh(toColor(
+							*(config.Theme.EqHigh)));
+					}
 					sceneBuilder.get_CanvasBuilder()
 						.set_hWnd(hWnd)
 						.set_Timer(*that->_renderTimer);
-					sceneBuilder.get_CompositionBuilder()
+					SceneBuilder::CompositionBuilder &compositionBuilder{
+						sceneBuilder.get_CompositionBuilder()
+					};
+					compositionBuilder
 						.set_Timer(*that->_compositionTimer)
 						.set_Mixer(*that->_mixer)
 						.set_PaddingPosition(vector_t{ push(3), push(3) })
 						.set_PaddingSize(vector_t{ push(3), push(3) });
-					sceneBuilder.get_CompositionBuilder()
-						.set_Vban(
-							config.Mixer.Vban
-							&& 0 < *(config.Mixer.Vban))
-						.set_Enabled<::Voicemeeter::Cherry::Strips::P>(
-							config.Mixer.P
-							&& 0 < *(config.Mixer.P))
-						.set_Enabled<::Voicemeeter::Cherry::Strips::V>(
-							config.Mixer.V
-							&& 0 < *(config.Mixer.V))
-						.set_Enabled<::Voicemeeter::Cherry::Strips::A1>(
-							config.Mixer.A1
-							&& 0 < *(config.Mixer.A1))
-						.set_Enabled<::Voicemeeter::Cherry::Strips::A2>(
-							config.Mixer.A2
-							&& 0 < *(config.Mixer.A2))
-						.set_Enabled<::Voicemeeter::Cherry::Strips::B1>(
-							config.Mixer.B1
-							&& 0 < *(config.Mixer.B1))
-						.set_Enabled<::Voicemeeter::Cherry::Strips::B2>(
-							config.Mixer.B2
-							&& 0 < *(config.Mixer.B2));
+					if (config.Mixer.Vban) {
+						compositionBuilder.set_Vban(
+							0 < *(config.Mixer.Vban));
+					}
+					if (config.Mixer.P) {
+						compositionBuilder.set_Enabled<
+							::Voicemeeter::Cherry::Strips::P>(
+							0 < *(config.Mixer.P));
+					}
+					if (config.Mixer.V) {
+						compositionBuilder.set_Enabled<
+							::Voicemeeter::Cherry::Strips::V>(
+							0 < *(config.Mixer.V));
+					}
+					if (config.Mixer.A1) {
+						compositionBuilder.set_Enabled<
+							::Voicemeeter::Cherry::Strips::A1>(
+							0 < *(config.Mixer.A1));
+					}
+					if (config.Mixer.A2) {
+						compositionBuilder.set_Enabled<
+							::Voicemeeter::Cherry::Strips::A2>(
+							0 < *(config.Mixer.A2));
+					}
+					if (config.Mixer.B1) {
+						compositionBuilder.set_Enabled<
+							::Voicemeeter::Cherry::Strips::B1>(
+							0 < *(config.Mixer.B1));
+					}
+					if (config.Mixer.B2) {
+						compositionBuilder.set_Enabled<
+							::Voicemeeter::Cherry::Strips::B2>(
+							0 < *(config.Mixer.B2));
+					}
 					if (that->_remote->get_Type() == RemoteBuilder::Remote::Type::Voicemeeter) {
-						sceneBuilder.get_CompositionBuilder()
+						compositionBuilder
 							.set_Vban(false)
 							.set_Enabled<::Voicemeeter::Cherry::Strips::A2>(false)
 							.set_Enabled<::Voicemeeter::Cherry::Strips::B2>(false);

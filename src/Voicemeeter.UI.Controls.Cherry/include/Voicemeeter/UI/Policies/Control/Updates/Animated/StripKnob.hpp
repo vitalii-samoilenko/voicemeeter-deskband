@@ -154,7 +154,7 @@ namespace Voicemeeter {
 								that->set_Label(shifted < 0
 									? context.target
 									: context.gain);
-								targetRgba[3] = push(255) * ans(shifted) / (_StripKnob_AnimationLength / 2);
+								targetRgba[3] = targetRgba[3] * ans(shifted) / (_StripKnob_AnimationLength / 2);
 								that->set_LabelColor(targetRgba);
 							};
 
