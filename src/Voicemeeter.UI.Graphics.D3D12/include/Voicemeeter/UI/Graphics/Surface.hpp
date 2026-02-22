@@ -1,6 +1,9 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_SURFACE_HPP
 #define VOICEMEETER_UI_GRAPHICS_SURFACE_HPP
 
+#include <memory>
+#include <unordered_map>
+
 #include "wheel.hpp"
 
 #include "Windows/API.hpp"
@@ -127,6 +130,9 @@ namespace Voicemeeter {
 
 				inline void set_Size(vector_t const &vertex) {
 					// TODO: use source size
+					for (auto &[clientId, binder] : _binders) {
+						binder->Unbind(*this);
+					}
 					::Windows::ThrowIfFailed(_swapChain->ResizeBuffers(
 						0,
 						static_cast<UINT>(max(pop(ceil(vertex[0])), 8)),
@@ -134,6 +140,9 @@ namespace Voicemeeter {
 						DXGI_FORMAT_UNKNOWN,
 						0
 					), "Swap chain resize failed");
+					for (auto &[clientId, binder] : _binders) {
+						binder->Bind(*this);
+					}
 					_first = true;
 				};
 
@@ -162,6 +171,54 @@ namespace Voicemeeter {
 					}
 				}
 
+				class token final {
+				public:
+					token() = delete;
+					token(token const &) = delete;
+					inline token(token &&other)
+						: that{ other.that }
+						, _clientId{ other._clientId } {
+						other._clientId = nullptr;
+					};
+
+					inline ~token() {
+						if (!_clientId) {
+							return;
+						}
+						that->_binders
+							.erase(_clientId);
+					};
+
+					token & operator=(token const &) = delete;
+					token & operator=(token &&) = delete;
+
+					template<typename TBinder>
+					inline void on_reallocate(TBinder &target) {
+						that->_binders[_clientId]
+							= ::std::make_unique<
+								Binder<TBinder>>(
+								&target);
+					};
+
+				private:
+					friend class Surface;
+
+					inline token(
+						Surface *that,
+						void const *clientId)
+						: that{ that }
+						, _clientId{ clientId } {
+
+					};
+
+					Surface *that;
+					void const *_clientId;
+				};
+				template<typename TClient>
+				inline token Subscribe() {
+					return token{ this, &typeid(TClient) };
+				};
+
 				static constexpr size_t BuffersSize{ 2 };
 
 				inline HWND get_hWnd() const {
@@ -178,12 +235,61 @@ namespace Voicemeeter {
 				};
 
 			private:
+				class IBinder {
+				public:
+					IBinder(IBinder const &) = delete;
+					IBinder(IBinder &&) = delete;
+
+					virtual ~IBinder() {};
+
+					IBinder & operator=(IBinder const &) = delete;
+					IBinder & operator=(IBinder &&) = delete;
+
+					virtual void Bind(Surface &target) = 0;
+					virtual void Unbind(Surface &target) = 0;
+
+				protected:
+					inline IBinder() = default;
+				};
+				template<typename TBinder>
+				class Binder final : public IBinder {
+				public:
+					inline explicit Binder(TBinder *that)
+						: that{ that } {
+
+					};
+					Binder() = delete;
+					Binder(Binder const &) = delete;
+					Binder(Binder &&) = delete;
+
+					inline ~Binder() = default;
+
+					Binder & operator=(Binder const &) = delete;
+					Binder & operator=(Binder &&) = delete;
+
+					virtual void Bind(Surface &target) override {
+						that->Bind(target);
+					};
+					virtual void Unbind(Surface &target) override {
+						that->Unbind(target);
+					};
+
+				private:
+					TBinder *that;
+				};
+
+				friend class token;
+
 				HWND _hWnd;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _device;
 				::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
 				::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
 				::Microsoft::WRL::ComPtr<IDCompositionTarget> _compositionTarget;
 				bool _first;
+				::std::unordered_map<
+					void const *,
+					::std::unique_ptr<IBinder>
+				> _binders;
 			};
 		}
 	}

@@ -29,12 +29,14 @@ namespace Voicemeeter {
 					, _state{ state }
 					, _queue{ queue }
 					, _stopwatch{ stopwatch }
+					, _frameBinder{ this }
+					, _token{ surface.Subscribe<Frame>() }
 					, _layers_size{ layers }
 					, _point{ 0, 0 }
 					, _vertex{ 0, 0 }
 					, _invalidFrom{ Inf, Inf }
 					, _invalidTo{ 0, 0 } {
-
+					token.on_reallocate(_frameBinder);
 				};
 				Frame() = delete;
 				Frame(Frame const &) = delete;
@@ -79,7 +81,7 @@ namespace Voicemeeter {
 						D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 						0,
 						static_cast<UINT>(max(pop(ceil(vertex[0])), 8)),
-						static_cast<UINT>(max(pop(ceil(vertex[1])), 8)),
+						static_cast<UINT>(max(pop(ceil(vertex[1])), 8) * _layers_size),
 						1, 1,
 						DXGI_FORMAT_R8G8B8A8_UNORM,
 						DXGI_SAMPLE_DESC{
@@ -271,7 +273,7 @@ namespace Voicemeeter {
 						->SetDescriptorHeaps(1, &hTextureHeap);
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRootDescriptorTable(
-							2, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
+							3, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
 					_state.get_slots_CommandList(slot)
 						->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 					D3D12_VERTEX_BUFFER_VIEW hSquareBuffer{ _state.get_hSquareBuffer() };
@@ -316,7 +318,12 @@ namespace Voicemeeter {
 					_state.get_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							1,
-							2U, &constants[4],
+							1U, &constants[4],
+							0);
+					_state.get_CommandList(slot)
+						->SetGraphicsRoot32BitConstants(
+							2,
+							1U, &constants[5],
 							0);
 					_state.get_CommandList(slot)
 						->DrawInstanced(4, 1, 0, 0);
@@ -339,10 +346,65 @@ namespace Voicemeeter {
 				};
 
 			private:
+				class FrameBinder final {
+				public:
+					inline explicit FrmaeBinder(Frame *that)
+						: that{ that } {
+
+					};
+					FrameBinder() = delete;
+					FrameBinder(FrameBinder const &) = delete;
+					FrameBinder(FrmaeBinder &&) = delete;
+
+					inline ~FrameBinder() = default;
+
+					FrameBinder & operator=(FrameBinder const &) = delete;
+					FrmaeBinder & operator=(FrameBinder &&) = delete;
+
+					inline void Bind(TSurface &target) {
+						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
+							::Windows::ThrowIfFailed(target.get_SwapChain()
+								->GetBuffer(
+									static_cast<UINT>(buffer),
+									IID_PPV_ARGS(that->_state.geta_blender_RenderTargets(buffer))
+							), "Failed to get swap chain buffer");
+							target.get_Device()
+								->CreateRenderTargetView(
+									that->_state.get_blender_RenderTargets(buffer),
+									nullptr, that->_state.get_blender_hRenderTargets(buffer));
+						}
+					};
+					inline void Unbind(TSurface &target) {
+						for (size_t slot{ 0 }; slot < TState::SlotsSize; ++slot) {
+							if (that->_state.get_slots_Fence(slot)
+									->GetCompletedValue()
+								< that->_state.get_slots_Count(slot)) {
+								::Windows::ThrowIfFailed(that->_state.get_slots_Fence(slot)
+									->SetEventOnCompletion(
+										that->_state.get_slots_Count(slot),
+										that->_state.get_slots_hEvent(slot)
+								), "Event signaling failed");
+								::Windows::WaitForSingleObject(
+									that->_state.get_slots_hEvent(slot), INFINITE);
+							}
+						}
+						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
+							*(that->_state.geta_blender_RenderTargets(buffer)) = nullptr;
+						}
+					};
+
+				private:
+					Frame *that;
+				};
+
+				friend class FrameBinder;
+
 				TSurface &_surface;
 				TState &_state;
 				TQueue &_queue;
 				TStopwatch &_stopwatch;
+				FrameBinder _frameBinder;
+				typename TSurface::token _token;
 				size_t _layers_size;
 				vector_t _point;
 				vector_t _vertex;

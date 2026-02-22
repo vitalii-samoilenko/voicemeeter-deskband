@@ -299,9 +299,10 @@ namespace Voicemeeter {
 									D3D12_DESCRIPTOR_HEAP_TYPE_RTV)
 						};
 						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
-							::Windows::ThrowIfFailed(_swapChain->GetBuffer(
-								static_cast<UINT>(buffer),
-								IID_PPV_ARGS(&_blender_renderTargets[buffer])
+							::Windows::ThrowIfFailed(surface.get_SwapChain()
+								->GetBuffer(
+									static_cast<UINT>(buffer),
+									IID_PPV_ARGS(&_blender_renderTargets[buffer])
 							), "Failed to get swap chain buffer");
 							_blender_hRenderTargets[buffer].ptr = SIZE_T(INT64(hRenderTarget.ptr)
 								+ INT64(buffer * hRenderTargetSize));
@@ -432,19 +433,23 @@ namespace Voicemeeter {
 							0, 0,
 							0
 						};
-						::std::array<D3D12_ROOT_PARAMETER, 3> params{};
+						::std::array<D3D12_ROOT_PARAMETER, 4> params{};
 						params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 						params[0].Constants.ShaderRegister = 0;
 						params[0].Constants.Num32BitValues = 4;
 						params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 						params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 						params[1].Constants.ShaderRegister = 0;
-						params[1].Constants.Num32BitValues = 2;
+						params[1].Constants.Num32BitValues = 1;
 						params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-						params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-						params[2].DescriptorTable.NumDescriptorRanges = 1;
-						params[2].DescriptorTable.pDescriptorRanges = &hTextureRange;
+						params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+						params[2].Constants.ShaderRegister = 0;
+						params[2].Constants.Num32BitValues = 1;
 						params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+						params[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+						params[3].DescriptorTable.NumDescriptorRanges = 1;
+						params[3].DescriptorTable.pDescriptorRanges = &hTextureRange;
+						params[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 						D3D12_STATIC_SAMPLER_DESC samplerDesc{
 							D3D12_FILTER_MIN_MAG_MIP_POINT,
 							D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER,
