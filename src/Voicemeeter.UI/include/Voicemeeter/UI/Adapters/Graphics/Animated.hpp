@@ -81,7 +81,7 @@ namespace Voicemeeter {
 					};
 
 					inline void set_AnimationSize(vector_t const &value) {
-						if (all(_vertex == value)) {
+						if (are_all(_vertex == value)) {
 							return;
 						}
 						_vertex = value;
@@ -119,7 +119,7 @@ namespace Voicemeeter {
 						}, _subSpaces);
 						_frame(this);
 						TBundle::operator()();
-						if (all(_point == _vertex)) {
+						if (are_all(_point == _vertex)) {
 							return;
 						}
 						Enqueue();

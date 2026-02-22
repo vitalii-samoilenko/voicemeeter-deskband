@@ -69,17 +69,17 @@ namespace Voicemeeter {
 						static_cast<FLOAT>(color[2]) / push(255),
 						static_cast<FLOAT>(color[3]) / push(255)
 					};
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							0,
 							4U, &constants[0],
 							0);
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							1,
 							5U, &constants[4],
 							0);
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->DrawInstanced(4, 1, 0, 0);
 				};
 

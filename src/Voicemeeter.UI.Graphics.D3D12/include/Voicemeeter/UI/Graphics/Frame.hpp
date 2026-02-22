@@ -36,7 +36,7 @@ namespace Voicemeeter {
 					, _vertex{ 0, 0 }
 					, _invalidFrom{ Inf, Inf }
 					, _invalidTo{ 0, 0 } {
-					token.on_reallocate(_frameBinder);
+					_token.on_reallocate(_frameBinder);
 				};
 				Frame() = delete;
 				Frame(Frame const &) = delete;
@@ -109,7 +109,7 @@ namespace Voicemeeter {
 					hTextureDesc.Texture2D.MipLevels = 1U;
 					_surface.get_Device()
 						->CreateShaderResourceView(
-							_state.get_layers_RenderTarget.Get(),
+							_state.get_layers_RenderTarget(),
 							&hTextureDesc,
 							_state.get_blender_hTextureHeap()
 								->GetCPUDescriptorHandleForHeapStart());
@@ -118,13 +118,13 @@ namespace Voicemeeter {
 
 				inline void set_Blend() {
 					size_t slot{ _state.get_slots_Current() };
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->SetPipelineState(
 							_state.get_layers_BlendState());
 				};
 				inline void unset_Blend() {
 					size_t slot{ _state.get_slots_Current() };
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->SetPipelineState(
 							_state.get_layers_DefaultState());
 				};
@@ -219,7 +219,7 @@ namespace Voicemeeter {
 					}
 					size_t slot{ _state.inc_slots_Current() };
 					size_t buffer{
-						_sufrace.get_SwapChain()
+						_surface.get_SwapChain()
 							->GetCurrentBackBufferIndex()
 					};
 					if (_state.get_slots_Fence(slot)
@@ -302,36 +302,36 @@ namespace Voicemeeter {
 						->RSSetViewports(1, &viewport);
 					FLOAT u{ static_cast<FLOAT>(from[0] - _point[0]) / _vertex[0] };
 					FLOAT v{ static_cast<FLOAT>(from[1] - _point[1]) / (_vertex[1] * _layers_size) };
-					::std::array<FLOAT, 6> constants{
+					::std::array<FLOAT, 5> constants{
 						u,
 						v,
 						u + static_cast<FLOAT>(to[0] - from[0]) / _vertex[0],
 						v + static_cast<FLOAT>(to[1] - from[1]) / (_vertex[1] * _layers_size),
-						reinterpret_cast<FLOAT>(static_cast<UINT>(_layers_size)),
 						1.F / _layers_size
 					};
-					_state.get_CommandList(slot)
+					UINT layers{ static_cast<UINT>(_layers_size) };
+					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							0,
 							4U, &constants[0],
 							0);
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							1,
-							1U, &constants[4],
+							1U, &layers,
 							0);
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							2,
-							1U, &constants[5],
+							1U, &constants[4],
 							0);
-					_state.get_CommandList(slot)
+					_state.get_slots_CommandList(slot)
 						->DrawInstanced(4, 1, 0, 0);
 					barriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 					barriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 					barriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 					barriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-					_state.get_CommandList(frame)
+					_state.get_slots_CommandList(slot)
 						->ResourceBarrier(barriers.size(), &barriers[0]);
 					::Windows::ThrowIfFailed(_state.get_slots_CommandList(slot)
 						->Close(
@@ -348,30 +348,30 @@ namespace Voicemeeter {
 			private:
 				class FrameBinder final {
 				public:
-					inline explicit FrmaeBinder(Frame *that)
+					inline explicit FrameBinder(Frame *that)
 						: that{ that } {
 
 					};
 					FrameBinder() = delete;
 					FrameBinder(FrameBinder const &) = delete;
-					FrameBinder(FrmaeBinder &&) = delete;
+					FrameBinder(FrameBinder &&) = delete;
 
 					inline ~FrameBinder() = default;
 
 					FrameBinder & operator=(FrameBinder const &) = delete;
-					FrmaeBinder & operator=(FrameBinder &&) = delete;
+					FrameBinder & operator=(FrameBinder &&) = delete;
 
 					inline void Bind(TSurface &target) {
 						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
 							::Windows::ThrowIfFailed(target.get_SwapChain()
 								->GetBuffer(
 									static_cast<UINT>(buffer),
-									IID_PPV_ARGS(that->_state.geta_blender_RenderTargets(buffer))
+									IID_PPV_ARGS(that->_state.geta_blender_RenderTarget(buffer))
 							), "Failed to get swap chain buffer");
 							target.get_Device()
 								->CreateRenderTargetView(
-									that->_state.get_blender_RenderTargets(buffer),
-									nullptr, that->_state.get_blender_hRenderTargets(buffer));
+									that->_state.get_blender_RenderTarget(buffer),
+									nullptr, that->_state.get_blender_hRenderTarget(buffer));
 						}
 					};
 					inline void Unbind(TSurface &target) {
@@ -389,7 +389,7 @@ namespace Voicemeeter {
 							}
 						}
 						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
-							*(that->_state.geta_blender_RenderTargets(buffer)) = nullptr;
+							*(that->_state.geta_blender_RenderTarget(buffer)) = nullptr;
 						}
 					};
 

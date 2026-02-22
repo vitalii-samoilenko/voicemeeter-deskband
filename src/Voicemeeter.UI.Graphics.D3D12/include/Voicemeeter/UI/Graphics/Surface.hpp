@@ -27,35 +27,35 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(::CoInitialize(
 						NULL
 					), "COM initialization failed");
-					::Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory{ nullptr };
+					::Microsoft::WRL::ComPtr<IDXGIFactory7> factory{ nullptr };
 					{
-						UINT dxgiFactoryFlags{ 0 };
+						UINT factoryFlags{ 0 };
 #ifndef NDEBUG
-						::Microsoft::WRL::ComPtr<ID3D12Debug> d3dDebug{ nullptr };
+						::Microsoft::WRL::ComPtr<ID3D12Debug> debug{ nullptr };
 						::Windows::ThrowIfFailed(::D3D12GetDebugInterface(
-							IID_PPV_ARGS(&d3dDebug)
+							IID_PPV_ARGS(&debug)
 						), "Could not get debug interface");
-						d3dDebug->EnableDebugLayer();
-						dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+						debug->EnableDebugLayer();
+						factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 						::Windows::ThrowIfFailed(::CreateDXGIFactory2(
-							dxgiFactoryFlags,
-							IID_PPV_ARGS(&dxgiFactory)
+							factoryFlags,
+							IID_PPV_ARGS(&factory)
 						), "DXGI factory creation failed");
-						::Windows::ThrowIfFailed(dxgiFactory->MakeWindowAssociation(
+						::Windows::ThrowIfFailed(factory->MakeWindowAssociation(
 							_hWnd,
 							DXGI_MWA_NO_ALT_ENTER
 						), "Failed to disable fullscreen transition");
-						::Microsoft::WRL::ComPtr<IDXGIAdapter4> dxgiAdapter{ nullptr };
-						::Windows::ThrowIfFailed(dxgiFactory->EnumAdapterByGpuPreference(
+						::Microsoft::WRL::ComPtr<IDXGIAdapter4> adapter{ nullptr };
+						::Windows::ThrowIfFailed(factory->EnumAdapterByGpuPreference(
 							0,
 							DXGI_GPU_PREFERENCE_UNSPECIFIED,
-							IID_PPV_ARGS(&dxgiAdapter)
+							IID_PPV_ARGS(&adapter)
 						), "Could not get DXGI adapter");
 						::Windows::ThrowIfFailed(::D3D12CreateDevice(
-							dxgiAdapter.Get(),
+							adapter.Get(),
 							D3D_FEATURE_LEVEL_12_1,
-							IID_PPV_ARGS(&_d3dDevice)
+							IID_PPV_ARGS(&_device)
 						), "D3D12 device creation failed");
 					}
 					{
@@ -65,7 +65,7 @@ namespace Voicemeeter {
 							D3D12_COMMAND_QUEUE_FLAG_NONE,
 							0
 						};
-						::Windows::ThrowIfFailed(_d3dDevice->CreateCommandQueue(
+						::Windows::ThrowIfFailed(_device->CreateCommandQueue(
 							&queueDesc,
 							IID_PPV_ARGS(&_commandQueue)
 						), "Command queue creation failed");
@@ -85,7 +85,7 @@ namespace Voicemeeter {
 							0
 						};
 						::Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain{ nullptr };
-						::Windows::ThrowIfFailed(dxgiFactory->CreateSwapChainForComposition(
+						::Windows::ThrowIfFailed(factory->CreateSwapChainForComposition(
 							_commandQueue.Get(),
 							&swapChainDesc,
 							nullptr,

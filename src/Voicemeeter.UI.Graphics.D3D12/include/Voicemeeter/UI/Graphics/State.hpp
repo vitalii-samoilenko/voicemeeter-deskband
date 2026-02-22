@@ -26,7 +26,7 @@ namespace Voicemeeter {
 			class State final {
 			public:
 				inline State(
-					TSurface &surface
+					TSurface &surface,
 					TLoader &loader)
 					: _slots_current{ 0 }
 					, _slots_commandAllocators{}
@@ -133,7 +133,7 @@ namespace Voicemeeter {
 						), "Upload buffer map failed");
 						::memcpy(data, square.data(), sizeof(square));
 						squareUploadBuffer->Unmap(0, nullptr);
-						_commandLists[0]->CopyResource(_squareBuffer.Get(), squareUploadBuffer.Get());
+						_slots_commandLists[0]->CopyResource(_squareBuffer.Get(), squareUploadBuffer.Get());
 						D3D12_RESOURCE_BARRIER barrier{
 							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 							D3D12_RESOURCE_BARRIER_FLAG_NONE,
@@ -144,7 +144,7 @@ namespace Voicemeeter {
 								D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER
 							}
 						};
-						_commandLists[0]->ResourceBarrier(1, &barrier);
+						_slots_commandLists[0]->ResourceBarrier(1, &barrier);
 						_hSquareBuffer.BufferLocation = _squareBuffer->GetGPUVirtualAddress();
 						_hSquareBuffer.StrideInBytes = 2 * sizeof(FLOAT);
 						_hSquareBuffer.SizeInBytes = sizeof(square);
@@ -232,7 +232,7 @@ namespace Voicemeeter {
 							D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX
 						};
 						dstLoc.SubresourceIndex = 0;
-						_commandLists[0]->CopyTextureRegion(
+						_slots_commandLists[0]->CopyTextureRegion(
 							&dstLoc,
 							0U, 0U, 0U,
 							&srcLoc,
@@ -247,7 +247,7 @@ namespace Voicemeeter {
 								D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 							}
 						};
-						_commandLists[0]->ResourceBarrier(1U, &barrier);
+						_slots_commandLists[0]->ResourceBarrier(1U, &barrier);
 						D3D12_DESCRIPTOR_HEAP_DESC hTextureHeapDesc{
 							D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
 							1,
@@ -267,17 +267,18 @@ namespace Voicemeeter {
 						hTextureDesc.Texture2D.MipLevels = 1U;
 						surface.get_Device()
 							->CreateShaderResourceView(
-								_texture.Get(),
+								_atlas.Get(),
 								&hTextureDesc,
 								_layers_hTextureHeap->GetCPUDescriptorHandleForHeapStart());
 					}
 					{
-						::Windows::ThrowIfFailed(_commandLists[0]->Close(
+						::Windows::ThrowIfFailed(_slots_commandLists[0]->Close(
 						), "Command list close failed");
+						ID3D12CommandList *commandList{ _slots_commandLists[0].Get() };
 						surface.get_CommandQueue()
-							->ExecuteCommandLists(1, &_commandLists[0]);
+							->ExecuteCommandLists(1, &commandList);
 						surface.get_CommandQueue()
-							->Signal(_fences[0].Get(), ++_counts[0]);
+							->Signal(_slots_fences[0].Get(), ++_slots_counts[0]);
 					}
 					{
 						D3D12_DESCRIPTOR_HEAP_DESC hRenderTargetHeapDesc{
@@ -351,7 +352,7 @@ namespace Voicemeeter {
 						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
 							_layers_hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
 						};
-						_layers_hRenderTarget.ptr = SIZE_T(INT64(hRenderTarget.ptr);
+						_layers_hRenderTarget.ptr = SIZE_T(INT64(hRenderTarget.ptr));
 						surface.get_Device()
 							->CreateRenderTargetView(
 								_layers_renderTarget.Get(),
@@ -599,9 +600,10 @@ namespace Voicemeeter {
 						pipelineStateDesc.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 						pipelineStateDesc.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO;
 						pipelineStateDesc.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
-						::Windows::ThrowIfFailed(_d3dDevice->CreateGraphicsPipelineState(
-							&pipelineStateDesc,
-							IID_PPV_ARGS(&_layers_blendState)
+						::Windows::ThrowIfFailed(surface.get_Device()
+							->CreateGraphicsPipelineState(
+								&pipelineStateDesc,
+								IID_PPV_ARGS(&_layers_blendState)
 						), "Pipeline state creation failed");
 					}
 					{
@@ -636,7 +638,7 @@ namespace Voicemeeter {
 								{
 									D3D12_RENDER_TARGET_BLEND_DESC{
 										TRUE, FALSE,
-										D3D12_BLEND_SRC_ALPHA, D3D12_BLENDINV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
+										D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
 										D3D12_BLEND_ZERO, D3D12_BLEND_ONE, D3D12_BLEND_OP_ADD,
 										D3D12_LOGIC_OP_NOOP,
 										D3D12_COLOR_WRITE_ENABLE_ALL
@@ -786,7 +788,7 @@ namespace Voicemeeter {
 				// blender
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _blender_hRenderTargetHeap;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, TSurface::BuffersSize> _blender_renderTargets;
-				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, TSufrace::BuffersSize> _blender_hRenderTargets;
+				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, TSurface::BuffersSize> _blender_hRenderTargets;
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _blender_hTextureHeap;
 				::Microsoft::WRL::ComPtr<ID3D12PipelineState> _blender_defaultState;
 				::Microsoft::WRL::ComPtr<ID3D12RootSignature> _blender_rootSignature;

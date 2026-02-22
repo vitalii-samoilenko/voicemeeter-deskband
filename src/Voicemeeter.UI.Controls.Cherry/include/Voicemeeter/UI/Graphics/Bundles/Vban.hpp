@@ -54,21 +54,21 @@ namespace Voicemeeter {
 					};
 
 					inline void set_FramePosition(vector_t const &value) {
-						if (all(_framePoint == value)) {
+						if (are_all(_framePoint == value)) {
 							return;
 						}
 						_framePoint = value;
 						OnInvalidate(flags::framePoint);
 					};
 					inline void set_FrameSize(vector_t const &value) {
-						if (all(_frameVertex == value)) {
+						if (are_all(_frameVertex == value)) {
 							return;
 						}
 						_frameVertex = value;
 						OnInvalidate(flags::frameVertex);
 					};
 					inline void set_FrameColor(vector_t const &value) {
-						if (all(_frameRgba == value)) {
+						if (are_all(_frameRgba == value)) {
 							return;
 						}
 						_frameRgba = value;

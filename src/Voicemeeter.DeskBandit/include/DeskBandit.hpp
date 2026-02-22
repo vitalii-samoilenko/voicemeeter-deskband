@@ -95,7 +95,7 @@ private:
 		::Voicemeeter::Clients::UI::PaletteBuilder,
 		::Voicemeeter::Clients::UI::ThemeBuilder,
 		::Voicemeeter::Clients::UI::CanvasBuilder<
-			SurfaceBuilder::Surface,
+			::Voicemeeter::Clients::UI::Surface,
 			::Voicemeeter::Clients::UI::Loader,
 			::Voicemeeter::Clients::UI::Palette,
 			::Voicemeeter::Clients::UI::Theme,
@@ -104,7 +104,7 @@ private:
 			::Windows::Timer,
 			::Voicemeeter::Cherry,
 			::Voicemeeter::Clients::UI::Canvas<
-				SurfaceBuilder::Surface,
+				::Voicemeeter::Clients::UI::Surface,
 				::Voicemeeter::Clients::UI::Loader,
 				::Voicemeeter::Clients::UI::Palette,
 				::Voicemeeter::Clients::UI::Theme,

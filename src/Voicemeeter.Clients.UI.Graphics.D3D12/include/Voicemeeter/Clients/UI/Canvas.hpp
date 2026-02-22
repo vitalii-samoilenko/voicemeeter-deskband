@@ -66,9 +66,18 @@ namespace Voicemeeter {
 					_timer = &value;
 					return *this;
 				};
+				inline CanvasBuilder & set_Layers(size_t value) {
+					_layers = value;
+					return *this;
+				};
 
 			protected:
-				inline CanvasBuilder() = default;
+				inline CanvasBuilder()
+					: _surface{ nullptr }
+					, _timer{ nullptr }
+					, _layers{ 1 } {
+
+				};
 
 				inline ::std::unique_ptr<Canvas> Build(
 					::std::unique_ptr<TLoader> &&loader,
@@ -89,7 +98,9 @@ namespace Voicemeeter {
 					auto stopwatch = ::std::make_unique<
 						Canvas::Stopwatch>();
 					auto frame = ::std::make_unique<
-						Canvas::Frame>(*_surface, *state, *queue, *stopwatch);
+						Canvas::Frame>(
+						*_surface, *state, *queue, *stopwatch,
+						_layers);
 					return ::std::make_unique<
 						Canvas>(*_timer,
 						::std::move(loader),
@@ -105,6 +116,7 @@ namespace Voicemeeter {
 			private:
 				TSurface *_surface;
 				TTimer *_timer;
+				size_t _layers;
 			};
 		}
 	}

@@ -17,7 +17,7 @@ namespace Voicemeeter {
 			public:
 				using Surface = Surface;
 
-				inline CanvasBuilder() = default;
+				inline SurfaceBuilder() = default;
 				SurfaceBuilder(SurfaceBuilder const &) = delete;
 				SurfaceBuilder(SurfaceBuilder &&) = delete;
 
