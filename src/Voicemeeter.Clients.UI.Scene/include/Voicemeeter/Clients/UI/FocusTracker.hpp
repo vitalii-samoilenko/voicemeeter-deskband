@@ -1,8 +1,8 @@
 #ifndef VOICEMEETER_CLIENTS_UI_FOCUSTRACKER_HPP
 #define VOICEMEETER_CLIENTS_UI_FOCUSTRACKER_HPP
 
-#include <exception>
 #include <memory>
+#include <stdexcept>
 
 #include "Voicemeeter/UI/Trackers/Focus.hpp"
 
@@ -35,7 +35,7 @@ namespace Voicemeeter {
 
 				inline ::std::unique_ptr<FocusTracker> Build() {
 					if (!_inputTracker) {
-						throw ::std::exception{ "Focus tracker is not set" };
+						throw ::std::runtime_error{ "Focus tracker is not set" };
 					}
 					return ::std::make_unique<
 						FocusTracker>(*_inputTracker);

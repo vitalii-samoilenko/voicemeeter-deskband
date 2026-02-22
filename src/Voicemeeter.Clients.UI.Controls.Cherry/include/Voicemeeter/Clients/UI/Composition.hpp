@@ -2,8 +2,8 @@
 #define VOICEMEETER_CLIENTS_UI_COMPOSITION_HPP
 
 #include <bitset>
-#include <exception>
 #include <memory>
+#include <stdexcept>
 
 #include "wheel.hpp"
 
@@ -94,10 +94,10 @@ namespace Voicemeeter {
 					TToolkit &toolkit,
 					TFocusTracker &focusTracker) {
 					if (!_timer) {
-						throw ::std::exception{ "Timer is not set" };
+						throw ::std::runtime_error{ "Timer is not set" };
 					}
 					if (!_mixer) {
-						throw ::std::exception{ "Mixer is not set" };
+						throw ::std::runtime_error{ "Mixer is not set" };
 					}
 					return _::Controls::Subscribe(
 						*_timer, *_mixer, toolkit, focusTracker,

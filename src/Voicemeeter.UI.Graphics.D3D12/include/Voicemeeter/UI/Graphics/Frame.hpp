@@ -54,10 +54,10 @@ namespace Voicemeeter {
 					return _vertex;
 				};
 
-				inline void set_Position(vector_t const &point) {
-					_point = point;
+				inline void set_Position(vector_t const &value) {
+					_point = value;
 				};
-				inline void set_Size(vector_t const &vertex) {
+				inline void set_Size(vector_t const &value) {
 					for (size_t slot{ 0 }; slot < TState::SlotsSize; ++slot) {
 						if (_state.get_slots_Fence(slot)
 								->GetCompletedValue()
@@ -80,8 +80,8 @@ namespace Voicemeeter {
 					D3D12_RESOURCE_DESC textureDesc{
 						D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 						0,
-						static_cast<UINT>(max(pop(ceil(vertex[0])), 8)),
-						static_cast<UINT>(max(pop(ceil(vertex[1])), 8) * _layers_size),
+						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
+						static_cast<UINT>(max(pop(ceil(value[1])), 8) * _layers_size),
 						1, 1,
 						DXGI_FORMAT_R8G8B8A8_UNORM,
 						DXGI_SAMPLE_DESC{
@@ -113,7 +113,7 @@ namespace Voicemeeter {
 							&hTextureDesc,
 							_state.get_blender_hTextureHeap()
 								->GetCPUDescriptorHandleForHeapStart());
-					_vertex = vertex;
+					_vertex = value;
 				};
 
 				inline void set_Blend() {

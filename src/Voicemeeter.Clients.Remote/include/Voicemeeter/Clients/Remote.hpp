@@ -1,8 +1,8 @@
 #ifndef VOICEMEETER_CLIENTS_REMOTE_HPP
 #define VOICEMEETER_CLIENTS_REMOTE_HPP
 
-#include <exception>
 #include <memory>
+#include <stdexcept>
 #include <utility>
 
 #include "vmr_client.h"
@@ -137,27 +137,27 @@ namespace Voicemeeter {
 
 			::std::unique_ptr<Remote> Build() const {
 				if (!_timer) {
-					throw ::std::exception{ "Timer is not set" };
+					throw ::std::runtime_error{ "Timer is not set" };
 				}
 				if (!_mixer) {
-					throw ::std::exception{ "Mixer is not set" };
+					throw ::std::runtime_error{ "Mixer is not set" };
 				}
 				T_VBVMR_INTERFACE client{};
 				if (::InitializeDLLInterfaces(client) != 0) {
-					throw ::std::exception{ "Could not initialize interfaces" };
+					throw ::std::runtime_error{ "Could not initialize interfaces" };
 				}
 				long login{ client.VBVMR_Login() };
 				if (login < 0) {
-					throw ::std::exception{ "Could not connect to Voicemeeter" };
+					throw ::std::runtime_error{ "Could not connect to Voicemeeter" };
 				} else if (login) {
 					client.VBVMR_Logout();
-					throw ::std::exception{ "Voicemeeter is not started" };
+					throw ::std::runtime_error{ "Voicemeeter is not started" };
 				}
 				_::Remote::runtime_t runtime{ 0L };
 				if (client.VBVMR_GetVoicemeeterType(
 					reinterpret_cast<long *>(&runtime))) {
 					client.VBVMR_Logout();
-					throw ::std::exception{ "Could not get Voicemeeter type" };
+					throw ::std::runtime_error{ "Could not get Voicemeeter type" };
 				}
 				if (_runtime < runtime) {
 					runtime = _runtime;

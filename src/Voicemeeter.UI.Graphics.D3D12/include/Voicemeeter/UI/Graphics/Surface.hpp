@@ -128,15 +128,15 @@ namespace Voicemeeter {
 				Surface & operator=(Surface const &) = delete;
 				Surface & operator=(Surface &&) = delete;
 
-				inline void set_Size(vector_t const &vertex) {
+				inline void set_Size(vector_t const &value) {
 					// TODO: use source size
 					for (auto &[clientId, binder] : _binders) {
 						binder->Unbind(*this);
 					}
 					::Windows::ThrowIfFailed(_swapChain->ResizeBuffers(
 						0,
-						static_cast<UINT>(max(pop(ceil(vertex[0])), 8)),
-						static_cast<UINT>(max(pop(ceil(vertex[1])), 8)),
+						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
+						static_cast<UINT>(max(pop(ceil(value[1])), 8)),
 						DXGI_FORMAT_UNKNOWN,
 						0
 					), "Swap chain resize failed");

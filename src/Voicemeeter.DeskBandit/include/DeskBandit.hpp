@@ -9,8 +9,8 @@
 #include "wheel.hpp"
 
 #include "Windows/API.hpp"
-#include <windowsx.h>
 #include "Windows/Timer.hpp"
+#include <windowsx.h>
 
 #include "Voicemeeter/Cherry.hpp"
 #include "Voicemeeter/Clients/Remote.hpp"
@@ -20,6 +20,7 @@
 #include "Voicemeeter/Clients/UI/Loader.hpp"
 #include "Voicemeeter/Clients/UI/Palette.hpp"
 #include "Voicemeeter/Clients/UI/Scene.hpp"
+#include "Voicemeeter/Clients/UI/Surface.hpp"
 #include "Voicemeeter/Clients/UI/Theme.hpp"
 
 #include "Messages.h"
@@ -38,6 +39,7 @@ public:
 		, _remoteTimer{ nullptr }
 		, _mixer{ nullptr }
 		, _remote{ nullptr }
+		, _surface{ nullptr }
 		, _scene{ nullptr }
 		, _dockTick{ nullptr } {
 		::Windows::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -86,12 +88,14 @@ private:
 	using RemoteBuilder = ::Voicemeeter::Clients::RemoteBuilder<
 		::Windows::Timer,
 		::Voicemeeter::Cherry>;
+	using SurfaceBuilder = ::Voicemeeter::Clients::UI::SurfaceBuilder;
 	using SceneBuilder = ::Voicemeeter::Clients::UI::SceneBuilder<
 		::Voicemeeter::Clients::UI::FocusTrackerBuilder<DeskBandit>,
 		::Voicemeeter::Clients::UI::LoaderBuilder,
 		::Voicemeeter::Clients::UI::PaletteBuilder,
 		::Voicemeeter::Clients::UI::ThemeBuilder,
 		::Voicemeeter::Clients::UI::CanvasBuilder<
+			SurfaceBuilder::Surface,
 			::Voicemeeter::Clients::UI::Loader,
 			::Voicemeeter::Clients::UI::Palette,
 			::Voicemeeter::Clients::UI::Theme,
@@ -100,6 +104,7 @@ private:
 			::Windows::Timer,
 			::Voicemeeter::Cherry,
 			::Voicemeeter::Clients::UI::Canvas<
+				SurfaceBuilder::Surface,
 				::Voicemeeter::Clients::UI::Loader,
 				::Voicemeeter::Clients::UI::Palette,
 				::Voicemeeter::Clients::UI::Theme,
@@ -206,6 +211,7 @@ private:
 	::std::unique_ptr<::Windows::Timer> _remoteTimer;
 	::std::unique_ptr<::Voicemeeter::Cherry> _mixer;
 	::std::unique_ptr<RemoteBuilder::Remote> _remote;
+	::std::unique_ptr<SurfaceBuilder::Surface> _surface;
 	::std::unique_ptr<SceneBuilder::Scene> _scene;
 	::std::unique_ptr<DockTick> _dockTick;
 
@@ -305,6 +311,12 @@ private:
 					that->_remote = remoteBuilder.Build();
 				}
 				{
+					SurfaceBuilder surfaceBuilder{};
+					surfaceBuilder
+						.set_hWnd(hWnd);
+					that->_surface = surfaceBuilder.Build();
+				}
+				{
 					auto toColor = [](DWORD rrggbbaa)->vector_t {
 						WORD rrgg{ HIWORD(rrggbbaa) };
 						WORD bbaa{ LOWORD(rrggbbaa) };
@@ -361,7 +373,7 @@ private:
 							*(config.Theme.EqHigh)));
 					}
 					sceneBuilder.get_CanvasBuilder()
-						.set_hWnd(hWnd)
+						.set_Surface(*that->_surface)
 						.set_Timer(*that->_renderTimer);
 					SceneBuilder::CompositionBuilder &compositionBuilder{
 						sceneBuilder.get_CompositionBuilder()
@@ -428,6 +440,7 @@ private:
 						that->_rc.left, that->_rc.top,
 						that->_rc.right, that->_rc.bottom,
 						0U);
+					that->_surface->set_Size(vertex);
 				}
 				that->_dockTick = ::std::make_unique<
 					DockTick>(that, *that->_dockTimer);
@@ -462,15 +475,16 @@ private:
 				if (::GetUpdateRect(hWnd, NULL, FALSE)) {
 					PAINTSTRUCT ps;
 					HDC hdc{ ::Windows::BeginPaint(hWnd, &ps) };
-					that->_scene->Redraw(
-						vector_t{
-							push(ps.rcPaint.left),
-							push(ps.rcPaint.top)
-						},
-						vector_t{
-							push(ps.rcPaint.right - ps.rcPaint.left),
-							push(ps.rcPaint.bottom - ps.rcPaint.top)
-						});
+					vector_t point{
+						push(ps.rcPaint.left),
+						push(ps.rcPaint.top)
+					};
+					vector_t vertex{
+						push(ps.rcPaint.right - ps.rcPaint.left),
+						push(ps.rcPaint.bottom - ps.rcPaint.top)
+					};
+					that->_scene->Redraw(point, vertex);
+					that->_surface->Present(point, vertex);
 					::EndPaint(hWnd, &ps);
 				}
 			} return OK;

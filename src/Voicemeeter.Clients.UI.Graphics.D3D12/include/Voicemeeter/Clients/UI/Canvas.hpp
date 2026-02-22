@@ -1,8 +1,8 @@
 #ifndef VOICEMEETER_CLIENTS_UI_CANVAS_HPP
 #define VOICEMEETER_CLIENTS_UI_CANVAS_HPP
 
-#include <exception>
 #include <memory>
+#include <stdexcept>
 
 #include "Windows/API.hpp"
 
@@ -18,6 +18,7 @@ namespace Voicemeeter {
 	namespace Clients {
 		namespace UI {
 			template<
+				typename TSurface,
 				typename TLoader,
 				typename TPalette,
 				typename TTheme,
@@ -25,27 +26,29 @@ namespace Voicemeeter {
 			using Canvas = ::Voicemeeter::UI::Adapters::Canvas<
 				::Voicemeeter::UI::Graphics::Toolkit<
 					TLoader,
-					::Voicemeeter::UI::Graphics::State<TLoader>,
+					::Voicemeeter::UI::Graphics::State<TSurface, TLoader>,
 					::Voicemeeter::UI::Graphics::Atlas<
-						::Voicemeeter::UI::Graphics::State<TLoader>>,
+						::Voicemeeter::UI::Graphics::State<TSurface, TLoader>>,
 					::Voicemeeter::UI::Graphics::Queue,
 					::Voicemeeter::UI::Graphics::Stopwatch,
 					TPalette,
 					TTheme,
 					::Voicemeeter::UI::Graphics::Frame<
-						::Voicemeeter::UI::Graphics::State<TLoader>,
+						TSurface,
+						::Voicemeeter::UI::Graphics::State<TSurface, TLoader>,
 						::Voicemeeter::UI::Graphics::Queue,
 						::Voicemeeter::UI::Graphics::Stopwatch>>,
 				TTimer>;
 
 			template<
+				typename TSurface,
 				typename TLoader,
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
 			class CanvasBuilder {
 			public:
-				using Canvas = Canvas<TLoader, TPalette, TTheme, TTimer>;
+				using Canvas = Canvas<TSurface, TLoader, TPalette, TTheme, TTimer>;
 
 				CanvasBuilder(CanvasBuilder const &) = delete;
 				CanvasBuilder(CanvasBuilder &&) = delete;
@@ -55,8 +58,8 @@ namespace Voicemeeter {
 				CanvasBuilder & operator=(CanvasBuilder const &) = delete;
 				CanvasBuilder & operator=(CanvasBuilder &&) = delete;
 
-				inline CanvasBuilder & set_hWnd(HWND value) {
-					_hWnd = value;
+				inline CanvasBuilder & set_Surface(TSurface &value) {
+					_surface = &value;
 					return *this;
 				};
 				inline CanvasBuilder & set_Timer(TTimer &value) {
@@ -71,14 +74,14 @@ namespace Voicemeeter {
 					::std::unique_ptr<TLoader> &&loader,
 					::std::unique_ptr<TPalette> &&palette,
 					::std::unique_ptr<TTheme> &&theme) {
-					if (_hWnd == NULL) {
-						throw ::std::exception{ "HWND is not set" };
+					if (!_surface) {
+						throw ::std::runtime_error{ "Surface is not set" };
 					}
 					if (!_timer) {
-						throw ::std::exception{ "Timer is not set" };
+						throw ::std::runtime_error{ "Timer is not set" };
 					}
 					auto state = ::std::make_unique<
-						Canvas::State>(_hWnd, *loader);
+						Canvas::State>(*_surface, *loader);
 					auto atlas = ::std::make_unique<
 						Canvas::Atlas>(*state);
 					auto queue = ::std::make_unique<
@@ -86,7 +89,7 @@ namespace Voicemeeter {
 					auto stopwatch = ::std::make_unique<
 						Canvas::Stopwatch>();
 					auto frame = ::std::make_unique<
-						Canvas::Frame>(*state, *queue, *stopwatch);
+						Canvas::Frame>(*_surface, *state, *queue, *stopwatch);
 					return ::std::make_unique<
 						Canvas>(*_timer,
 						::std::move(loader),
@@ -100,7 +103,7 @@ namespace Voicemeeter {
 				};
 
 			private:
-				HWND _hWnd;
+				TSurface *_surface;
 				TTimer *_timer;
 			};
 		}
