@@ -113,12 +113,29 @@ inline num_t min(V const &v) {
 	return v.min();
 };
 template<typename V>
-inline num_t any(V const &v) {
+inline bool is_any(V const &v) {
 	return max(v);
 };
 template<typename V>
-inline num_t all(V const &v) {
+inline bool are_all(V const &v) {
 	return min(v);
+};
+
+template<
+	typename Vp, typename Vv>
+inline bool is_inside(
+	Vp const &point, Vv const &vertex) {
+	return !is_any(point < 0)
+		&& are_all(point - vertex < 0);
+};
+template<
+	typename Vlp, typename Vlv,
+	typename Vrp, typename Vrv>
+inline static bool is_overlapping(
+	Vlp const &lhs_point, Vlv const &lhs_vertex,
+	Vrp const &rhs_point, Vrv const &rhs_vertex) {
+	return is_inside(rhs_point, lhs_point + lhs_vertex)
+		&& is_inside(lhs_point, rhs_point + rhs_vertex);
 };
 
 #endif

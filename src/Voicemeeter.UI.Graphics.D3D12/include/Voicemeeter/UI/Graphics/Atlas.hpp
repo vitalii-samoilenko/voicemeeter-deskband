@@ -32,71 +32,55 @@ namespace Voicemeeter {
 				inline void FillSDF(
 					vector_t const &srcPoint, vector_t const &srcVertex,
 					vector_t const &dstPoint, vector_t const &dstVertex,
-					vector_t const &color, bool blend) const {
-					size_t frame{
-						_state.get_SwapChain()
-							->GetCurrentBackBufferIndex()
-					};
-					if (blend) {
-						_state.get_CommandList(frame)
-							->SetPipelineState(
-								_state.get_BlendState());
-					}
-					D3D12_VIEWPORT viewport{
-						static_cast<FLOAT>(pop(floor(dstPoint[0]))),
-						static_cast<FLOAT>(pop(floor(dstPoint[1]))),
-						static_cast<FLOAT>(pop(ceil(dstVertex[0]))),
-						static_cast<FLOAT>(pop(ceil(dstVertex[1])))
-					};
-					_state.get_CommandList(frame)
-						->RSSetViewports(1, &viewport);
+					vector_t const &color) const {
+					size_t slot{ _state.get_slots_Current() };
 					D3D12_RECT scissor{
 						static_cast<LONG>(pop(floor(dstPoint[0]))),
 						static_cast<LONG>(pop(floor(dstPoint[1]))),
 						static_cast<LONG>(pop(ceil(dstPoint[0] + dstVertex[0]))),
 						static_cast<LONG>(pop(ceil(dstPoint[1] + dstVertex[1])))
 					};
+					_state.get_slots_CommandList(slot)
+						->RSSetScissorRects(1, &scissor);
+					D3D12_VIEWPORT viewport{
+						static_cast<FLOAT>(scissor.left),
+						static_cast<FLOAT>(scissor.top),
+						static_cast<FLOAT>(scissor.right - scissor.left),
+						static_cast<FLOAT>(scissor.bottom - scissor.top)
+					};
+					_state.get_slots_CommandList(slot)
+						->RSSetViewports(1, &viewport);
+					FLOAT r0{ static_cast<FLOAT>(srcVertex[0]) / dstVertex[0] };
+					FLOAT r1{ static_cast<FLOAT>(srcVertex[1]) / dstVertex[1] };
 					FLOAT u{ static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width };
 					FLOAT v{ static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height };
-					_state.get_CommandList(frame)
-						->RSSetScissorRects(1, &scissor);
 					::std::array<FLOAT, 9> constants{
+						u - frac(dstPoint[0]) * r0 / Layouts::Atlas::Width,
+						v - frac(dstPoint[1]) * r1 / Layouts::Atlas::Height,
+						u + static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width
+						+ frac(push(2) - frac(dstPoint[0]) - frac(dstVertex[0]))
+						* r0 / Layouts::Atlas::Width,
+						v + static_cast<FLOAT>(srcVertex[1]) / Layouts::Atlas::Height
+						+ frac(push(2) - frac(dstPoint[1]) - frac(dstVertex[1]))
+						* r1 / Layouts::Atlas::Height,
+						Layouts::Atlas::Range::Width / ::std::max(r0, r1),
 						static_cast<FLOAT>(color[0]) / push(255),
 						static_cast<FLOAT>(color[1]) / push(255),
 						static_cast<FLOAT>(color[2]) / push(255),
-						static_cast<FLOAT>(color[3]) / push(255),
-						::std::min(
-							// TODO: Ajust this
-							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[0]) / srcVertex[0],
-							static_cast<FLOAT>(Layouts::Atlas::Range::Width * dstVertex[1]) / srcVertex[1]),
-						u - static_cast<FLOAT>(frac(dstPoint[0]) * srcVertex[0])
-						/ (Layouts::Atlas::Width * dstVertex[0]),
-						v - static_cast<FLOAT>(frac(dstPoint[1]) * srcVertex[1])
-						/ (Layouts::Atlas::Height * dstVertex[1]),
-						u + static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width 
-						+ static_cast<FLOAT>(frac(dstVertex[0]) * srcVertex[0])
-						/ (Layouts::Atlas::Width * dstVertex[0]),
-						v + static_cast<FLOAT>(srcVertex[1]) / Layouts::Atlas::Height
-						+ static_cast<FLOAT>(frac(dstVertex[1]) * srcVertex[1])
-						/ (Layouts::Atlas::Height * dstVertex[1])
+						static_cast<FLOAT>(color[3]) / push(255)
 					};
-					_state.get_CommandList(frame)
+					_state.get_CommandList(slot)
+						->SetGraphicsRoot32BitConstants(
+							0,
+							4U, &constants[0],
+							0);
+					_state.get_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							1,
-							5U, &constants[0],
+							5U, &constants[4],
 							0);
-					_state.get_CommandList(frame)
-						->SetGraphicsRoot32BitConstants(
-							2,
-							4U, &constants[5],
-							0);
-					_state.get_CommandList(frame)
+					_state.get_CommandList(slot)
 						->DrawInstanced(4, 1, 0, 0);
-					if (blend) {
-						_state.get_CommandList(frame)
-							->SetPipelineState(
-								_state.get_DefaultState());
-					}
 				};
 
 			private:

@@ -90,9 +90,9 @@ namespace Voicemeeter {
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
-								_frameRgba, false);
+								_frameRgba);
 						_toolkit.get_Frame()
-							.Invalidate(_framePoint, _frameVertex);
+							.set_Invalid(_framePoint, _frameVertex);
 					};
 
 				protected:

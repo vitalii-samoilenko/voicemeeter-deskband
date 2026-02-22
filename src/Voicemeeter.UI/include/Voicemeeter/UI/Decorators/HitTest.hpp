@@ -59,32 +59,13 @@ namespace Voicemeeter {
 				};
 
 			private:
-				template<
-					typename Vp, typename Vv>
-				inline static bool is_inside(
-					Vp const &point, Vv const &vertex) {
-					return !(min(point) < 0)
-						&& max(point - vertex) < 0;
-				};
-				template<
-					typename Vlp, typename Vlv,
-					typename Vrp, typename Vrv>
-				inline static bool is_overlapping(
-					Vlp const &lhs_point, Vlv const &lhs_vertex,
-					Vrp const &rhs_point, Vrv const &rhs_vertex) {
-					return is_inside(rhs_point, lhs_point + lhs_vertex)
-						&& is_inside(lhs_point, rhs_point + rhs_vertex);
-				};
-				template<
-					typename Vp, typename Vv>
 				inline bool IsOverlapping(
-					Vp const &point, Vv const &vertex) const {
+					vector_t const &point, vector_t const &vertex) const {
 					return is_overlapping(
 							point, vertex,
 							TComponent::get_Position(), TComponent::get_Size());
 				};
-				template<typename Vp>
-				inline bool IsInside(Vp const &point) const {
+				inline bool IsInside(vector_t const &point) const {
 					return is_inside(
 						point - TComponent::get_Position(), TComponent::get_Size());
 				};
