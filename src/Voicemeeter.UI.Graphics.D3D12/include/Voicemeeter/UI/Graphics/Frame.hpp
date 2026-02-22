@@ -73,7 +73,7 @@ namespace Voicemeeter {
 					}
 					D3D12_HEAP_PROPERTIES textureHeapProps{
 						D3D12_HEAP_TYPE_DEFAULT,
-						D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE,
+						D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
 						D3D12_MEMORY_POOL_UNKNOWN,
 						0, 0
 					};
@@ -170,7 +170,7 @@ namespace Voicemeeter {
 						->SetDescriptorHeaps(1, &hTextureHeap);
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRootDescriptorTable(
-							2, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
+							3, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
 					_state.get_slots_CommandList(slot)
 						->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 					D3D12_VERTEX_BUFFER_VIEW hSquareBuffer{ _state.get_hSquareBuffer() };
@@ -239,7 +239,7 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(_state.get_slots_CommandList(slot)
 						->Reset(
 							_state.get_slots_CommandAllocator(slot),
-							_state.get_layers_DefaultState()
+							_state.get_blender_DefaultState()
 					), "Command list reset failed");
 					::std::array<D3D12_RESOURCE_BARRIER, 2> barriers{
 						D3D12_RESOURCE_BARRIER{

@@ -77,7 +77,12 @@ namespace Voicemeeter {
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							1,
-							5U, &constants[4],
+							1U, &constants[4],
+							0);
+					_state.get_slots_CommandList(slot)
+						->SetGraphicsRoot32BitConstants(
+							2,
+							4U, &constants[5],
 							0);
 					_state.get_slots_CommandList(slot)
 						->DrawInstanced(4, 1, 0, 0);

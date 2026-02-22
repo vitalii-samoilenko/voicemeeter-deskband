@@ -83,6 +83,11 @@ namespace Voicemeeter {
 									IID_PPV_ARGS(&_slots_fences[slot])
 							), "Fence creation failed");
 						}
+						::Windows::ThrowIfFailed(_slots_commandLists[0]
+							->Reset(
+								_slots_commandAllocators[0].Get(),
+								nullptr
+						), "Command list reset failed");
 					}
 					::Microsoft::WRL::ComPtr<ID3D12Resource> squareUploadBuffer{ nullptr };
 					{
@@ -157,7 +162,7 @@ namespace Voicemeeter {
 						};
 						D3D12_HEAP_PROPERTIES textureHeapProps{
 							D3D12_HEAP_TYPE_DEFAULT,
-							D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE,
+							D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
 							D3D12_MEMORY_POOL_UNKNOWN,
 							0, 0
 						};
@@ -326,7 +331,7 @@ namespace Voicemeeter {
 						), "RTV heap descriptor creation failed");
 						D3D12_HEAP_PROPERTIES textureHeapProps{
 							D3D12_HEAP_TYPE_DEFAULT,
-							D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE,
+							D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
 							D3D12_MEMORY_POOL_UNKNOWN,
 							0, 0
 						};
@@ -387,19 +392,23 @@ namespace Voicemeeter {
 							0, 0,
 							0
 						};
-						::std::array<D3D12_ROOT_PARAMETER, 3> params{};
+						::std::array<D3D12_ROOT_PARAMETER, 4> params{};
 						params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 						params[0].Constants.ShaderRegister = 0;
 						params[0].Constants.Num32BitValues = 4;
 						params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 						params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 						params[1].Constants.ShaderRegister = 0;
-						params[1].Constants.Num32BitValues = 5;
+						params[1].Constants.Num32BitValues = 1;
 						params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-						params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-						params[2].DescriptorTable.NumDescriptorRanges = 1;
-						params[2].DescriptorTable.pDescriptorRanges = &hTextureRange;
+						params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+						params[2].Constants.ShaderRegister = 1;
+						params[2].Constants.Num32BitValues = 4;
 						params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+						params[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+						params[3].DescriptorTable.NumDescriptorRanges = 1;
+						params[3].DescriptorTable.pDescriptorRanges = &hTextureRange;
+						params[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 						D3D12_STATIC_SAMPLER_DESC samplerDesc{
 							D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT,
 							D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER, D3D12_TEXTURE_ADDRESS_MODE_BORDER,
@@ -444,7 +453,7 @@ namespace Voicemeeter {
 						params[1].Constants.Num32BitValues = 1;
 						params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 						params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-						params[2].Constants.ShaderRegister = 0;
+						params[2].Constants.ShaderRegister = 1;
 						params[2].Constants.Num32BitValues = 1;
 						params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 						params[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
@@ -502,7 +511,7 @@ namespace Voicemeeter {
 							vertexCode.data(), vertexCode.size(),
 							NULL,
 							nullptr, nullptr,
-							"Main", "vs_5_0",
+							"Main", "vs_5_1",
 							compileFlags, 0,
 							&vertexShader, nullptr
 						), "Vertex shader compilation failed");
@@ -510,15 +519,15 @@ namespace Voicemeeter {
 							pixelCode.data(), pixelCode.size(),
 							NULL,
 							nullptr, nullptr,
-							"Main", "ps_5_0",
+							"Main", "ps_5_1",
 							compileFlags, 0,
 							&pixelShader, nullptr
 						), "Pixel shader compilation failed");
 						::Windows::ThrowIfFailed(::D3DCompile(
-							pixelCode.data(), pixelCode.size(),
+							blenderCode.data(), blenderCode.size(),
 							NULL,
 							nullptr, nullptr,
-							"Main", "ps_5_0",
+							"Main", "ps_5_1",
 							compileFlags, 0,
 							&blenderShader, nullptr
 						), "Pixel shader compilation failed");
@@ -637,9 +646,9 @@ namespace Voicemeeter {
 								FALSE, FALSE,
 								{
 									D3D12_RENDER_TARGET_BLEND_DESC{
-										TRUE, FALSE,
-										D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
-										D3D12_BLEND_ZERO, D3D12_BLEND_ONE, D3D12_BLEND_OP_ADD,
+										FALSE, FALSE,
+										D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
+										D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
 										D3D12_LOGIC_OP_NOOP,
 										D3D12_COLOR_WRITE_ENABLE_ALL
 									}
@@ -708,7 +717,8 @@ namespace Voicemeeter {
 					return _slots_current;
 				}
 				inline size_t inc_slots_Current() {
-					return ++(_slots_current) % SlotsSize;
+					_slots_current = (_slots_current + 1) % SlotsSize;
+					return _slots_current;
 				};
 				inline ID3D12CommandAllocator * get_slots_CommandAllocator(size_t slot) const {
 					return _slots_commandAllocators[slot].Get();

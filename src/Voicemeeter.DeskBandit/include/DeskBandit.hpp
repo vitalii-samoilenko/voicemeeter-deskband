@@ -545,8 +545,8 @@ private:
 				});
 			} return OK;
 			case WM_KEYDOWN: {
-				// TODO: Alt + F4?
 				if (LOWORD(wParam) == 'C' && ::GetKeyState(VK_CONTROL)) {
+					that->_remote = nullptr;
 					::PostQuitMessage(0);
 				}
 			} return OK;
