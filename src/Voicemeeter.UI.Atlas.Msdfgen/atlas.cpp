@@ -3,12 +3,10 @@
 #include <vector>
 
 constexpr size_t PixelSize{ 3 * sizeof(float) };
-//constexpr size_t Width{ 173 };
-constexpr size_t TextWidth{ 86 };
-constexpr size_t TextHeight{ 44 };
+constexpr size_t TextWidth{ 90 };
+constexpr size_t TextHeight{ 48 };
 constexpr size_t Width{ TextWidth * 3 };
-//constexpr size_t Height{ 50 };
-constexpr size_t Height{ 50 + TextHeight * 2 + TextHeight * 72 / 3 };
+constexpr size_t Height{ 52 + TextHeight * 2 + TextHeight * 72 / 3 };
 constexpr size_t RowStride{ PixelSize * Width };
 constexpr size_t Size{ Height * RowStride };
 
@@ -35,48 +33,48 @@ int main(int argc, char const *argv[]) {
 	combine(atlas,
 		"knob_frame.bit",
 		0, 0,
-		50, 50);
+		52, 52);
 	combine(atlas,
 		"plug_frame.bit",
-		50, 0,
+		52, 0,
 		43, 21);
 	combine(atlas,
 		"knob_indicator.bit",
-		50, 22,
-		24, 24);
+		52, 21,
+		30, 30);
 	combine(atlas,
 		"vban_frame.bit",
-		93, 0,
-		80, 46);
+		95, 0,
+		82, 48);
 	combine(atlas,
 		"P.bit",
-		0 * TextWidth, 50 + 0 * TextHeight,
+		0 * TextWidth, 52 + 0 * TextHeight,
 		TextWidth, TextHeight);
 	combine(atlas,
 		"V.bit",
-		1 * TextWidth, 50 + 0 * TextHeight,
+		1 * TextWidth, 52 + 0 * TextHeight,
 		TextWidth, TextHeight);
 	combine(atlas,
 		"A1.bit",
-		2 * TextWidth, 50 + 0 * TextHeight,
+		2 * TextWidth, 52 + 0 * TextHeight,
 		TextWidth, TextHeight);
 	combine(atlas,
 		"A2.bit",
-		0 * TextWidth, 50 + 1 * TextHeight,
+		0 * TextWidth, 52 + 1 * TextHeight,
 		TextWidth, TextHeight);
 	combine(atlas,
 		"B1.bit",
-		1 * TextWidth, 50 + 1 * TextHeight,
+		1 * TextWidth, 52 + 1 * TextHeight,
 		TextWidth, TextHeight);
 	combine(atlas,
 		"B2.bit",
-		2 * TextWidth, 50 + 1 * TextHeight,
+		2 * TextWidth, 52 + 1 * TextHeight,
 		TextWidth, TextHeight);
 	for (size_t i{ 0 }; i < 70 + 1; ++i) {
 		::std::string bit{ ::std::to_string(i) + ".bit" };
 		combine(atlas,
 			bit.c_str(),
-			(i % 3) * TextWidth, 50 + ((6 + i) / 3) * TextHeight,
+			(i % 3) * TextWidth, 52 + ((6 + i) / 3) * TextHeight,
 			TextWidth, TextHeight);
 	}
 	{

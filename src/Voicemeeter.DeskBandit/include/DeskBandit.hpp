@@ -483,6 +483,7 @@ private:
 						push(ps.rcPaint.right - ps.rcPaint.left),
 						push(ps.rcPaint.bottom - ps.rcPaint.top)
 					};
+					that->_surface->Clear(point, vertex);
 					that->_scene->Redraw(point, vertex);
 					that->_surface->Present(point, vertex);
 					::EndPaint(hWnd, &ps);

@@ -23,5 +23,5 @@ float4 Main(PSInput input) : SV_TARGET {
 	float sd = median(msd.r, msd.g, msd.b);
 	float screenPxDistance = g_screenPxRange.value * (sd - 0.5);
 	float a = clamp(screenPxDistance + 0.5, 0.0, 1.0);
-	return float4(g_color.value.rgb, a * g_color.value.a);
+	return g_color.value * a;
 }

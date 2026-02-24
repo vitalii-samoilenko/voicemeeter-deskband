@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_SURFACE_HPP
 #define VOICEMEETER_UI_GRAPHICS_SURFACE_HPP
 
+#include <array>
 #include <memory>
 #include <unordered_map>
 
@@ -22,8 +23,28 @@ namespace Voicemeeter {
 					: _hWnd{ hWnd }
 					, _device{ nullptr }
 					, _commandQueue{ nullptr }
+					, _commandAllocator{ nullptr }
+					, _commandList{ nullptr }
+					, _fence{ nullptr }
+					, _hEvent{ NULL }
+					, _count{ 0 }
 					, _swapChain{ nullptr }
-					, _compositionTarget{ nullptr } {
+					, _hRenderTargetHeap{ nullptr }
+					, _renderTargets{}
+					, _hRenderTargets{}
+					, _compositionTarget{ nullptr }
+					, _first{ false }
+					, _binders{} {
+					bool failed{ true };
+					auto guardEvent = ::estd::make_guard([
+							&failed,
+							&hEvent = _hEvent
+						]()->void {
+							if (!failed) {
+								return;
+							}
+							::CloseHandle(hEvent);
+						});
 					::Windows::ThrowIfFailed(::CoInitialize(
 						NULL
 					), "COM initialization failed");
@@ -96,6 +117,52 @@ namespace Voicemeeter {
 						), "Could not get swap chain");
 					}
 					{
+						D3D12_DESCRIPTOR_HEAP_DESC hRenderTargetHeapDesc{
+							D3D12_DESCRIPTOR_HEAP_TYPE_RTV, BuffersSize,
+							D3D12_DESCRIPTOR_HEAP_FLAG_NONE,
+							0
+						};
+						::Windows::ThrowIfFailed(_device->CreateDescriptorHeap(
+							&hRenderTargetHeapDesc,
+							IID_PPV_ARGS(&_hRenderTargetHeap)
+						), "RTV heap descriptor creation failed");
+						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
+							__hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
+						};
+						UINT hRenderTargetSize{
+							_device->GetDescriptorHandleIncrementSize(
+								D3D12_DESCRIPTOR_HEAP_TYPE_RTV)
+						};
+						for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
+							::Windows::ThrowIfFailed(_swapChain->GetBuffer(
+								static_cast<UINT>(buffer),
+								IID_PPV_ARGS(&_renderTargets[buffer])
+							), "Failed to get swap chain buffer");
+							_hRenderTargets[buffer].ptr = SIZE_T(INT64(hRenderTarget.ptr)
+								+ INT64(buffer * hRenderTargetSize));
+							_device->CreateRenderTargetView(
+								_renderTargets[buffer].Get(),
+								nullptr, _hRenderTargets[buffer]);
+						}
+					}
+					{
+						::Windows::ThrowIfFailed(device->CreateCommandAllocator(
+							D3D12_COMMAND_LIST_TYPE_DIRECT,
+							IID_PPV_ARGS(&_commandAllocator)
+						), "Command allocator creation failed");
+						::Windows::ThrowIfFailed(device->CreateCommandList1(
+							0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+							D3D12_COMMAND_LIST_FLAG_NONE,
+							IID_PPV_ARGS(&_commandList)
+						), "Command list creation failed");
+						_hEvent = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
+						::Windows::ThrowIfFailed(_device->CreateFence(
+							_count,
+							D3D12_FENCE_FLAG_NONE,
+							IID_PPV_ARGS(&_fence)
+						), "Fence creation failed");
+					}
+					{
 						::Microsoft::WRL::ComPtr<IDCompositionDevice> compositionDevice{ nullptr };
 						::Windows::ThrowIfFailed(::DCompositionCreateDevice(
 							nullptr,
@@ -118,12 +185,15 @@ namespace Voicemeeter {
 						::Windows::ThrowIfFailed(compositionDevice->Commit(
 						), "Could not commit composition device");
 					}
+					failed = false;
 				};
 				Surface() = delete;
 				Surface(Surface const &) = delete;
 				Surface(Surface &&) = delete;
 
-				inline ~Surface() = default;
+				inline ~Surface() {
+					::CloseHandle(_hEvent);
+				};
 
 				Surface & operator=(Surface const &) = delete;
 				Surface & operator=(Surface &&) = delete;
@@ -133,6 +203,17 @@ namespace Voicemeeter {
 					for (auto &[clientId, binder] : _binders) {
 						binder->Unbind(*this);
 					}
+					if (_fence->GetCompletedValue() < _count) {
+						::Windows::ThrowIfFailed(_fence->SetEventOnCompletion(
+							_count,
+							_hEvent
+						), "Event signaling failed");
+						::Windows::WaitForSingleObject(
+							_hEvent, INFINITE);
+					}
+					for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
+						_renderTargets[buffer] = nullptr;
+					}
 					::Windows::ThrowIfFailed(_swapChain->ResizeBuffers(
 						0,
 						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
@@ -140,10 +221,55 @@ namespace Voicemeeter {
 						DXGI_FORMAT_UNKNOWN,
 						0
 					), "Swap chain resize failed");
+					for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
+						::Windows::ThrowIfFailed(_swapChain->GetBuffer(
+							static_cast<UINT>(buffer),
+							IID_PPV_ARGS(&_renderTargets[buffer])
+						), "Failed to get swap chain buffer");
+						_device->CreateRenderTargetView(
+							_renderTargets[buffer].Get(),
+							nullptr, _hRenderTargets[buffer]);
+					}
 					for (auto &[clientId, binder] : _binders) {
 						binder->Bind(*this);
 					}
 					_first = true;
+				};
+
+				inline void Clear(vector_t const &point, vector_t const &vertex) {
+					size_t buffer{ _swapChain->GetCurrentBackBufferIndex() };
+					if (_fence->GetCompletedValue() < _count) {
+						::Windows::ThrowIfFailed(_fence->SetEventOnCompletion(
+							_count,
+							_hEvent
+						), "Event signaling failed");
+						::Windows::WaitForSingleObject(
+							_hEvent, INFINITE);
+					}
+					::Windows::ThrowIfFailed(_commandAllocator->Reset(
+					), "Command allocator reset failed");
+					::Windows::ThrowIfFailed(_commandList->Reset(
+						_commandAllocator,
+						nullptr
+					), "Command list reset failed");
+					_commandList->OMSetRenderTargets(
+						1, &_hRenderTarget[buffer], FALSE, nullptr);
+					D3D12_RECT rect{
+						pop(floor(point[0])),
+						pop(floor(point[1])),
+						pop(ceil(point[0] + vertex[0])),
+						pop(ceil(point[1] + vertex[1]))
+					};
+					_commandList->ClearRenderTargetView(
+						_state.get_layers_hRenderTarget()
+						FLOAT[]{ 0.F, 0.F, 0.F, 0.F },
+						1U, &rect);
+					::Windows::ThrowIfFailed(_commandList->Close(
+					), "Command list close failed");
+					_commandQueue->ExecuteCommandLists(
+						1, &_commandList);
+					_commandQueue->Signal(
+						_fence, ++_count);
 				};
 
 				inline void Present(vector_t const &point, vector_t const &vertex) {
@@ -233,6 +359,12 @@ namespace Voicemeeter {
 				inline IDXGISwapChain4 * get_SwapChain() const {
 					return _swapChain.Get();
 				};
+				inline ID3D12Resource * get_RenderTarget(size_t buffer) const {
+					return _renderTargets[buffer].Get();
+				};
+				inline D3D12_CPU_DESCRIPTOR_HANDLE get_hRenderTarget(size_t buffer) const {
+					return _hRenderTargets[buffer].Get();
+				};
 
 			private:
 				class IBinder {
@@ -283,7 +415,15 @@ namespace Voicemeeter {
 				HWND _hWnd;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _device;
 				::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
+				::Microsoft::WRL::ComPtr<ID3D12CommandAllocator> _commandAllocator;
+				::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _commandList;
+				::Microsoft::WRL::ComPtr<ID3D12Fence> _fence;
+				HANDLE _hEvent;
+				UINT64 _count;
 				::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
+				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _hRenderTargetHeap;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, BuffersSize> _renderTargets;
+				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, BuffersSize> _hRenderTargets;
 				::Microsoft::WRL::ComPtr<IDCompositionTarget> _compositionTarget;
 				bool _first;
 				::std::unordered_map<

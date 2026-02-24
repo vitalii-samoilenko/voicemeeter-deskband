@@ -4,6 +4,8 @@ project(Voicemeeter.UI.Atlas.Msdfgen VERSION 0.9 LANGUAGES CXX)
 
 add_library(voicemeeter_ui_atlas_msdfgen INTERFACE)
 
+option(GENERATE_ATLAS "Compile atlas during build phase" OFF)
+
 if(GENERATE_ATLAS)
 	if(NOT DEFINED MSDFGEN_PATH)
 		message(FATAL_ERROR "Msdfgen path is not specified")
@@ -43,16 +45,18 @@ if(GENERATE_ATLAS)
 			9.desc
 		VERBATIM)
 
-	set(COMMON_PARAMS msdf -pxrange 4 -translate 1 1 -scale 1 -format binfloat)
-	set(TEXT_DIMENSIONS 86 44)
-	set(TEXT_RENDER_DIMENSIONS 1720 880)
+	set(COMMON_PARAMS msdf -pxrange 4 -scale 1 -format binfloat)
+	set(TEXT_DIMENSIONS 90 48)
+	set(TEXT_TRANSLATE 3 3)
+	set(TEXT_RENDER_DIMENSIONS 1800 960)
 
 	add_custom_command(
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_SOURCE_DIR}/shapes/knob_frame.desc
 			-o knob_frame.bit
-			-dimensions 50 50
-			-testrender knob_frame.test.png 1000 1000
+			-translate 2 2
+			-dimensions 52 52
+			-testrender knob_frame.test.png 1040 1040
 		DEPENDS shapes/knob_frame.desc
 		OUTPUT knob_frame.bit
 		VERBATIM)
@@ -60,6 +64,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_SOURCE_DIR}/shapes/plug_frame.desc
 			-o plug_frame.bit
+			-translate 1 1
 			-dimensions 43 21
 			-testrender plug_frame.test.png 860 420
 		DEPENDS shapes/plug_frame.desc
@@ -69,8 +74,9 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_SOURCE_DIR}/shapes/knob_indicator.desc
 			-o knob_indicator.bit
-			-dimensions 24 24
-			-testrender knob_indicator.test.png 480 480
+			-translate 4 4
+			-dimensions 30 30
+			-testrender knob_indicator.test.png 600 600
 		DEPENDS shapes/knob_indicator.desc
 		OUTPUT knob_indicator.bit
 		VERBATIM)
@@ -78,8 +84,9 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_SOURCE_DIR}/shapes/vban_frame.desc
 			-o vban_frame.bit
-			-dimensions 80 46
-			-testrender vban_frame.test.png 1600 920
+			-translate 2 2
+			-dimensions 82 48
+			-testrender vban_frame.test.png 1640 960
 		DEPENDS shapes/vban_frame.desc
 		OUTPUT vban_frame.bit
 		VERBATIM)
@@ -87,6 +94,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_BINARY_DIR}/P.desc
 			-o P.bit
+			-translate ${TEXT_TRANSLATE}
 			-dimensions ${TEXT_DIMENSIONS}
 			-testrender P.test.png ${TEXT_RENDER_DIMENSIONS}
 		DEPENDS ${PROJECT_BINARY_DIR}/P.desc
@@ -96,6 +104,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_BINARY_DIR}/V.desc
 			-o V.bit
+			-translate ${TEXT_TRANSLATE}
 			-dimensions ${TEXT_DIMENSIONS}
 			-testrender V.test.png ${TEXT_RENDER_DIMENSIONS}
 		DEPENDS ${PROJECT_BINARY_DIR}/V.desc
@@ -105,6 +114,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_BINARY_DIR}/A1.desc
 			-o A1.bit
+			-translate ${TEXT_TRANSLATE}
 			-dimensions ${TEXT_DIMENSIONS}
 			-testrender A1.test.png ${TEXT_RENDER_DIMENSIONS}
 		DEPENDS ${PROJECT_BINARY_DIR}/A1.desc
@@ -114,6 +124,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_BINARY_DIR}/A2.desc
 			-o A2.bit
+			-translate ${TEXT_TRANSLATE}
 			-dimensions ${TEXT_DIMENSIONS}
 			-testrender A2.test.png ${TEXT_RENDER_DIMENSIONS}
 		DEPENDS ${PROJECT_BINARY_DIR}/A2.desc
@@ -123,6 +134,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_BINARY_DIR}/B1.desc
 			-o B1.bit
+			-translate ${TEXT_TRANSLATE}
 			-dimensions ${TEXT_DIMENSIONS}
 			-testrender B1.test.png ${TEXT_RENDER_DIMENSIONS}
 		DEPENDS ${PROJECT_BINARY_DIR}/B1.desc
@@ -132,6 +144,7 @@ if(GENERATE_ATLAS)
 		COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 			-shapedesc ${PROJECT_BINARY_DIR}/B2.desc
 			-o B2.bit
+			-translate ${TEXT_TRANSLATE}
 			-dimensions ${TEXT_DIMENSIONS}
 			-testrender B2.test.png ${TEXT_RENDER_DIMENSIONS}
 		DEPENDS ${PROJECT_BINARY_DIR}/B2.desc
@@ -143,6 +156,7 @@ if(GENERATE_ATLAS)
 			COMMAND ${MSDFGEN_PATH} ${COMMON_PARAMS}
 				-shapedesc ${PROJECT_BINARY_DIR}/${N}.desc
 				-o ${N}.bit
+				-translate ${TEXT_TRANSLATE}
 				-dimensions ${TEXT_DIMENSIONS}
 				-testrender ${N}.test.png ${TEXT_RENDER_DIMENSIONS}
 				DEPENDS ${PROJECT_BINARY_DIR}/${N}.desc

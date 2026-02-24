@@ -116,24 +116,26 @@ namespace Voicemeeter {
 					_vertex = value;
 				};
 
-				inline void set_Blend() {
-					size_t slot{ _state.get_slots_Current() };
-					_state.get_slots_CommandList(slot)
-						->SetPipelineState(
-							_state.get_layers_BlendState());
-				};
-				inline void unset_Blend() {
-					size_t slot{ _state.get_slots_Current() };
-					_state.get_slots_CommandList(slot)
-						->SetPipelineState(
-							_state.get_layers_DefaultState());
-				};
-				inline void set_Invalid(vector_t const &point, vector_t const &vertex) {
+				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
 					auto lessFrom = point < _invalidFrom;
 					auto to = point + vertex;
 					auto greaterTo = _invalidTo < to;
 					_invalidFrom[lessFrom] = point[lessFrom];
 					_invalidTo[greaterTo] = to[greaterTo];
+				};
+				inline void Clear(vector_t const &point, vector_t const &vertex) {
+					size_t slot{ _state.get_slots_Current() };
+					D3D12_RECT rect{
+						pop(floor(point[0])),
+						pop(floor(point[1])),
+						pop(ceil(point[0] + vertex[0])),
+						pop(ceil(point[1] + vertex[1]))
+					};
+					_state.get_slots_CommandList(slot)
+						->ClearRenderTargetView(
+							_state.get_layers_hRenderTarget()
+							FLOAT[]{ 0.F, 0.F, 0.F, 0.F },
+							1U, &rect);
 				};
 
 				inline void Update() {
@@ -160,7 +162,7 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(_state.get_slots_CommandList(slot)
 						->Reset(
 							_state.get_slots_CommandAllocator(slot),
-							_state.get_layers_DefaultState()
+							_state.get_layers_State()
 					), "Command list reset failed");
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRootSignature(
@@ -239,7 +241,7 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(_state.get_slots_CommandList(slot)
 						->Reset(
 							_state.get_slots_CommandAllocator(slot),
-							_state.get_blender_DefaultState()
+							_state.get_blender_State()
 					), "Command list reset failed");
 					::std::array<D3D12_RESOURCE_BARRIER, 2> barriers{
 						D3D12_RESOURCE_BARRIER{
@@ -256,7 +258,7 @@ namespace Voicemeeter {
 							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 							D3D12_RESOURCE_BARRIER_FLAG_NONE,
 							D3D12_RESOURCE_TRANSITION_BARRIER{
-								_state.get_blender_RenderTarget(buffer),
+								_surface.get_RenderTarget(buffer),
 								D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 								D3D12_RESOURCE_STATE_PRESENT,
 								D3D12_RESOURCE_STATE_RENDER_TARGET,
@@ -280,7 +282,7 @@ namespace Voicemeeter {
 					_state.get_slots_CommandList(slot)
 						->IASetVertexBuffers(0, 1, &hSquareBuffer);
 					D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
-						_state.get_blender_hRenderTarget(buffer)
+						_surface.get_hRenderTarget(buffer)
 					};
 					_state.get_slots_CommandList(slot)
 						->OMSetRenderTargets(1, &hRenderTarget, FALSE, nullptr);
@@ -304,9 +306,9 @@ namespace Voicemeeter {
 					FLOAT v{ static_cast<FLOAT>(from[1] - _point[1]) / (_vertex[1] * _layers_size) };
 					::std::array<FLOAT, 5> constants{
 						u,
-						v,
-						u + static_cast<FLOAT>(to[0] - from[0]) / _vertex[0],
 						v + static_cast<FLOAT>(to[1] - from[1]) / (_vertex[1] * _layers_size),
+						u + static_cast<FLOAT>(to[0] - from[0]) / _vertex[0],
+						v,
 						1.F / _layers_size
 					};
 					UINT layers{ static_cast<UINT>(_layers_size) };
@@ -362,17 +364,7 @@ namespace Voicemeeter {
 					FrameBinder & operator=(FrameBinder &&) = delete;
 
 					inline void Bind(TSurface &target) {
-						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
-							::Windows::ThrowIfFailed(target.get_SwapChain()
-								->GetBuffer(
-									static_cast<UINT>(buffer),
-									IID_PPV_ARGS(that->_state.geta_blender_RenderTarget(buffer))
-							), "Failed to get swap chain buffer");
-							target.get_Device()
-								->CreateRenderTargetView(
-									that->_state.get_blender_RenderTarget(buffer),
-									nullptr, that->_state.get_blender_hRenderTarget(buffer));
-						}
+
 					};
 					inline void Unbind(TSurface &target) {
 						for (size_t slot{ 0 }; slot < TState::SlotsSize; ++slot) {
@@ -387,9 +379,6 @@ namespace Voicemeeter {
 								::Windows::WaitForSingleObject(
 									that->_state.get_slots_hEvent(slot), INFINITE);
 							}
-						}
-						for (size_t buffer{ 0 }; buffer < TSurface::BuffersSize; ++buffer) {
-							*(that->_state.geta_blender_RenderTarget(buffer)) = nullptr;
 						}
 					};
 

@@ -77,10 +77,13 @@ namespace Voicemeeter {
 
 				inline ::std::unique_ptr<Scene> Build() {
 					auto focusTracker = TFocusTrackerBuilder::Build();
+					auto loader = TLoaderBuilder::Build();
+					auto palette = TPaletteBuilder::Build();
+					auto theme TThemeBuilder::Build(*palette);
 					auto canvas = TCanvasBuilder::Build(
-						TLoaderBuilder::Build(),
-						TPaletteBuilder::Build(),
-						TThemeBuilder::Build());
+						::std::move(loader),
+						::std::move(palette),
+						::std::move(theme));
 					auto composition = TCompositionBuilder::Build(
 						*canvas, *focusTracker);
 					return ::std::make_unique<

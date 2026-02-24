@@ -19,7 +19,7 @@ float4 Main(PSInput input) : SV_TARGET {
 	for (uint layer = 1; layer < g_layers.value; ++layer) {
 		input.coord.y += g_offset.value;
 		float4 temp = g_texture.Sample(g_sampler, input.coord);
-		rgba.rgb = temp.rgb * temp.a + rgba.rgb * (1 - temp.a);
+		rgba = temp + rgba * (1 - temp.a);
 	}
 	return rgba;
 }

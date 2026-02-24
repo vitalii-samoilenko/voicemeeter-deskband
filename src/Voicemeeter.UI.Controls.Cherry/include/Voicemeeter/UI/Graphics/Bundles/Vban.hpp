@@ -23,9 +23,9 @@ namespace Voicemeeter {
 						, _frameVertex{ 0, 0 }
 						, _frameAtlasPoint{
 							Layouts::Atlas::Vban::Frame::X
-							+ Layouts::Atlas::Offset::Width,
+							+ Layouts::Atlas::Vban::Frame::Offset::Width,
 							Layouts::Atlas::Vban::Frame::Y
-							+ Layouts::Atlas::Offset::Height
+							+ Layouts::Atlas::Vban::Frame::Offset::Height
 						}
 						, _frameAtlasVertex{
 							Layouts::Atlas::Vban::Frame::Width,
@@ -86,13 +86,15 @@ namespace Voicemeeter {
 						}
 						_changes.reset();
 						_slot.reset();
+						_toolkit.get_Frame()
+							.Clear(_framePoint, _frameVertex);
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba);
 						_toolkit.get_Frame()
-							.set_Invalid(_framePoint, _frameVertex);
+							.Invalidate(_framePoint, _frameVertex);
 					};
 
 				protected:

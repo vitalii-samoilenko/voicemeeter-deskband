@@ -25,52 +25,81 @@ namespace Voicemeeter {
 				ThemeBuilder & operator=(ThemeBuilder &&) = delete;
 
 				inline ThemeBuilder & set_Inactive(vector_t const &value) {
-					_prototype.Inactive = value;
+					_srgba.Inactive = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_Active(vector_t const &value) {
-					_prototype.Active = value;
+					_srgba.Active = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_Warning(vector_t const &value) {
-					_prototype.Warning = value;
+					_srgba.Warning = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_Error(vector_t const &value) {
-					_prototype.Error = value;
+					_srgba.Error = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_Information(vector_t const &value) {
-					_prototype.Information = value;
+					_srgba.Information = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_Neutral(vector_t const &value) {
-					_prototype.Neutral = value;
+					_srgba.Neutral = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_EqLow(vector_t const &value) {
-					_prototype.EqLow = value;
+					_srgba.EqLow = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_EqMedium(vector_t const &value) {
-					_prototype.EqMedium = value;
+					_srgba.EqMedium = value;
 					return *this;
 				};
 				inline ThemeBuilder & set_EqHigh(vector_t const &value) {
-					_prototype.EqHigh = value;
+					_srgba.EqHigh = value;
 					return *this;
 				};
 
 			protected:
 				inline ThemeBuilder() = default;
 
-				inline ::std::unique_ptr<Theme> Build() {
+				template<typename TPalette>
+				inline ::std::unique_ptr<Theme> Build(
+					TPalette &palette) {
 					return ::std::make_unique<
-						Theme>(_prototype);
-				};
+						Theme>(
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.Inactive)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.Active)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.Warning)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.Error)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.Information)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.Neutral)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.EqLow)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.EqMedium)),
+						palette.Premultiply(
+						palette.Linearize(
+						_srgba.EqHigh)));
+			};
 
 			private:
-				Theme _prototype;
+				Theme _srgba;
 			};
 		}
 	}

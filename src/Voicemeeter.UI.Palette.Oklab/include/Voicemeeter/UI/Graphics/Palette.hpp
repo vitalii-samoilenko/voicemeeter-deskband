@@ -42,15 +42,9 @@ namespace Voicemeeter {
 								})
 						};
 						return vector_t{
-							denormalize(
-								::ok_color::srgb_transfer_function(
-									target.r)),
-							denormalize(
-								::ok_color::srgb_transfer_function(
-									target.g)),
-							denormalize(
-								::ok_color::srgb_transfer_function(
-									target.b)),
+							Palette::denormalize(target.r),
+							Palette::denormalize(target.g),
+							Palette::denormalize(target.b),
 							(_fromA * (rI - One) + push(_toA)) / rI
 						};
 					};
@@ -69,23 +63,17 @@ namespace Voicemeeter {
 						: _from{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									::ok_color::srgb_transfer_function_inv(
-										normalize(from[0])),
-									::ok_color::srgb_transfer_function_inv(
-										normalize(from[1])),
-									::ok_color::srgb_transfer_function_inv(
-										normalize(from[2]))
+									Palette::normalize(from[0]),
+									Palette::normalize(from[1]),
+									Palette::normalize(from[2])
 								})
 						}
 						, _to{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									::ok_color::srgb_transfer_function_inv(
-										normalize(to[0])),
-									::ok_color::srgb_transfer_function_inv(
-										normalize(to[1])),
-									::ok_color::srgb_transfer_function_inv(
-										normalize(to[2]))
+									Palette::normalize(to[0])),
+									Palette::normalize(to[1])),
+									Palette::normalize(to[2]))
 								})
 						}
 						, _fromA{ from[3] }
@@ -93,17 +81,44 @@ namespace Voicemeeter {
 
 					};
 
-					inline static float normalize(num_t n) {
-						return static_cast<float>(n) / push(255);
-					};
-					inline static int denormalize(float n) {
-						return static_cast<num_t>(push(255) * n);
-					};
 				};
 
 				inline gradient Interpolate(
 					vector_t const &from, vector_t const &to) const {
 					return gradient{ from, to };
+				};
+
+				inline vector_t Linearize(vector_t const &rgba) const {
+					return vector_t{
+						denormalize(
+						::ok_color::srgb_transfer_function_inv(
+						normalize(rgba[0]))),
+						denormalize(
+						::ok_color::srgb_transfer_function_inv(
+						normalize(rgba[1]))),
+						denormalize(
+						::ok_color::srgb_transfer_function_inv(
+						normalize(rgba[2]))),
+						rgba[3]
+					};
+				};
+				inline vector_t Premultiply(vector_t const &rgba) const {
+					return vector_t{
+						rgba[0] * rgba[3] / push(255),
+						rgba[1] * rgba[3] / push(255),
+						rgba[2] * rgba[3] / push(255),
+						rgba[3]
+					};
+				};
+
+			private:
+				friend class gradient;
+
+				inline static float normalize(num_t n) {
+					return static_cast<float>(n) / push(255);
+				};
+				inline static int denormalize(float n) {
+					return static_cast<num_t>(push(255) * n);
 				};
 			};
 		}
