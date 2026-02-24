@@ -202,8 +202,6 @@ namespace Voicemeeter {
 								_labelPoint, _labelVertex,
 								_labelRgba);
 						_toolkit.get_Frame()
-							.unset_Blend();
-						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};
 

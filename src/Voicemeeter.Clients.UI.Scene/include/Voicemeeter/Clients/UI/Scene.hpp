@@ -79,7 +79,7 @@ namespace Voicemeeter {
 					auto focusTracker = TFocusTrackerBuilder::Build();
 					auto loader = TLoaderBuilder::Build();
 					auto palette = TPaletteBuilder::Build();
-					auto theme TThemeBuilder::Build(*palette);
+					auto theme = TThemeBuilder::Build(*palette);
 					auto canvas = TCanvasBuilder::Build(
 						::std::move(loader),
 						::std::move(palette),

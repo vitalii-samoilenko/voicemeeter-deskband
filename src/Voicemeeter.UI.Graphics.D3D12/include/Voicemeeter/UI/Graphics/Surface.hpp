@@ -127,7 +127,7 @@ namespace Voicemeeter {
 							IID_PPV_ARGS(&_hRenderTargetHeap)
 						), "RTV heap descriptor creation failed");
 						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
-							__hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
+							_hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
 						};
 						UINT hRenderTargetSize{
 							_device->GetDescriptorHandleIncrementSize(
@@ -146,11 +146,11 @@ namespace Voicemeeter {
 						}
 					}
 					{
-						::Windows::ThrowIfFailed(device->CreateCommandAllocator(
+						::Windows::ThrowIfFailed(_device->CreateCommandAllocator(
 							D3D12_COMMAND_LIST_TYPE_DIRECT,
 							IID_PPV_ARGS(&_commandAllocator)
 						), "Command allocator creation failed");
-						::Windows::ThrowIfFailed(device->CreateCommandList1(
+						::Windows::ThrowIfFailed(_device->CreateCommandList1(
 							0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 							D3D12_COMMAND_LIST_FLAG_NONE,
 							IID_PPV_ARGS(&_commandList)
@@ -249,27 +249,29 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(_commandAllocator->Reset(
 					), "Command allocator reset failed");
 					::Windows::ThrowIfFailed(_commandList->Reset(
-						_commandAllocator,
+						_commandAllocator.Get(),
 						nullptr
 					), "Command list reset failed");
 					_commandList->OMSetRenderTargets(
-						1, &_hRenderTarget[buffer], FALSE, nullptr);
+						1, &_hRenderTargets[buffer], FALSE, nullptr);
 					D3D12_RECT rect{
-						pop(floor(point[0])),
-						pop(floor(point[1])),
-						pop(ceil(point[0] + vertex[0])),
-						pop(ceil(point[1] + vertex[1]))
+						static_cast<LONG>(pop(floor(point[0]))),
+						static_cast<LONG>(pop(floor(point[1]))),
+						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
+						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
 					};
+					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
 					_commandList->ClearRenderTargetView(
-						_state.get_layers_hRenderTarget()
-						FLOAT[]{ 0.F, 0.F, 0.F, 0.F },
+						_hRenderTargets[buffer],
+						transparent,
 						1U, &rect);
 					::Windows::ThrowIfFailed(_commandList->Close(
 					), "Command list close failed");
+					ID3D12CommandList *commandList{ _commandList.Get() };
 					_commandQueue->ExecuteCommandLists(
-						1, &_commandList);
+						1, &commandList);
 					_commandQueue->Signal(
-						_fence, ++_count);
+						_fence.Get(), ++_count);
 				};
 
 				inline void Present(vector_t const &point, vector_t const &vertex) {
@@ -363,7 +365,7 @@ namespace Voicemeeter {
 					return _renderTargets[buffer].Get();
 				};
 				inline D3D12_CPU_DESCRIPTOR_HANDLE get_hRenderTarget(size_t buffer) const {
-					return _hRenderTargets[buffer].Get();
+					return _hRenderTargets[buffer];
 				};
 
 			private:

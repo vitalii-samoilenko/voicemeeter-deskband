@@ -126,15 +126,16 @@ namespace Voicemeeter {
 				inline void Clear(vector_t const &point, vector_t const &vertex) {
 					size_t slot{ _state.get_slots_Current() };
 					D3D12_RECT rect{
-						pop(floor(point[0])),
-						pop(floor(point[1])),
-						pop(ceil(point[0] + vertex[0])),
-						pop(ceil(point[1] + vertex[1]))
+						static_cast<LONG>(pop(floor(point[0]))),
+						static_cast<LONG>(pop(floor(point[1]))),
+						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
+						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
 					};
+					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
 					_state.get_slots_CommandList(slot)
 						->ClearRenderTargetView(
-							_state.get_layers_hRenderTarget()
-							FLOAT[]{ 0.F, 0.F, 0.F, 0.F },
+							_state.get_layers_hRenderTarget(),
+							transparent,
 							1U, &rect);
 				};
 

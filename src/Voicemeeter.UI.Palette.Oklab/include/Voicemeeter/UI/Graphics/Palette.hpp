@@ -71,9 +71,9 @@ namespace Voicemeeter {
 						, _to{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									Palette::normalize(to[0])),
-									Palette::normalize(to[1])),
-									Palette::normalize(to[2]))
+									Palette::normalize(to[0]),
+									Palette::normalize(to[1]),
+									Palette::normalize(to[2])
 								})
 						}
 						, _fromA{ from[3] }

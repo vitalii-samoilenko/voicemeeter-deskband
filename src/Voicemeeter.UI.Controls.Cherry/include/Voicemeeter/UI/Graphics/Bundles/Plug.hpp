@@ -152,15 +152,11 @@ namespace Voicemeeter {
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba);
-						_toolkit.get_Frame()
-							.set_Blend();
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_labelAtlasPoint, _labelAtlasVertex,
 								_labelPoint, _labelVertex,
 								_labelRgba);
-						_toolkit.get_Frame()
-							.unset_Blend();
 						_toolkit.get_Frame()
 							.Invalidate(_framePoint, _frameVertex);
 					};

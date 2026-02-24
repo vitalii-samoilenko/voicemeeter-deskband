@@ -28,7 +28,7 @@ namespace Voicemeeter {
 				inline State(
 					TSurface &surface,
 					TLoader &loader)
-					: _slots_current{ 0 }
+					: _slots_current{ 1 }
 					, _slots_commandAllocators{}
 					, _slots_commandLists{}
 					, _slots_fences{}
@@ -699,6 +699,9 @@ namespace Voicemeeter {
 				};
 				inline ID3D12PipelineState * get_blender_State() const {
 					return _blender_state.Get();
+				};
+				inline ID3D12RootSignature * get_blender_RootSignature() const {
+					return _blender_rootSignature.Get();
 				};
 				// layers
 				inline ID3D12Resource * get_layers_RenderTarget() const {

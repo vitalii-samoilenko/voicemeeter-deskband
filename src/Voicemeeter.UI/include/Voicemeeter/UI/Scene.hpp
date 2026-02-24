@@ -48,6 +48,9 @@ namespace Voicemeeter {
 				_focusTracker->set_Focus(value);
 			};
 
+			inline void Move(vector_t const &point) {
+				_canvas->Move(point);
+			};
 			inline void Redraw(vector_t const &point, vector_t const &vertex) {
 				_canvas->Redraw(point, vertex);
 			};

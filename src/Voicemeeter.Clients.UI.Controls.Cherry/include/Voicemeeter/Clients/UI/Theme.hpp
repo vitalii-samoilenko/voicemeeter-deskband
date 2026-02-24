@@ -67,35 +67,35 @@ namespace Voicemeeter {
 				template<typename TPalette>
 				inline ::std::unique_ptr<Theme> Build(
 					TPalette &palette) {
-					return ::std::make_unique<
-						Theme>(
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.Inactive)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.Active)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.Warning)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.Error)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.Information)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.Neutral)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.EqLow)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.EqMedium)),
-						palette.Premultiply(
-						palette.Linearize(
-						_srgba.EqHigh)));
+					auto theme = ::std::make_unique<Theme>();
+					theme->Inactive = palette
+						.Premultiply(palette
+						.Linearize(_srgba.Inactive));
+					theme->Active = palette
+						.Premultiply(palette
+						.Linearize(_srgba.Active));
+					theme->Warning = palette
+						.Premultiply(palette
+						.Linearize(_srgba.Warning));
+					theme->Error = palette
+						.Premultiply(palette
+						.Linearize(_srgba.Error));
+					theme->Information = palette
+						.Premultiply(palette
+						.Linearize(_srgba.Information));
+					theme->Neutral = palette
+						.Premultiply(palette
+						.Linearize(_srgba.Neutral));
+					theme->EqLow = palette
+						.Premultiply(palette
+						.Linearize(_srgba.EqLow));
+					theme->EqMedium = palette
+						.Premultiply(palette
+						.Linearize(_srgba.EqMedium));
+					theme->EqHigh = palette
+						.Premultiply(palette
+						.Linearize(_srgba.EqHigh));
+					return theme;
 			};
 
 			private:
