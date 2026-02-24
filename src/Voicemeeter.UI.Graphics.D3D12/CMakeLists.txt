@@ -5,6 +5,7 @@ project(Voicemeeter.UI.Graphics.D3D12 VERSION 0.9 LANGUAGES CXX)
 add_library(voicemeeter_ui_graphics_d3d12 INTERFACE)
 target_compile_features(voicemeeter_ui_graphics_d3d12 INTERFACE cxx_std_17)
 target_link_libraries(voicemeeter_ui_graphics_d3d12 INTERFACE
+	estd
 	wheel
 	Windows
 	Voicemeeter::UI::Layouts)

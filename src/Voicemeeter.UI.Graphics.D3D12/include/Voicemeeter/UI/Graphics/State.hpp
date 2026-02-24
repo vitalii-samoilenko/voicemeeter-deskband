@@ -312,11 +312,15 @@ namespace Voicemeeter {
 							D3D12_TEXTURE_LAYOUT_UNKNOWN,
 							D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 						};
+						D3D12_CLEAR_VALUE clearValue{
+							DXGI_FORMAT_R16G16B16A16_FLOAT,
+							{ 0.F, 0.F, 0.F, 0.F }
+						};
 						::Windows::ThrowIfFailed(surface.get_Device()
 							->CreateCommittedResource(
 								&textureHeapProps, D3D12_HEAP_FLAG_NONE, &textureDesc,
 								D3D12_RESOURCE_STATE_RENDER_TARGET,
-								nullptr,
+								&clearValue,
 								IID_PPV_ARGS(&_layers_renderTarget)
 						), "Texture creation failed");
 						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
@@ -672,8 +676,7 @@ namespace Voicemeeter {
 					return _slots_current;
 				}
 				inline size_t inc_slots_Current() {
-					_slots_current = (_slots_current + 1) % SlotsSize;
-					return _slots_current;
+					return (_slots_current = (_slots_current + 1) % SlotsSize);
 				};
 				inline ID3D12CommandAllocator * get_slots_CommandAllocator(size_t slot) const {
 					return _slots_commandAllocators[slot].Get();

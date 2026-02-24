@@ -5,6 +5,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include "memory.hpp"
 #include "wheel.hpp"
 
 #include "Windows/API.hpp"
@@ -23,11 +24,12 @@ namespace Voicemeeter {
 					: _hWnd{ hWnd }
 					, _device{ nullptr }
 					, _commandQueue{ nullptr }
-					, _commandAllocator{ nullptr }
-					, _commandList{ nullptr }
-					, _fence{ nullptr }
-					, _hEvent{ NULL }
-					, _count{ 0 }
+					, _slots_current{ 0 }
+					, _slots_commandAllocators{}
+					, _slots_commandLists{}
+					, _slots_fences{}
+					, _slots_hEvents{}
+					, _slots_counts{}
 					, _swapChain{ nullptr }
 					, _hRenderTargetHeap{ nullptr }
 					, _renderTargets{}
@@ -36,14 +38,16 @@ namespace Voicemeeter {
 					, _first{ false }
 					, _binders{} {
 					bool failed{ true };
-					auto guardEvent = ::estd::make_guard([
+					auto guardEvents = ::estd::make_guard([
 							&failed,
-							&hEvent = _hEvent
+							&hEvents = _slots_hEvents
 						]()->void {
 							if (!failed) {
 								return;
 							}
-							::CloseHandle(hEvent);
+							for (HANDLE hEvent : hEvents) {
+								::CloseHandle(hEvent);
+							}
 						});
 					::Windows::ThrowIfFailed(::CoInitialize(
 						NULL
@@ -90,6 +94,25 @@ namespace Voicemeeter {
 							&queueDesc,
 							IID_PPV_ARGS(&_commandQueue)
 						), "Command queue creation failed");
+					}
+					{
+						for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
+							::Windows::ThrowIfFailed(_device->CreateCommandAllocator(
+								D3D12_COMMAND_LIST_TYPE_DIRECT,
+								IID_PPV_ARGS(&_slots_commandAllocators[slot])
+							), "Command allocator creation failed");
+							::Windows::ThrowIfFailed(_device->CreateCommandList1(
+								0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+								D3D12_COMMAND_LIST_FLAG_NONE,
+								IID_PPV_ARGS(&_slots_commandLists[slot])
+							), "Command list creation failed");
+							_slots_hEvents[slot] = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
+							::Windows::ThrowIfFailed(_device->CreateFence(
+								_slots_counts[slot],
+								D3D12_FENCE_FLAG_NONE,
+								IID_PPV_ARGS(&_slots_fences[slot])
+							), "Fence creation failed");
+						}
 					}
 					{
 						DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
@@ -146,23 +169,6 @@ namespace Voicemeeter {
 						}
 					}
 					{
-						::Windows::ThrowIfFailed(_device->CreateCommandAllocator(
-							D3D12_COMMAND_LIST_TYPE_DIRECT,
-							IID_PPV_ARGS(&_commandAllocator)
-						), "Command allocator creation failed");
-						::Windows::ThrowIfFailed(_device->CreateCommandList1(
-							0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-							D3D12_COMMAND_LIST_FLAG_NONE,
-							IID_PPV_ARGS(&_commandList)
-						), "Command list creation failed");
-						_hEvent = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
-						::Windows::ThrowIfFailed(_device->CreateFence(
-							_count,
-							D3D12_FENCE_FLAG_NONE,
-							IID_PPV_ARGS(&_fence)
-						), "Fence creation failed");
-					}
-					{
 						::Microsoft::WRL::ComPtr<IDCompositionDevice> compositionDevice{ nullptr };
 						::Windows::ThrowIfFailed(::DCompositionCreateDevice(
 							nullptr,
@@ -192,7 +198,9 @@ namespace Voicemeeter {
 				Surface(Surface &&) = delete;
 
 				inline ~Surface() {
-					::CloseHandle(_hEvent);
+					for (HANDLE hEvent : _slots_hEvents) {
+						::CloseHandle(hEvent);
+					}
 				};
 
 				Surface & operator=(Surface const &) = delete;
@@ -203,13 +211,18 @@ namespace Voicemeeter {
 					for (auto &[clientId, binder] : _binders) {
 						binder->Unbind(*this);
 					}
-					if (_fence->GetCompletedValue() < _count) {
-						::Windows::ThrowIfFailed(_fence->SetEventOnCompletion(
-							_count,
-							_hEvent
-						), "Event signaling failed");
-						::Windows::WaitForSingleObject(
-							_hEvent, INFINITE);
+					for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
+						if (_slots_fences[slot]
+								->GetCompletedValue()
+							< _slots_counts[slot]) {
+							::Windows::ThrowIfFailed(_slots_fences[slot]
+								->SetEventOnCompletion(
+									_slots_counts[slot],
+									_slots_hEvents[slot]
+							), "Event signaling failed");
+							::Windows::WaitForSingleObject(
+								_slots_hEvents[slot], INFINITE);
+						}
 					}
 					for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
 						_renderTargets[buffer] = nullptr;
@@ -237,23 +250,42 @@ namespace Voicemeeter {
 				};
 
 				inline void Clear(vector_t const &point, vector_t const &vertex) {
+					size_t slot{ (_slots_current = (_slots_current + 1) % SlotsSize) };
 					size_t buffer{ _swapChain->GetCurrentBackBufferIndex() };
-					if (_fence->GetCompletedValue() < _count) {
-						::Windows::ThrowIfFailed(_fence->SetEventOnCompletion(
-							_count,
-							_hEvent
+					if (_slots_fences[slot]
+							->GetCompletedValue()
+						< _slots_counts[slot]) {
+						::Windows::ThrowIfFailed(_slots_fences[slot]
+							->SetEventOnCompletion(
+								_slots_counts[slot],
+								_slots_hEvents[slot]
 						), "Event signaling failed");
 						::Windows::WaitForSingleObject(
-							_hEvent, INFINITE);
+							_slots_hEvents[slot], INFINITE);
 					}
-					::Windows::ThrowIfFailed(_commandAllocator->Reset(
+					::Windows::ThrowIfFailed(_slots_commandAllocators[slot]
+						->Reset(
 					), "Command allocator reset failed");
-					::Windows::ThrowIfFailed(_commandList->Reset(
-						_commandAllocator.Get(),
-						nullptr
+					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+						->Reset(
+							_slots_commandAllocators[slot].Get(),
+							nullptr
 					), "Command list reset failed");
-					_commandList->OMSetRenderTargets(
-						1, &_hRenderTargets[buffer], FALSE, nullptr);
+					D3D12_RESOURCE_BARRIER barrier{
+						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
+						D3D12_RESOURCE_BARRIER_FLAG_NONE,
+						D3D12_RESOURCE_TRANSITION_BARRIER{
+							_renderTargets[buffer].Get(),
+							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+							D3D12_RESOURCE_STATE_PRESENT,
+							D3D12_RESOURCE_STATE_RENDER_TARGET
+						}
+					};
+					_slots_commandLists[slot]
+						->ResourceBarrier(1U, &barrier);
+					_slots_commandLists[slot]
+						->OMSetRenderTargets(
+							1, &_hRenderTargets[buffer], FALSE, nullptr);
 					D3D12_RECT rect{
 						static_cast<LONG>(pop(floor(point[0]))),
 						static_cast<LONG>(pop(floor(point[1]))),
@@ -261,20 +293,63 @@ namespace Voicemeeter {
 						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
 					};
 					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
-					_commandList->ClearRenderTargetView(
-						_hRenderTargets[buffer],
-						transparent,
-						1U, &rect);
-					::Windows::ThrowIfFailed(_commandList->Close(
+					_slots_commandLists[slot]
+						->ClearRenderTargetView(
+							_hRenderTargets[buffer],
+							transparent,
+							1U, &rect);
+					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+						->Close(
 					), "Command list close failed");
-					ID3D12CommandList *commandList{ _commandList.Get() };
+					ID3D12CommandList *commandList{ _slots_commandLists[slot].Get() };
 					_commandQueue->ExecuteCommandLists(
 						1, &commandList);
 					_commandQueue->Signal(
-						_fence.Get(), ++_count);
+						_slots_fences[slot].Get(), ++_slots_counts[slot]);
 				};
 
 				inline void Present(vector_t const &point, vector_t const &vertex) {
+					size_t slot{ (_slots_current = (_slots_current + 1) % SlotsSize) };
+					size_t buffer{ _swapChain->GetCurrentBackBufferIndex() };
+					if (_slots_fences[slot]
+							->GetCompletedValue()
+						< _slots_counts[slot]) {
+						::Windows::ThrowIfFailed(_slots_fences[slot]
+							->SetEventOnCompletion(
+								_slots_counts[slot],
+								_slots_hEvents[slot]
+						), "Event signaling failed");
+						::Windows::WaitForSingleObject(
+							_slots_hEvents[slot], INFINITE);
+					}
+					::Windows::ThrowIfFailed(_slots_commandAllocators[slot]
+						->Reset(
+					), "Command allocator reset failed");
+					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+						->Reset(
+							_slots_commandAllocators[slot].Get(),
+							nullptr
+					), "Command list reset failed");
+					D3D12_RESOURCE_BARRIER barrier{
+						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
+						D3D12_RESOURCE_BARRIER_FLAG_NONE,
+						D3D12_RESOURCE_TRANSITION_BARRIER{
+							_renderTargets[buffer].Get(),
+							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+							D3D12_RESOURCE_STATE_RENDER_TARGET,
+							D3D12_RESOURCE_STATE_PRESENT
+						}
+					};
+					_slots_commandLists[slot]
+						->ResourceBarrier(1U, &barrier);
+					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+						->Close(
+					), "Command list close failed");
+					ID3D12CommandList *commandList{ _slots_commandLists[slot].Get() };
+					_commandQueue->ExecuteCommandLists(
+						1, &commandList);
+					_commandQueue->Signal(
+						_slots_fences[slot].Get(), ++_slots_counts[slot]);
 					if (_first) {
 						::Windows::ThrowIfFailed(_swapChain->Present(
 							0U, 0U
@@ -361,9 +436,6 @@ namespace Voicemeeter {
 				inline IDXGISwapChain4 * get_SwapChain() const {
 					return _swapChain.Get();
 				};
-				inline ID3D12Resource * get_RenderTarget(size_t buffer) const {
-					return _renderTargets[buffer].Get();
-				};
 				inline D3D12_CPU_DESCRIPTOR_HANDLE get_hRenderTarget(size_t buffer) const {
 					return _hRenderTargets[buffer];
 				};
@@ -414,14 +486,19 @@ namespace Voicemeeter {
 
 				friend class token;
 
+				static constexpr size_t SlotsSize{ 2 };
+
 				HWND _hWnd;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _device;
 				::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
-				::Microsoft::WRL::ComPtr<ID3D12CommandAllocator> _commandAllocator;
-				::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _commandList;
-				::Microsoft::WRL::ComPtr<ID3D12Fence> _fence;
-				HANDLE _hEvent;
-				UINT64 _count;
+				// slots
+				size_t _slots_current;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, SlotsSize> _slots_commandAllocators;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, SlotsSize> _slots_commandLists;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, SlotsSize> _slots_fences;
+				::std::array<HANDLE, SlotsSize> _slots_hEvents;
+				::std::array<UINT64, SlotsSize> _slots_counts;
+				// -----
 				::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _hRenderTargetHeap;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, BuffersSize> _renderTargets;

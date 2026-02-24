@@ -90,11 +90,15 @@ namespace Voicemeeter {
 						D3D12_TEXTURE_LAYOUT_UNKNOWN,
 						D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET
 					};
+					D3D12_CLEAR_VALUE clearValue{
+						DXGI_FORMAT_R16G16B16A16_FLOAT,
+						{ 0.F, 0.F, 0.F, 0.F }
+					};
 					::Windows::ThrowIfFailed(_surface.get_Device()
 						->CreateCommittedResource(
 							&textureHeapProps, D3D12_HEAP_FLAG_NONE, &textureDesc,
 							D3D12_RESOURCE_STATE_RENDER_TARGET,
-							nullptr,
+							&clearValue,
 							IID_PPV_ARGS(_state.geta_layers_RenderTarget())
 					), "Texture creation failed");
 					_surface.get_Device()
@@ -244,30 +248,18 @@ namespace Voicemeeter {
 							_state.get_slots_CommandAllocator(slot),
 							_state.get_blender_State()
 					), "Command list reset failed");
-					::std::array<D3D12_RESOURCE_BARRIER, 2> barriers{
-						D3D12_RESOURCE_BARRIER{
-							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
-							D3D12_RESOURCE_BARRIER_FLAG_NONE,
-							D3D12_RESOURCE_TRANSITION_BARRIER{
-								_state.get_layers_RenderTarget(),
-								D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
-								D3D12_RESOURCE_STATE_RENDER_TARGET,
-								D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-							}
-						},
-						D3D12_RESOURCE_BARRIER{
-							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
-							D3D12_RESOURCE_BARRIER_FLAG_NONE,
-							D3D12_RESOURCE_TRANSITION_BARRIER{
-								_surface.get_RenderTarget(buffer),
-								D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
-								D3D12_RESOURCE_STATE_PRESENT,
-								D3D12_RESOURCE_STATE_RENDER_TARGET,
-							}
-						},
+					D3D12_RESOURCE_BARRIER barrier{
+						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
+						D3D12_RESOURCE_BARRIER_FLAG_NONE,
+						D3D12_RESOURCE_TRANSITION_BARRIER{
+							_state.get_layers_RenderTarget(),
+							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
+							D3D12_RESOURCE_STATE_RENDER_TARGET,
+							D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+						}
 					};
 					_state.get_slots_CommandList(slot)
-						->ResourceBarrier(barriers.size(), &barriers[0]);
+						->ResourceBarrier(1U, &barrier);
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRootSignature(
 							_state.get_blender_RootSignature());
@@ -330,12 +322,10 @@ namespace Voicemeeter {
 							0);
 					_state.get_slots_CommandList(slot)
 						->DrawInstanced(4, 1, 0, 0);
-					barriers[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-					barriers[0].Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-					barriers[1].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-					barriers[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+					barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+					barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 					_state.get_slots_CommandList(slot)
-						->ResourceBarrier(barriers.size(), &barriers[0]);
+						->ResourceBarrier(1U, &barrier);
 					::Windows::ThrowIfFailed(_state.get_slots_CommandList(slot)
 						->Close(
 					), "Command list close failed");
