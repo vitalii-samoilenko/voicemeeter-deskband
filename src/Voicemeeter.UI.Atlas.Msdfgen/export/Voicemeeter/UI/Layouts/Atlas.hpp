@@ -24,10 +24,10 @@ namespace Voicemeeter {
 					}
 #ifdef WHEEL_EXTENDED_PRECISION
 					constexpr num_t Descender{ push(79667832167832) / 10000000000000 };
-					constexpr num_t Capital{ push(28457360820997) / 1000000000000 };
+					constexpr num_t Capital{ push(269108391608392) / 10000000000000 };
 #else
 					constexpr num_t Descender{ push(7966783) / 1000000 };
-					constexpr num_t Capital{ push(2845736) / 100000 };
+					constexpr num_t Capital{ push(2691083) / 100000 };
 #endif
 				}
 				constexpr num_t Width{ push(270) };

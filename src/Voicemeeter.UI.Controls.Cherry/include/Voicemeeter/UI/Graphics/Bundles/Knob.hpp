@@ -180,7 +180,8 @@ namespace Voicemeeter {
 										Layouts::Atlas::Label::Offset::Height
 										+ Layouts::Atlas::Label::Height
 										+ Layouts::Atlas::Label::Offset::Height
-									) * (_label / Layouts::Atlas::Label::Stride);
+									) * (_label / Layouts::Atlas::Label::Stride)
+								+ Layouts::Atlas::Label::Offset::Height;
 						}
 						_changes.reset();
 						_slot.reset();

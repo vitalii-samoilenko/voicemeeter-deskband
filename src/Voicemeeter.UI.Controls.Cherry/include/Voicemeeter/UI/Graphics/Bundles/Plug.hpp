@@ -118,15 +118,12 @@ namespace Voicemeeter {
 							_labelPoint[0] = _framePoint[0]
 								+ 7 * _frameVertex[0] / 41;
 							_labelPoint[1] = _framePoint[1]
-								+ (
-										_frameVertex[1] * (
-										Layouts::Atlas::Label::Capital * 31
-										- (
-												Layouts::Atlas::Label::Height
-												- Layouts::Atlas::Label::Descender
-											) * 24
-									)
-								) / (Layouts::Atlas::Label::Capital * 38);
+								+ 7 * _frameVertex[1] / 38
+								- (
+										Layouts::Atlas::Label::Height
+										- Layouts::Atlas::Label::Descender
+										- Layouts::Atlas::Label::Capital
+								) * _labelVertex[1] / Layouts::Atlas::Label::Height;
 						}
 						if (_changes.test(flags::label)) {
 							_labelAtlasPoint[0] = Layouts::Atlas::Label::X
@@ -141,7 +138,8 @@ namespace Voicemeeter {
 										Layouts::Atlas::Label::Offset::Height
 										+ Layouts::Atlas::Label::Height
 										+ Layouts::Atlas::Label::Offset::Height
-									) * (_label / Layouts::Atlas::Label::Stride);
+									) * (_label / Layouts::Atlas::Label::Stride)
+								+ Layouts::Atlas::Label::Offset::Height;
 						}
 						_changes.reset();
 						_slot.reset();
