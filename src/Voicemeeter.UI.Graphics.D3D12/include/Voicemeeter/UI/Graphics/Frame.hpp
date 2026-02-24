@@ -83,7 +83,7 @@ namespace Voicemeeter {
 						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
 						static_cast<UINT>(max(pop(ceil(value[1])), 8) * _layers_size),
 						1, 1,
-						DXGI_FORMAT_R8G8B8A8_UNORM,
+						DXGI_FORMAT_R16G16B16A16_FLOAT,
 						DXGI_SAMPLE_DESC{
 							1, 0
 						},
@@ -102,7 +102,7 @@ namespace Voicemeeter {
 							_state.get_layers_RenderTarget(),
 							nullptr, _state.get_layers_hRenderTarget());
 					D3D12_SHADER_RESOURCE_VIEW_DESC hTextureDesc{
-						DXGI_FORMAT_R8G8B8A8_UNORM,
+						DXGI_FORMAT_R16G16B16A16_FLOAT,
 						D3D12_SRV_DIMENSION_TEXTURE2D,
 						D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING
 					};

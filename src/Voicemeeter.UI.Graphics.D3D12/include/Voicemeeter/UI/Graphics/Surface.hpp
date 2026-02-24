@@ -94,7 +94,7 @@ namespace Voicemeeter {
 					{
 						DXGI_SWAP_CHAIN_DESC1 swapChainDesc{
 							8, 8,
-							DXGI_FORMAT_R8G8B8A8_UNORM,
+							DXGI_FORMAT_R16G16B16A16_FLOAT,
 							FALSE,
 							DXGI_SAMPLE_DESC{
 								1, 0

@@ -305,7 +305,7 @@ namespace Voicemeeter {
 							0,
 							8U, 8U,
 							1, 1,
-							DXGI_FORMAT_R8G8B8A8_UNORM,
+							DXGI_FORMAT_R16G16B16A16_FLOAT,
 							DXGI_SAMPLE_DESC{
 								1, 0
 							},
@@ -339,7 +339,7 @@ namespace Voicemeeter {
 								IID_PPV_ARGS(&_blender_hTextureHeap)
 						), "SRV heap descriptor creation failed");
 						D3D12_SHADER_RESOURCE_VIEW_DESC hTextureDesc{
-							DXGI_FORMAT_R8G8B8A8_UNORM,
+							DXGI_FORMAT_R16G16B16A16_FLOAT,
 							D3D12_SRV_DIMENSION_TEXTURE2D,
 							D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING
 						};
@@ -555,7 +555,7 @@ namespace Voicemeeter {
 							},
 							D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED,
 							D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
-							1, { DXGI_FORMAT_R8G8B8A8_UNORM },
+							1, { DXGI_FORMAT_R16G16B16A16_FLOAT },
 							DXGI_FORMAT_UNKNOWN,
 							DXGI_SAMPLE_DESC{
 								1, 0
@@ -628,7 +628,7 @@ namespace Voicemeeter {
 							},
 							D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED,
 							D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
-							1, { DXGI_FORMAT_R8G8B8A8_UNORM },
+							1, { DXGI_FORMAT_R16G16B16A16_FLOAT },
 							DXGI_FORMAT_UNKNOWN,
 							DXGI_SAMPLE_DESC{
 								1, 0
