@@ -4,7 +4,7 @@ project(Voicemeeter.UI.Atlas.Msdfgen VERSION 0.9 LANGUAGES CXX)
 
 add_library(voicemeeter_ui_atlas_msdfgen INTERFACE)
 
-option(GENERATE_ATLAS "Compile atlas during build phase" ON)
+option(GENERATE_ATLAS "Compile atlas during build phase" OFF)
 
 if(GENERATE_ATLAS)
 	if(NOT DEFINED MSDFGEN_PATH)

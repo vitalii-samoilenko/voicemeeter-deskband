@@ -52,18 +52,18 @@ namespace Voicemeeter {
 						->RSSetViewports(1, &viewport);
 					FLOAT r0{ static_cast<FLOAT>(srcVertex[0]) / dstVertex[0] };
 					FLOAT r1{ static_cast<FLOAT>(srcVertex[1]) / dstVertex[1] };
-					FLOAT u{ static_cast<FLOAT>(srcPoint[0]) / Layouts::Atlas::Width };
-					FLOAT v{ static_cast<FLOAT>(srcPoint[1]) / Layouts::Atlas::Height };
+					FLOAT from0{ srcPoint[0] - frac(push(2) - frac(dstPoint[0]) - frac(dstVertex[0])) * r0 };
+					FLOAT from1{ srcPoint[1] - frac(push(2) - frac(dstPoint[1]) - frac(dstVertex[1])) * r1 };
+					FLOAT to0{ srcPoint[0] + srcVertex[0] + frac(dstPoint[0]) * r0 };
+					FLOAT to1{ srcPoint[1] + srcVertex[1] + frac(dstPoint[1]) * r1 };
 					::std::array<FLOAT, 9> constants{
-						u - frac(dstPoint[0]) * r0 / Layouts::Atlas::Width,
-						v - frac(dstPoint[1]) * r1 / Layouts::Atlas::Height,
-						u + static_cast<FLOAT>(srcVertex[0]) / Layouts::Atlas::Width
-						+ frac(push(2) - frac(dstPoint[0]) - frac(dstVertex[0]))
-						* r0 / Layouts::Atlas::Width,
-						v + static_cast<FLOAT>(srcVertex[1]) / Layouts::Atlas::Height
-						+ frac(push(2) - frac(dstPoint[1]) - frac(dstVertex[1]))
-						* r1 / Layouts::Atlas::Height,
-						Layouts::Atlas::Range::Width / ::std::max(r0, r1),
+						from0 / Layouts::Atlas::Width,
+						from1 / Layouts::Atlas::Height,
+						to0 / Layouts::Atlas::Width,
+						to1 / Layouts::Atlas::Height,
+						Layouts::Atlas::Range::Width * ::std::min(
+							viewport.Width * One / (to0 - from0),
+							viewport.Height * One / (to1 - from1)),
 						static_cast<FLOAT>(color[0]) / push(255),
 						static_cast<FLOAT>(color[1]) / push(255),
 						static_cast<FLOAT>(color[2]) / push(255),
