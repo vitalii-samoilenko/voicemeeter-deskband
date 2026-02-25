@@ -52,9 +52,9 @@ namespace Voicemeeter {
 						->RSSetViewports(1, &viewport);
 					FLOAT r0{ static_cast<FLOAT>(srcVertex[0]) / dstVertex[0] };
 					FLOAT r1{ static_cast<FLOAT>(srcVertex[1]) / dstVertex[1] };
-					FLOAT from0{ srcPoint[0] - frac(push(2) - frac(dstPoint[0]) - frac(dstVertex[0])) * r0 };
+					FLOAT from0{ srcPoint[0] - frac(dstPoint[0]) * r0 };
 					FLOAT from1{ srcPoint[1] - frac(push(2) - frac(dstPoint[1]) - frac(dstVertex[1])) * r1 };
-					FLOAT to0{ srcPoint[0] + srcVertex[0] + frac(dstPoint[0]) * r0 };
+					FLOAT to0{ srcPoint[0] + srcVertex[0] + frac(push(2) - frac(dstPoint[0]) - frac(dstVertex[0])) * r0 };
 					FLOAT to1{ srcPoint[1] + srcVertex[1] + frac(dstPoint[1]) * r1 };
 					::std::array<FLOAT, 9> constants{
 						from0 / Layouts::Atlas::Width,
