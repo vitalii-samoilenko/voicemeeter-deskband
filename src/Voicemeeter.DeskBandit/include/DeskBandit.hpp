@@ -10,7 +10,6 @@
 
 #include "Windows/API.hpp"
 #include "Windows/Timer.hpp"
-#include <windowsx.h>
 
 #include "Voicemeeter/Cherry.hpp"
 #include "Voicemeeter/Clients/Remote.hpp"
@@ -94,7 +93,7 @@ private:
 		::Voicemeeter::Clients::UI::LoaderBuilder,
 		::Voicemeeter::Clients::UI::PaletteBuilder,
 		::Voicemeeter::Clients::UI::ThemeBuilder,
-		::Voicemeeter::Clients::UI::CanvasBuilder<
+		::Voicemeeter::Clients::UI::DirectCanvasBuilder<
 			::Voicemeeter::Clients::UI::Surface,
 			::Voicemeeter::Clients::UI::Loader,
 			::Voicemeeter::Clients::UI::Palette,
@@ -103,7 +102,7 @@ private:
 		::Voicemeeter::Clients::UI::CompositionBuilder<
 			::Windows::Timer,
 			::Voicemeeter::Cherry,
-			::Voicemeeter::Clients::UI::Canvas<
+			::Voicemeeter::Clients::UI::DirectCanvas<
 				::Voicemeeter::Clients::UI::Surface,
 				::Voicemeeter::Clients::UI::Loader,
 				::Voicemeeter::Clients::UI::Palette,
@@ -440,7 +439,10 @@ private:
 						that->_rc.left, that->_rc.top,
 						that->_rc.right, that->_rc.bottom,
 						0U);
+					/*
+					// CachedCanvas only
 					that->_surface->set_Size(vertex);
+					*/
 				}
 				that->_dockTick = ::std::make_unique<
 					DockTick>(that, *that->_dockTimer);
@@ -471,6 +473,8 @@ private:
 				};
 				target->Elapse();
 			} return OK;
+			/*
+			// CachedCanvas only
 			case WM_PAINT: {
 				if (::GetUpdateRect(hWnd, NULL, FALSE)) {
 					PAINTSTRUCT ps;
@@ -483,12 +487,13 @@ private:
 						push(ps.rcPaint.right - ps.rcPaint.left),
 						push(ps.rcPaint.bottom - ps.rcPaint.top)
 					};
-					that->_surface->Clear(point, vertex);
+					that->_surface->Prepare(point, vertex);
 					that->_scene->Redraw(point, vertex);
-					that->_surface->Present(point, vertex);
+					that->_surface->Commit();
 					::EndPaint(hWnd, &ps);
 				}
 			} return OK;
+			*/
 			case WM_LBUTTONDOWN: {
 				that->_scene->MouseLDown(vector_t{
 					push(GET_X_LPARAM(lParam)),

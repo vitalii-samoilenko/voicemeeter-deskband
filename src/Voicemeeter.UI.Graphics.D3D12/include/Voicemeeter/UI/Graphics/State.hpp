@@ -27,8 +27,10 @@ namespace Voicemeeter {
 			public:
 				inline State(
 					TSurface &surface,
-					TLoader &loader)
-					: _slots_current{ 1 }
+					TLoader &loader,
+					size_t layers)
+					: _hEvent{ ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL) }
+					, _slots_current{ 0 }
 					, _slots_commandAllocators{}
 					, _slots_commandLists{}
 					, _slots_fences{}
@@ -37,26 +39,27 @@ namespace Voicemeeter {
 					, _blender_hTextureHeap{ nullptr }
 					, _blender_state{ nullptr }
 					, _blender_rootSignature{ nullptr }
+					, _layers_size{ layers }
 					, _layers_hRenderTargetHeap{ nullptr }
 					, _layers_renderTarget{ nullptr }
 					, _layers_hRenderTarget{}
 					, _layers_hTextureHeap{ nullptr }
 					, _layers_state{ nullptr }
 					, _layers_rootSignature{ nullptr }
+					, _layers_fence{ nullptr }
+					, _layers_count{ 0 }
 					, _atlas{ nullptr }
 					, _squareBuffer{ nullptr }
 					, _hSquareBuffer{} {
 					bool failed{ true };
 					auto guardEvents = ::estd::make_guard([
 							&failed,
-							&hEvents = _slots_hEvents
+							&hEvent = _hEvent
 						]()->void {
 							if (!failed) {
 								return;
 							}
-							for (HANDLE hEvent : hEvents) {
-								::CloseHandle(hEvent);
-							}
+							::CloseHandle(hEvent);
 						});
 					{
 						for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
@@ -71,7 +74,6 @@ namespace Voicemeeter {
 									D3D12_COMMAND_LIST_FLAG_NONE,
 									IID_PPV_ARGS(&_slots_commandLists[slot])
 							), "Command list creation failed");
-							_slots_hEvents[slot] = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
 							::Windows::ThrowIfFailed(surface.get_Device()
 								->CreateFence(
 									_slots_counts[slot],
@@ -80,10 +82,11 @@ namespace Voicemeeter {
 							), "Fence creation failed");
 						}
 					}
+					size_t slot{ inc_slots_Current() };
 					{
-						::Windows::ThrowIfFailed(_slots_commandLists[0]
+						::Windows::ThrowIfFailed(get_slots_CommandList(slot)
 							->Reset(
-								_slots_commandAllocators[0].Get(),
+								get_slots_CommandAllocator(slot),
 								nullptr
 						), "Command list reset failed");
 					}
@@ -136,7 +139,8 @@ namespace Voicemeeter {
 						), "Upload buffer map failed");
 						::memcpy(data, square.data(), sizeof(square));
 						squareUploadBuffer->Unmap(0, nullptr);
-						_slots_commandLists[0]->CopyResource(_squareBuffer.Get(), squareUploadBuffer.Get());
+						get_slots_CommandList(slot)
+							->CopyResource(_squareBuffer.Get(), squareUploadBuffer.Get());
 						D3D12_RESOURCE_BARRIER barrier{
 							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 							D3D12_RESOURCE_BARRIER_FLAG_NONE,
@@ -147,7 +151,8 @@ namespace Voicemeeter {
 								D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER
 							}
 						};
-						_slots_commandLists[0]->ResourceBarrier(1, &barrier);
+						get_slots_CommandList(slot)
+							->ResourceBarrier(1, &barrier);
 						_hSquareBuffer.BufferLocation = _squareBuffer->GetGPUVirtualAddress();
 						_hSquareBuffer.StrideInBytes = 2 * sizeof(FLOAT);
 						_hSquareBuffer.SizeInBytes = sizeof(square);
@@ -235,11 +240,12 @@ namespace Voicemeeter {
 							D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX
 						};
 						dstLoc.SubresourceIndex = 0;
-						_slots_commandLists[0]->CopyTextureRegion(
-							&dstLoc,
-							0U, 0U, 0U,
-							&srcLoc,
-							nullptr);
+						get_slots_CommandList(slot)
+							->CopyTextureRegion(
+								&dstLoc,
+								0U, 0U, 0U,
+								&srcLoc,
+								nullptr);
 						D3D12_RESOURCE_BARRIER barrier{
 							D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 							D3D12_RESOURCE_BARRIER_FLAG_NONE,
@@ -250,7 +256,8 @@ namespace Voicemeeter {
 								D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 							}
 						};
-						_slots_commandLists[0]->ResourceBarrier(1U, &barrier);
+						get_slots_CommandList(slot)
+							->ResourceBarrier(1U, &barrier);
 						D3D12_DESCRIPTOR_HEAP_DESC hTextureHeapDesc{
 							D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
 							1,
@@ -275,13 +282,16 @@ namespace Voicemeeter {
 								_layers_hTextureHeap->GetCPUDescriptorHandleForHeapStart());
 					}
 					{
-						::Windows::ThrowIfFailed(_slots_commandLists[0]->Close(
+						::Windows::ThrowIfFailed(get_slots_CommandList(slot)
+							->Close(
 						), "Command list close failed");
-						ID3D12CommandList *commandList{ _slots_commandLists[0].Get() };
+						ID3D12CommandList *commandList{ get_slots_CommandList(slot) };
 						surface.get_CommandQueue()
-							->ExecuteCommandLists(1, &commandList);
+							->ExecuteCommandLists(1U, &commandList);
 						surface.get_CommandQueue()
-							->Signal(_slots_fences[0].Get(), ++_slots_counts[0]);
+							->Signal(
+								get_slots_Fence(slot),
+								inc_slots_Count(slot));
 					}
 					{
 						D3D12_DESCRIPTOR_HEAP_DESC hRenderTargetHeapDesc{
@@ -303,7 +313,7 @@ namespace Voicemeeter {
 						D3D12_RESOURCE_DESC textureDesc{
 							D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 							0,
-							8U, 8U,
+							8U, 8U * _layers_size,
 							1, 1,
 							DXGI_FORMAT_R16G16B16A16_FLOAT,
 							DXGI_SAMPLE_DESC{
@@ -353,6 +363,12 @@ namespace Voicemeeter {
 								_layers_renderTarget.Get(),
 								&hTextureDesc,
 								_blender_hTextureHeap->GetCPUDescriptorHandleForHeapStart());
+						::Windows::ThrowIfFailed(surface.get_Device()
+							->CreateFence(
+								_layers_count,
+								D3D12_FENCE_FLAG_NONE,
+								IID_PPV_ARGS(&_layers_fence)
+						), "Fence creation failed");
 					}
 					{
 						D3D12_DESCRIPTOR_RANGE hTextureRange{
@@ -647,13 +663,6 @@ namespace Voicemeeter {
 								IID_PPV_ARGS(&_blender_state)
 						), "Pipeline state creation failed");
 					}
-					if (_slots_fences[0]->GetCompletedValue() < _slots_counts[0]) {
-						::Windows::ThrowIfFailed(_slots_fences[0]->SetEventOnCompletion(
-							_slots_counts[0], _slots_hEvents[0]
-						), "Event signaling failed");
-						::Windows::WaitForSingleObject(
-							_slots_hEvents[0], INFINITE);
-					}
 					failed = false;
 				};
 				State() = delete;
@@ -661,9 +670,7 @@ namespace Voicemeeter {
 				State(State &&) = delete;
 
 				inline ~State() {
-					for (HANDLE hEvent : _slots_hEvents) {
-						::CloseHandle(hEvent);
-					}
+					::CloseHandle(_hEvent);
 				};
 
 				State & operator=(State const &) = delete;
@@ -671,6 +678,9 @@ namespace Voicemeeter {
 
 				static constexpr size_t SlotsSize{ 3 };
 
+				inline HANDLE get_hEvent() const {
+					return _hEvent;
+				};
 				// slots
 				inline size_t get_slots_Current() const {
 					return _slots_current;
@@ -686,9 +696,6 @@ namespace Voicemeeter {
 				};
 				inline ID3D12Fence * get_slots_Fence(size_t slot) const {
 					return _slots_fences[slot].Get();
-				};
-				inline HANDLE get_slots_hEvent(size_t slot) const {
-					return _slots_hEvents[slot];
 				};
 				inline UINT64 get_slots_Count(size_t slot) const {
 					return _slots_counts[slot];
@@ -707,6 +714,9 @@ namespace Voicemeeter {
 					return _blender_rootSignature.Get();
 				};
 				// layers
+				inline size_t get_layers_Size() const {
+					return _layers_size;
+				};
 				inline ID3D12Resource * get_layers_RenderTarget() const {
 					return _layers_renderTarget.Get();
 				};
@@ -725,6 +735,15 @@ namespace Voicemeeter {
 				inline ID3D12RootSignature * get_layers_RootSignature() const {
 					return _layers_rootSignature.Get();
 				};
+				inline ID3D12Fence * get_layers_Fence() const {
+					return _layers_fence.Get();
+				};
+				inline UINT64 get_layers_Count() const {
+					return _layers_count;
+				};
+				inline UINT64 inc_layers_Count() {
+					return ++(_layers_count);
+				};
 				// ------
 				inline ID3D12Resource * get_Atlas() const {
 					return _atlas.Get();
@@ -734,24 +753,27 @@ namespace Voicemeeter {
 				};
 
 			private:
+				HANDLE _hEvent;
 				// slots
 				size_t _slots_current;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, SlotsSize> _slots_commandAllocators;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, SlotsSize> _slots_commandLists;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, SlotsSize> _slots_fences;
-				::std::array<HANDLE, SlotsSize> _slots_hEvents;
 				::std::array<UINT64, SlotsSize> _slots_counts;
 				// blender
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _blender_hTextureHeap;
 				::Microsoft::WRL::ComPtr<ID3D12PipelineState> _blender_state;
 				::Microsoft::WRL::ComPtr<ID3D12RootSignature> _blender_rootSignature;
 				// layers
+				size_t _layers_size;
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _layers_hRenderTargetHeap;
 				::Microsoft::WRL::ComPtr<ID3D12Resource> _layers_renderTarget;
 				D3D12_CPU_DESCRIPTOR_HANDLE _layers_hRenderTarget;
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _layers_hTextureHeap;
 				::Microsoft::WRL::ComPtr<ID3D12PipelineState> _layers_state;
 				::Microsoft::WRL::ComPtr<ID3D12RootSignature> _layers_rootSignature;
+				::Microsoft::WRL::ComPtr<ID3D12Fence _layers_fence;
+				UINT64 _layers_count;
 				// ------
 				::Microsoft::WRL::ComPtr<ID3D12Resource> _atlas;
 				::Microsoft::WRL::ComPtr<ID3D12Resource> _squareBuffer;

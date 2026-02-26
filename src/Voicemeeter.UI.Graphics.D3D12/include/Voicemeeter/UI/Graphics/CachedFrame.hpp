@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_UI_GRAPHICS_FRAME_HPP
-#define VOICEMEETER_UI_GRAPHICS_FRAME_HPP
+#ifndef VOICEMEETER_UI_GRAPHICS_CACHEDFRAME_HPP
+#define VOICEMEETER_UI_GRAPHICS_CACHEDFRAME_HPP
 
 #include <array>
 #include <utility>
@@ -17,7 +17,7 @@ namespace Voicemeeter {
 				typename TState,
 				typename TQueue,
 				typename TStopwatch>
-			class Frame final {
+			class CachedFrame final {
 			public:
 				inline Frame(
 					TSurface &surface,
@@ -29,14 +29,9 @@ namespace Voicemeeter {
 					, _state{ state }
 					, _queue{ queue }
 					, _stopwatch{ stopwatch }
-					, _frameBinder{ this }
-					, _token{ surface.Subscribe<Frame>() }
-					, _layers_size{ layers }
 					, _point{ 0, 0 }
-					, _vertex{ 0, 0 }
-					, _invalidFrom{ Inf, Inf }
-					, _invalidTo{ 0, 0 } {
-					_token.on_reallocate(_frameBinder);
+					, _vertex{ 0, 0 } {
+
 				};
 				Frame() = delete;
 				Frame(Frame const &) = delete;
@@ -58,18 +53,17 @@ namespace Voicemeeter {
 					_point = value;
 				};
 				inline void set_Size(vector_t const &value) {
-					for (size_t slot{ 0 }; slot < TState::SlotsSize; ++slot) {
-						if (_state.get_slots_Fence(slot)
-								->GetCompletedValue()
-							< _state.get_slots_Count(slot)) {
-							::Windows::ThrowIfFailed(_state.get_slots_Fence(slot)
-								->SetEventOnCompletion(
-									_state.get_slots_Count(slot),
-									_state.get_slots_hEvent(slot)
-							), "Event signaling failed");
-							::Windows::WaitForSingleObject(
-								_state.get_slots_hEvent(slot), INFINITE);
-						}
+					// User source size
+					if (_state.get_layers_Fence()
+							->GetCompletedValue()
+						< _state.get_layers_Count()) {
+						::Windows::ThrowIfFailed(_state.get_layers_Fence()
+							->SetEventOnCompletion(
+								_state.get_layers_Count(),
+								_state.get_hEvent()
+						), "Event signaling failed");
+						::Windows::WaitForSingleObject(
+							_state.get_hEvent(), INFINITE);
 					}
 					D3D12_HEAP_PROPERTIES textureHeapProps{
 						D3D12_HEAP_TYPE_DEFAULT,
@@ -81,7 +75,7 @@ namespace Voicemeeter {
 						D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 						0,
 						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
-						static_cast<UINT>(max(pop(ceil(value[1])), 8) * _layers_size),
+						static_cast<UINT>(max(pop(ceil(value[1])), 8) * _state.get_layers_Size()),
 						1, 1,
 						DXGI_FORMAT_R16G16B16A16_FLOAT,
 						DXGI_SAMPLE_DESC{
@@ -120,29 +114,6 @@ namespace Voicemeeter {
 					_vertex = value;
 				};
 
-				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
-					auto lessFrom = point < _invalidFrom;
-					auto to = point + vertex;
-					auto greaterTo = _invalidTo < to;
-					_invalidFrom[lessFrom] = point[lessFrom];
-					_invalidTo[greaterTo] = to[greaterTo];
-				};
-				inline void Clear(vector_t const &point, vector_t const &vertex) {
-					size_t slot{ _state.get_slots_Current() };
-					D3D12_RECT rect{
-						static_cast<LONG>(pop(floor(point[0]))),
-						static_cast<LONG>(pop(floor(point[1]))),
-						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
-					};
-					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
-					_state.get_slots_CommandList(slot)
-						->ClearRenderTargetView(
-							_state.get_layers_hRenderTarget(),
-							transparent,
-							1U, &rect);
-				};
-
 				inline void Update() {
 					_stopwatch.Lap();
 					if (_queue.empty()) {
@@ -156,10 +127,10 @@ namespace Voicemeeter {
 						::Windows::ThrowIfFailed(_state.get_slots_Fence(slot)
 							->SetEventOnCompletion(
 								_state.get_slots_Count(slot),
-								_state.get_slots_hEvent(slot)
+								_state.get_hEvent()
 						), "Event signaling failed");
 						::Windows::WaitForSingleObject(
-							_state.get_slots_hEvent(slot), INFINITE);
+							_state.get_hEvent(), INFINITE);
 					}
 					::Windows::ThrowIfFailed(_state.get_slots_CommandAllocator(slot)
 						->Reset(
@@ -199,18 +170,10 @@ namespace Voicemeeter {
 						->Signal(
 							_state.get_slots_Fence(slot),
 							_state.inc_slots_Count(slot));
-					RECT rect{
-						static_cast<LONG>(pop(floor(_point[0] + _invalidFrom[0]))),
-						static_cast<LONG>(pop(floor(_point[1] + _invalidFrom[1]))),
-						static_cast<LONG>(pop(ceil(_point[0] + _invalidTo[0]))),
-						static_cast<LONG>(pop(ceil(_point[1] + _invalidTo[1])))
-					};
-					::Windows::InvalidateRect(
-						_surface.get_hWnd(), &rect, FALSE);
-					_invalidFrom[0] = Inf;
-					_invalidFrom[1] = Inf;
-					_invalidTo[0] = 0;
-					_invalidTo[1] = 0;
+					_surface.get_CommandQueue()
+						->Signal(
+							_state.get_layers_Fence(),
+							_state.inc_layers_Count());
 				};
 				inline void Present(vector_t const &point, vector_t const &vertex) {
 					vector_t from{
@@ -221,24 +184,21 @@ namespace Voicemeeter {
 						min(point[0] + vertex[0], _point[0] + _vertex[0]),
 						min(point[1] + vertex[1], _point[1] + _vertex[1])
 					};
-					if (is_any(to < from)) {
+					if (!is_all(from < to)) {
 						return;
 					}
 					size_t slot{ _state.inc_slots_Current() };
-					size_t buffer{
-						_surface.get_SwapChain()
-							->GetCurrentBackBufferIndex()
-					};
+					size_t buffer{ _surface.get_buffers_Current() };
 					if (_state.get_slots_Fence(slot)
 							->GetCompletedValue()
 						< _state.get_slots_Count(slot)) {
 						::Windows::ThrowIfFailed(_state.get_slots_Fence(slot)
 							->SetEventOnCompletion(
 								_state.get_slots_Count(slot),
-								_state.get_slots_hEvent(slot)
+								_state.get_hEvent()
 						), "Event signaling failed");
 						::Windows::WaitForSingleObject(
-							_state.get_slots_hEvent(slot), INFINITE);
+							_state.get_hEvent(), INFINITE);
 					}
 					::Windows::ThrowIfFailed(_state.get_slots_CommandAllocator(slot)
 						->Reset(
@@ -265,20 +225,20 @@ namespace Voicemeeter {
 							_state.get_blender_RootSignature());
 					ID3D12DescriptorHeap *hTextureHeap{ _state.get_blender_hTextureHeap() };
 					_state.get_slots_CommandList(slot)
-						->SetDescriptorHeaps(1, &hTextureHeap);
+						->SetDescriptorHeaps(1U, &hTextureHeap);
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRootDescriptorTable(
-							3, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
+							3U, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
 					_state.get_slots_CommandList(slot)
 						->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 					D3D12_VERTEX_BUFFER_VIEW hSquareBuffer{ _state.get_hSquareBuffer() };
 					_state.get_slots_CommandList(slot)
 						->IASetVertexBuffers(0, 1, &hSquareBuffer);
 					D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
-						_surface.get_hRenderTarget(buffer)
+						_surface.get_buffers_hRenderTarget(buffer)
 					};
 					_state.get_slots_CommandList(slot)
-						->OMSetRenderTargets(1, &hRenderTarget, FALSE, nullptr);
+						->OMSetRenderTargets(1U, &hRenderTarget, FALSE, nullptr);
 					D3D12_RECT scissor{
 						static_cast<LONG>(pop(floor(from[0]))),
 						static_cast<LONG>(pop(floor(from[1]))),
@@ -296,15 +256,15 @@ namespace Voicemeeter {
 					_state.get_slots_CommandList(slot)
 						->RSSetViewports(1, &viewport);
 					FLOAT u{ static_cast<FLOAT>(from[0] - _point[0]) / _vertex[0] };
-					FLOAT v{ static_cast<FLOAT>(from[1] - _point[1]) / (_vertex[1] * _layers_size) };
+					FLOAT v{ static_cast<FLOAT>(from[1] - _point[1]) / (_vertex[1] * _state.get_layers_Size()) };
 					::std::array<FLOAT, 5> constants{
 						u,
-						v + static_cast<FLOAT>(to[1] - from[1]) / (_vertex[1] * _layers_size),
+						v + static_cast<FLOAT>(to[1] - from[1]) / (_vertex[1] * _state.get_layers_Size()),
 						u + static_cast<FLOAT>(to[0] - from[0]) / _vertex[0],
 						v,
-						1.F / _layers_size
+						1.F / _state.get_layers_Size()
 					};
-					UINT layers{ static_cast<UINT>(_layers_size) };
+					UINT layers{ static_cast<UINT>(_state.get_layers_Size()) };
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(
 							0,
@@ -336,60 +296,45 @@ namespace Voicemeeter {
 						->Signal(
 							_state.get_slots_Fence(slot),
 							_state.inc_slots_Count(slot));
+					_surface.get_CommandQueue()
+						->Signal(
+							_state.get_layers_Fence(),
+							_state.inc_layers_Count());
+				};
+
+				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
+					RECT rect{
+						static_cast<LONG>(pop(floor(_point[0] + point[0]))),
+						static_cast<LONG>(pop(floor(_point[1] + point[1]))),
+						static_cast<LONG>(pop(ceil(_point[0] + point[0] + vertex[0]))),
+						static_cast<LONG>(pop(ceil(_point[1] + point[1] + vertex[0])))
+					};
+					::Windows::InvalidateRect(
+						_surface.get_hWnd(), &rect, FALSE);
+				};
+				inline void Clear(vector_t const &point, vector_t const &vertex) {
+					size_t slot{ _state.get_slots_Current() };
+					D3D12_RECT rect{
+						static_cast<LONG>(pop(floor(point[0]))),
+						static_cast<LONG>(pop(floor(point[1]))),
+						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
+						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
+					};
+					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
+					_state.get_slots_CommandList(slot)
+						->ClearRenderTargetView(
+							_state.get_layers_hRenderTarget(),
+							transparent,
+							1U, &rect);
 				};
 
 			private:
-				class FrameBinder final {
-				public:
-					inline explicit FrameBinder(Frame *that)
-						: that{ that } {
-
-					};
-					FrameBinder() = delete;
-					FrameBinder(FrameBinder const &) = delete;
-					FrameBinder(FrameBinder &&) = delete;
-
-					inline ~FrameBinder() = default;
-
-					FrameBinder & operator=(FrameBinder const &) = delete;
-					FrameBinder & operator=(FrameBinder &&) = delete;
-
-					inline void Bind(TSurface &target) {
-
-					};
-					inline void Unbind(TSurface &target) {
-						for (size_t slot{ 0 }; slot < TState::SlotsSize; ++slot) {
-							if (that->_state.get_slots_Fence(slot)
-									->GetCompletedValue()
-								< that->_state.get_slots_Count(slot)) {
-								::Windows::ThrowIfFailed(that->_state.get_slots_Fence(slot)
-									->SetEventOnCompletion(
-										that->_state.get_slots_Count(slot),
-										that->_state.get_slots_hEvent(slot)
-								), "Event signaling failed");
-								::Windows::WaitForSingleObject(
-									that->_state.get_slots_hEvent(slot), INFINITE);
-							}
-						}
-					};
-
-				private:
-					Frame *that;
-				};
-
-				friend class FrameBinder;
-
 				TSurface &_surface;
 				TState &_state;
 				TQueue &_queue;
 				TStopwatch &_stopwatch;
-				FrameBinder _frameBinder;
-				typename TSurface::token _token;
-				size_t _layers_size;
 				vector_t _point;
 				vector_t _vertex;
-				vector_t _invalidFrom;
-				vector_t _invalidTo;
 			};
 		}
 	}

@@ -2,8 +2,7 @@
 #define VOICEMEETER_UI_GRAPHICS_SURFACE_HPP
 
 #include <array>
-#include <memory>
-#include <unordered_map>
+#include <vector>
 
 #include "memory.hpp"
 #include "wheel.hpp"
@@ -22,32 +21,32 @@ namespace Voicemeeter {
 			public:
 				inline explicit Surface(HWND hWnd)
 					: _hWnd{ hWnd }
+					, _hEvent{ ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL) }
 					, _device{ nullptr }
 					, _commandQueue{ nullptr }
 					, _slots_current{ 0 }
 					, _slots_commandAllocators{}
 					, _slots_commandLists{}
 					, _slots_fences{}
-					, _slots_hEvents{}
 					, _slots_counts{}
 					, _swapChain{ nullptr }
-					, _hRenderTargetHeap{ nullptr }
-					, _renderTargets{}
-					, _hRenderTargets{}
-					, _compositionTarget{ nullptr }
-					, _first{ false }
-					, _binders{} {
+					, _buffers_hRenderTargetHeap{ nullptr }
+					, _buffers_renderTargets{}
+					, _buffers_hRenderTargets{}
+					, _buffers_fence{ nullptr }
+					, _buffers_count{ 0 }
+					, _buffers_first{ true }
+					, _buffers_invalids{}
+					, _compositionTarget{ nullptr } {
 					bool failed{ true };
 					auto guardEvents = ::estd::make_guard([
 							&failed,
-							&hEvents = _slots_hEvents
+							&hEvent = _hEvent
 						]()->void {
 							if (!failed) {
 								return;
 							}
-							for (HANDLE hEvent : hEvents) {
-								::CloseHandle(hEvent);
-							}
+							::CloseHandle(hEvent);
 						});
 					::Windows::ThrowIfFailed(::CoInitialize(
 						NULL
@@ -106,7 +105,6 @@ namespace Voicemeeter {
 								D3D12_COMMAND_LIST_FLAG_NONE,
 								IID_PPV_ARGS(&_slots_commandLists[slot])
 							), "Command list creation failed");
-							_slots_hEvents[slot] = ::Windows::CreateEventW(NULL, FALSE, FALSE, NULL);
 							::Windows::ThrowIfFailed(_device->CreateFence(
 								_slots_counts[slot],
 								D3D12_FENCE_FLAG_NONE,
@@ -147,10 +145,10 @@ namespace Voicemeeter {
 						};
 						::Windows::ThrowIfFailed(_device->CreateDescriptorHeap(
 							&hRenderTargetHeapDesc,
-							IID_PPV_ARGS(&_hRenderTargetHeap)
+							IID_PPV_ARGS(&_buffers_hRenderTargetHeap)
 						), "RTV heap descriptor creation failed");
 						D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
-							_hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
+							_buffers_hRenderTargetHeap->GetCPUDescriptorHandleForHeapStart()
 						};
 						UINT hRenderTargetSize{
 							_device->GetDescriptorHandleIncrementSize(
@@ -159,14 +157,19 @@ namespace Voicemeeter {
 						for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
 							::Windows::ThrowIfFailed(_swapChain->GetBuffer(
 								static_cast<UINT>(buffer),
-								IID_PPV_ARGS(&_renderTargets[buffer])
+								IID_PPV_ARGS(&_buffers_renderTargets[buffer])
 							), "Failed to get swap chain buffer");
-							_hRenderTargets[buffer].ptr = SIZE_T(INT64(hRenderTarget.ptr)
+							_buffers_hRenderTargets[buffer].ptr = SIZE_T(INT64(hRenderTarget.ptr)
 								+ INT64(buffer * hRenderTargetSize));
 							_device->CreateRenderTargetView(
-								_renderTargets[buffer].Get(),
-								nullptr, _hRenderTargets[buffer]);
+								_buffers_renderTargets[buffer].Get(),
+								nullptr, _buffers_hRenderTargets[buffer]);
 						}
+						::Windows::ThrowIfFailed(_device->CreateFence(
+							_buffers_count,
+							D3D12_FENCE_FLAG_NONE,
+							IID_PPV_ARGS(&_buffers_fence)
+						), "Fence creation failed");
 					}
 					{
 						::Microsoft::WRL::ComPtr<IDCompositionDevice> compositionDevice{ nullptr };
@@ -198,234 +201,166 @@ namespace Voicemeeter {
 				Surface(Surface &&) = delete;
 
 				inline ~Surface() {
-					for (HANDLE hEvent : _slots_hEvents) {
-						::CloseHandle(hEvent);
-					}
+					::CloseHandle(_hEvent);
 				};
 
 				Surface & operator=(Surface const &) = delete;
 				Surface & operator=(Surface &&) = delete;
 
-				inline void set_Size(vector_t const &value) {
+				inline void Resize(vector_t const &value) {
 					// TODO: use source size
-					for (auto &[clientId, binder] : _binders) {
-						binder->Unbind(*this);
-					}
-					for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
-						if (_slots_fences[slot]
-								->GetCompletedValue()
-							< _slots_counts[slot]) {
-							::Windows::ThrowIfFailed(_slots_fences[slot]
-								->SetEventOnCompletion(
-									_slots_counts[slot],
-									_slots_hEvents[slot]
-							), "Event signaling failed");
-							::Windows::WaitForSingleObject(
-								_slots_hEvents[slot], INFINITE);
-						}
+					if (get_buffers_Fence()
+							->GetCompletedValue()
+						< get_buffers_Count()) {
+						::Windows::ThrowIfFailed(get_buffers_Fence()
+							->SetEventOnCompletion(
+								get_buffers_Count(),
+								get_hEvent()
+						), "Event signaling failed");
+						::Windows::WaitForSingleObject(
+							get_hEvent(), INFINITE);
 					}
 					for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
-						_renderTargets[buffer] = nullptr;
+						*geta_buffers_RenderTarget(buffer) = nullptr;
 					}
-					::Windows::ThrowIfFailed(_swapChain->ResizeBuffers(
-						0,
-						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
-						static_cast<UINT>(max(pop(ceil(value[1])), 8)),
-						DXGI_FORMAT_UNKNOWN,
-						0
+					::Windows::ThrowIfFailed(get_SwapChain()
+						->ResizeBuffers(
+							0,
+							static_cast<UINT>(max(pop(ceil(value[0])), 8)),
+							static_cast<UINT>(max(pop(ceil(value[1])), 8)),
+							DXGI_FORMAT_UNKNOWN,
+							0
 					), "Swap chain resize failed");
 					for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
-						::Windows::ThrowIfFailed(_swapChain->GetBuffer(
-							static_cast<UINT>(buffer),
-							IID_PPV_ARGS(&_renderTargets[buffer])
+						::Windows::ThrowIfFailed(get_SwapChain()
+							->GetBuffer(
+								static_cast<UINT>(buffer),
+								IID_PPV_ARGS(geta_buffers_RenderTarget(buffer))
 						), "Failed to get swap chain buffer");
-						_device->CreateRenderTargetView(
-							_renderTargets[buffer].Get(),
-							nullptr, _hRenderTargets[buffer]);
-					}
-					for (auto &[clientId, binder] : _binders) {
-						binder->Bind(*this);
+						get_Device()
+							->CreateRenderTargetView(
+								get_buffers_RenderTarget(buffer),
+								nullptr, get_buffers_hRenderTarget(buffer));
 					}
 					_first = true;
 				};
-
-				inline void Clear(vector_t const &point, vector_t const &vertex) {
-					size_t slot{ (_slots_current = (_slots_current + 1) % SlotsSize) };
-					size_t buffer{ _swapChain->GetCurrentBackBufferIndex() };
-					if (_slots_fences[slot]
+				inline void Prepare(vector_t const &point, vector_t const &vertex) {
+					size_t slot{ inc_slots_Current() };
+					size_t buffer{ get_buffers_Current() };
+					if (get_slots_Fence(slot)
 							->GetCompletedValue()
-						< _slots_counts[slot]) {
-						::Windows::ThrowIfFailed(_slots_fences[slot]
+						< get_slots_Count(slot)) {
+						::Windows::ThrowIfFailed(get_slots_Fence(slot)
 							->SetEventOnCompletion(
-								_slots_counts[slot],
-								_slots_hEvents[slot]
+								get_slots_Count(slot),
+								get_slots_hEvent(slot)
 						), "Event signaling failed");
 						::Windows::WaitForSingleObject(
-							_slots_hEvents[slot], INFINITE);
+							get_slots_hEvent(), INFINITE);
 					}
-					::Windows::ThrowIfFailed(_slots_commandAllocators[slot]
+					::Windows::ThrowIfFailed(get_slots_CommandAllocator(slot)
 						->Reset(
 					), "Command allocator reset failed");
-					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+					::Windows::ThrowIfFailed(get_slots_CommandList(slot)
 						->Reset(
-							_slots_commandAllocators[slot].Get(),
+							get_slots_CommandAllocator(slot),
 							nullptr
 					), "Command list reset failed");
 					D3D12_RESOURCE_BARRIER barrier{
 						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 						D3D12_RESOURCE_BARRIER_FLAG_NONE,
 						D3D12_RESOURCE_TRANSITION_BARRIER{
-							_renderTargets[buffer].Get(),
+							get_buffers_RenderTarget(buffer),
 							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 							D3D12_RESOURCE_STATE_PRESENT,
 							D3D12_RESOURCE_STATE_RENDER_TARGET
 						}
 					};
-					_slots_commandLists[slot]
+					get_slots_CommandList(slot)
 						->ResourceBarrier(1U, &barrier);
-					_slots_commandLists[slot]
-						->OMSetRenderTargets(
-							1, &_hRenderTargets[buffer], FALSE, nullptr);
-					D3D12_RECT rect{
-						static_cast<LONG>(pop(floor(point[0]))),
-						static_cast<LONG>(pop(floor(point[1]))),
-						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
+					D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{
+						get_buffers_hRenderTarget(buffer)
 					};
+					get_slots_CommandList(slot)
+						->OMSetRenderTargets(
+							1, &hRenderTarget, FALSE, nullptr);
+					Invalidate(point, vertex);
 					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
-					_slots_commandLists[slot]
+					get_slots_CommandList(slot)
 						->ClearRenderTargetView(
-							_hRenderTargets[buffer],
+							get_buffers_hRenderTarget(buffer),
 							transparent,
-							1U, &rect);
-					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+							1U, &_buffers_invalid[0]);
+					::Windows::ThrowIfFailed(get_slots_CommandList(slot)
 						->Close(
 					), "Command list close failed");
-					ID3D12CommandList *commandList{ _slots_commandLists[slot].Get() };
-					_commandQueue->ExecuteCommandLists(
-						1, &commandList);
-					_commandQueue->Signal(
-						_slots_fences[slot].Get(), ++_slots_counts[slot]);
+					ID3D12CommandList *commandList{ get_slots_CommandList(slot) };
+					get_CommandQueue()
+						->ExecuteCommandLists(1, &commandList);
+					get_CommandQueue()
+						->Signal(
+							get_slots_Fence(slot),
+							inc_slots_Count(slot));
+					get_CommandQueue()
+						->Signal(
+							get_buffers_Fence(),
+							inc_buffers_Count());
 				};
-
-				inline void Present(vector_t const &point, vector_t const &vertex) {
-					size_t slot{ (_slots_current = (_slots_current + 1) % SlotsSize) };
-					size_t buffer{ _swapChain->GetCurrentBackBufferIndex() };
-					if (_slots_fences[slot]
+				inline void Commit() {
+					size_t slot{ inc_slots_Current() };
+					size_t buffer{ get_buffers_Current() };
+					if (get_slots_Fence(slot)
 							->GetCompletedValue()
-						< _slots_counts[slot]) {
-						::Windows::ThrowIfFailed(_slots_fences[slot]
+						< get_slots_Count(slot)) {
+						::Windows::ThrowIfFailed(get_slots_Fence(slot)
 							->SetEventOnCompletion(
-								_slots_counts[slot],
-								_slots_hEvents[slot]
+								get_slots_Count(slot),
+								get_hEvent()
 						), "Event signaling failed");
 						::Windows::WaitForSingleObject(
-							_slots_hEvents[slot], INFINITE);
+							get_hEvent(), INFINITE);
 					}
-					::Windows::ThrowIfFailed(_slots_commandAllocators[slot]
+					::Windows::ThrowIfFailed(get_slots_CommandAllocator(slot)
 						->Reset(
 					), "Command allocator reset failed");
-					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+					::Windows::ThrowIfFailed(get_slots_CommandList(slot)
 						->Reset(
-							_slots_commandAllocators[slot].Get(),
+							get_slots_CommandAllocator(slot),
 							nullptr
 					), "Command list reset failed");
 					D3D12_RESOURCE_BARRIER barrier{
 						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 						D3D12_RESOURCE_BARRIER_FLAG_NONE,
 						D3D12_RESOURCE_TRANSITION_BARRIER{
-							_renderTargets[buffer].Get(),
+							get_buffers_RenderTarget(buffer),
 							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 							D3D12_RESOURCE_STATE_RENDER_TARGET,
 							D3D12_RESOURCE_STATE_PRESENT
 						}
 					};
-					_slots_commandLists[slot]
+					get_slots_CommandList(slot)
 						->ResourceBarrier(1U, &barrier);
-					::Windows::ThrowIfFailed(_slots_commandLists[slot]
+					::Windows::ThrowIfFailed(get_slots_CommandList(slot)
 						->Close(
 					), "Command list close failed");
-					ID3D12CommandList *commandList{ _slots_commandLists[slot].Get() };
-					_commandQueue->ExecuteCommandLists(
-						1, &commandList);
-					_commandQueue->Signal(
-						_slots_fences[slot].Get(), ++_slots_counts[slot]);
-					if (_first) {
-						::Windows::ThrowIfFailed(_swapChain->Present(
-							0U, 0U
-						), "Presentation failed");
-						_first = false;
-					} else {
-						RECT rect{
-							static_cast<LONG>(pop(floor(point[0]))),
-							static_cast<LONG>(pop(floor(point[1]))),
-							static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-							static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
-						};
-						DXGI_PRESENT_PARAMETERS params{
-							1, &rect,
-							nullptr,
-							nullptr
-						};
-						::Windows::ThrowIfFailed(_swapChain->Present1(
-							0U, 0U,
-							&params
-						), "Presentation failed");
-					}
+					ID3D12CommandList *commandList{ get_slots_CommandList(slot) };
+					get_CommandQueue()
+						->ExecuteCommandLists(1, &commandList);
+					get_CommandQueue()
+						->Signal(
+							get_slots_Fence(slot),
+							inc_slots_Count(slot));
+					Present();
 				}
 
-				class token final {
-				public:
-					token() = delete;
-					token(token const &) = delete;
-					inline token(token &&other)
-						: that{ other.that }
-						, _clientId{ other._clientId } {
-						other._clientId = nullptr;
-					};
-
-					inline ~token() {
-						if (!_clientId) {
-							return;
-						}
-						that->_binders
-							.erase(_clientId);
-					};
-
-					token & operator=(token const &) = delete;
-					token & operator=(token &&) = delete;
-
-					template<typename TBinder>
-					inline void on_reallocate(TBinder &target) {
-						that->_binders[_clientId]
-							= ::std::make_unique<
-								Binder<TBinder>>(
-								&target);
-					};
-
-				private:
-					friend class Surface;
-
-					inline token(
-						Surface *that,
-						void const *clientId)
-						: that{ that }
-						, _clientId{ clientId } {
-
-					};
-
-					Surface *that;
-					void const *_clientId;
-				};
-				template<typename TClient>
-				inline token Subscribe() {
-					return token{ this, &typeid(TClient) };
-				};
-
 				static constexpr size_t BuffersSize{ 2 };
+				static constexpr size_t SlotsSize{ 3 };
 
 				inline HWND get_hWnd() const {
 					return _hWnd;
+				};
+				inline HANDLE get_hEvent() const {
+					return _hEvent;
 				};
 				inline ID3D12Device8 * get_Device() const {
 					return _device.Get();
@@ -433,62 +368,92 @@ namespace Voicemeeter {
 				inline ID3D12CommandQueue * get_CommandQueue() const {
 					return _commandQueue.Get();
 				};
+				// slots
+				inline size_t get_slots_Current() const {
+					return _slots_current;
+				};
+				inline size_t inc_slots_Current() {
+					return (_slots_current = (_slots_current + 1) % SlotsSize);
+				};
+				inline ID3D12CommandAllocator * get_slots_CommandAllocator(size_t slot) const {
+					return _slots_commandAllocators[slot].Get();
+				};
+				inline ID3D12GraphicsCommandList * get_slots_CommandList(size_t slot) const {
+					return _slots_commandLists[slot].Get();
+				};
+				inline ID3D12Fence * get_slots_Fence(size_t slot) const {
+					return _slots_fences[slot].Get();
+				};
+				inline UINT64 get_slots_Count(size_t slot) const {
+					return _slots_counts[slot];
+				};
+				inline UINT64 inc_slots_Count(size_t slot) {
+					return ++_slots_counts[slot];
+				};
+				// -----
 				inline IDXGISwapChain4 * get_SwapChain() const {
 					return _swapChain.Get();
 				};
-				inline D3D12_CPU_DESCRIPTOR_HANDLE get_hRenderTarget(size_t buffer) const {
-					return _hRenderTargets[buffer];
+				// buffers
+				inline size_t get_buffers_Current() const {
+					return _swapChain->GetCurrentBackBufferIndex();
+				};
+				inline ID3D12Resource * get_buffers_RenderTarget(size_t buffer) const {
+					return _buffers_rengerTargets[buffer].Get();
+				};
+				inline ID3D12Resource ** geta_buffers_RenderTarget(size_t buffer) {
+					return &_buffers_renderTargets[buffer];
+				};
+				inline D3D12_CPU_DESCRIPTOR_HANDLE get_buffers_hRenderTarget(size_t buffer) const {
+					return _buffers_hRenderTargets[buffer];
+				};
+				inline ID3D12Fence get_buffers_Fence() const {
+					return _buffers_fence.Get();
+				};
+				inline UINT64 get_buffers_Count() const {
+					return _buffers_count;
+				};
+				inline UINT64 inc_buffers_Count() {
+					return ++_buffers_count;
+				};
+				// -----
+
+				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
+					_buffers_invalids.emplace_back(
+						static_cast<LONG>(pop(floor(point[0]))),
+						static_cast<LONG>(pop(floor(point[1]))),
+						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
+						static_cast<LONG>(pop(ceil(point[1] + vertex[1]))));
+				};
+				inline void Present() {
+					if (_buffers_first) {
+						::Windows::ThrowIfFailed(get_SwapChain()
+							->Present(
+								0U, 0U
+						), "Presentation failed");
+						_first = false;
+					} else {
+						DXGI_PRESENT_PARAMETERS params{
+							_buffers_invalids.size(), &_buffers_invalids[0],
+							nullptr,
+							nullptr
+						};
+						::Windows::ThrowIfFailed(get_SwapChain()
+							->Present1(
+								0U, 0U,
+								&params
+						), "Presentation failed");
+					}
+					get_CommandQueue()
+						->Signal(
+							get_buffers_Fence(),
+							inc_buffers_Count());
+					_buffers_invalids.clear();
 				};
 
 			private:
-				class IBinder {
-				public:
-					IBinder(IBinder const &) = delete;
-					IBinder(IBinder &&) = delete;
-
-					virtual ~IBinder() {};
-
-					IBinder & operator=(IBinder const &) = delete;
-					IBinder & operator=(IBinder &&) = delete;
-
-					virtual void Bind(Surface &target) = 0;
-					virtual void Unbind(Surface &target) = 0;
-
-				protected:
-					inline IBinder() = default;
-				};
-				template<typename TBinder>
-				class Binder final : public IBinder {
-				public:
-					inline explicit Binder(TBinder *that)
-						: that{ that } {
-
-					};
-					Binder() = delete;
-					Binder(Binder const &) = delete;
-					Binder(Binder &&) = delete;
-
-					inline ~Binder() = default;
-
-					Binder & operator=(Binder const &) = delete;
-					Binder & operator=(Binder &&) = delete;
-
-					virtual void Bind(Surface &target) override {
-						that->Bind(target);
-					};
-					virtual void Unbind(Surface &target) override {
-						that->Unbind(target);
-					};
-
-				private:
-					TBinder *that;
-				};
-
-				friend class token;
-
-				static constexpr size_t SlotsSize{ 2 };
-
 				HWND _hWnd;
+				HANDLE _hEvent;
 				::Microsoft::WRL::ComPtr<ID3D12Device8> _device;
 				::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
 				// slots
@@ -496,19 +461,19 @@ namespace Voicemeeter {
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, SlotsSize> _slots_commandAllocators;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, SlotsSize> _slots_commandLists;
 				::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, SlotsSize> _slots_fences;
-				::std::array<HANDLE, SlotsSize> _slots_hEvents;
 				::std::array<UINT64, SlotsSize> _slots_counts;
 				// -----
 				::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
-				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _hRenderTargetHeap;
-				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, BuffersSize> _renderTargets;
-				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, BuffersSize> _hRenderTargets;
+				// buffers
+				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _buffers_hRenderTargetHeap;
+				::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, BuffersSize> _buffers_renderTargets;
+				::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, BuffersSize> _buffers_hRenderTargets;
+				::Microsoft::WRL::ComPtr<ID3D12Fence> _buffers_fence;
+				UINT64 _buffers_count;
+				bool _buffers_first;
+				::std::vector<D3D12_RECT> _buffers_invalids;
+				// -----
 				::Microsoft::WRL::ComPtr<IDCompositionTarget> _compositionTarget;
-				bool _first;
-				::std::unordered_map<
-					void const *,
-					::std::unique_ptr<IBinder>
-				> _binders;
 			};
 		}
 	}
