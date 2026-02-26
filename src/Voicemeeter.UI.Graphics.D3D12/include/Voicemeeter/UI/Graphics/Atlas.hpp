@@ -1,6 +1,7 @@
 #ifndef VOICEMEETER_UI_GRAPHICS_ATLAS_HPP
 #define VOICEMEETER_UI_GRAPHICS_ATLAS_HPP
 
+#include <algorithm>
 #include <array>
 
 #include "wheel.hpp"

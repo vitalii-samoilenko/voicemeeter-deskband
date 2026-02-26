@@ -3,11 +3,11 @@
 
 #include <array>
 #include <utility>
-#include <vector>
 
 #include "wheel.hpp"
 
 #include "Windows/API.hpp"
+#include "Windows/COM.hpp"
 #include <d3d12.h>
 
 namespace Voicemeeter {
@@ -136,24 +136,16 @@ namespace Voicemeeter {
 
 				};
 
-				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
-					_surface.Invalidate(point, vertex);
-				};
-				inline void Clear(vector_t const &point, vector_t const &vertex) {
+				inline void Prepare(vector_t const &point, vector_t const &vertex) {
+					D3D12_RECT const &target{ _surface.Invalidate(point, vertex) };
 					size_t slot{ _state.get_slots_Current() };
 					size_t buffer{ _surface.get_buffers_Current() };
-					D3D12_RECT rect{
-						static_cast<LONG>(pop(floor(point[0]))),
-						static_cast<LONG>(pop(floor(point[1]))),
-						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
-					};
 					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
 					_state.get_slots_CommandList(slot)
 						->ClearRenderTargetView(
 							_surface.get_buffers_hRenderTarget(buffer),
 							transparent,
-							1U, &rect);
+							1U, &target);
 				};
 
 			private:

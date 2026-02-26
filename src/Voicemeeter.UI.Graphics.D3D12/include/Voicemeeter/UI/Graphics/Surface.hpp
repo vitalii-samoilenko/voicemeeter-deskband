@@ -284,13 +284,13 @@ namespace Voicemeeter {
 					get_slots_CommandList(slot)
 						->OMSetRenderTargets(
 							1, &hRenderTarget, FALSE, nullptr);
-					Invalidate(point, vertex);
+					D3D12_RECT const &target{ Invalidate(point, vertex) };
 					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
 					get_slots_CommandList(slot)
 						->ClearRenderTargetView(
 							get_buffers_hRenderTarget(buffer),
 							transparent,
-							1U, &_buffers_invalid[0]);
+							1U, &target);
 					::Windows::ThrowIfFailed(get_slots_CommandList(slot)
 						->Close(
 					), "Command list close failed");
@@ -418,12 +418,13 @@ namespace Voicemeeter {
 				};
 				// -----
 
-				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
+				inline D3D12_RECT const & Invalidate(vector_t const &point, vector_t const &vertex) {
 					_buffers_invalids.emplace_back(
 						static_cast<LONG>(pop(floor(point[0]))),
 						static_cast<LONG>(pop(floor(point[1]))),
 						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
 						static_cast<LONG>(pop(ceil(point[1] + vertex[1]))));
+					return _buffers_invalids.back();
 				};
 				inline void Present() {
 					if (_buffers_first) {

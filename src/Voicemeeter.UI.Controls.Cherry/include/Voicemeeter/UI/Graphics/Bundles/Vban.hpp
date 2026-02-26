@@ -87,14 +87,12 @@ namespace Voicemeeter {
 						_changes.reset();
 						_slot.reset();
 						_toolkit.get_Frame()
-							.Clear(_framePoint, _frameVertex);
+							.Prepare(_framePoint, _frameVertex);
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
 								_framePoint, _frameVertex,
 								_frameRgba);
-						_toolkit.get_Frame()
-							.Invalidate(_framePoint, _frameVertex);
 					};
 
 				protected:

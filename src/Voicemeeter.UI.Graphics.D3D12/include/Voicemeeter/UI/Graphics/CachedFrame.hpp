@@ -7,7 +7,9 @@
 #include "wheel.hpp"
 
 #include "Windows/API.hpp"
+#include "Windows/COM.hpp"
 #include <d3d12.h>
+#include <dxgi1_6.h>
 
 namespace Voicemeeter {
 	namespace UI {
@@ -302,17 +304,7 @@ namespace Voicemeeter {
 							_state.inc_layers_Count());
 				};
 
-				inline void Invalidate(vector_t const &point, vector_t const &vertex) {
-					RECT rect{
-						static_cast<LONG>(pop(floor(_point[0] + point[0]))),
-						static_cast<LONG>(pop(floor(_point[1] + point[1]))),
-						static_cast<LONG>(pop(ceil(_point[0] + point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(_point[1] + point[1] + vertex[0])))
-					};
-					::Windows::InvalidateRect(
-						_surface.get_hWnd(), &rect, FALSE);
-				};
-				inline void Clear(vector_t const &point, vector_t const &vertex) {
+				inline void Prepare(vector_t const &point, vector_t const &vertex) {
 					size_t slot{ _state.get_slots_Current() };
 					D3D12_RECT rect{
 						static_cast<LONG>(pop(floor(point[0]))),
@@ -326,6 +318,14 @@ namespace Voicemeeter {
 							_state.get_layers_hRenderTarget(),
 							transparent,
 							1U, &rect);
+					rect.top %= pop(ceil(_vertex[1]));
+					rect.bottom %= pop(ceil(_vertex[1]));
+					rect.left += pop(floor(_point[0]));
+					rect.top += pop(floor(_point[1]));
+					rect.right += pop(ceil(_point[0]));
+					rect.bottom += pop(ceil(_point[1]));
+					::Windows::InvalidateRect(
+						_surface.get_hWnd(), &rect, FALSE);
 				};
 
 			private:

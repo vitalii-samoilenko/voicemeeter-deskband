@@ -144,7 +144,7 @@ namespace Voicemeeter {
 						_changes.reset();
 						_slot.reset();
 						_toolkit.get_Frame()
-							.Clear(_framePoint, _frameVertex);
+							.Prepare(_framePoint, _frameVertex);
 						_toolkit.get_Atlas()
 							.FillSDF(
 								_frameAtlasPoint, _frameAtlasVertex,
@@ -155,8 +155,6 @@ namespace Voicemeeter {
 								_labelAtlasPoint, _labelAtlasVertex,
 								_labelPoint, _labelVertex,
 								_labelRgba);
-						_toolkit.get_Frame()
-							.Invalidate(_framePoint, _frameVertex);
 					};
 
 				protected:

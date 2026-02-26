@@ -1,6 +1,7 @@
 #ifndef WHEEL_HPP
 #define WHEEL_HPP
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <limits>
