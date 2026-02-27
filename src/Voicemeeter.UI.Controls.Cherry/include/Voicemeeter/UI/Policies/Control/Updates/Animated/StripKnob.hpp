@@ -71,9 +71,9 @@ namespace Voicemeeter {
 										targetRgba = &_toolkit.get_Theme()
 											.Active;
 									}
-								} else if (5 < state.level) {
-									if (700 < state.level) {
-										if (1000 < state.level) {
+								} else if (push(5) < state.level) {
+									if (push(700) < state.level) {
+										if (push(10000) < state.level) {
 											targetVertex[2] = _StripKnob_AnimationLength;
 											targetRgba = &_toolkit.get_Theme()
 												.EqHigh;

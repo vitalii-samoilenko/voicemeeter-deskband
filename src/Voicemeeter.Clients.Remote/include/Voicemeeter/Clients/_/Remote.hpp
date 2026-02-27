@@ -246,7 +246,7 @@ namespace Voicemeeter {
 						.get_Channel<Channels>()
 						.set_Level<bag<TMixer>>(code
 							? throw ::std::runtime_error{ "level" }
-							: static_cast<num_t>(value * One))))
+							: static_cast<num_t>(value * push(10000)))))
 					, ...);
 				};
 

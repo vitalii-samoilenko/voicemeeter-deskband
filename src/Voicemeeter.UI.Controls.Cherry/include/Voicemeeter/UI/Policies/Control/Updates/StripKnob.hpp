@@ -41,13 +41,13 @@ namespace Voicemeeter {
 												.Error
 											: &_toolkit.get_Theme()
 												.Active
-										: 700 < state.level
-											? 1000 < state.level
+										: push(700) < state.level
+											? push(10000) < state.level
 												? &_toolkit.get_Theme()
 													.EqHigh
 												: &_toolkit.get_Theme()
 													.EqMedium
-											: 5 < state.level
+											: push(5) < state.level
 												? &_toolkit.get_Theme()
 													.EqLow
 												: &_toolkit.get_Theme()
