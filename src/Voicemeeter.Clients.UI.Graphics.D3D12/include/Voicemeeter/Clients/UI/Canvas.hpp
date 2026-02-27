@@ -89,16 +89,12 @@ namespace Voicemeeter {
 					_timer = &value;
 					return *this;
 				};
-				inline DirectCanvasBuilder & set_Layers(size_t value) {
-					_layers = value;
-					return *this;
-				};
 
 			protected:
 				inline DirectCanvasBuilder()
 					: _surface{ nullptr }
 					, _timer{ nullptr }
-					, _layers{ 1 } {
+					, _layers{ 0 } {
 
 				};
 

@@ -34,7 +34,6 @@ namespace Voicemeeter {
 					, _slots_commandAllocators{}
 					, _slots_commandLists{}
 					, _slots_fences{}
-					, _slots_hEvents{}
 					, _slots_counts{}
 					, _blender_hTextureHeap{ nullptr }
 					, _blender_state{ nullptr }
@@ -293,6 +292,7 @@ namespace Voicemeeter {
 								get_slots_Fence(slot),
 								inc_slots_Count(slot));
 					}
+					if (_layers_size)
 					{
 						D3D12_DESCRIPTOR_HEAP_DESC hRenderTargetHeapDesc{
 							D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1U,
@@ -313,7 +313,7 @@ namespace Voicemeeter {
 						D3D12_RESOURCE_DESC textureDesc{
 							D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 							0,
-							8U, 8U * _layers_size,
+							8U, static_cast<UINT>(8U * _layers_size),
 							1, 1,
 							DXGI_FORMAT_R16G16B16A16_FLOAT,
 							DXGI_SAMPLE_DESC{
@@ -421,6 +421,7 @@ namespace Voicemeeter {
 								IID_PPV_ARGS(&_layers_rootSignature)
 						), "Root signature creation failed");
 					}
+					if (_layers_size)
 					{
 						D3D12_DESCRIPTOR_RANGE hTextureRange{
 							D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
@@ -590,6 +591,7 @@ namespace Voicemeeter {
 								IID_PPV_ARGS(&_layers_state)
 						), "Pipeline state creation failed");
 					}
+					if (_layers_size)
 					{
 						::std::array<D3D12_INPUT_ELEMENT_DESC, 2> inputDescs{};
 						inputDescs[0].SemanticName = "POSITION";
@@ -772,7 +774,7 @@ namespace Voicemeeter {
 				::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _layers_hTextureHeap;
 				::Microsoft::WRL::ComPtr<ID3D12PipelineState> _layers_state;
 				::Microsoft::WRL::ComPtr<ID3D12RootSignature> _layers_rootSignature;
-				::Microsoft::WRL::ComPtr<ID3D12Fence _layers_fence;
+				::Microsoft::WRL::ComPtr<ID3D12Fence> _layers_fence;
 				UINT64 _layers_count;
 				// ------
 				::Microsoft::WRL::ComPtr<ID3D12Resource> _atlas;

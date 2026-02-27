@@ -242,7 +242,7 @@ namespace Voicemeeter {
 								get_buffers_RenderTarget(buffer),
 								nullptr, get_buffers_hRenderTarget(buffer));
 					}
-					_first = true;
+					_buffers_first = true;
 				};
 				inline void Prepare(vector_t const &point, vector_t const &vertex) {
 					size_t slot{ inc_slots_Current() };
@@ -253,10 +253,10 @@ namespace Voicemeeter {
 						::Windows::ThrowIfFailed(get_slots_Fence(slot)
 							->SetEventOnCompletion(
 								get_slots_Count(slot),
-								get_slots_hEvent(slot)
+								get_hEvent()
 						), "Event signaling failed");
 						::Windows::WaitForSingleObject(
-							get_slots_hEvent(), INFINITE);
+							get_hEvent(), INFINITE);
 					}
 					::Windows::ThrowIfFailed(get_slots_CommandAllocator(slot)
 						->Reset(
@@ -399,7 +399,7 @@ namespace Voicemeeter {
 					return _swapChain->GetCurrentBackBufferIndex();
 				};
 				inline ID3D12Resource * get_buffers_RenderTarget(size_t buffer) const {
-					return _buffers_rengerTargets[buffer].Get();
+					return _buffers_renderTargets[buffer].Get();
 				};
 				inline ID3D12Resource ** geta_buffers_RenderTarget(size_t buffer) {
 					return &_buffers_renderTargets[buffer];
@@ -407,7 +407,7 @@ namespace Voicemeeter {
 				inline D3D12_CPU_DESCRIPTOR_HANDLE get_buffers_hRenderTarget(size_t buffer) const {
 					return _buffers_hRenderTargets[buffer];
 				};
-				inline ID3D12Fence get_buffers_Fence() const {
+				inline ID3D12Fence * get_buffers_Fence() const {
 					return _buffers_fence.Get();
 				};
 				inline UINT64 get_buffers_Count() const {
@@ -419,11 +419,12 @@ namespace Voicemeeter {
 				// -----
 
 				inline D3D12_RECT const & Invalidate(vector_t const &point, vector_t const &vertex) {
-					_buffers_invalids.emplace_back(
+					_buffers_invalids.push_back(D3D12_RECT{
 						static_cast<LONG>(pop(floor(point[0]))),
 						static_cast<LONG>(pop(floor(point[1]))),
 						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(point[1] + vertex[1]))));
+						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
+					});
 					return _buffers_invalids.back();
 				};
 				inline void Present() {
@@ -432,10 +433,10 @@ namespace Voicemeeter {
 							->Present(
 								0U, 0U
 						), "Presentation failed");
-						_first = false;
+						_buffers_first = false;
 					} else {
 						DXGI_PRESENT_PARAMETERS params{
-							_buffers_invalids.size(), &_buffers_invalids[0],
+							static_cast<UINT>(_buffers_invalids.size()), &_buffers_invalids[0],
 							nullptr,
 							nullptr
 						};

@@ -21,7 +21,7 @@ namespace Voicemeeter {
 				typename TStopwatch>
 			class CachedFrame final {
 			public:
-				inline Frame(
+				inline CachedFrame(
 					TSurface &surface,
 					TState &state,
 					TQueue &queue,
@@ -35,14 +35,14 @@ namespace Voicemeeter {
 					, _vertex{ 0, 0 } {
 
 				};
-				Frame() = delete;
-				Frame(Frame const &) = delete;
-				Frame(Frame &&) = delete;
+				CachedFrame() = delete;
+				CachedFrame(CachedFrame const &) = delete;
+				CachedFrame(CachedFrame &&) = delete;
 
-				inline ~Frame() = default;
+				inline ~CachedFrame() = default;
 
-				Frame & operator=(Frame const &) = delete;
-				Frame & operator=(Frame &&) = delete;
+				CachedFrame & operator=(CachedFrame const &) = delete;
+				CachedFrame & operator=(CachedFrame &&) = delete;
 
 				inline vector_t const & get_Position() const {
 					return _point;

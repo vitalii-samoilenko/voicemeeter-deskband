@@ -10,6 +10,7 @@
 
 #include "Windows/API.hpp"
 #include "Windows/Timer.hpp"
+#include <windowsx.h>
 
 #include "Voicemeeter/Cherry.hpp"
 #include "Voicemeeter/Clients/Remote.hpp"
@@ -139,6 +140,7 @@ private:
 	};
 	struct _config_DeskBand {
 		::std::optional<DWORD> Dock;
+		::std::optional<DWORD> Animated;
 		_config_Mixer Mixer;
 		_config_Theme Theme;
 	};
@@ -261,6 +263,7 @@ private:
 						}
 					};
 					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand)", L"Dock", config.Dock);
+					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand)", L"Animated", config.Animated);
 					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"Vban", config.Mixer.Vban);
 					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"P", config.Mixer.P);
 					loadValue(LR"(SOFTWARE\VoicemeeterDeskBand\Mixer)", L"V", config.Mixer.V);
@@ -382,6 +385,10 @@ private:
 						.set_Mixer(*that->_mixer)
 						.set_PaddingPosition(vector_t{ push(3), push(3) })
 						.set_PaddingSize(vector_t{ push(3), push(3) });
+					if (config.Animated) {
+						compositionBuilder.set_Animated(
+							0 < *(config.Animated));
+					}
 					if (config.Mixer.Vban) {
 						compositionBuilder.set_Vban(
 							0 < *(config.Mixer.Vban));

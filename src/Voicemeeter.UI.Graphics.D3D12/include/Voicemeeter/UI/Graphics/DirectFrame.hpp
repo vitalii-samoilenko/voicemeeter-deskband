@@ -18,9 +18,9 @@ namespace Voicemeeter {
 				typename TState,
 				typename TQueue,
 				typename TStopwatch>
-			class CachedFrame final {
+			class DirectFrame final {
 			public:
-				inline Frame(
+				inline DirectFrame(
 					TSurface &surface,
 					TState &state,
 					TQueue &queue,
@@ -33,14 +33,14 @@ namespace Voicemeeter {
 					, _vertex{ 0, 0 } {
 
 				};
-				Frame() = delete;
-				Frame(Frame const &) = delete;
-				Frame(Frame &&) = delete;
+				DirectFrame() = delete;
+				DirectFrame(DirectFrame const &) = delete;
+				DirectFrame(DirectFrame &&) = delete;
 
-				inline ~Frame() = default;
+				inline ~DirectFrame() = default;
 
-				Frame & operator=(Frame const &) = delete;
-				Frame & operator=(Frame &&) = delete;
+				DirectFrame & operator=(DirectFrame const &) = delete;
+				DirectFrame & operator=(DirectFrame &&) = delete;
 
 				inline vector_t const & get_Position() const {
 					return _point;
@@ -110,7 +110,7 @@ namespace Voicemeeter {
 					D3D12_VERTEX_BUFFER_VIEW hSquareBuffer{ _state.get_hSquareBuffer() };
 					_state.get_slots_CommandList(slot)
 						->IASetVertexBuffers(0, 1, &hSquareBuffer);
-					D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{ _surfce.get_buffers_hRenderTarget(buffer) };
+					D3D12_CPU_DESCRIPTOR_HANDLE hRenderTarget{ _surface.get_buffers_hRenderTarget(buffer) };
 					_state.get_slots_CommandList(slot)
 						->OMSetRenderTargets(1, &hRenderTarget, FALSE, nullptr);
 					for (auto &bundle : queue) {
