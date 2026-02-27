@@ -1016,14 +1016,14 @@ namespace Voicemeeter {
 						using state_t = typename TStripKnob::state_t;
 						state_t state{};
 						state.target = Target;
-						stripKnob.set_State(state);
+						stripKnob.owr_State(state);
 						tokens.get_Strip<Target>()
 							.on_gain([
 								&stripKnob
 							](num_t value)->void {
 								state_t state{ stripKnob.get_State() };
 								state.degree = value * 15 / 4;
-								stripKnob.set_State(state);
+								stripKnob.owr_State(state);
 							});
 						tokens.get_Strip<Target>()
 							.on_mute([
@@ -1031,7 +1031,7 @@ namespace Voicemeeter {
 							](bool value)->void {
 								state_t state{ stripKnob.get_State() };
 								state.toggle = value;
-								stripKnob.set_State(state);
+								stripKnob.owr_State(state);
 							});
 						tokens.get_Channels<Target>()
 							.on_maxLevel([
@@ -1039,7 +1039,7 @@ namespace Voicemeeter {
 							](num_t value)->void {
 								state_t state{ stripKnob.get_State() };
 								state.level = value;
-								stripKnob.set_State(state);
+								stripKnob.owr_State(state);
 							});
 					};
 					template<typename TStripKnob>
@@ -1087,7 +1087,7 @@ namespace Voicemeeter {
 						state_t state{};
 						state.from = From;
 						state.to = To;
-						plug.set_State(state);
+						plug.owr_State(state);
 						plug.set_Label(state.to);
 						tokens.get_Mixer()
 							.on_plug<From, To>([
@@ -1095,7 +1095,7 @@ namespace Voicemeeter {
 							](bool value)->void {
 								state_t state{ plug.get_State() };
 								state.toggle = value;
-								plug.set_State(state);
+								plug.owr_State(state);
 							});
 					};
 					template<
@@ -1817,12 +1817,12 @@ namespace Voicemeeter {
 						}
 						bag<Cherry> tokens{ mixer };
 						if (enabled.test(flags::vban)) {
-							vban->set_State(0);
+							vban->owr_State(0);
 							tokens.get_Mixer()
 								.on_vban([
 									&control = *vban
 								](bool value)->void {
-									control.set_State(
+									control.owr_State(
 										static_cast<num_t>(value));
 								});
 						}

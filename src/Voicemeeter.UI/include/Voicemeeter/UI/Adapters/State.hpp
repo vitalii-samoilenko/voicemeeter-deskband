@@ -44,6 +44,10 @@ namespace Voicemeeter {
 					_notify(value);
 					_update(this, value);
 				};
+				inline void owr_State(state_t const &value) {
+					_state = value;
+					_update(this, value);
+				};
 
 			private:
 				::std::optional<state_t> _state;
