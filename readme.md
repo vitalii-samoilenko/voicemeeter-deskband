@@ -6,7 +6,11 @@ Official website: https://voicemeeter.com/
 
 Voicemeeter is a donationware, all participations are welcome
 
-# Voicemeeter DeskBand
+This software also utilizes [Oklab](https://bottosson.github.io/posts/oklab/) as interpolation method for gradients
+
+This software also utilizes [msdfgen](https://github.com/Chlumsky/msdfgen) to generate natively scalable textures
+
+# Voicemeeter desk band
 
 ![Prototype](prototype.png)
 
@@ -20,29 +24,28 @@ More convenient simple sound management:
 - Active output switch (speakers/headphones/remote device/communication channel)
 - Remote device support
 
-Plenty of space always available in the taskbar
+Plenty of space always available on the taskbar
 
 ## Overview
+
+### Tips
+
+- Press Ctrl + C while desk band is focused to shut it down
 
 ### Limitations
 
 - Bugs (by using this software you are doing so at your own risk)
 
+#### Windows 11
+
+- Dynamic scale adjustment is not supported, please shut down desk band before modifying display settings
+- Technically it is impossible to track empty space left on the taskbar, to avoid overlapping please adjust your workflow/desk band layout
+
 ### Install
 
 #### Windows 10
 
-Build solution/download release, place Voicemeeter.DeskBand.dll into separate folder and run following command from elevated command prompt:
-
-```
-regsvr32 Voicemeeter.DeskBand.dll
-```
-
-Right click on taskbar empty space and check Toolbars->Voicemeeter.DeskBand
-
-![Taskbar](taskbar.png)
-
-Unlock taskbar, adjust deskband size and lock it back
+Following the [end of support](https://support.microsoft.com/en-us/windows/windows-10-support-has-ended-on-october-14-2025-2ca8b313-1946-43d3-b55c-2b95b107f281) Windows 10 compatibility is no longer maintained
 
 #### Windows 11
 
@@ -50,25 +53,13 @@ Build solution/download release, run Voicemeeter.DeskBandit.exe
 
 ### Uninstall
 
-#### Windows 10
+#### Windows 11
 
-Right click on taskbar empty space and uncheck Toolbars->Voicemeeter.DeskBand, run following command from elevated command prompt:
-
-```
-regsvr32 /u Voicemeeter.DeskBand.dll
-```
-
-(*Optional*) To release DLL file reboot or run following commands from elevated command prompt:
-
-```
-taskkill /IM "Explorer.exe" /F
-Explorer.exe &
-```
+Shut down desk band and remove binaries from your PC
 
 ### Features
 
-- Windows 10: Resizable (lock/unlock taskbar to adjust)
-- Windows 11: Scalable
+- Scalable
 - Interactive (left click/middle click/right click/wheel/left hold and move)
 - Customizable
 
@@ -82,18 +73,18 @@ In case if you experience any issues or seek performance boost/power safety you 
 HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand
 ```
 
-Add DWORD value Animations and set it to 0
+Add DWORD value Animated and set it to 0
 
 
-Custom colors and font family could be set via registry key:
+Custom colors could be set via registry key:
 
 ```
 HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Theme
 ```
 
-Value names could be taken from [Theme](src/Voicemeeter.UI.Cherry/Graphics/Palette.h)
+Value names could be taken from [Theme](src/Voicemeeter.UI.Controls.Cherry/include/Voicemeeter/UI/Graphics/Theme.hpp)
 
-Color type is DWORD in hexadecimal format RRGGBBAA (alpha channel is ignored)
+Color type is DWORD in hexadecimal format RRGGBBAA
 
 For example, to change strip mute warning color to red use following value:
 
@@ -105,18 +96,9 @@ Controls could be disabled via registry key:
 HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Mixer
 ```
 
-Add DWORD value Network and set it to 0 to disable VBAN button
+Add DWORD value Vban and set it to 0 to disable VBAN button
 
-Add REG_BINARY value IgnoredStrip and add 8 byte hex ID per each strip you wish to disable:
-
-P = 0, V = 1, A1 = 2, A2 = 3, B1 = 4, B2 = 5
-
-For example, to disable virtual input and both virtual output strips use following value:
-
-![IgnoredStrip sample](ignored_strip_sample.png)
-
-> [!CAUTION]
-> For any input strip to allign properly leave 0, 2 or 4 output strips
+Add DWORD value P, V, A1, A2, B1, B2 and set it to 0 to disable corresponding plug/knob control
 
 #### Windows 11
 
@@ -126,6 +108,6 @@ Docking position could be changed via registry key:
 HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand
 ```
 
-Add DWORD value Dock and set it either to 0 or to 3:
+Add DWORD value Dock and set it either to 0 or 3:
 
 Left = 0, Right = 3
