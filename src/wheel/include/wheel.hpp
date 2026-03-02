@@ -103,15 +103,11 @@ template<typename V>
 inline auto sub(V *v, sub_t const &i) {
 	return v->operator[](i);
 };
-template<typename V>
-inline size_t size(V const &v) {
+inline size_t size(vec_t const &v) {
 	return v.size();
 };
 inline size_t size(sub_t i) {
 	return i.size();
-};
-inline constexpr size_t size(size_t i) {
-	return 1;
 };
 
 template<typename V,

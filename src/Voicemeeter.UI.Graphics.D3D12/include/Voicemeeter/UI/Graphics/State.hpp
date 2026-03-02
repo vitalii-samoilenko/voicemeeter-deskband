@@ -218,7 +218,7 @@ namespace Voicemeeter {
 						), "Upload buffer map failed");
 						for (UINT row{ 0 }; row < pop(Layouts::Atlas::Height); ++row) {
 							memcpy(dst + dstRowPitch * row,
-								reinterpret_cast<BYTE *>(atlas.data()) + srcRowPitch * row,
+								atlas.data() + srcRowPitch * row,
 								rowSize);
 						}
 						textureUploadBuffer->Unmap(0, nullptr);

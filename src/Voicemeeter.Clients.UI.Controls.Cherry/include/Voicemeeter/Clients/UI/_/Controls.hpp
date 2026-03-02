@@ -394,7 +394,7 @@ namespace Voicemeeter {
 											::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanContext<TToolkit>>,
 										TToolkit,
 										::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>,
-										size_t>,
+										sub_t>,
 									::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 								>>,
 								num_t,
@@ -423,7 +423,7 @@ namespace Voicemeeter {
 												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
 											TToolkit,
 											::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
-											sub_t, size_t>,
+											sub_t, sub_t>,
 										::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 									>>,
 									::Voicemeeter::UI::States::StripKnob,
@@ -454,7 +454,7 @@ namespace Voicemeeter {
 											::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugContext<TToolkit>>,
 										TToolkit,
 										::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>,
-										size_t>,
+										sub_t>,
 									::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 								>>,
 								::Voicemeeter::UI::States::Plug,
@@ -1214,7 +1214,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1 = ::std::make_unique<
@@ -1242,7 +1242,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
-							size_t{ 6 },
+							sub_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2 = ::std::make_unique<
@@ -1270,7 +1270,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
-							size_t{ 6 },
+							sub_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o1 = ::std::make_unique<
@@ -1298,7 +1298,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
-							size_t{ 6 },
+							sub_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o2 = ::std::make_unique<
@@ -1340,7 +1340,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
-							size_t{ 6 },
+							sub_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o3 = ::std::make_unique<
@@ -1382,7 +1382,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
-							size_t{ 6 },
+							sub_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o4 = ::std::make_unique<
@@ -1424,7 +1424,7 @@ namespace Voicemeeter {
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
-							size_t{ 6 },
+							sub_t{ 6, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o1 = ::std::make_unique<
@@ -1449,7 +1449,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o2 = ::std::make_unique<
@@ -1488,7 +1488,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o3 = ::std::make_unique<
@@ -1513,7 +1513,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o4 = ::std::make_unique<
@@ -1552,7 +1552,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o1 = ::std::make_unique<
@@ -1577,7 +1577,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o2 = ::std::make_unique<
@@ -1616,7 +1616,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o3 = ::std::make_unique<
@@ -1641,7 +1641,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o4 = ::std::make_unique<
@@ -1680,7 +1680,7 @@ namespace Voicemeeter {
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							size_t{ 0 },
+							sub_t{ 0, 1, 1 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						if (enabled.test(flags::vban)) {

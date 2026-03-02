@@ -107,7 +107,7 @@ namespace Voicemeeter {
 							auto animationVertex2 = animationVertex * animationVertex;
 							num_t distance2{ 0 };
 							num_t rI{ 0 };
-							(((distance2 = sum(sub(animationVertex2, is)) }))
+							(((distance2 = sum(sub(animationVertex2, is)))
 							,(rI = traveled2 < distance2
 								? sqrt(push(distance2) / traveled2)
 								: One)
