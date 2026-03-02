@@ -12,7 +12,7 @@ This software also utilizes following third party components:
 
 - [msdfgen](https://github.com/Chlumsky/msdfgen) to generate natively scalable textures
 
-- [LZMA](https://www.7-zip.org/sdk.html) to compress embedded resources
+- [LZMA](https://www.7-zip.org/sdk.html) to compress/decompress embedded resources
 
 # Voicemeeter desk band
 
