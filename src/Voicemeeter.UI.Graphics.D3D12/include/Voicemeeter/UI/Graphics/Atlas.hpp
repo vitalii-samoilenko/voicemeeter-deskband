@@ -31,15 +31,15 @@ namespace Voicemeeter {
 				Atlas & operator=(Atlas &&) = delete;
 
 				inline void FillSDF(
-					vector_t const &srcPoint, vector_t const &srcVertex,
-					vector_t const &dstPoint, vector_t const &dstVertex,
-					vector_t const &color) const {
+					vec_t const &srcPoint, vec_t const &srcVertex,
+					vec_t const &dstPoint, vec_t const &dstVertex,
+					vec_t const &color) const {
 					size_t slot{ _state.get_slots_Current() };
 					D3D12_RECT scissor{
-						static_cast<LONG>(pop(floor(dstPoint[0]))),
-						static_cast<LONG>(pop(floor(dstPoint[1]))),
-						static_cast<LONG>(pop(ceil(dstPoint[0] + dstVertex[0]))),
-						static_cast<LONG>(pop(ceil(dstPoint[1] + dstVertex[1])))
+						static_cast<LONG>(pop(floor(sub(dstPoint, 0)))),
+						static_cast<LONG>(pop(floor(sub(dstPoint, 1)))),
+						static_cast<LONG>(pop(ceil(sub(dstPoint, 0) + sub(dstVertex, 0)))),
+						static_cast<LONG>(pop(ceil(sub(dstPoint, 1) + sub(dstVertex, 1))))
 					};
 					_state.get_slots_CommandList(slot)
 						->RSSetScissorRects(1, &scissor);
@@ -51,12 +51,12 @@ namespace Voicemeeter {
 					};
 					_state.get_slots_CommandList(slot)
 						->RSSetViewports(1, &viewport);
-					FLOAT r0{ static_cast<FLOAT>(srcVertex[0]) / dstVertex[0] };
-					FLOAT r1{ static_cast<FLOAT>(srcVertex[1]) / dstVertex[1] };
-					FLOAT from0{ srcPoint[0] - frac(dstPoint[0]) * r0 };
-					FLOAT from1{ srcPoint[1] - frac(push(2) - frac(dstPoint[1]) - frac(dstVertex[1])) * r1 };
-					FLOAT to0{ srcPoint[0] + srcVertex[0] + frac(push(2) - frac(dstPoint[0]) - frac(dstVertex[0])) * r0 };
-					FLOAT to1{ srcPoint[1] + srcVertex[1] + frac(dstPoint[1]) * r1 };
+					FLOAT r0{ static_cast<FLOAT>(sub(srcVertex, 0)) / sub(dstVertex, 0) };
+					FLOAT r1{ static_cast<FLOAT>(sub(srcVertex, 1)) / sub(dstVertex, 1) };
+					FLOAT from0{ sub(srcPoint, 0) - frac(sub(dstPoint, 0)) * r0 };
+					FLOAT from1{ sub(srcPoint, 1) - frac(push(2) - frac(sub(dstPoint, 1)) - frac(sub(dstVertex, 1))) * r1 };
+					FLOAT to0{ sub(srcPoint, 0) + sub(srcVertex, 0) + frac(push(2) - frac(sub(dstPoint, 0)) - frac(sub(dstVertex, 0))) * r0 };
+					FLOAT to1{ sub(srcPoint, 1) + sub(srcVertex, 1) + frac(sub(dstPoint, 1)) * r1 };
 					::std::array<FLOAT, 9> constants{
 						from0 / Layouts::Atlas::Width,
 						from1 / Layouts::Atlas::Height,
@@ -65,10 +65,10 @@ namespace Voicemeeter {
 						Layouts::Atlas::Range::Width * ::std::min(
 							viewport.Width * One / (to0 - from0),
 							viewport.Height * One / (to1 - from1)),
-						static_cast<FLOAT>(color[0]) / push(255),
-						static_cast<FLOAT>(color[1]) / push(255),
-						static_cast<FLOAT>(color[2]) / push(255),
-						static_cast<FLOAT>(color[3]) / push(255)
+						static_cast<FLOAT>(sub(color, 0)) / push(255),
+						static_cast<FLOAT>(sub(color, 1)) / push(255),
+						static_cast<FLOAT>(sub(color, 2)) / push(255),
+						static_cast<FLOAT>(sub(color, 3)) / push(255)
 					};
 					_state.get_slots_CommandList(slot)
 						->SetGraphicsRoot32BitConstants(

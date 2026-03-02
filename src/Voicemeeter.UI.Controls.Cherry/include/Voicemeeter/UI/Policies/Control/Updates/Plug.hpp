@@ -30,7 +30,7 @@ namespace Voicemeeter {
 
 						template<typename TPlug>
 						inline void operator()(TPlug *that, state_t const &state) const {
-							vector_t const *targetRgba{
+							vec_t const *targetRgba{
 								state.toggle
 									? &_toolkit.get_Theme()
 										.Active

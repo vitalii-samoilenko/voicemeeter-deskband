@@ -57,31 +57,31 @@ namespace Voicemeeter {
 					Plug & operator=(Plug const &) = delete;
 					Plug & operator=(Plug &&) = delete;
 
-					inline vector_t const & get_FramePosition() const {
+					inline vec_t const & get_FramePosition() const {
 						return _framePoint;
 					};
-					inline vector_t const & get_FrameSize() const {
+					inline vec_t const & get_FrameSize() const {
 						return _frameVertex;
 					};
-					inline vector_t const & get_FrameColor() const {
+					inline vec_t const & get_FrameColor() const {
 						return _frameRgba;
 					};
 
-					inline void set_FramePosition(vector_t const &value) {
+					inline void set_FramePosition(vec_t const &value) {
 						if (are_all(_framePoint == value)) {
 							return;
 						}
 						_framePoint = value;
 						OnInvalidate(flags::framePoint);
 					};
-					inline void set_FrameSize(vector_t const &value) {
+					inline void set_FrameSize(vec_t const &value) {
 						if (are_all(_frameVertex == value)) {
 							return;
 						}
 						_frameVertex = value;
 						OnInvalidate(flags::frameVertex);
 					};
-					inline void set_FrameColor(vector_t const &value) {
+					inline void set_FrameColor(vec_t const &value) {
 						if (are_all(_frameRgba == value)) {
 							return;
 						}
@@ -95,7 +95,7 @@ namespace Voicemeeter {
 						_label = value;
 						OnInvalidate(flags::label);
 					};
-					inline void set_LabelColor(vector_t const &value) {
+					inline void set_LabelColor(vec_t const &value) {
 						if (are_all(_labelRgba == value)) {
 							return;
 						}
@@ -177,17 +177,17 @@ namespace Voicemeeter {
 					TToolkit &_toolkit;
 					::std::optional<slot_t> _slot;
 					::std::bitset<flags::renderTarget + 1> _changes;
-					vector_t _framePoint;
-					vector_t _frameVertex;
-					vector_t _frameAtlasPoint;
-					vector_t _frameAtlasVertex;
-					vector_t _frameRgba;
+					vec_t _framePoint;
+					vec_t _frameVertex;
+					vec_t _frameAtlasPoint;
+					vec_t _frameAtlasVertex;
+					vec_t _frameRgba;
 					size_t _label;
-					vector_t _labelPoint;
-					vector_t _labelVertex;
-					vector_t _labelAtlasPoint;
-					vector_t _labelAtlasVertex;
-					vector_t _labelRgba;
+					vec_t _labelPoint;
+					vec_t _labelVertex;
+					vec_t _labelAtlasPoint;
+					vec_t _labelAtlasVertex;
+					vec_t _labelRgba;
 
 					inline void OnInvalidate(flags property) {
 						if (_changes.none()) {

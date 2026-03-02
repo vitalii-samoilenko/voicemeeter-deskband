@@ -169,8 +169,8 @@ namespace Voicemeeter {
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
 						> const &enabled,
-						vector_t const &paddingPoint,
-						vector_t const &paddingVertex);
+						vec_t const &paddingPoint,
+						vec_t const &paddingVertex);
 					template<
 						typename TTimer,
 						typename TMixer,
@@ -192,8 +192,8 @@ namespace Voicemeeter {
 							+ TMixer::InputSize
 							+ TMixer::OutputSize
 						> const &enabled,
-						vector_t const &paddingPoint,
-						vector_t const &paddingVertex) {
+						vec_t const &paddingPoint,
+						vec_t const &paddingVertex) {
 						if constexpr (::std::is_same_v<TMixer, Cherry>) {
 							return SubscribeCherry(
 								timer, mixer, toolkit, focusTracker,
@@ -360,12 +360,12 @@ namespace Voicemeeter {
 							ToggleVisibility & operator=(ToggleVisibility const &) = delete;
 							ToggleVisibility & operator=(ToggleVisibility &&) = delete;
 
-							inline void Move(vector_t const &point) {
+							inline void Move(vec_t const &point) {
 								if (_on) {
 									TControl::Move(point);
 								}
 							};
-							inline void Rescale(vector_t const &vertex) {
+							inline void Rescale(vec_t const &vertex) {
 								if (_on) {
 									TControl::Rescale(vertex);
 								}
@@ -394,7 +394,7 @@ namespace Voicemeeter {
 											::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanContext<TToolkit>>,
 										TToolkit,
 										::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>,
-										slice_t>,
+										size_t>,
 									::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 								>>,
 								num_t,
@@ -423,7 +423,7 @@ namespace Voicemeeter {
 												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
 											TToolkit,
 											::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
-											slice_t, slice_t>,
+											sub_t, size_t>,
 										::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 									>>,
 									::Voicemeeter::UI::States::StripKnob,
@@ -454,7 +454,7 @@ namespace Voicemeeter {
 											::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugContext<TToolkit>>,
 										TToolkit,
 										::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>,
-										slice_t>,
+										size_t>,
 									::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
 								>>,
 								::Voicemeeter::UI::States::Plug,
@@ -647,7 +647,7 @@ namespace Voicemeeter {
 									i = temp++
 								](num_t value)->void {
 									num_t before{ max(levels) };
-									levels[i] = value;
+									sub(&levels, i) = value;
 									num_t after{ max(levels) };
 									if (before == after) {
 										return;
@@ -661,7 +661,7 @@ namespace Voicemeeter {
 					private:
 						::std::tuple<TTokens ...> _tokens;
 						::std::function<void(num_t)> _callback;
-						vector_t _levels;
+						vec_t _levels;
 					};
 					template<>
 					class bag<Cherry> final {
@@ -1163,8 +1163,8 @@ namespace Voicemeeter {
 							+ Cherry::InputSize
 							+ Cherry::OutputSize
 						> const &enabled,
-						vector_t const &paddingPoint,
-						vector_t const &paddingVertex) {
+						vec_t const &paddingPoint,
+						vec_t const &paddingVertex) {
 						num_t enabledInputs{
 							static_cast<num_t>(
 								enabled.test(flags::offset + Cherry::Strips::P))
@@ -1189,11 +1189,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							enabled.test(flags::vban),
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
 							},
@@ -1208,13 +1208,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Vban<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Vban<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Vban::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Vban::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1 = ::std::make_unique<
@@ -1235,14 +1235,14 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 6, 1 },
-							slice_t{ 6, 1, 1 },
+							sub_t{ 0, 6, 1 },
+							size_t{ 6 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2 = ::std::make_unique<
@@ -1263,14 +1263,14 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 6, 1 },
-							slice_t{ 6, 1, 1 },
+							sub_t{ 0, 6, 1 },
+							size_t{ 6 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o1 = ::std::make_unique<
@@ -1291,14 +1291,14 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 6, 1 },
-							slice_t{ 6, 1, 1 },
+							sub_t{ 0, 6, 1 },
+							size_t{ 6 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o2 = ::std::make_unique<
@@ -1313,11 +1313,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
 							},
@@ -1333,14 +1333,14 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 6, 1 },
-							slice_t{ 6, 1, 1 },
+							sub_t{ 0, 6, 1 },
+							size_t{ 6 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o3 = ::std::make_unique<
@@ -1355,11 +1355,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							2 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
 							},
@@ -1375,14 +1375,14 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 6, 1 },
-							slice_t{ 6, 1, 1 },
+							sub_t{ 0, 6, 1 },
+							size_t{ 6 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o4 = ::std::make_unique<
@@ -1397,11 +1397,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							3 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
 							},
@@ -1417,14 +1417,14 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 6, 1 },
-							slice_t{ 6, 1, 1 },
+							sub_t{ 0, 6, 1 },
+							size_t{ 6 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o1 = ::std::make_unique<
@@ -1443,13 +1443,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o2 = ::std::make_unique<
@@ -1464,11 +1464,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
@@ -1482,13 +1482,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o3 = ::std::make_unique<
@@ -1507,13 +1507,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o4 = ::std::make_unique<
@@ -1528,11 +1528,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							3 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
@@ -1546,13 +1546,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o1 = ::std::make_unique<
@@ -1571,13 +1571,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o2 = ::std::make_unique<
@@ -1592,11 +1592,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
@@ -1610,13 +1610,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o3 = ::std::make_unique<
@@ -1635,13 +1635,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o4 = ::std::make_unique<
@@ -1656,11 +1656,11 @@ namespace Voicemeeter {
 							>>
 						>(
 							3 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
@@ -1674,13 +1674,13 @@ namespace Voicemeeter {
 								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
 								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
-							slice_t{ 0, 1, 1 },
+							size_t{ 0 },
 							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						if (enabled.test(flags::vban)) {
@@ -1865,16 +1865,16 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
 							},
@@ -1893,16 +1893,16 @@ namespace Voicemeeter {
 							>>
 						>(
 							2 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
 							},
@@ -1916,10 +1916,10 @@ namespace Voicemeeter {
 								TToolkit,
 								TFocusTracker>
 						>(
-							vector_t{
-								i1->get_BaseSize()[0]
-								+ (0 < enabledOutputs) * i1o1o2->get_BaseSize()[0]
-								+ (2 < enabledOutputs) * i1o3o4->get_BaseSize()[0],
+							vec_t{
+								sub(i1->get_BaseSize(), 0)
+								+ (0 < enabledOutputs) * sub(i1o1o2->get_BaseSize(), 0)
+								+ (2 < enabledOutputs) * sub(i1o3o4->get_BaseSize(), 0),
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -1938,16 +1938,16 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
 							},
@@ -1966,16 +1966,16 @@ namespace Voicemeeter {
 							>>
 						>(
 							2 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
 								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
 							},
@@ -1994,19 +1994,19 @@ namespace Voicemeeter {
 							>>
 						>(
 							1 < enabledInputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
-								i2->get_BaseSize()[0]
-								+ (0 < enabledOutputs) * i2o1o2->get_BaseSize()[0]
-								+ (2 < enabledOutputs) * i2o3o4->get_BaseSize()[0],
+							vec_t{
+								sub(i2->get_BaseSize(), 0)
+								+ (0 < enabledOutputs) * sub(i2o1o2->get_BaseSize(), 0)
+								+ (2 < enabledOutputs) * sub(i2o3o4->get_BaseSize(), 0),
 								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2025,18 +2025,18 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledInputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
-								i1o1o2o3o4->get_BaseSize()[0]
-								+ (1 < enabledInputs) * i2o1o2o3o4->get_BaseSize()[0],
+							vec_t{
+								sub(i1o1o2o3o4->get_BaseSize(), 0)
+								+ (1 < enabledInputs) * sub(i2o1o2o3o4->get_BaseSize(), 0),
 								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2054,20 +2054,20 @@ namespace Voicemeeter {
 							>>
 						>(
 							0 < enabledOutputs,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
 							},
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
 							},
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
-								o1->get_BaseSize()[0]
-								+ (1 < enabledOutputs) * o2->get_BaseSize()[0]
-								+ (2 < enabledOutputs) * o3->get_BaseSize()[0]
-								+ (3 < enabledOutputs) * o4->get_BaseSize()[0],
+							vec_t{
+								sub(o1->get_BaseSize(), 0)
+								+ (1 < enabledOutputs) * sub(o2->get_BaseSize(), 0)
+								+ (2 < enabledOutputs) * sub(o3->get_BaseSize(), 0)
+								+ (3 < enabledOutputs) * sub(o4->get_BaseSize(), 0),
 								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
@@ -2084,19 +2084,19 @@ namespace Voicemeeter {
 								TFocusTracker>
 						>(
 							::std::move(tokens),
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
 							} + paddingPoint,
-							vector_t{
+							vec_t{
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
 							} + paddingVertex,
 							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
-							vector_t{
-								enabled.test(flags::vban) * vban->get_BaseSize()[0]
-								+ (0 < enabledInputs) * i1i2->get_BaseSize()[0]
-								+ (0 < enabledOutputs) * o1o2o3o4->get_BaseSize()[0],
+							vec_t{
+								enabled.test(flags::vban) * sub(vban->get_BaseSize(), 0)
+								+ (0 < enabledInputs) * sub(i1i2->get_BaseSize(), 0)
+								+ (0 < enabledOutputs) * sub(o1o2o3o4->get_BaseSize(), 0),
 								::Voicemeeter::UI::Layouts::Cherry::Panel::Height
 							},
 							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },

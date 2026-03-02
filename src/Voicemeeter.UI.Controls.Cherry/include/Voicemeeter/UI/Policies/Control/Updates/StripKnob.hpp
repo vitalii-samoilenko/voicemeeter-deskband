@@ -31,7 +31,7 @@ namespace Voicemeeter {
 
 						template<typename TStripKnob>
 						inline void operator()(TStripKnob *that, state_t const &state) const {
-							vector_t const *targetRgba{
+							vec_t const *targetRgba{
 								state.toggle
 									? &_toolkit.get_Theme()
 										.Warning

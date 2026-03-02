@@ -30,24 +30,24 @@ namespace Voicemeeter {
 				Canvas & operator=(Canvas const &) = delete;
 				Canvas & operator=(Canvas &&) = delete;
 
-				inline vector_t const & get_Position() const {
+				inline vec_t const & get_Position() const {
 					return TToolkit::get_Frame()
 						.get_Position();
 				};
-				inline vector_t const & get_Size() const {
+				inline vec_t const & get_Size() const {
 					return TToolkit::get_Frame()
 						.get_Size();
 				};
 
-				inline void Move(vector_t const &point) {
+				inline void Move(vec_t const &point) {
 					TToolkit::get_Frame()
 						.set_Position(point);
 				};
-				inline void Redraw(vector_t const &point, vector_t const &vertex) {
+				inline void Redraw(vec_t const &point, vec_t const &vertex) {
 					TToolkit::get_Frame()
 						.Present(point, vertex);
 				};
-				inline void Resize(vector_t const &vertex) {
+				inline void Resize(vec_t const &vertex) {
 					TToolkit::get_Frame()
 						.set_Size(vertex);
 				};

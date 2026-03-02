@@ -44,17 +44,17 @@ namespace Voicemeeter {
 				CachedFrame & operator=(CachedFrame const &) = delete;
 				CachedFrame & operator=(CachedFrame &&) = delete;
 
-				inline vector_t const & get_Position() const {
+				inline vec_t const & get_Position() const {
 					return _point;
 				};
-				inline vector_t const & get_Size() const {
+				inline vec_t const & get_Size() const {
 					return _vertex;
 				};
 
-				inline void set_Position(vector_t const &value) {
+				inline void set_Position(vec_t const &value) {
 					_point = value;
 				};
-				inline void set_Size(vector_t const &value) {
+				inline void set_Size(vec_t const &value) {
 					// User source size
 					if (_state.get_layers_Fence()
 							->GetCompletedValue()
@@ -76,8 +76,8 @@ namespace Voicemeeter {
 					D3D12_RESOURCE_DESC textureDesc{
 						D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 						0,
-						static_cast<UINT>(max(pop(ceil(value[0])), 8)),
-						static_cast<UINT>(max(pop(ceil(value[1])), 8) * _state.get_layers_Size()),
+						static_cast<UINT>(max(pop(ceil(sub(value, 0))), 8)),
+						static_cast<UINT>(max(pop(ceil(sub(value, 1))), 8) * _state.get_layers_Size()),
 						1, 1,
 						DXGI_FORMAT_R16G16B16A16_FLOAT,
 						DXGI_SAMPLE_DESC{
@@ -177,14 +177,14 @@ namespace Voicemeeter {
 							_state.get_layers_Fence(),
 							_state.inc_layers_Count());
 				};
-				inline void Present(vector_t const &point, vector_t const &vertex) {
-					vector_t from{
-						max(point[0], _point[0]),
-						max(point[1], _point[1])
+				inline void Present(vec_t const &point, vec_t const &vertex) {
+					vec_t from{
+						max(sub(point, 0), sub(_point, 0)),
+						max(sub(point, 1), sub(_point, 1))
 					};
-					vector_t to{
-						min(point[0] + vertex[0], _point[0] + _vertex[0]),
-						min(point[1] + vertex[1], _point[1] + _vertex[1])
+					vec_t to{
+						min(sub(point, 0) + sub(vertex, 0), sub(_point, 0) + sub(_vertex, 0)),
+						min(sub(point, 1) + sub(vertex, 1), sub(_point, 1) + sub(_vertex, 1))
 					};
 					if (!is_all(from < to)) {
 						return;
@@ -242,27 +242,27 @@ namespace Voicemeeter {
 					_state.get_slots_CommandList(slot)
 						->OMSetRenderTargets(1U, &hRenderTarget, FALSE, nullptr);
 					D3D12_RECT scissor{
-						static_cast<LONG>(pop(floor(from[0]))),
-						static_cast<LONG>(pop(floor(from[1]))),
-						static_cast<LONG>(pop(ceil(to[0]))),
-						static_cast<LONG>(pop(ceil(to[1])))
+						static_cast<LONG>(pop(floor(sub(from, 0)))),
+						static_cast<LONG>(pop(floor(sub(from, 1)))),
+						static_cast<LONG>(pop(ceil(sub(to, 0)))),
+						static_cast<LONG>(pop(ceil(sub(to, 1))))
 					};
 					_state.get_slots_CommandList(slot)
 						->RSSetScissorRects(1, &scissor);
 					D3D12_VIEWPORT viewport{
-						static_cast<FLOAT>(from[0]) / One,
-						static_cast<FLOAT>(from[1]) / One,
-						static_cast<FLOAT>(to[0] - from[0]) / One,
-						static_cast<FLOAT>(to[1] - from[1]) / One
+						static_cast<FLOAT>(sub(from, 0)) / One,
+						static_cast<FLOAT>(sub(from, 1)) / One,
+						static_cast<FLOAT>(sub(to, 0) - sub(from, 0)) / One,
+						static_cast<FLOAT>(sub(to, 1) - sub(from, 1)) / One
 					};
 					_state.get_slots_CommandList(slot)
 						->RSSetViewports(1, &viewport);
-					FLOAT u{ static_cast<FLOAT>(from[0] - _point[0]) / _vertex[0] };
-					FLOAT v{ static_cast<FLOAT>(from[1] - _point[1]) / (_vertex[1] * _state.get_layers_Size()) };
+					FLOAT u{ static_cast<FLOAT>(sub(from, 0) - sub(_point, 0)) / sub(_vertex, 0) };
+					FLOAT v{ static_cast<FLOAT>(sub(from, 1) - sub(_point, 1)) / (sub(_vertex, 1) * _state.get_layers_Size()) };
 					::std::array<FLOAT, 5> constants{
 						u,
-						v + static_cast<FLOAT>(to[1] - from[1]) / (_vertex[1] * _state.get_layers_Size()),
-						u + static_cast<FLOAT>(to[0] - from[0]) / _vertex[0],
+						v + static_cast<FLOAT>(sub(to, 1) - sub(from, 1)) / (sub(_vertex, 1) * _state.get_layers_Size()),
+						u + static_cast<FLOAT>(sub(to, 0) - sub(from, 0)) / sub(_vertex, 0),
 						v,
 						1.F / _state.get_layers_Size()
 					};
@@ -304,13 +304,13 @@ namespace Voicemeeter {
 							_state.inc_layers_Count());
 				};
 
-				inline void Prepare(vector_t const &point, vector_t const &vertex) {
+				inline void Prepare(vec_t const &point, vec_t const &vertex) {
 					size_t slot{ _state.get_slots_Current() };
 					D3D12_RECT rect{
-						static_cast<LONG>(pop(floor(point[0]))),
-						static_cast<LONG>(pop(floor(point[1]))),
-						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
+						static_cast<LONG>(pop(floor(sub(point, 0)))),
+						static_cast<LONG>(pop(floor(sub(point, 1)))),
+						static_cast<LONG>(pop(ceil(sub(point, 0) + sub(vertex, 0)))),
+						static_cast<LONG>(pop(ceil(sub(point, 1) + sub(vertex, 1))))
 					};
 					FLOAT transparent[]{ 0.F, 0.F, 0.F, 0.F };
 					_state.get_slots_CommandList(slot)
@@ -318,12 +318,12 @@ namespace Voicemeeter {
 							_state.get_layers_hRenderTarget(),
 							transparent,
 							1U, &rect);
-					rect.top %= pop(ceil(_vertex[1]));
-					rect.bottom %= pop(ceil(_vertex[1]));
-					rect.left += pop(floor(_point[0]));
-					rect.top += pop(floor(_point[1]));
-					rect.right += pop(ceil(_point[0]));
-					rect.bottom += pop(ceil(_point[1]));
+					rect.top %= pop(ceil(sub(_vertex, 1)));
+					rect.bottom %= pop(ceil(sub(_vertex, 1)));
+					rect.left += pop(floor(sub(_point, 0)));
+					rect.top += pop(floor(sub(_point, 1)));
+					rect.right += pop(ceil(sub(_point, 0)));
+					rect.bottom += pop(ceil(sub(_point, 1)));
 					::Windows::InvalidateRect(
 						_surface.get_hWnd(), &rect, FALSE);
 				};
@@ -333,8 +333,8 @@ namespace Voicemeeter {
 				TState &_state;
 				TQueue &_queue;
 				TStopwatch &_stopwatch;
-				vector_t _point;
-				vector_t _vertex;
+				vec_t _point;
+				vec_t _vertex;
 			};
 		}
 	}

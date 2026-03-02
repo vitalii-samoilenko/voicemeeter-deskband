@@ -319,10 +319,10 @@ private:
 					that->_surface = surfaceBuilder.Build();
 				}
 				{
-					auto toColor = [](DWORD rrggbbaa)->vector_t {
+					auto toColor = [](DWORD rrggbbaa)->vec_t {
 						WORD rrgg{ HIWORD(rrggbbaa) };
 						WORD bbaa{ LOWORD(rrggbbaa) };
-						return vector_t{
+						return vec_t{
 							push(HIBYTE(rrgg)),
 							push(LOBYTE(rrgg)),
 							push(HIBYTE(bbaa)),
@@ -336,8 +336,8 @@ private:
 						sceneBuilder.get_ThemeBuilder()
 					};
 					themeBuilder
-						.set_Warning(vector_t{ push(215), push(215), push(215), push(255) })
-						.set_Neutral(vector_t{ push(215), push(215), push(215), push(255) });
+						.set_Warning(vec_t{ push(215), push(215), push(215), push(255) })
+						.set_Neutral(vec_t{ push(215), push(215), push(215), push(255) });
 					if (config.Theme.Inactive) {
 						themeBuilder.set_Inactive(toColor(
 							*(config.Theme.Inactive)));
@@ -383,8 +383,8 @@ private:
 					compositionBuilder
 						.set_Timer(*that->_compositionTimer)
 						.set_Mixer(*that->_mixer)
-						.set_PaddingPosition(vector_t{ push(3), push(3) })
-						.set_PaddingSize(vector_t{ push(3), push(3) });
+						.set_PaddingPosition(vec_t{ push(3), push(3) })
+						.set_PaddingSize(vec_t{ push(3), push(3) });
 					if (config.Animated) {
 						compositionBuilder.set_Animated(
 							0 < *(config.Animated));
@@ -434,13 +434,13 @@ private:
 				{
 					RECT parent;
 					::Windows::GetWindowRect(that->_hWndParent, &parent);
-					that->_scene->Rescale(vector_t{
+					that->_scene->Rescale(vec_t{
 						push(parent.right - parent.left),
 						push(parent.bottom - parent.top)
 					});
-					vector_t const &vertex{ that->_scene->get_Size() };
-					that->_rc.right = static_cast<LONG>(pop(ceil(vertex[0])));
-					that->_rc.bottom = static_cast<LONG>(pop(ceil(vertex[1])));
+					vec_t const &vertex{ that->_scene->get_Size() };
+					that->_rc.right = static_cast<LONG>(pop(ceil(sub(vertex, 0))));
+					that->_rc.bottom = static_cast<LONG>(pop(ceil(sub(vertex, 1))));
 					::Windows::SetWindowPos(
 						that->_hWnd, NULL,
 						that->_rc.left, that->_rc.top,
@@ -486,11 +486,11 @@ private:
 				if (::GetUpdateRect(hWnd, NULL, FALSE)) {
 					PAINTSTRUCT ps;
 					HDC hdc{ ::Windows::BeginPaint(hWnd, &ps) };
-					vector_t point{
+					vec_t point{
 						push(ps.rcPaint.left),
 						push(ps.rcPaint.top)
 					};
-					vector_t vertex{
+					vec_t vertex{
 						push(ps.rcPaint.right - ps.rcPaint.left),
 						push(ps.rcPaint.bottom - ps.rcPaint.top)
 					};
@@ -502,37 +502,37 @@ private:
 			} return OK;
 			*/
 			case WM_LBUTTONDOWN: {
-				that->_scene->MouseLDown(vector_t{
+				that->_scene->MouseLDown(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_LBUTTONDBLCLK: {
-				that->_scene->MouseLDouble(vector_t{
+				that->_scene->MouseLDouble(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MBUTTONDOWN: {
-				that->_scene->MouseMDown(vector_t{
+				that->_scene->MouseMDown(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_MBUTTONDBLCLK: {
-				that->_scene->MouseMDouble(vector_t{
+				that->_scene->MouseMDouble(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_RBUTTONDOWN: {
-				that->_scene->MouseRDown(vector_t{
+				that->_scene->MouseRDown(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_RBUTTONDBLCLK: {
-				that->_scene->MouseRDouble(vector_t{
+				that->_scene->MouseRDouble(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
@@ -540,19 +540,19 @@ private:
 			case WM_MOUSEWHEEL: {
 				POINT point{ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 				::Windows::ScreenToClient(hWnd, &point);
-				that->_scene->MouseWheel(vector_t{
+				that->_scene->MouseWheel(vec_t{
 					push(point.x),
 					push(point.y)
 				}, GET_WHEEL_DELTA_WPARAM(wParam));
 			} return OK;
 			case WM_MOUSEMOVE: {
-				that->_scene->MouseMove(vector_t{
+				that->_scene->MouseMove(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});
 			} return OK;
 			case WM_LBUTTONUP: {
-				that->_scene->MouseLUp(vector_t{
+				that->_scene->MouseLUp(vec_t{
 					push(GET_X_LPARAM(lParam)),
 					push(GET_Y_LPARAM(lParam))
 				});

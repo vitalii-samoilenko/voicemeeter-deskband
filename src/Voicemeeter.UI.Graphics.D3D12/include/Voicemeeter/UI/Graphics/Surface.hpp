@@ -207,7 +207,7 @@ namespace Voicemeeter {
 				Surface & operator=(Surface const &) = delete;
 				Surface & operator=(Surface &&) = delete;
 
-				inline void Resize(vector_t const &value) {
+				inline void Resize(vec_t const &value) {
 					// TODO: use source size
 					if (get_buffers_Fence()
 							->GetCompletedValue()
@@ -226,8 +226,8 @@ namespace Voicemeeter {
 					::Windows::ThrowIfFailed(get_SwapChain()
 						->ResizeBuffers(
 							0,
-							static_cast<UINT>(max(pop(ceil(value[0])), 8)),
-							static_cast<UINT>(max(pop(ceil(value[1])), 8)),
+							static_cast<UINT>(max(pop(ceil(sub(value, 0))), 8)),
+							static_cast<UINT>(max(pop(ceil(sub(value, 1))), 8)),
 							DXGI_FORMAT_UNKNOWN,
 							0
 					), "Swap chain resize failed");
@@ -244,7 +244,7 @@ namespace Voicemeeter {
 					}
 					_buffers_first = true;
 				};
-				inline void Prepare(vector_t const &point, vector_t const &vertex) {
+				inline void Prepare(vec_t const &point, vec_t const &vertex) {
 					size_t slot{ inc_slots_Current() };
 					size_t buffer{ get_buffers_Current() };
 					if (get_slots_Fence(slot)
@@ -418,12 +418,12 @@ namespace Voicemeeter {
 				};
 				// -----
 
-				inline D3D12_RECT const & Invalidate(vector_t const &point, vector_t const &vertex) {
+				inline D3D12_RECT const & Invalidate(vec_t const &point, vec_t const &vertex) {
 					_buffers_invalids.push_back(D3D12_RECT{
-						static_cast<LONG>(pop(floor(point[0]))),
-						static_cast<LONG>(pop(floor(point[1]))),
-						static_cast<LONG>(pop(ceil(point[0] + vertex[0]))),
-						static_cast<LONG>(pop(ceil(point[1] + vertex[1])))
+						static_cast<LONG>(pop(floor(sub(point, 0)))),
+						static_cast<LONG>(pop(floor(sub(point, 1)))),
+						static_cast<LONG>(pop(ceil(sub(point, 0) + sub(vertex, 0)))),
+						static_cast<LONG>(pop(ceil(sub(point, 1) + sub(vertex, 1))))
 					});
 					return _buffers_invalids.back();
 				};

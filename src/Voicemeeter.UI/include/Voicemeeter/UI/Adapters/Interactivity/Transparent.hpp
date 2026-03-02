@@ -31,31 +31,31 @@ namespace Voicemeeter {
 
 					};
 
-					inline bool MouseLDown(vector_t const &point) {
+					inline bool MouseLDown(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseLDouble(vector_t const &point) {
+					inline bool MouseLDouble(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseLUp(vector_t const &point) {
+					inline bool MouseLUp(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseMDown(vector_t const &point) {
+					inline bool MouseMDown(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseMDouble(vector_t const &point) {
+					inline bool MouseMDouble(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseRDown(vector_t const &point) {
+					inline bool MouseRDown(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseRDouble(vector_t const &point) {
+					inline bool MouseRDouble(vec_t const &point) {
 						return false;
 					};
-					inline bool MouseWheel(vector_t const &point, num_t delta) {
+					inline bool MouseWheel(vec_t const &point, num_t delta) {
 						return false;
 					};
-					inline bool MouseMove(vector_t const &point) {
+					inline bool MouseMove(vec_t const &point) {
 						return false;
 					};
 				};

@@ -47,20 +47,20 @@ namespace Voicemeeter {
 					typename TBundle,
 					typename TToolkit,
 					typename TFrame,
-					typename ...TSubSpaces>
+					typename ...Is>
 				class Animated : public TBundle {
 				public:
 					template<typename ...Args>
 					inline Animated(
 						TToolkit &toolkit,
-						TSubSpaces &&...subSpaces,
+						Is &&...is,
 						TFrame &&frame = TFrame{},
 						Args &&...args)
 						: TBundle{ ::std::forward<Args>(args) ... }
 						, _toolkit{ toolkit }
-						, _point(Zero, (subSpaces.size() + ...))
+						, _point(Zero, (size(is) + ...))
 						, _vertex{ _point }
-						, _subSpaces{ ::std::forward<TSubSpaces>(subSpaces) ... }
+						, _is{ ::std::forward<Is>(is) ... }
 						, _frame{ ::std::move(frame) } {
 
 					};
@@ -73,14 +73,14 @@ namespace Voicemeeter {
 					Animated & operator()(Animated const &) = delete;
 					Animated & operator()(Animated &&) = delete;
 
-					inline vector_t const & get_AnimationPosition() const {
+					inline vec_t const & get_AnimationPosition() const {
 						return _point;
 					};
-					inline vector_t const & get_AnimationSize() const {
+					inline vec_t const & get_AnimationSize() const {
 						return _vertex;
 					};
 
-					inline void set_AnimationSize(vector_t const &value) {
+					inline void set_AnimationSize(vec_t const &value) {
 						if (are_all(_vertex == value)) {
 							return;
 						}
@@ -93,7 +93,7 @@ namespace Voicemeeter {
 							&toolkit = _toolkit,
 							&point = _point,
 							&vertex = _vertex
-						](TSubSpaces &...subSpaces)->void {
+						](Is &...is)->void {
 							num_t traveled{
 								toolkit.get_Stopwatch()
 									.get_Elapsed()
@@ -107,16 +107,16 @@ namespace Voicemeeter {
 							auto animationVertex2 = animationVertex * animationVertex;
 							num_t distance2{ 0 };
 							num_t rI{ 0 };
-							(((distance2 = sum(vector_t{ animationVertex2[subSpaces] }))
+							(((distance2 = sum(sub(animationVertex2, is)) }))
 							,(rI = traveled2 < distance2
 								? sqrt(push(distance2) / traveled2)
 								: One)
-							,(point[subSpaces] = (
-									vector_t{ point[subSpaces] } * (rI - One)
-									+ push(vector_t{ vertex[subSpaces] })
+							,(sub(&point, is) = (
+									sub(point, is) * (rI - One)
+									+ push(sub(vertex, is))
 								) / rI))
 							, ...);
-						}, _subSpaces);
+						}, _is);
 						_frame(this);
 						TBundle::operator()();
 						if (are_all(_point == _vertex)) {
@@ -127,9 +127,9 @@ namespace Voicemeeter {
 
 				private:
 					TToolkit &_toolkit;
-					vector_t _point;
-					vector_t _vertex;
-					::std::tuple<TSubSpaces ...> _subSpaces;
+					vec_t _point;
+					vec_t _vertex;
+					::std::tuple<Is ...> _is;
 					TFrame _frame;
 
 					inline void Enqueue() {

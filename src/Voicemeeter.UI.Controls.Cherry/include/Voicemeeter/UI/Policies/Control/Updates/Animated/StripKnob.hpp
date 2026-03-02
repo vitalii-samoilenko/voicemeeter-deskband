@@ -43,13 +43,13 @@ namespace Voicemeeter {
 
 							template<typename TStripKnob>
 							inline void operator()(TStripKnob *that, state_t const &state) const {
-								vector_t targetVertex{
+								vec_t targetVertex{
 									0, 0, 0,
 									0, 0,
 									0,
 									0
 								};
-								vector_t const *targetRgba{
+								vec_t const *targetRgba{
 									&_toolkit.get_Theme()
 										.Inactive
 								};
@@ -58,42 +58,45 @@ namespace Voicemeeter {
 									+ pop(floor(ans(state.degree * 4 / 15)))
 								};
 								if (state.toggle) {
-									targetVertex[5] = _StripKnob_AnimationLength;
+									sub(&targetVertex, 5) = _StripKnob_AnimationLength;
 									targetRgba = &_toolkit.get_Theme()
 										.Warning;
 								} else if (state.hold) {
 									if (0 < state.degree) {
-										targetVertex[4] = _StripKnob_AnimationLength;
+										sub(&targetVertex, 4) = _StripKnob_AnimationLength;
 										targetRgba = &_toolkit.get_Theme()
 											.Error;
 									} else {
-										targetVertex[3] = _StripKnob_AnimationLength;
+										sub(&targetVertex, 3) = _StripKnob_AnimationLength;
 										targetRgba = &_toolkit.get_Theme()
 											.Active;
 									}
 								} else if (push(5) < state.level) {
 									if (push(700) < state.level) {
 										if (push(10000) < state.level) {
-											targetVertex[2] = _StripKnob_AnimationLength;
+											sub(&targetVertex, 2) = _StripKnob_AnimationLength;
 											targetRgba = &_toolkit.get_Theme()
 												.EqHigh;
 										} else {
-											targetVertex[1] = _StripKnob_AnimationLength;
+											sub(&targetVertex, 1) = _StripKnob_AnimationLength;
 											targetRgba = &_toolkit.get_Theme()
 												.EqMedium;
 										}
 									} else {
-										targetVertex[0] = _StripKnob_AnimationLength;
+										sub(&targetVertex, 0) = _StripKnob_AnimationLength;
 										targetRgba = &_toolkit.get_Theme()
 											.EqLow;
 									}
 								}
 								if (state.hold) {
-									targetVertex[6] = _StripKnob_AnimationLength;
+									sub(&targetVertex, 6) = _StripKnob_AnimationLength;
 								}
 								that->set_AnimationSize(targetVertex);
 								that->set_IndicatorAngle(state.degree);
-								num_t shifted{ that->get_AnimationPosition()[6] - _StripKnob_AnimationLength / 2 };
+								num_t shifted{
+									sub(that->get_AnimationPosition(), 6)
+									- _StripKnob_AnimationLength / 2
+								};
 								that->set_Label(shifted < 0
 									? state.target
 									: gain);
@@ -103,7 +106,7 @@ namespace Voicemeeter {
 								that->set_AnimationContext(context_t{
 									_toolkit.get_Palette()
 										.Interpolate(that->get_FrameColor(), *targetRgba),
-									sum(vector_t{ animationVertex2[slice_t{ 0, 6, 1 }] }),
+									sum(sub(animationVertex2, sub_t{ 0, 6, 1 })),
 									state.target, gain
 								});
 							};
@@ -136,7 +139,7 @@ namespace Voicemeeter {
 									- that->get_AnimationPosition();
 								auto animationVertex2 = animationVertex * animationVertex;
 								num_t remaining2{
-									sum(vector_t{ animationVertex2[slice_t{ 0, 6, 1 }] })
+									sum(sub(animationVertex2, sub_t{ 0, 6, 1 }))
 								};
 								context_t const &context{
 									that->get_AnimationContext()
@@ -148,13 +151,17 @@ namespace Voicemeeter {
 											/ (context.distance2 - remaining2)
 										) : One
 								};
-								vector_t targetRgba{ context.path.pick(rI) };
+								vec_t targetRgba{ context.path.pick(rI) };
 								that->set_FrameColor(targetRgba);
-								num_t shifted{ that->get_AnimationPosition()[6] - _StripKnob_AnimationLength / 2 };
+								num_t shifted{
+									sub(that->get_AnimationPosition(), 6)
+									- _StripKnob_AnimationLength / 2
+								};
 								that->set_Label(shifted < 0
 									? context.target
 									: context.gain);
-								targetRgba[3] = targetRgba[3] * ans(shifted) / (_StripKnob_AnimationLength / 2);
+								sub(&targetRgba, 3) = sub(targetRgba, 3) * ans(shifted)
+									/ (_StripKnob_AnimationLength / 2);
 								that->set_LabelColor(targetRgba);
 							};
 

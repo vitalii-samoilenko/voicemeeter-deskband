@@ -42,17 +42,17 @@ namespace Voicemeeter {
 				DirectFrame & operator=(DirectFrame const &) = delete;
 				DirectFrame & operator=(DirectFrame &&) = delete;
 
-				inline vector_t const & get_Position() const {
+				inline vec_t const & get_Position() const {
 					return _point;
 				};
-				inline vector_t const & get_Size() const {
+				inline vec_t const & get_Size() const {
 					return _vertex;
 				};
 
-				inline void set_Position(vector_t const &value) {
+				inline void set_Position(vec_t const &value) {
 
 				};
-				inline void set_Size(vector_t const &value) {
+				inline void set_Size(vec_t const &value) {
 					_surface.Resize(value);
 					_vertex = value;
 				};
@@ -132,11 +132,11 @@ namespace Voicemeeter {
 							_state.inc_slots_Count(slot));
 					_surface.Present();
 				};
-				inline void Present(vector_t const &point, vector_t const &vertex) {
+				inline void Present(vec_t const &point, vec_t const &vertex) {
 
 				};
 
-				inline void Prepare(vector_t const &point, vector_t const &vertex) {
+				inline void Prepare(vec_t const &point, vec_t const &vertex) {
 					D3D12_RECT const &target{ _surface.Invalidate(point, vertex) };
 					size_t slot{ _state.get_slots_Current() };
 					size_t buffer{ _surface.get_buffers_Current() };
@@ -153,8 +153,8 @@ namespace Voicemeeter {
 				TState &_state;
 				TQueue &_queue;
 				TStopwatch &_stopwatch;
-				vector_t _point;
-				vector_t _vertex;
+				vec_t _point;
+				vec_t _vertex;
 			};
 		}
 	}

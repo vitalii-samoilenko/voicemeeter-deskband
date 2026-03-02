@@ -24,48 +24,48 @@ namespace Voicemeeter {
 				HitTest & operator=(HitTest const &) = delete;
 				HitTest & operator=(HitTest &&) = delete;
 
-				inline void Redraw(vector_t const &point, vector_t const &vertex) {
+				inline void Redraw(vec_t const &point, vec_t const &vertex) {
 					if (!IsOverlapping(point, vertex)) {
 						return;
 					}
 					TComponent::Redraw(point, vertex);
 				};
-				inline bool MouseLDown(vector_t const &point) {
+				inline bool MouseLDown(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseLDown(point);
 				};
-				inline bool MouseLDouble(vector_t const &point) {
+				inline bool MouseLDouble(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseLDouble(point);
 				};
-				inline bool MouseLUp(vector_t const &point) {
+				inline bool MouseLUp(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseLUp(point);
 				};
-				inline bool MouseMDown(vector_t const &point) {
+				inline bool MouseMDown(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseMDown(point);
 				};
-				inline bool MouseMDouble(vector_t const &point) {
+				inline bool MouseMDouble(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseMDouble(point);
 				};
-				inline bool MouseRDown(vector_t const &point) {
+				inline bool MouseRDown(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseRDown(point);
 				};
-				inline bool MouseRDouble(vector_t const &point) {
+				inline bool MouseRDouble(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseRDouble(point);
 				};
-				inline bool MouseWheel(vector_t const &point, num_t delta) {
+				inline bool MouseWheel(vec_t const &point, num_t delta) {
 					return IsInside(point) && TComponent::MouseWheel(point, delta);
 				};
-				inline bool MouseMove(vector_t const &point) {
+				inline bool MouseMove(vec_t const &point) {
 					return IsInside(point) && TComponent::MouseMove(point);
 				};
 
 			private:
 				inline bool IsOverlapping(
-					vector_t const &point, vector_t const &vertex) const {
+					vec_t const &point, vec_t const &vertex) const {
 					return is_overlapping(
 							point, vertex,
 							TComponent::get_Position(), TComponent::get_Size());
 				};
-				inline bool IsInside(vector_t const &point) const {
+				inline bool IsInside(vec_t const &point) const {
 					return is_inside(
 						point - TComponent::get_Position(), TComponent::get_Size());
 				};

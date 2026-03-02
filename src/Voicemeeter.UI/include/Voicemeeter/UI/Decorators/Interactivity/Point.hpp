@@ -33,55 +33,55 @@ namespace Voicemeeter {
 					Point & operator=(Point const &) = delete;
 					Point & operator=(Point &&) = delete;
 
-					inline bool MouseLDown(vector_t const &point) {
+					inline bool MouseLDown(vec_t const &point) {
 						bool base{ TComponent::MouseLDown(point) };
 						if (base) {
 							_focusTracker.set_Track(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseLDouble(vector_t const &point) {
+					inline bool MouseLDouble(vec_t const &point) {
 						bool base{ TComponent::MouseLDouble(point) };
 						if (base) {
 							_focusTracker.set_Track(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseLUp(vector_t const &point) {
+					inline bool MouseLUp(vec_t const &point) {
 						return TComponent::MouseLUp(point);
 					};
-					inline bool MouseMDown(vector_t const &point) {
+					inline bool MouseMDown(vec_t const &point) {
 						bool base{ TComponent::MouseMDown(point) };
 						if (base) {
 							_focusTracker.set_Track(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseMDouble(vector_t const &point) {
+					inline bool MouseMDouble(vec_t const &point) {
 						bool base{ TComponent::MouseMDouble(point) };
 						if (base) {
 							_focusTracker.set_Track(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseRDown(vector_t const &point) {
+					inline bool MouseRDown(vec_t const &point) {
 						bool base{ TComponent::MouseRDown(point) };
 						if (base) {
 							_focusTracker.set_Track(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseRDouble(vector_t const &point) {
+					inline bool MouseRDouble(vec_t const &point) {
 						bool base{ TComponent::MouseRDouble(point) };
 						if (base) {
 							_focusTracker.set_Track(*this, Focus::Floating);
 						}
 						return base;
 					};
-					inline bool MouseWheel(vector_t const &point, num_t delta) {
+					inline bool MouseWheel(vec_t const &point, num_t delta) {
 						return TComponent::MouseWheel(point, delta);
 					};
-					inline bool MouseMove(vector_t const &point) {
+					inline bool MouseMove(vec_t const &point) {
 						return TComponent::MouseMove(point);
 					};
 

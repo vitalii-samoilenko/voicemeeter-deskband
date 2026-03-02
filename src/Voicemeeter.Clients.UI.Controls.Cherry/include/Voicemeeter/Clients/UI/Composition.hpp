@@ -71,11 +71,11 @@ namespace Voicemeeter {
 						value);
 					return *this;
 				};
-				inline CompositionBuilder & set_PaddingPosition(vector_t const &value) {
+				inline CompositionBuilder & set_PaddingPosition(vec_t const &value) {
 					_paddingPoint = value;
 					return *this;
 				};
-				inline CompositionBuilder & set_PaddingSize(vector_t const &value) {
+				inline CompositionBuilder & set_PaddingSize(vec_t const &value) {
 					_paddingVertex = value;
 					return *this;
 				};
@@ -112,8 +112,8 @@ namespace Voicemeeter {
 					+ TLayout::InputSize
 					+ TLayout::OutputSize
 				> _enabled;
-				vector_t _paddingPoint;
-				vector_t _paddingVertex;
+				vec_t _paddingPoint;
+				vec_t _paddingVertex;
 			};
 		}
 	}

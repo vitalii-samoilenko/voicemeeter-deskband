@@ -24,39 +24,39 @@ namespace Voicemeeter {
 				ThemeBuilder & operator=(ThemeBuilder const &) = delete;
 				ThemeBuilder & operator=(ThemeBuilder &&) = delete;
 
-				inline ThemeBuilder & set_Inactive(vector_t const &value) {
+				inline ThemeBuilder & set_Inactive(vec_t const &value) {
 					_srgba.Inactive = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_Active(vector_t const &value) {
+				inline ThemeBuilder & set_Active(vec_t const &value) {
 					_srgba.Active = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_Warning(vector_t const &value) {
+				inline ThemeBuilder & set_Warning(vec_t const &value) {
 					_srgba.Warning = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_Error(vector_t const &value) {
+				inline ThemeBuilder & set_Error(vec_t const &value) {
 					_srgba.Error = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_Information(vector_t const &value) {
+				inline ThemeBuilder & set_Information(vec_t const &value) {
 					_srgba.Information = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_Neutral(vector_t const &value) {
+				inline ThemeBuilder & set_Neutral(vec_t const &value) {
 					_srgba.Neutral = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_EqLow(vector_t const &value) {
+				inline ThemeBuilder & set_EqLow(vec_t const &value) {
 					_srgba.EqLow = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_EqMedium(vector_t const &value) {
+				inline ThemeBuilder & set_EqMedium(vec_t const &value) {
 					_srgba.EqMedium = value;
 					return *this;
 				};
-				inline ThemeBuilder & set_EqHigh(vector_t const &value) {
+				inline ThemeBuilder & set_EqHigh(vec_t const &value) {
 					_srgba.EqHigh = value;
 					return *this;
 				};

@@ -30,7 +30,7 @@ namespace Voicemeeter {
 					inline gradient & operator=(gradient const &) = default;
 					inline gradient & operator=(gradient &&) = default;
 
-					inline vector_t pick(num_t rI) const {
+					inline vec_t pick(num_t rI) const {
 						float rF{ static_cast<float>(One) / rI };
 						float rF1m{ 1.F - rF };
 						::ok_color::RGB target{
@@ -41,7 +41,7 @@ namespace Voicemeeter {
 									_from.b * rF1m + _to.b * rF
 								})
 						};
-						return vector_t{
+						return vec_t{
 							Palette::denormalize(target.r),
 							Palette::denormalize(target.g),
 							Palette::denormalize(target.b),
@@ -58,56 +58,56 @@ namespace Voicemeeter {
 					num_t _toA;
 
 					inline gradient(
-						vector_t const &from,
-						vector_t const &to)
+						vec_t const &from,
+						vec_t const &to)
 						: _from{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									Palette::normalize(from[0]),
-									Palette::normalize(from[1]),
-									Palette::normalize(from[2])
+									Palette::normalize(sub(from, 0)),
+									Palette::normalize(sub(from, 1)),
+									Palette::normalize(sub(from, 2))
 								})
 						}
 						, _to{
 							::ok_color::linear_srgb_to_oklab(
 								::ok_color::RGB{
-									Palette::normalize(to[0]),
-									Palette::normalize(to[1]),
-									Palette::normalize(to[2])
+									Palette::normalize(sub(to, 0)),
+									Palette::normalize(sub(to, 1)),
+									Palette::normalize(sub(to, 2))
 								})
 						}
-						, _fromA{ from[3] }
-						, _toA{ to[3] } {
+						, _fromA{ sub(from, 3) }
+						, _toA{ sub(to, 3) } {
 
 					};
 
 				};
 
 				inline gradient Interpolate(
-					vector_t const &from, vector_t const &to) const {
+					vec_t const &from, vec_t const &to) const {
 					return gradient{ from, to };
 				};
 
-				inline vector_t Linearize(vector_t const &rgba) const {
-					return vector_t{
+				inline vec_t Linearize(vec_t const &rgba) const {
+					return vec_t{
 						denormalize(
 						::ok_color::srgb_transfer_function_inv(
-						normalize(rgba[0]))),
+						normalize(sub(rgba, 0)))),
 						denormalize(
 						::ok_color::srgb_transfer_function_inv(
-						normalize(rgba[1]))),
+						normalize(sub(rgba, 1)))),
 						denormalize(
 						::ok_color::srgb_transfer_function_inv(
-						normalize(rgba[2]))),
-						rgba[3]
+						normalize(sub(rgba, 2)))),
+						sub(rgba, 3)
 					};
 				};
-				inline vector_t Premultiply(vector_t const &rgba) const {
-					return vector_t{
-						rgba[0] * rgba[3] / push(255),
-						rgba[1] * rgba[3] / push(255),
-						rgba[2] * rgba[3] / push(255),
-						rgba[3]
+				inline vec_t Premultiply(vec_t const &rgba) const {
+					return vec_t{
+						sub(rgba, 0) * sub(rgba, 3) / push(255),
+						sub(rgba, 1) * sub(rgba, 3) / push(255),
+						sub(rgba, 2) * sub(rgba, 3) / push(255),
+						sub(rgba, 3)
 					};
 				};
 

@@ -84,8 +84,35 @@ inline constexpr num_t max(num_t a, num_t b) {
 	return ::std::max(a, b);
 };
 
-using vector_t = ::std::valarray<num_t>;
-using slice_t = ::std::slice;
+using vec_t = ::std::valarray<num_t>;
+using sub_t = ::std::slice;
+
+template<typename V>
+inline num_t sub(V const &v, size_t i) {
+	return v[i];
+};
+template<typename V>
+inline num_t & sub(V *v, size_t i) {
+	return v->operator[](i);
+};
+template<typename V>
+inline vec_t sub(V const &v, sub_t const &i) {
+	return vec_t{ v[i] };
+};
+template<typename V>
+inline auto sub(V *v, sub_t const &i) {
+	return v->operator[](i);
+};
+template<typename V>
+inline size_t size(V const &v) {
+	return v.size();
+};
+inline size_t size(sub_t i) {
+	return i.size();
+};
+inline constexpr size_t size(size_t i) {
+	return 1;
+};
 
 template<typename V,
 	::std::enable_if_t<

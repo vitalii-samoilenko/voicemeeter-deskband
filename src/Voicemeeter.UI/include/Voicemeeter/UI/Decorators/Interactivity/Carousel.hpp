@@ -27,33 +27,33 @@ namespace Voicemeeter {
 					Carousel & operator=(Carousel const &) = delete;
 					Carousel & operator=(Carousel &&) = delete;
 
-					inline bool MouseLDown(vector_t const &point) {
+					inline bool MouseLDown(vec_t const &point) {
 						TCircularControl::set_NextState();
 						return true;
 					};
-					inline bool MouseLDouble(vector_t const &point) {
+					inline bool MouseLDouble(vec_t const &point) {
 						TCircularControl::set_NextState();
 						return true;
 					};
-					inline bool MouseLUp(vector_t const &point) {
+					inline bool MouseLUp(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseMDown(vector_t const &point) {
+					inline bool MouseMDown(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseMDouble(vector_t const &point) {
+					inline bool MouseMDouble(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseRDown(vector_t const &point) {
+					inline bool MouseRDown(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseRDouble(vector_t const &point) {
+					inline bool MouseRDouble(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseWheel(vector_t const &point, num_t delta) {
+					inline bool MouseWheel(vec_t const &point, num_t delta) {
 						return true;
 					};
-					inline bool MouseMove(vector_t const &point) {
+					inline bool MouseMove(vec_t const &point) {
 						return true;
 					};
 				};

@@ -18,9 +18,9 @@ namespace Voicemeeter {
 						inline auto operator()(
 							V const &dst, Vs &&...srcs) const {
 							auto src = (srcs + ...);
-							for (size_t i{ 0 }; i < dst.size(); ++i) {
-								num_t nom{ dst[i] };
-								num_t denom{ src[i] };
+							for (size_t i{ 0 }; i < size(dst); ++i) {
+								num_t nom{ sub(dst, i) };
+								num_t denom{ sub(src, i) };
 								if (is_any(dst < src * nom / denom)) {
 									continue;
 								}

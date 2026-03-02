@@ -51,41 +51,41 @@ namespace Voicemeeter {
 						_hold = false;
 					};
 
-					inline bool MouseLDown(vector_t const &point) {
+					inline bool MouseLDown(vec_t const &point) {
 						_releaseTick.Unset();
 						TStripKnob::set_HoldState(true);
 						_initPoint = point;
 						return true;
 					};
-					inline bool MouseLDouble(vector_t const &point) {
+					inline bool MouseLDouble(vec_t const &point) {
 						_releaseTick.Set();
 						TStripKnob::set_DefaultState();
 						return true;
 					};
-					inline bool MouseLUp(vector_t const &point) {
+					inline bool MouseLUp(vec_t const &point) {
 						_releaseTick.Set();
 						return true;
 					};
-					inline bool MouseMDown(vector_t const &point) {
+					inline bool MouseMDown(vec_t const &point) {
 						TStripKnob::toggle_MuteState();
 						return true;
 					};
-					inline bool MouseMDouble(vector_t const &point) {
+					inline bool MouseMDouble(vec_t const &point) {
 						TStripKnob::toggle_MuteState();
 						return true;
 					};
-					inline bool MouseRDown(vector_t const &point) {
+					inline bool MouseRDown(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseRDouble(vector_t const &point) {
+					inline bool MouseRDouble(vec_t const &point) {
 						return true;
 					};
-					inline bool MouseWheel(vector_t const &point, num_t delta) {
+					inline bool MouseWheel(vec_t const &point, num_t delta) {
 						_releaseTick.Set();
 						TStripKnob::add_GainState(delta * 6);
 						return true;
 					};
-					inline bool MouseMove(vector_t const &point) {
+					inline bool MouseMove(vec_t const &point) {
 						if (_hold) {
 							TStripKnob::add_GainState(
 								sum(_direction(point - _initPoint)));
@@ -134,7 +134,7 @@ namespace Voicemeeter {
 
 					ReleaseTick _releaseTick;
 					TDirection _direction;
-					vector_t _initPoint;
+					vec_t _initPoint;
 					bool _hold;
 				};
 			}

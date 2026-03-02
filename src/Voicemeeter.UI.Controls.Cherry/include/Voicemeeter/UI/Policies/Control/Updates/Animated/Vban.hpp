@@ -38,13 +38,13 @@ namespace Voicemeeter {
 
 							template<typename TVban>
 							inline void operator()(TVban *that, state_t state) const {
-								vector_t targetVertex{ 0 };
-								vector_t const *targetRgba{
+								vec_t targetVertex{ 0 };
+								vec_t const *targetRgba{
 									&_toolkit.get_Theme()
 										.Inactive
 								};
 								if (state) {
-									targetVertex[0] = _Vban_AnimationLength;
+									sub(&targetVertex, 0) = _Vban_AnimationLength;
 									targetRgba = &_toolkit.get_Theme()
 										.Information;
 								}

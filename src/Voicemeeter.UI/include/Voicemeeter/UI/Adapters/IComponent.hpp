@@ -16,10 +16,10 @@ namespace Voicemeeter {
 				IVisible & operator=(IVisible const &) = delete;
 				IVisible & operator=(IVisible &&) = delete;
 
-				virtual vector_t const & get_Position() const = 0;
-				virtual vector_t const & get_Size() const = 0;
+				virtual vec_t const & get_Position() const = 0;
+				virtual vec_t const & get_Size() const = 0;
 
-				virtual void Redraw(vector_t const &point, vector_t const &vertex) = 0;
+				virtual void Redraw(vec_t const &point, vec_t const &vertex) = 0;
 
 			protected:
 				inline IVisible() = default;
@@ -35,7 +35,7 @@ namespace Voicemeeter {
 				IMovable & operator=(IMovable const &) = delete;
 				IMovable & operator=(IMovable &&) = delete;
 
-				virtual void Move(vector_t const &point) = 0;
+				virtual void Move(vec_t const &point) = 0;
 
 			protected:
 				inline IMovable() = default;
@@ -51,7 +51,7 @@ namespace Voicemeeter {
 				IResizable & operator=(IResizable const &) = delete;
 				IResizable & operator=(IResizable &&) = delete;
 
-				virtual void Resize(vector_t const &vertex) = 0;
+				virtual void Resize(vec_t const &vertex) = 0;
 
 			protected:
 				inline IResizable() = default;
@@ -67,9 +67,9 @@ namespace Voicemeeter {
 				IScalable & operator=(IScalable const &) = delete;
 				IScalable & operator=(IScalable &&) = delete;
 
-				virtual vector_t const & get_BaseSize() const = 0;
+				virtual vec_t const & get_BaseSize() const = 0;
 
-				virtual void Rescale(vector_t const &vertex) = 0;
+				virtual void Rescale(vec_t const &vertex) = 0;
 
 			protected:
 				inline IScalable() = default;
@@ -87,15 +87,15 @@ namespace Voicemeeter {
 
 				virtual void set_Focus(Focus value) = 0;
 
-				virtual bool MouseLDown(vector_t const &point) = 0;
-				virtual bool MouseLDouble(vector_t const &point) = 0;
-				virtual bool MouseLUp(vector_t const &point) = 0;
-				virtual bool MouseMDown(vector_t const &point) = 0;
-				virtual bool MouseMDouble(vector_t const &point) = 0;
-				virtual bool MouseRDown(vector_t const &point) = 0;
-				virtual bool MouseRDouble(vector_t const &point) = 0;
-				virtual bool MouseWheel(vector_t const &point, num_t delta) = 0;
-				virtual bool MouseMove(vector_t const &point) = 0;
+				virtual bool MouseLDown(vec_t const &point) = 0;
+				virtual bool MouseLDouble(vec_t const &point) = 0;
+				virtual bool MouseLUp(vec_t const &point) = 0;
+				virtual bool MouseMDown(vec_t const &point) = 0;
+				virtual bool MouseMDouble(vec_t const &point) = 0;
+				virtual bool MouseRDown(vec_t const &point) = 0;
+				virtual bool MouseRDouble(vec_t const &point) = 0;
+				virtual bool MouseWheel(vec_t const &point, num_t delta) = 0;
+				virtual bool MouseMove(vec_t const &point) = 0;
 
 			protected:
 				inline IInteractive() = default;
@@ -137,13 +137,13 @@ namespace Voicemeeter {
 				Component & operator=(Component const &) = delete;
 				Component & operator=(Component &&) = delete;
 
-				virtual vector_t const & get_Position() const override {
+				virtual vec_t const & get_Position() const override {
 					return that->get_Position();
 				};
-				virtual vector_t const & get_Size() const override {
+				virtual vec_t const & get_Size() const override {
 					return that->get_Size();
 				};
-				virtual vector_t const & get_BaseSize() const override {
+				virtual vec_t const & get_BaseSize() const override {
 					return that->get_BaseSize();
 				};
 
@@ -151,40 +151,40 @@ namespace Voicemeeter {
 					that->set_Focus(value);
 				};
 
-				virtual void Redraw(vector_t const &point, vector_t const &vertex) override {
+				virtual void Redraw(vec_t const &point, vec_t const &vertex) override {
 					that->Redraw(point, vertex);
 				};
-				virtual void Move(vector_t const &point) override {
+				virtual void Move(vec_t const &point) override {
 					that->Move(point);
 				};
-				virtual void Rescale(vector_t const &vertex) override {
+				virtual void Rescale(vec_t const &vertex) override {
 					that->Rescale(vertex);
 				};
-				virtual bool MouseLDown(vector_t const &point) override {
+				virtual bool MouseLDown(vec_t const &point) override {
 					return that->MouseLDown(point);
 				};
-				virtual bool MouseLDouble(vector_t const &point) override {
+				virtual bool MouseLDouble(vec_t const &point) override {
 					return that->MouseLDouble(point);
 				};
-				virtual bool MouseLUp(vector_t const &point) override {
+				virtual bool MouseLUp(vec_t const &point) override {
 					return that->MouseLUp(point);
 				};
-				virtual bool MouseMDown(vector_t const &point) override {
+				virtual bool MouseMDown(vec_t const &point) override {
 					return that->MouseMDown(point);
 				};
-				virtual bool MouseMDouble(vector_t const &point) override {
+				virtual bool MouseMDouble(vec_t const &point) override {
 					return that->MouseMDouble(point);
 				};
-				virtual bool MouseRDown(vector_t const &point) override {
+				virtual bool MouseRDown(vec_t const &point) override {
 					return that->MouseRDown(point);
 				};
-				virtual bool MouseRDouble(vector_t const &point) override {
+				virtual bool MouseRDouble(vec_t const &point) override {
 					return that->MouseRDouble(point);
 				};
-				virtual bool MouseWheel(vector_t const &point, num_t delta) override {
+				virtual bool MouseWheel(vec_t const &point, num_t delta) override {
 					return that->MouseWheel(point, delta);
 				};
-				virtual bool MouseMove(vector_t const &point) override {
+				virtual bool MouseMove(vec_t const &point) override {
 					return that->MouseMove(point);
 				};
 

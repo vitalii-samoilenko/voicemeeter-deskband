@@ -96,39 +96,39 @@ namespace Voicemeeter {
 					_mode = UI::Focus::None;
 				};
 
-				bool MouseLDown(vector_t const &point) {
+				bool MouseLDown(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseLDown(point);
 				};
-				bool MouseLDouble(vector_t const &point) {
+				bool MouseLDouble(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseLDouble(point);
 				};
-				bool MouseLUp(vector_t const &point) {
+				bool MouseLUp(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseLUp(point);
 				};
-				bool MouseMDown(vector_t const &point) {
+				bool MouseMDown(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseMDown(point);
 				};
-				bool MouseMDouble(vector_t const &point) {
+				bool MouseMDouble(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseMDouble(point);
 				};
-				bool MouseRDown(vector_t const &point) {
+				bool MouseRDown(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseRDown(point);
 				};
-				bool MouseRDouble(vector_t const &point) {
+				bool MouseRDouble(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseRDouble(point);
 				};
-				bool MouseWheel(vector_t const &point, num_t delta) {
+				bool MouseWheel(vec_t const &point, num_t delta) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseWheel(point, delta);
 				};
-				bool MouseMove(vector_t const &point) {
+				bool MouseMove(vec_t const &point) {
 					return _mode == UI::Focus::Fixed
 						&& _tracked->MouseMove(point);
 				};

@@ -40,13 +40,13 @@ namespace Voicemeeter {
 
 							template<typename TPlug>
 							inline void operator()(TPlug *that, state_t const &state) const {
-								vector_t targetVertex{ 0 };
-								vector_t const *targetRgba{
+								vec_t targetVertex{ 0 };
+								vec_t const *targetRgba{
 									&_toolkit.get_Theme()
 										.Inactive
 								};
 								if (state.toggle) {
-									targetVertex[0] = _Plug_AnimationLength;
+									sub(&targetVertex, 0) = _Plug_AnimationLength;
 									targetRgba = &_toolkit.get_Theme()
 										.Active;
 								}
@@ -99,7 +99,7 @@ namespace Voicemeeter {
 											/ (context.distance2 - remaining2)
 										) : One
 								};
-								vector_t targetRgba{ context.path.pick(rI) };
+								vec_t targetRgba{ context.path.pick(rI) };
 								that->set_FrameColor(targetRgba);
 								that->set_LabelColor(targetRgba);
 							};
