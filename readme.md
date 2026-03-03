@@ -6,9 +6,13 @@ Official website: https://voicemeeter.com/
 
 Voicemeeter is a donationware, all participations are welcome
 
-This software also utilizes [Oklab](https://bottosson.github.io/posts/oklab/) as interpolation method for gradients
+This software also utilizes following third party components:
 
-This software also utilizes [msdfgen](https://github.com/Chlumsky/msdfgen) to generate natively scalable textures
+- [Oklab](https://bottosson.github.io/posts/oklab/) as interpolation method for gradients
+
+- [msdfgen](https://github.com/Chlumsky/msdfgen) to generate natively scalable textures
+
+- [LZMA](https://www.7-zip.org/sdk.html) to compress/decompress embedded resources
 
 # Voicemeeter desk band
 
