@@ -1,0 +1,72 @@
+#ifndef WUI_DECORATORS_PADDING_HPP
+#define WUI_DECORATORS_PADDING_HPP
+
+#include <utility>
+
+#include "wheel.hpp"
+
+namespace WUI {
+	namespace Decorators {
+		template<
+			typename TComponent,
+			typename TScale>
+		class Padding : public TComponent {
+		public:
+			template<typename ...Args>
+			inline Padding(
+				vec_t &&basePaddingPoint,
+				vec_t &&basePaddingVertex,
+				TScale &&scale = TScale{},
+				Args &&...args)
+				: TComponent{ ::std::forward<Args>(args) ... }
+				, _point{ 0, 0 }
+				, _vertex{ 0, 0 }
+				, _baseVertex{ basePaddingPoint + TComponent::get_BaseSize() + basePaddingVertex }
+				, _basePaddingPoint{ ::std::move(basePaddingPoint) }
+				, _basePaddingVertex{ ::std::move(basePaddingVertex) }
+				, _scale{ ::std::move(scale) } {
+
+			};
+			Padding() = delete;
+			Padding(Padding const &) = delete;
+			Padding(Padding &&) = delete;
+
+			inline ~Padding() = default;
+
+			Padding & operator=(Padding const &) = delete;
+			Padding & operator=(Padding &&) = delete;
+
+			inline vec_t const & get_Position() const {
+				return _point;
+			};
+			inline vec_t const & get_Size() const {
+				return _vertex;
+			};
+			inline vec_t const & get_BaseSize() const {
+				return _baseVertex;
+			};
+
+			inline void Rescale(vec_t const &vertex) {
+				auto [paddingPoint, _, paddingVertex] = _scale(vertex,
+					_basePaddingPoint, TComponent::get_BaseSize(), _basePaddingVertex);
+				TComponent::Rescale(vertex - paddingPoint - paddingVertex);
+				TComponent::Move(_point + paddingPoint);
+				_vertex = paddingPoint + TComponent::get_Size() + paddingVertex;
+			};
+			inline void Move(vec_t const &point) {
+				TComponent::Move(point + TComponent::get_Position() - _point);
+				_point = point;
+			};
+
+		private:
+			vec_t _point;
+			vec_t _vertex;
+			vec_t _baseVertex;
+			vec_t _basePaddingPoint;
+			vec_t _basePaddingVertex;
+			TScale _scale;
+		};
+	}
+}
+
+#endif

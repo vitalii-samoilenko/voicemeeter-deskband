@@ -1,0 +1,37 @@
+#ifndef WUI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
+#define WUI_POLICIES_SIZE_SCALES_PRESERVERATIO_HPP
+
+#include <stdexcept>
+#include <tuple>
+
+#include "wheel.hpp"
+
+namespace WUI {
+	namespace Policies {
+		namespace Size {
+			namespace Scales {
+				struct PreserveRatio {
+					template<
+						typename V,
+						typename ...Vs>
+					inline auto operator()(
+						V const &dst, Vs &&...srcs) const {
+						auto src = (srcs + ...);
+						for (size_t i{ 0 }; i < size(dst); ++i) {
+							num_t nom{ sub(dst, i) };
+							num_t denom{ sub(src, i) };
+							if (is_any(dst < src * nom / denom)) {
+								continue;
+							}
+							return ::std::make_tuple(
+								srcs * nom / denom ...);
+						}
+						throw ::std::runtime_error{ "Scaling error" };
+					};
+				};
+			}
+		}
+	}
+}
+
+#endif

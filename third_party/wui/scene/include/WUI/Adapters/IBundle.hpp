@@ -1,0 +1,48 @@
+#ifndef WUI_ADAPTERS_IBUNDLE_HPP
+#define WUI_ADAPTERS_IBUNDLE_HPP
+
+namespace WUI {
+	namespace Adapters {
+		class IBundle {
+		public:
+			IBundle(IBundle const &) = delete;
+			IBundle(IBundle &&) = delete;
+
+			virtual ~IBundle() {};
+
+			IBundle & operator=(IBundle const &) = delete;
+			IBundle & operator=(IBundle &&) = delete;
+
+			virtual void operator()() = 0;
+
+		protected:
+			inline IBundle() = default;
+		};
+
+		template<typename TBundle>
+		class Bundle final : public IBundle {
+		public:
+			inline explicit Bundle(TBundle *that)
+				: that{ that } {
+
+			};
+			Bundle() = delete;
+			Bundle(Bundle const &) = delete;
+			Bundle(Bundle &&) = delete;
+
+			inline ~Bundle() = default;
+
+			Bundle & operator=(Bundle const &) = delete;
+			Bundle & operator=(Bundle &&) = delete;
+
+			virtual void operator()() override {
+				that->operator()();
+			};
+
+		private:
+			TBundle *that;
+		};
+	}
+}
+
+#endif

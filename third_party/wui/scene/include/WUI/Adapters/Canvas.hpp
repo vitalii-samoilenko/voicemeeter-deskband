@@ -1,0 +1,103 @@
+#ifndef WUI_ADAPTERS_CANVAS_HPP
+#define WUI_ADAPTERS_CANVAS_HPP
+
+#include <utility>
+
+#include "wheel.hpp"
+
+namespace WUI {
+	namespace Adapters {
+		template<
+			typename TToolkit,
+			typename TTimer>
+		class Canvas : public TToolkit {
+		public:
+			template<typename ...Args>
+			inline explicit Canvas(
+				TTimer &timer,
+				Args &&...args)
+				: TToolkit{ ::std::forward<Args>(args) ... }
+				, _frameTick{ this, timer } {
+
+			};
+			Canvas() = delete;
+			Canvas(Canvas const &) = delete;
+			Canvas(Canvas &&) = delete;
+
+			inline ~Canvas() = default;
+
+			Canvas & operator=(Canvas const &) = delete;
+			Canvas & operator=(Canvas &&) = delete;
+
+			inline vec_t const & get_Position() const {
+				return TToolkit::get_Frame()
+					.get_Position();
+			};
+			inline vec_t const & get_Size() const {
+				return TToolkit::get_Frame()
+					.get_Size();
+			};
+
+			inline void Move(vec_t const &point) {
+				TToolkit::get_Frame()
+					.set_Position(point);
+			};
+			inline void Redraw(vec_t const &point, vec_t const &vertex) {
+				TToolkit::get_Frame()
+					.Present(point, vertex);
+			};
+			inline void Resize(vec_t const &vertex) {
+				TToolkit::get_Frame()
+					.set_Size(vertex);
+			};
+			inline void Show() {
+				_frameTick.Set();
+			};
+			inline void Hide() {
+				_frameTick.Unset();
+			};
+
+		private:
+			class FrameTick {
+			public:
+				inline explicit FrameTick(
+					Canvas *that,
+					TTimer &timer)
+					: that{ that }
+					, _timer{ timer } {
+
+				};
+				FrameTick() = delete;
+				FrameTick(FrameTick const &) = delete;
+				FrameTick(FrameTick &&) = delete;
+
+				inline ~FrameTick() {
+					Unset();
+				};
+
+				FrameTick & operator=(FrameTick const &) = delete;
+				FrameTick & operator=(FrameTick &&) = delete;
+
+				inline void operator()() const {
+					that->get_Frame()
+						.Update();
+				};
+
+				inline void Set() {
+					_timer.Set(17, *this);
+				};
+				inline void Unset() {
+					_timer.Unset(*this);
+				};
+
+			private:
+				Canvas *that;
+				TTimer &_timer;
+			};
+
+			FrameTick _frameTick;
+		};
+	}
+}
+
+#endif
