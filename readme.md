@@ -86,7 +86,7 @@ Custom colors could be set via registry key:
 HKEY_CURRENT_USER\SOFTWARE\VoicemeeterDeskBand\Theme
 ```
 
-Value names could be taken from [Theme](src/Voicemeeter.UI.Controls.Cherry/include/Voicemeeter/UI/Graphics/Theme.hpp)
+Value names could be taken from [Theme](src/wui/controls/include/WUI/Graphics/Theme.hpp)
 
 Color type is DWORD in hexadecimal format RRGGBBAA
 
