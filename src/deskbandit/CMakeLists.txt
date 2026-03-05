@@ -1,63 +1,67 @@
 cmake_minimum_required(VERSION 3.25.1)
 
-project(Voicemeeter.DeskBandit VERSION 0.9 LANGUAGES CXX)
+project(DeskBandit VERSION 0.9 LANGUAGES CXX)
+
+find_package(WSTD)
+find_package(Windows)
 
 add_executable(Voicemeeter.DeskBandit WIN32)
-target_sources(Voicemeeter.DeskBandit PRIVATE main.cpp)
-target_compile_features(Voicemeeter.DeskBandit PRIVATE cxx_std_17)
+target_compile_features(Voicemeeter.DeskBandit PRIVATE cxx_std_11)
 target_link_libraries(Voicemeeter.DeskBandit PRIVATE
-		wheel
-		Windows
+		::WSTD
+		::Windows
 		Voicemeeter
 		Voicemeeter::Clients::Remote
-		Voicemeeter::Clients::UI::Controls
-		Voicemeeter::Clients::UI::Graphics
-		Voicemeeter::Clients::UI::Loader
-		Voicemeeter::Clients::UI::Palette
-		Voicemeeter::Clients::UI::Scene)
-target_include_directories(Voicemeeter.DeskBandit PRIVATE include)
+		Voicemeeter::Clients::WUI::Controls
+		Voicemeeter::Clients::WUI::Graphics
+		Voicemeeter::Clients::WUI::Loader
+		Voicemeeter::Clients::WUI::Palette
+		Voicemeeter::Clients::WUI::Scene)
+target_sources(Voicemeeter.DeskBandit
+	PRIVATE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/DeskBandit.hpp
+		include/ErrorMessageBox.hpp)
+target_sources(Voicemeeter.DeskBandit PRIVATE main.cpp)
 
-if(MSVC)
-	if(MSVC_TOOLSET_VERSION EQUAL 145)
-		set(BUILD_TOOLS_INSTALLATION_PATH "C:/Program Files/Microsoft Visual Studio/18/Community")
-	else()
-		message(FATAL_ERROR "Toolset is not supported")
-	endif()
-else()
-	message(FATAL_ERROR "Compiler is not supported")
+if(NOT DEFINED MSVC_TOOLSET_PATH)
+	message(FATAL_ERROR "MSVC toolset path is not specified")
 endif()
 
 add_custom_command(
-	COMMAND ${BUILD_TOOLS_INSTALLATION_PATH}/VC/Auxiliary/Build/vcvarsall.bat x64
-		&& mc -b -c ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
+	COMMAND ${MSVC_TOOLSET_PATH}/Auxiliary/Build/vcvarsall.bat x64
+		&& mc -b -c ${PROJECT_SOURCE_DIR}/Messages.mc
 	OUTPUT
 		Messages.h
 		Messages.rc
 	DEPENDS Messages.mc
 	VERBATIM)
-target_sources(Voicemeeter.DeskBandit PRIVATE
-	FILE_SET generated TYPE HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_BINARY_DIR}
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/Messages.h)
 add_custom_command(
-	COMMAND ${BUILD_TOOLS_INSTALLATION_PATH}/VC/Auxiliary/Build/vcvarsall.bat x64
+	COMMAND ${MSVC_TOOLSET_PATH}/Auxiliary/Build/vcvarsall.bat x64
 		&& rc Messages.rc
 	OUTPUT Messages.res
-	DEPENDS Messages.rc
+	DEPENDS ${PROJECT_BINARY_DIR}/Messages.rc
 	VERBATIM)
-add_custom_target(run.rc.Messages.rc DEPENDS Messages.res)
-add_dependencies(Voicemeeter.DeskBandit run.rc.Messages.rc)
-target_link_options(Voicemeeter.DeskBandit PRIVATE Messages.res)
-
 add_custom_command(
-	COMMAND ${BUILD_TOOLS_INSTALLATION_PATH}/VC/Auxiliary/Build/vcvarsall.bat x64
-		&& rc /fo ${CMAKE_CURRENT_BINARY_DIR}/Version.res
-			${CMAKE_CURRENT_SOURCE_DIR}/Version.rc
+	COMMAND ${MSVC_TOOLSET_PATH}/Auxiliary/Build/vcvarsall.bat x64
+		&& rc /fo ${PROJECT_BINARY_DIR}/Version.res
+		${PROJECT_SOURCE_DIR}/Version.rc
 	OUTPUT Version.res
 	DEPENDS Version.rc
 	VERBATIM)
-add_custom_target(run.rc.Version.rc DEPENDS Version.res)
-add_dependencies(Voicemeeter.DeskBandit run.rc.Version.rc)
-target_link_options(Voicemeeter.DeskBandit PRIVATE Version.res)
 
-install(TARGETS Voicemeeter.DeskBandit)
+target_link_libraries(Voicemeeter.DeskBandit
+	PRIVATE
+	${PROJECT_BINARY_DIR}/Messages.res
+	${PROJECT_BINARY_DIR}/Version.res)
+
+target_sources(Voicemeeter.DeskBandit
+	PRIVATE FILE_SET messages_h TYPE HEADERS
+	BASE_DIRS ${PROJECT_BINARY_DIR}
+	FILES ${PROJECT_BINARY_DIR}/Messages.h)
+
+include(GNUInstallDirs)
+install(
+	TARGETS Voicemeeter.DeskBandit
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

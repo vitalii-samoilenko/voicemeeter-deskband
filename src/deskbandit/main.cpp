@@ -1,8 +1,8 @@
 #include <memory>
 
 #include "Windows/API.hpp"
-#include "Windows/ErrorMessageBox.hpp"
 
+#include "ErrorMessageBox.hpp"
 #include "DeskBandit.hpp"
 
 #include "Messages.h"
@@ -20,11 +20,11 @@ int WINAPI wWinMain(
 		deskBandit->Show(nShowCmd);
 	}
 	catch (::Windows::Error const &e) {
-		::Windows::ErrorMessageBox(NULL, CPT_ERROR, e.code());
+		::ErrorMessageBox(NULL, CPT_ERROR, e.code());
 		return -1;
 	}
 	catch (...) {
-		::Windows::ErrorMessageBox(NULL, CPT_ERROR, MSG_ERR_GENERAL);
+		::ErrorMessageBox(NULL, CPT_ERROR, MSG_ERR_GENERAL);
 		return -1;
 	}
 	MSG msg{};

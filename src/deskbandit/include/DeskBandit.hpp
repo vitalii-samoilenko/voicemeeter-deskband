@@ -5,23 +5,25 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <utility>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "Windows/API.hpp"
-#include "Windows/Timer.hpp"
 #include <windowsx.h>
 
 #include "Voicemeeter/Cherry.hpp"
 #include "Voicemeeter/Clients/Remote.hpp"
-#include "Voicemeeter/Clients/UI/Canvas.hpp"
-#include "Voicemeeter/Clients/UI/Composition.hpp"
-#include "Voicemeeter/Clients/UI/FocusTracker.hpp"
-#include "Voicemeeter/Clients/UI/Loader.hpp"
-#include "Voicemeeter/Clients/UI/Palette.hpp"
-#include "Voicemeeter/Clients/UI/Scene.hpp"
-#include "Voicemeeter/Clients/UI/Surface.hpp"
-#include "Voicemeeter/Clients/UI/Theme.hpp"
+#include "Voicemeeter/Clients/WUI/Canvas.hpp"
+#include "Voicemeeter/Clients/WUI/Composition.hpp"
+#include "Voicemeeter/Clients/WUI/FocusTracker.hpp"
+#include "Voicemeeter/Clients/WUI/Loader.hpp"
+#include "Voicemeeter/Clients/WUI/Palette.hpp"
+#include "Voicemeeter/Clients/WUI/Scene.hpp"
+#include "Voicemeeter/Clients/WUI/Surface.hpp"
+#include "Voicemeeter/Clients/WUI/Theme.hpp"
+
+#include "ErrorMessageBox.hpp"
 
 #include "Messages.h"
 
@@ -85,32 +87,6 @@ public:
 	};
 
 private:
-	using RemoteBuilder = ::Voicemeeter::Clients::RemoteBuilder<
-		::Windows::Timer,
-		::Voicemeeter::Cherry>;
-	using SurfaceBuilder = ::Voicemeeter::Clients::UI::SurfaceBuilder;
-	using SceneBuilder = ::Voicemeeter::Clients::UI::SceneBuilder<
-		::Voicemeeter::Clients::UI::FocusTrackerBuilder<DeskBandit>,
-		::Voicemeeter::Clients::UI::LoaderBuilder,
-		::Voicemeeter::Clients::UI::PaletteBuilder,
-		::Voicemeeter::Clients::UI::ThemeBuilder,
-		::Voicemeeter::Clients::UI::DirectCanvasBuilder<
-			::Voicemeeter::Clients::UI::Surface,
-			::Voicemeeter::Clients::UI::Loader,
-			::Voicemeeter::Clients::UI::Palette,
-			::Voicemeeter::Clients::UI::Theme,
-			::Windows::Timer>,
-		::Voicemeeter::Clients::UI::CompositionBuilder<
-			::Windows::Timer,
-			::Voicemeeter::Cherry,
-			::Voicemeeter::Clients::UI::DirectCanvas<
-				::Voicemeeter::Clients::UI::Surface,
-				::Voicemeeter::Clients::UI::Loader,
-				::Voicemeeter::Clients::UI::Palette,
-				::Voicemeeter::Clients::UI::Theme,
-				::Windows::Timer>,
-			::Voicemeeter::Clients::UI::FocusTracker<DeskBandit>>>;
-
 	enum class Dock {
 		Left = 0,
 		MidLeft = 1,
@@ -143,6 +119,95 @@ private:
 		::std::optional<DWORD> Animated;
 		_config_Mixer Mixer;
 		_config_Theme Theme;
+	};
+
+	class Timer final {
+	public:
+		inline explicit Timer(HWND hWnd)
+			: _hWnd{ hWnd }
+			, _target{ nullptr }
+			, _targetId{ nullptr } {
+
+		};
+		Timer(Timer const &) = delete;
+		Timer(Timer &&) = delete;
+
+		inline ~Timer() = default;
+
+		Timer & operator=(Timer const &) = delete;
+		Timer & operator=(Timer &&) = delete;
+
+		inline UINT_PTR get_Id() const {
+			return reinterpret_cast<UINT_PTR>(this);
+		};
+
+		template<typename TTick>
+		inline void Set(num_t duration, TTick &target) {
+			::Windows::SetTimer(_hWnd, get_Id(),
+				static_cast<UINT>(duration), NULL);
+			_target = ::std::make_unique<
+				Tick<TTick>>(
+				&target);
+			_targetId = &target;
+		};
+		template<typename TTick>
+		inline void Unset(TTick &target) {
+			if (_targetId != &target) {
+				return;
+			}
+			::Windows::KillTimer(_hWnd, get_Id());
+			_target = nullptr;
+			_targetId = nullptr;
+		};
+
+		inline void Elapse() {
+			_target->operator()();
+		};
+
+	private:
+		class ITick {
+		public:
+			ITick(ITick const &) = delete;
+			ITick(ITick &&) = delete;
+
+			virtual ~ITick() {};
+
+			ITick & operator=(ITick const &) = delete;
+			ITick & operator=(ITick &&) = delete;
+
+			virtual void operator()() = 0;
+
+		protected:
+			inline ITick() = default;
+		};
+
+		template<typename TTick>
+		class Tick final : public ITick {
+		public:
+			inline explicit Tick(TTick *that)
+				: that{ that } {
+
+			};
+			Tick() = delete;
+			Tick(Tick const &) = delete;
+			Tick(Tick &&) = delete;
+
+			inline ~Tick() = default;
+
+			Tick & operator=(Tick const &) = delete;
+			Tick & operator=(Tick &&) = delete;
+
+			virtual void operator()() override {
+				that->operator()();
+			};
+
+		private:
+			TTick *that;
+		};
+
+		HWND _hWnd;
+		::std::unique_ptr<ITick> _target;
+		void const *_targetId;
 	};
 
 	class DockTick final {
@@ -196,8 +261,34 @@ private:
 
 	private:
 		DeskBandit *that;
-		::Windows::Timer &_timer;
+		Timer &_timer;
 	};
+
+	using RemoteBuilder = ::Voicemeeter::Clients::RemoteBuilder<
+		Timer,
+		::Voicemeeter::Cherry>;
+	using SurfaceBuilder = ::Voicemeeter::Clients::WUI::SurfaceBuilder;
+	using SceneBuilder = ::Voicemeeter::Clients::WUI::SceneBuilder<
+		::Voicemeeter::Clients::WUI::FocusTrackerBuilder<DeskBandit>,
+		::Voicemeeter::Clients::WUI::LoaderBuilder,
+		::Voicemeeter::Clients::WUI::PaletteBuilder,
+		::Voicemeeter::Clients::WUI::ThemeBuilder,
+		::Voicemeeter::Clients::WUI::DirectCanvasBuilder<
+			::Voicemeeter::Clients::WUI::Surface,
+			::Voicemeeter::Clients::WUI::Loader,
+			::Voicemeeter::Clients::WUI::Palette,
+			::Voicemeeter::Clients::WUI::Theme,
+			Timer>,
+		::Voicemeeter::Clients::WUI::CompositionBuilder<
+			Timer,
+			::Voicemeeter::Cherry,
+			::Voicemeeter::Clients::WUI::DirectCanvas<
+				::Voicemeeter::Clients::WUI::Surface,
+				::Voicemeeter::Clients::WUI::Loader,
+				::Voicemeeter::Clients::WUI::Palette,
+				::Voicemeeter::Clients::WUI::Theme,
+				Timer>,
+			::Voicemeeter::Clients::WUI::FocusTracker<DeskBandit>>>;
 
 	friend class DockTick;
 
@@ -206,10 +297,10 @@ private:
 	RECT _rc;
 	Dock _dock;
 	HWND _hWnd;
-	::std::unique_ptr<::Windows::Timer> _dockTimer;
-	::std::unique_ptr<::Windows::Timer> _compositionTimer;
-	::std::unique_ptr<::Windows::Timer> _renderTimer;
-	::std::unique_ptr<::Windows::Timer> _remoteTimer;
+	::std::unique_ptr<Timer> _dockTimer;
+	::std::unique_ptr<Timer> _compositionTimer;
+	::std::unique_ptr<Timer> _renderTimer;
+	::std::unique_ptr<Timer> _remoteTimer;
 	::std::unique_ptr<::Voicemeeter::Cherry> _mixer;
 	::std::unique_ptr<RemoteBuilder::Remote> _remote;
 	::std::unique_ptr<SurfaceBuilder::Surface> _surface;
@@ -224,7 +315,7 @@ private:
 	) {
 		constexpr LRESULT OK{ 0 };
 		auto shutdown = [OK, uMsg](long long errCode)->LRESULT {
-			::Windows::ErrorMessageBox(NULL, CPT_ERROR, errCode);
+			::ErrorMessageBox(NULL, CPT_ERROR, errCode);
 			if (uMsg == WM_NCCREATE) {
 				return FALSE;
 			}
@@ -296,13 +387,13 @@ private:
 					}
 				}
 				that->_dockTimer = ::std::make_unique<
-					::Windows::Timer>(hWnd);
+					Timer>(hWnd);
 				that->_compositionTimer = ::std::make_unique<
-					::Windows::Timer>(hWnd);
+					Timer>(hWnd);
 				that->_renderTimer = ::std::make_unique<
-					::Windows::Timer>(hWnd);
+					Timer>(hWnd);
 				that->_remoteTimer = ::std::make_unique<
-					::Windows::Timer>(hWnd);
+					Timer>(hWnd);
 				that->_mixer = ::std::make_unique<
 					::Voicemeeter::Cherry>();
 				{
