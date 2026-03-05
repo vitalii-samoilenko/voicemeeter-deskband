@@ -5,13 +5,12 @@ project(Windows VERSION 0.9 LANGUAGES CXX)
 add_library(windows INTERFACE)
 target_compile_features(windows INTERFACE cxx_std_11)
 target_sources(windows
-	INTERFACE
-		FILE_SET HEADERS
-			BASE_DIRS include
-			FILES
-				include/Windows/Error.hpp
-				include/Windows/API.hpp
-				include/Windows/COM.hpp)
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/Windows/Error.hpp
+		include/Windows/API.hpp
+		include/Windows/COM.hpp)
 
 add_library(Windows ALIAS windows)
 
@@ -19,8 +18,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS windows
 	EXPORT windowsTargets
-	FILE_SET HEADERS
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
 	EXPORT windowsTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Windows

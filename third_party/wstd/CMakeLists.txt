@@ -12,12 +12,11 @@ if(WSTD_EXTENDED_PRECISION)
 	target_compile_definitions(wstd INTERFACE WSTD_EXTENDED_PRECISION)
 endif()
 target_sources(wstd
-	INTERFACE
-		FILE_SET HEADERS
-			BASE_DIRS include
-			FILES
-				include/math.hpp
-				include/memory.hpp)
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/math.hpp
+		include/memory.hpp)
 
 add_library(WSTD ALIAS wstd)
 
@@ -25,8 +24,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS wstd
 	EXPORT wstdTargets
-	FILE_SET HEADERS
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
 	EXPORT wstdTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WSTD

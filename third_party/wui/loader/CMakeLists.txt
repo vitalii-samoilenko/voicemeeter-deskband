@@ -13,5 +13,9 @@ endif()
 
 include(GNUInstallDirs)
 install(
+	TARGETS wui_loader
+	EXPORT _wuiLoaderTargets
+	RESOURCE DESTINATION ${CMAKE_INSTALL_DATADIR})
+install(
 	FILES ${PROJECT_SOURCE_DIR}/wuiLoaderTargets.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

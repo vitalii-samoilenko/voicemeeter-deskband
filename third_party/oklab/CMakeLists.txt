@@ -5,10 +5,9 @@ project(Oklab VERSION 0.9 LANGUAGES CXX)
 add_library(oklab INTERFACE)
 target_compile_features(oklab INTERFACE cxx_std_11)
 target_sources(oklab
-	INTERFACE
-		FILE_SET HEADERS
-			BASE_DIRS include
-			FILES include/ok_color.h)
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES include/ok_color.h)
 
 add_library(Oklab ALIAS oklab)
 
@@ -16,8 +15,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS oklab
 	EXPORT oklabTargets
-	FILE_SET HEADERS
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
 	EXPORT oklabTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Oklab

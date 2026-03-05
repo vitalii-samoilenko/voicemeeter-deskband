@@ -8,8 +8,6 @@ set(WUI_PALETTE "" CACHE STRING
 	"Choose color space for interpolation: Oklab")
 set(WUI_LOADER "" CACHE STRING
 	"Choose resource manager: Windows")
-set(WUI_INSTALL OFF CACHE BOOL
-	"Build for installation")
 
 add_subdirectory(layouts)
 add_subdirectory(loader)

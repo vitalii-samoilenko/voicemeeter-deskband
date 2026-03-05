@@ -12,10 +12,9 @@ target_link_libraries(wui_palette_oklab
 		::WSTD
 		::Oklab)
 target_sources(wui_palette_oklab
-	INTERFACE
-		FILE_SET HEADERS
-			BASE_DIRS include
-			FILES include/WUI/Graphics/Palette.hpp)
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES include/WUI/Graphics/Palette.hpp)
 
 add_library(WUI::Palette::Oklab ALIAS wui_palette_oklab)
 
@@ -23,8 +22,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS wui_palette_oklab
 	EXPORT _wuiPaletteOklabTargets
-	FILE_SET HEADERS
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
 	EXPORT _wuiPaletteOklabTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI

@@ -10,17 +10,16 @@ target_link_libraries(wui_graphics_vulkan
 	INTERFACE
 		::WSTD
 		WUI::Layouts)
-target_link_options(wui_graphics_vulkan INTERFACE vulkan-1.lib)
+target_link_libraries(wui_graphics_vulkan INTERFACE vulkan-1)
 target_sources(wui_graphics_vulkan
-	INTERFACE
-		FILE_SET HEADERS
-			BASE_DIRS include
-			FILES
-				include/WUI/Atlas.hpp
-				include/WUI/CachedFrame.hpp
-				include/WUI/DirectFrame.hpp
-				include/WUI/State.hpp
-				include/WUI/Surface.hpp)
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/WUI/Atlas.hpp
+		include/WUI/CachedFrame.hpp
+		include/WUI/DirectFrame.hpp
+		include/WUI/State.hpp
+		include/WUI/Surface.hpp)
 
 add_library(WUI::Graphics::Vulkan ALIAS wui_graphics_vulkan)
 
@@ -35,8 +34,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS wui_graphics_vulkan
 	EXPORT _wuiGraphicsVulkanTargets
-	FILE_SET HEADERS
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
 	EXPORT _wuiGraphicsVulkanTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI

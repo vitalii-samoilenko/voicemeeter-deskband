@@ -12,22 +12,21 @@ target_link_libraries(wui_graphics_d3d12
 		::WSTD
 		::Windows
 		WUI::Layouts)
-target_link_options(wui_graphics_d3d12
+target_link_libraries(wui_graphics_d3d12
 	INTERFACE
-		d3d12.lib
-		d3dcompiler.lib
-		dcomp.lib
-		dxgi.lib)
+		d3d12
+		d3dcompiler
+		dcomp
+		dxgi)
 target_sources(wui_graphics_d3d12
-	INTERFACE
-		FILE_SET HEADERS
-			BASE_DIRS include
-			FILES
-				include/WUI/Graphics/Atlas.hpp
-				include/WUI/Graphics/CachedFrame.hpp
-				include/WUI/Graphics/DirectFrame.hpp
-				include/WUI/Graphics/State.hpp
-				include/WUI/Graphics/Surface.hpp)
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/WUI/Graphics/Atlas.hpp
+		include/WUI/Graphics/CachedFrame.hpp
+		include/WUI/Graphics/DirectFrame.hpp
+		include/WUI/Graphics/State.hpp
+		include/WUI/Graphics/Surface.hpp)
 
 add_library(WUI::Graphics::D3D12 ALIAS wui_graphics_d3d12)
 
@@ -42,8 +41,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS wui_graphics_d3d12
 	EXPORT _wuiGraphicsD3d12Targets
-	FILE_SET HEADERS
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(
 	EXPORT _wuiGraphicsD3d12Targets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI
