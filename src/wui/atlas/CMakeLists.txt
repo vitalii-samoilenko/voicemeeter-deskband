@@ -5,9 +5,7 @@ project(WUI::Atlas VERSION 0.9 LANGUAGES CXX)
 add_library(wui_atlas INTERFACE)
 
 if(WUI_ATLAS_GENERATE)
-	if(NOT DEFINED MSDFGEN_PATH)
-		message(FATAL_ERROR "Msdfgen path is not specified")
-	endif()
+	find_package(msdfgen)
 
 	add_executable(labels.generator)
 	target_sources(labels.generator PRIVATE labels.cpp)

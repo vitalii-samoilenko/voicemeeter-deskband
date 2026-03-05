@@ -1,143 +1,141 @@
-#ifndef VOICEMEETER_UI_DECORATORS_INTERACTIVITY_STRIPKNOB_HPP
-#define VOICEMEETER_UI_DECORATORS_INTERACTIVITY_STRIPKNOB_HPP
+#ifndef WUI_DECORATORS_INTERACTIVITY_STRIPKNOB_HPP
+#define WUI_DECORATORS_INTERACTIVITY_STRIPKNOB_HPP
 
 #include <utility>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
-#include "Voicemeeter/UI/Focus.hpp"
+#include "WUI/Focus.hpp"
 
-namespace Voicemeeter {
-	namespace UI {
-		namespace Decorators {
-			namespace Interactivity {
-				template<
-					typename TStripKnob,
-					typename TTimer,
-					typename TDirection>
-				class StripKnob : public TStripKnob {
-				public:
-					template<typename ...Args>
-					inline StripKnob(
-						TTimer &timer,
-						TDirection &&direction = TDirection{},
-						Args &&...args)
-						: TStripKnob{ ::std::forward<Args>(args) ... }
-						, _releaseTick{ this, timer }
-						, _direction{ ::std::move(direction) }
-						, _initPoint{ 0, 0 }
-						, _hold{ false } {
+namespace WUI {
+	namespace Decorators {
+		namespace Interactivity {
+			template<
+				typename TStripKnob,
+				typename TTimer,
+				typename TDirection>
+			class StripKnob : public TStripKnob {
+			public:
+				template<typename ...Args>
+				inline StripKnob(
+					TTimer &timer,
+					TDirection &&direction = TDirection{},
+					Args &&...args)
+					: TStripKnob{ ::std::forward<Args>(args) ... }
+					, _releaseTick{ this, timer }
+					, _direction{ ::std::move(direction) }
+					, _initPoint{ 0, 0 }
+					, _hold{ false } {
 
-					};
-					StripKnob() = delete;
-					StripKnob(StripKnob const &) = delete;
-					StripKnob(StripKnob &&) = delete;
+				};
+				StripKnob() = delete;
+				StripKnob(StripKnob const &) = delete;
+				StripKnob(StripKnob &&) = delete;
 
-					inline ~StripKnob() = default;
+				inline ~StripKnob() = default;
 
-					StripKnob & operator=(StripKnob const &) = delete;
-					StripKnob & operator=(StripKnob &&) = delete;
+				StripKnob & operator=(StripKnob const &) = delete;
+				StripKnob & operator=(StripKnob &&) = delete;
 
-					inline void set_Focus(Focus value) {
-						switch (value) {
-						case Focus::Fixed:
-							_hold = true;
-							return;
-						case Focus::None:
-							_releaseTick.Unset();
-							TStripKnob::set_HoldState(false);
-							break;
-						}
-						_hold = false;
-					};
-
-					inline bool MouseLDown(vec_t const &point) {
+				inline void set_Focus(Focus value) {
+					switch (value) {
+					case Focus::Fixed:
+						_hold = true;
+						return;
+					case Focus::None:
 						_releaseTick.Unset();
-						TStripKnob::set_HoldState(true);
+						TStripKnob::set_HoldState(false);
+						break;
+					}
+					_hold = false;
+				};
+
+				inline bool MouseLDown(vec_t const &point) {
+					_releaseTick.Unset();
+					TStripKnob::set_HoldState(true);
+					_initPoint = point;
+					return true;
+				};
+				inline bool MouseLDouble(vec_t const &point) {
+					_releaseTick.Set();
+					TStripKnob::set_DefaultState();
+					return true;
+				};
+				inline bool MouseLUp(vec_t const &point) {
+					_releaseTick.Set();
+					return true;
+				};
+				inline bool MouseMDown(vec_t const &point) {
+					TStripKnob::toggle_MuteState();
+					return true;
+				};
+				inline bool MouseMDouble(vec_t const &point) {
+					TStripKnob::toggle_MuteState();
+					return true;
+				};
+				inline bool MouseRDown(vec_t const &point) {
+					return true;
+				};
+				inline bool MouseRDouble(vec_t const &point) {
+					return true;
+				};
+				inline bool MouseWheel(vec_t const &point, num_t delta) {
+					_releaseTick.Set();
+					TStripKnob::add_GainState(delta * 6);
+					return true;
+				};
+				inline bool MouseMove(vec_t const &point) {
+					if (_hold) {
+						TStripKnob::add_GainState(
+							sum(_direction(point - _initPoint)));
 						_initPoint = point;
-						return true;
+					}
+					return true;
+				};
+
+			private:
+				class ReleaseTick final {
+				public:
+					inline ReleaseTick(
+						StripKnob *that,
+						TTimer &timer)
+						: that{ that }
+						, _timer{ timer } {
+
 					};
-					inline bool MouseLDouble(vec_t const &point) {
-						_releaseTick.Set();
-						TStripKnob::set_DefaultState();
-						return true;
+					ReleaseTick() = delete;
+					ReleaseTick(ReleaseTick const &) = delete;
+					ReleaseTick(ReleaseTick &&) = delete;
+
+					inline ~ReleaseTick() {
+						Unset();
 					};
-					inline bool MouseLUp(vec_t const &point) {
-						_releaseTick.Set();
-						return true;
+
+					ReleaseTick & operator=(ReleaseTick const &) = delete;
+					ReleaseTick & operator=(ReleaseTick &&) = delete;
+
+					inline void operator()() {
+						Unset();
+						that->set_HoldState(false);
 					};
-					inline bool MouseMDown(vec_t const &point) {
-						TStripKnob::toggle_MuteState();
-						return true;
+
+					inline void Set() {
+						_timer.Set(2000, *this);
 					};
-					inline bool MouseMDouble(vec_t const &point) {
-						TStripKnob::toggle_MuteState();
-						return true;
-					};
-					inline bool MouseRDown(vec_t const &point) {
-						return true;
-					};
-					inline bool MouseRDouble(vec_t const &point) {
-						return true;
-					};
-					inline bool MouseWheel(vec_t const &point, num_t delta) {
-						_releaseTick.Set();
-						TStripKnob::add_GainState(delta * 6);
-						return true;
-					};
-					inline bool MouseMove(vec_t const &point) {
-						if (_hold) {
-							TStripKnob::add_GainState(
-								sum(_direction(point - _initPoint)));
-							_initPoint = point;
-						}
-						return true;
+					inline void Unset() {
+						_timer.Unset(*this);
 					};
 
 				private:
-					class ReleaseTick final {
-					public:
-						inline ReleaseTick(
-							StripKnob *that,
-							TTimer &timer)
-							: that{ that }
-							, _timer{ timer } {
-
-						};
-						ReleaseTick() = delete;
-						ReleaseTick(ReleaseTick const &) = delete;
-						ReleaseTick(ReleaseTick &&) = delete;
-
-						inline ~ReleaseTick() {
-							Unset();
-						};
-
-						ReleaseTick & operator=(ReleaseTick const &) = delete;
-						ReleaseTick & operator=(ReleaseTick &&) = delete;
-
-						inline void operator()() {
-							Unset();
-							that->set_HoldState(false);
-						};
-
-						inline void Set() {
-							_timer.Set(2000, *this);
-						};
-						inline void Unset() {
-							_timer.Unset(*this);
-						};
-
-					private:
-						StripKnob *that;
-						TTimer &_timer;
-					};
-
-					ReleaseTick _releaseTick;
-					TDirection _direction;
-					vec_t _initPoint;
-					bool _hold;
+					StripKnob *that;
+					TTimer &_timer;
 				};
-			}
+
+				ReleaseTick _releaseTick;
+				TDirection _direction;
+				vec_t _initPoint;
+				bool _hold;
+			};
 		}
 	}
 }
