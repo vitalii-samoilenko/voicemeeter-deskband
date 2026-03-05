@@ -1,7 +1,7 @@
 #ifndef VOICEMEETER_CHANNEL_HPP
 #define VOICEMEETER_CHANNEL_HPP
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 namespace Voicemeeter {
 	class Channel {
