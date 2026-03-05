@@ -4,8 +4,8 @@
 #include <array>
 #include <vector>
 
+#include "math.hpp"
 #include "memory.hpp"
-#include "wheel.hpp"
 
 #include "Windows/API.hpp"
 #include "Windows/COM.hpp"
@@ -38,7 +38,7 @@ namespace WUI {
 				, _buffers_invalids{}
 				, _compositionTarget{ nullptr } {
 				bool failed{ true };
-				auto guardEvents = ::estd::make_guard([
+				auto guardEvents = ::wstd::make_guard([
 						&failed,
 						&hEvent = _hEvent
 					]()->void {

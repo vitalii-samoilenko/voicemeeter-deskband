@@ -1,7 +1,7 @@
 #ifndef WUI_POLICIES_ORIENTATION_DIRECTIONS_AXIS_HPP
 #define WUI_POLICIES_ORIENTATION_DIRECTIONS_AXIS_HPP
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 namespace WUI {
 	namespace Policies {

@@ -8,9 +8,27 @@ set(WUI_PALETTE "" CACHE STRING
 	"Choose color space for interpolation: Oklab")
 set(WUI_LOADER "" CACHE STRING
 	"Choose resource manager: Windows")
+set(WUI_INSTALL OFF CACHE BOOL
+	"Build for installation")
 
+add_subdirectory(layouts)
+add_subdirectory(loader)
 add_subdirectory(graphics)
 add_subdirectory(palette)
 add_subdirectory(scene)
-add_subdirectory(loader)
-add_subdirectory(layouts)
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+	${PROJECT_SOURCE_DIR}/WUIConfig.cmake.in
+	${PROJECT_BINARY_DIR}/WUIConfig.cmake
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)
+write_basic_package_version_file(
+	${PROJECT_BINARY_DIR}/WUIConfigVersion.cmake
+	VERSION 0.9.0
+	COMPATIBILITY SameMajorVersion)
+install(
+	FILES
+		${PROJECT_BINARY_DIR}/WUIConfig.cmake
+		${PROJECT_BINARY_DIR}/WUIConfigVersion.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

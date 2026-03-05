@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <array>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "Windows/API.hpp"
 #include <d3d12.h>

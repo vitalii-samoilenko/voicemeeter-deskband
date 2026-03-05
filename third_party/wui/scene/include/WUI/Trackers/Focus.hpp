@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "WUI/Adapters/IComponent.hpp"
 #include "WUI/Focus.hpp"

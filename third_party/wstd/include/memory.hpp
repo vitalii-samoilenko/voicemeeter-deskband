@@ -1,10 +1,10 @@
-#ifndef ESTD_GUARD_HPP
-#define ESTD_GUARD_HPP
+#ifndef WSTD_MEMORY_HPP
+#define WSTD_MEMORY_HPP
 
 #include <type_traits>
 #include <utility>
 
-namespace estd {
+namespace wstd {
 	template<typename Fn>
 	class guard final {
 		static_assert(

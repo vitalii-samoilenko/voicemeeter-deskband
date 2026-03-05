@@ -2,12 +2,24 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(WUI::Layouts VERSION 0.9 LANGUAGES CXX)
 
+find_package(WSTD)
+
 add_library(wui_layouts INTERFACE)
 target_compile_features(wui_layouts INTERFACE cxx_std_11)
-target_link_libraries(wui_layouts INTERFACE wheel)
-target_sources(wui_layouts INTERFACE
-	FILE_SET export TYPE HEADERS
-	BASE_DIRS ${LAYOUTS_BASE_DIRS}
-	FILES ${LAYOUTS_FILES})
+target_link_libraries(wui_layouts INTERFACE ::WSTD)
 
 add_library(WUI::Layouts ALIAS wui_layouts)
+
+include(GNUInstallDirs)
+install(
+	TARGETS wui_layouts
+	EXPORT wuiLayoutsTargets
+	FILE_SET HEADERS
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(
+	EXPORT _wuiLayoutsTargets
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI
+	NAMESPACE ::)
+install(
+	FILES ${PROJECT_SOURCE_DIR}/wuiLayoutsTargets.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

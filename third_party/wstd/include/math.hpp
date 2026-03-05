@@ -1,5 +1,5 @@
-#ifndef WHEEL_HPP
-#define WHEEL_HPP
+#ifndef MATH_HPP
+#define MATH_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -8,7 +8,7 @@
 #include <type_traits>
 #include <valarray>
 
-#ifdef WHEEL_EXTENDED_PRECISION
+#ifdef WSTD_EXTENDED_PRECISION
 using num_t = int64_t;
 using unum_t = uint64_t;
 constexpr int _wheel_Precision{ 14 };
@@ -60,7 +60,7 @@ inline constexpr num_t frac(num_t n) {
 	return n & ~_wheel_Imask;
 };
 
-inline num_t ans(num_t n) {
+inline num_t absl(num_t n) {
 	return ::std::abs(n);
 };
 inline num_t sqrt(num_t n) {

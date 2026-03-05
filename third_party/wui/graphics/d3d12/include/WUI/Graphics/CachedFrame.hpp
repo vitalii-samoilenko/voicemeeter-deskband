@@ -4,7 +4,7 @@
 #include <array>
 #include <utility>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "Windows/API.hpp"
 #include "Windows/COM.hpp"

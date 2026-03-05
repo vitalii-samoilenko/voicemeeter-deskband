@@ -5,7 +5,7 @@
 #include <tuple>
 #include <utility>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 namespace WUI {
 	namespace Adapters {

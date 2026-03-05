@@ -1,7 +1,7 @@
 #ifndef WUI_GRAPHICS_PALETTE_HPP
 #define WUI_GRAPHICS_PALETTE_HPP
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "ok_color.h"
 

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <tuple>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 namespace WUI {
 	namespace Policies {

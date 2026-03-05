@@ -1,7 +1,7 @@
 #ifndef WUI_ADAPTERS_ICOMPONENT_HPP
 #define WUI_ADAPTERS_ICOMPONENT_HPP
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "WUI/Focus.hpp"
 
