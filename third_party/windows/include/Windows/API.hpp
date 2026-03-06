@@ -549,6 +549,34 @@ namespace Windows {
 			}
 		}
 	};
+
+	HMODULE LoadLibraryW(
+	  _In_ LPCWSTR lpLibFileName
+	) {
+		HMODULE hModule{
+			::LoadLibraryW(
+				lpLibFileName)
+		};
+		if (HMDOULE == NULL) {
+			throw Error{ "Failed to load library" };
+		}
+		return hModule;
+	};
+
+	FARPROC GetProcAddress(
+	  _In_ HMODULE hModule,
+	  _In_ LPCSTR  lpProcName
+	) {
+		FARPROC hProc{
+			::GetProcAddress(
+				hModule,
+				lpProcName)
+		};
+		if (hProc == NULL) {
+			throw Error{ "Failed to locate procedure" };
+		}
+		return hProc;
+	};
 }
 
 #endif

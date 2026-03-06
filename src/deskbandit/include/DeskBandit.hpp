@@ -13,7 +13,7 @@
 #include <windowsx.h>
 
 #include "Voicemeeter/Cherry.hpp"
-#include "Voicemeeter/Clients/Remote.hpp"
+#include "Voicemeeter/Clients/VBVMR.hpp"
 #include "Voicemeeter/Clients/WUI/Canvas.hpp"
 #include "Voicemeeter/Clients/WUI/Composition.hpp"
 #include "Voicemeeter/Clients/WUI/FocusTracker.hpp"
@@ -264,7 +264,7 @@ private:
 		Timer &_timer;
 	};
 
-	using RemoteBuilder = ::Voicemeeter::Clients::RemoteBuilder<
+	using VBVMRBuilder = ::Voicemeeter::Clients::VBVMRBuilder<
 		Timer,
 		::Voicemeeter::Cherry>;
 	using SurfaceBuilder = ::Voicemeeter::Clients::WUI::SurfaceBuilder;
@@ -302,7 +302,7 @@ private:
 	::std::unique_ptr<Timer> _renderTimer;
 	::std::unique_ptr<Timer> _remoteTimer;
 	::std::unique_ptr<::Voicemeeter::Cherry> _mixer;
-	::std::unique_ptr<RemoteBuilder::Remote> _remote;
+	::std::unique_ptr<VBVMRBuilder::VBVMR> _remote;
 	::std::unique_ptr<SurfaceBuilder::Surface> _surface;
 	::std::unique_ptr<SceneBuilder::Scene> _scene;
 	::std::unique_ptr<DockTick> _dockTick;
@@ -347,9 +347,9 @@ private:
 					auto loadValue = [](LPCWSTR lpSubKey, LPCWSTR lpValue, ::std::optional<DWORD> &target)->void {
 						DWORD value{ 0UL };
 						DWORD size{ sizeof(DWORD) };
-						if (::Windows::RegGetValueW(
-							HKEY_CURRENT_USER, lpSubKey, lpValue,
-							RRF_RT_DWORD, NULL, &value, &size) == ERROR_SUCCESS) {
+						if (ERROR_SUCCESS == ::Windows::RegGetValueW(
+								HKEY_CURRENT_USER, lpSubKey, lpValue,
+								RRF_RT_DWORD, NULL, &value, &size)) {
 							target = value;
 						}
 					};
@@ -397,7 +397,7 @@ private:
 				that->_mixer = ::std::make_unique<
 					::Voicemeeter::Cherry>();
 				{
-					RemoteBuilder remoteBuilder{};
+					VBVMRBuilder remoteBuilder{};
 					remoteBuilder
 						.set_Timer(*that->_remoteTimer)
 						.set_Mixer(*that->_mixer);

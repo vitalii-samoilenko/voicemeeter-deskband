@@ -1,17 +1,21 @@
-#ifndef VOICEMEETER_CLIENTS___REMOTE_HPP
-#define VOICEMEETER_CLIENTS___REMOTE_HPP
+#ifndef VOICEMEETER_CLIENTS___VBVMR_HPP
+#define VOICEMEETER_CLIENTS___VBVMR_HPP
 
 #include <stdexcept>
+#include <wchar.h>
 
-#include "wheel.hpp"
+#include "math.hpp"
+
+#include "Windows/API.hpp"
 
 #include "Voicemeeter/Cherry.hpp"
+
 #include "VoicemeeterRemote.h"
 
 namespace Voicemeeter {
 	namespace Clients {
 		namespace _ {
-			namespace Remote {
+			namespace VBVMR {
 				enum runtime_t : long {
 					Voicemeeter = 1L,
 					Banana = 2L,
@@ -20,33 +24,138 @@ namespace Voicemeeter {
 				template<typename TMixer>
 				class bag;
 				template<typename TMixer>
-				bag<TMixer> Subscribe(TMixer &mixer, T_VBVMR_INTERFACE &remote, runtime_t runtime);
+				void Subscribe(bag<TMixer> &tokens, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime);
 				template<typename TMixer>
-				void Update(TMixer &mixer, T_VBVMR_INTERFACE &remote, runtime_t runtime);
+				void Update(TMixer &mixer, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime);
+
+				template<
+					typename TTimer,
+					typename TMixer>
+				class Proxy final {
+				public:
+					inline Proxy(
+						TTimer &timer,
+						TMixer &mixer)
+						: _mixer{ mixer }
+						, _tokens{ mixer }
+						, _hVoicemeeterRemote{ NULL }
+						, _voicemeeterRemote{}
+						, _runtime{ Voicemeeter }
+						, _remoteTick{ this, timer } {
+						{
+							WCHAR path[MAX_PATH];
+							DWORD size{ sizeof(path) };
+							if (ERROR_SUCCESS != ::Windows::RegGetValueW(
+									HKEY_LOCAL_MACHINE, LR"(SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\VB:Voicemeeter {17359A74-1236-5467})", L"UninstallString",
+									RRF_RT_REG_SZ, NULL, &value, &size)) {
+								throw ::std::runtime_error{ "Voicemeeter is not installed" };
+							}
+							size_t i{ wcslen(path) };
+							for (; 0 < i; --i) {
+								if (path[i] == L'\\') {
+									break;
+								}
+							}
+							if (0 != wcscpy_s(&path[i], MAX_PATH - i,
+									sizeof(void *) == 8
+										? L"VoicemeeterRemote64.dll"
+										: L"VoicemeeterRemote.dll")) {
+								throw ::std::runtime_error{ "Path is too long" };
+							}
+							_hVoicemeeterRemote = ::Windows::LoadLibraryW(path);
+						}
+						{
+							_voicemeeterRemote.VBVMR_Login = (T_VBVMR_Login)::Windows::GetProcAddress(_hVoicemeeterRemote, "VBVMR_Login");
+							_voicemeeterRemote.VBVMR_Logout = (T_VBVMR_Logout)::Windows::GetProcAddress(_hVoicemeeterRemote, "VBVMR_Logout");
+							_voicemeeterRemote.VBVMR_GetVoicemeeterType = (T_VBVMR_GetVoicemeeterType)::Windows::GetProcAddress(_hVoicemeeterRemote,"VBVMR_GetVoicemeeterType");
+							_voicemeeterRemote.VBVMR_IsParametersDirty = (T_VBVMR_IsParametersDirty)::Windows::GetProcAddress(_hVoicemeeterRemote,"VBVMR_IsParametersDirty");
+							_voicemeeterRemote.VBVMR_GetParameterFloat = (T_VBVMR_GetParameterFloat)::Windows::GetProcAddress(_hVoicemeeterRemote,"VBVMR_GetParameterFloat");
+							_voicemeeterRemote.VBVMR_GetLevel = (T_VBVMR_GetLevel)::Windows::GetProcAddress(_hVoicemeeterRemote,"VBVMR_GetLevel");
+							_voicemeeterRemote.VBVMR_SetParameterFloat = (T_VBVMR_SetParameterFloat)::Windows::GetProcAddress(_hVoicemeeterRemote,"VBVMR_SetParameterFloat");
+						}
+						long login{ _voicemeeterRemote.VBVMR_Login() };
+						if (login < 0) {
+							throw ::std::runtime_error{ "Could not connect to Voicemeeter" };
+						} else if (login) {
+							_voicemeeterRemote.VBVMR_Logout();
+							::FreeLibrary(_hVoicemeeterRemote);
+							throw ::std::runtime_error{ "Voicemeeter is not started" };
+						}
+						if (_voicemeeterRemote.VBVMR_GetVoicemeeterType(
+							reinterpret_cast<long *>(&_runtime))) {
+							_voicemeeterRemote.VBVMR_Logout();
+							::FreeLibrary(_hVoicemeeterRemote);
+							throw ::std::runtime_error{ "Could not get Voicemeeter type" };
+						}
+						Subscribe(_tokens, _voicemeeterRemote, _runtime);
+						_remoteTick.Set();
+					};
+					Proxy() = delete;
+					Proxy(Proxy const &) = delete;
+					Proxy(Proxy &&) = delete;
+
+					inline ~Proxy() {
+						_voicemeeterRemote.VBVMR_Logout();
+						::FreeLibrary(_hVoicemeeterRemote);
+					};
+
+					Proxy & operator=(Proxy const &) = delete;
+					Proxy & operator=(Proxy &&) = delete;
+
+					inline Type get_Type() const {
+						return _runtime;
+					};
+
+				private:
+					class UpdateTick final {
+					public:
+						inline UpdateTick(
+							Remote *that,
+							TTimer &timer)
+							: that{ that }
+							, _timer{ timer } {
+
+						};
+						UpdateTick() = delete;
+						UpdateTick(ProxyTick const &) = delete;
+						UpdateTick(ProxyTick &&) = delete;
+
+						inline ~UpdateTick() {
+							Unset();
+						};
+
+						UpdateTick & operator=(ProxyTick const &) = delete;
+						UpdateTick & operator=(ProxyTick &&) = delete;
+
+						inline void operator()() const {
+							Update(that->_mixer, that->_voicemeeterRemote, that->_runtime);
+						};
+
+						inline void Set() {
+							_timer.Set(100, *this);
+						};
+						inline void Unset() {
+							_timer.Unset(*this);
+						};
+
+					private:
+						Remote *that;
+						TTimer &_timer;
+					};
+
+					friend class UpdateTick;
+
+					TMixer &_mixer;
+					bag<TMixer> _tokens;
+					HMODULE _hVoicemeeterRemote;
+					T_VBVMR_INTERFACE _voicemeeterRemote;
+					runtime_t _runtime;
+					UpdateTick _updateTick;
+				};
 
 				template<>
 				class bag<Cherry> final {
 				public:
-					bag() = delete;
-					bag(bag const &) = delete;
-					inline bag(bag &&) = default;
-
-					inline ~bag() = default;
-
-					bag & operator=(bag const &) = delete;
-					bag & operator=(bag &&) = delete;
-
-				private:
-					friend bag<Cherry> Subscribe<Cherry>(Cherry &, T_VBVMR_INTERFACE &, runtime_t);
-
-					Cherry::token _tokenM;
-					Cherry::PIStrip::token _tokenP;
-					Cherry::VIStrip::token _tokenV;
-					Cherry::POStrip::token _tokenA1;
-					Cherry::POStrip::token _tokenA2;
-					Cherry::VOStrip::token _tokenB1;
-					Cherry::VOStrip::token _tokenB2;
-
 					inline explicit bag(Cherry &mixer)
 						: _tokenM{ mixer.Subscribe<bag>() }
 						, _tokenP{
@@ -75,6 +184,23 @@ namespace Voicemeeter {
 						} {
 
 					};
+					bag() = delete;
+					bag(bag const &) = delete;
+					inline bag(bag &&) = default;
+
+					inline ~bag() = default;
+
+					bag & operator=(bag const &) = delete;
+					bag & operator=(bag &&) = delete;
+
+				private:
+					Cherry::token _tokenM;
+					Cherry::PIStrip::token _tokenP;
+					Cherry::VIStrip::token _tokenV;
+					Cherry::POStrip::token _tokenA1;
+					Cherry::POStrip::token _tokenA2;
+					Cherry::VOStrip::token _tokenB1;
+					Cherry::VOStrip::token _tokenB2;
 				};
 
 				static bool g_dirty{ false };
@@ -177,33 +303,33 @@ namespace Voicemeeter {
 				};
 
 				template<typename TMixer, typename TMixer::Strips From, typename TMixer::Strips To>
-				inline void SubscribePlug(typename TMixer::token &token, TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
+				inline void SubscribePlug(typename TMixer::token &token, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime) {
 					token.on_plug<From, To>([
-						&client,
+						&voicemeeterRemote,
 						key = ToPlugKey<TMixer>(runtime, From, To)
 					](bool value)->void {
-						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
+						if (voicemeeterRemote.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
 							throw ::std::runtime_error{ key };
 						}
 						g_dirty = true;
 					});
 				};
 				template<typename TMixer, typename TMixer::Strips Target, typename TToken>
-				inline void SubscribeStrip(TToken &token, T_VBVMR_INTERFACE &client, runtime_t runtime) {
+				inline void SubscribeStrip(TToken &token, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime) {
 					token.on_gain([
-						&client,
+						&voicemeeterRemote,
 						key = ToStripKey<TMixer>(runtime, Target, Gain)
 					](num_t value)->void {
-						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value) / One)) {
+						if (voicemeeterRemote.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value) / One)) {
 							throw ::std::runtime_error{ key };
 						}
 						g_dirty = true;
 					});
 					token.on_mute([
-						&client,
+						&voicemeeterRemote,
 						key = ToStripKey<TMixer>(runtime, Target, Mute)
 					](bool value)->void {
-						if (client.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
+						if (voicemeeterRemote.VBVMR_SetParameterFloat(const_cast<char *>(key), static_cast<float>(value))) {
 							throw ::std::runtime_error{ key };
 						}
 						g_dirty = true;
@@ -211,37 +337,37 @@ namespace Voicemeeter {
 				};
 
 				template<typename TMixer, typename TMixer::Strips From, typename TMixer::Strips To>
-				inline void UpdatePlug(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
+				inline void UpdatePlug(TMixer &mixer, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime) {
 					char const *key{ ToPlugKey<TMixer>(runtime, From, To) };
 					float value{ 0.F };
-					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
+					if (voicemeeterRemote.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::runtime_error{ key };
 					}
 					mixer.set_Plug<bag<TMixer>, From, To>(0.01F < value);
 				};
 				template<typename TMixer, typename TMixer::Strips Target>
-				inline void UpdateStrip(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
+				inline void UpdateStrip(TMixer &mixer, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime) {
 					char const *key{ ToStripKey<TMixer>(runtime, Target, Gain) };
 					float value{ 0.F };
-					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
+					if (voicemeeterRemote.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::runtime_error{ key };
 					}
 					mixer.get_Strip<Target>()
 						.set_Gain<bag<TMixer>>(static_cast<num_t>(value * One));
 					key = ToStripKey<TMixer>(runtime, Target, Mute);
-					if (client.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
+					if (voicemeeterRemote.VBVMR_GetParameterFloat(const_cast<char *>(key), &value)) {
 						throw ::std::runtime_error{ key };
 					}
 					mixer.get_Strip<Target>()
 						.set_Mute<bag<TMixer>>(0.01F < value);
 				};
 				template<typename TMixer, typename TMixer::Strips Target, size_t ...Channels>
-				inline void UpdateChannels(TMixer &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime, level_t level) {
+				inline void UpdateChannels(TMixer &mixer, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime, level_t level) {
 					long key{ 0L };
 					float value{ 0.F };
 					long code{ 0L };
 					(((key = ToChannelKey<TMixer>(runtime, Target, Channels))
-					,(code = client.VBVMR_GetLevel(level, key, &value))
+					,(code = voicemeeterRemote.VBVMR_GetLevel(level, key, &value))
 					,(mixer.get_Strip<Target>()
 						.get_Channel<Channels>()
 						.set_Level<bag<TMixer>>(code
@@ -251,65 +377,63 @@ namespace Voicemeeter {
 				};
 
 				template<>
-				inline bag<Cherry> Subscribe<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
-					bag<Cherry> tokens{ mixer };
+				inline void Subscribe<Cherry>(bag<Cherry> &tokens, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime) {
 					SubscribePlug<Cherry,
 						Cherry::Strips::P, Cherry::Strips::A1>(
-						tokens._tokenM, mixer, client, runtime);
+						tokens._tokenM, voicemeeterRemote, runtime);
 					SubscribePlug<Cherry,
 						Cherry::Strips::P, Cherry::Strips::B1>(
-						tokens._tokenM, mixer, client, runtime);
+						tokens._tokenM, voicemeeterRemote, runtime);
 					SubscribePlug<Cherry,
 						Cherry::Strips::V, Cherry::Strips::A1>(
-						tokens._tokenM, mixer, client, runtime);
+						tokens._tokenM, voicemeeterRemote, runtime);
 					SubscribePlug<Cherry,
 						Cherry::Strips::V, Cherry::Strips::B1>(
-						tokens._tokenM, mixer, client, runtime);
+						tokens._tokenM, voicemeeterRemote, runtime);
 					SubscribeStrip<Cherry,
 						Cherry::Strips::P>(
-						tokens._tokenP, client, runtime);
+						tokens._tokenP, voicemeeterRemote, runtime);
 					SubscribeStrip<Cherry,
 						Cherry::Strips::V>(
-						tokens._tokenV, client, runtime);
+						tokens._tokenV, voicemeeterRemote, runtime);
 					SubscribeStrip<Cherry,
 						Cherry::Strips::A1>(
-						tokens._tokenA1, client, runtime);
+						tokens._tokenA1, voicemeeterRemote, runtime);
 					SubscribeStrip<Cherry,
 						Cherry::Strips::B1>(
-						tokens._tokenB1, client, runtime);
+						tokens._tokenB1, voicemeeterRemote, runtime);
 					if (Voicemeeter < runtime) {
 						tokens._tokenM.on_vban([
-							&client
+							&voicemeeterRemote
 						](bool value)->void {
-							if (client.VBVMR_SetParameterFloat(const_cast<char *>(g_keys[0]), static_cast<float>(value))) {
+							if (voicemeeterRemote.VBVMR_SetParameterFloat(const_cast<char *>(g_keys[0]), static_cast<float>(value))) {
 								throw ::std::runtime_error{ g_keys[0] };
 							}
 							g_dirty = true;
 						});
 						SubscribePlug<Cherry,
 							Cherry::Strips::P, Cherry::Strips::A2>(
-							tokens._tokenM, mixer, client, runtime);
+							tokens._tokenM, voicemeeterRemote, runtime);
 						SubscribePlug<Cherry,
 							Cherry::Strips::P, Cherry::Strips::B2>(
-							tokens._tokenM, mixer, client, runtime);
+							tokens._tokenM, voicemeeterRemote, runtime);
 						SubscribePlug<Cherry,
 							Cherry::Strips::V, Cherry::Strips::A2>(
-							tokens._tokenM, mixer, client, runtime);
+							tokens._tokenM, voicemeeterRemote, runtime);
 						SubscribePlug<Cherry,
 							Cherry::Strips::V, Cherry::Strips::B2>(
-							tokens._tokenM, mixer, client, runtime);
+							tokens._tokenM, voicemeeterRemote, runtime);
 						SubscribeStrip<Cherry,
 							Cherry::Strips::A2>(
-							tokens._tokenA2, client, runtime);
+							tokens._tokenA2, voicemeeterRemote, runtime);
 						SubscribeStrip<Cherry,
 							Cherry::Strips::B2>(
-							tokens._tokenB2, client, runtime);
+							tokens._tokenB2, voicemeeterRemote, runtime);
 					}
-					return tokens;
 				};
 				template<>
-				inline void Update<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &client, runtime_t runtime) {
-					long temp{ client.VBVMR_IsParametersDirty() };
+				inline void Update<Cherry>(Cherry &mixer, T_VBVMR_INTERFACE &voicemeeterRemote, runtime_t runtime) {
+					long temp{ voicemeeterRemote.VBVMR_IsParametersDirty() };
 					if (temp < 0) {
 						throw ::std::runtime_error{ "Could not check Voicemeeter" };
 					}
@@ -318,73 +442,73 @@ namespace Voicemeeter {
 					if (dirty) {
 						UpdatePlug<Cherry,
 							Cherry::Strips::P, Cherry::Strips::A1>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdatePlug<Cherry,
 							Cherry::Strips::P, Cherry::Strips::B1>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdatePlug<Cherry,
 							Cherry::Strips::V, Cherry::Strips::A1>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdatePlug<Cherry,
 							Cherry::Strips::V, Cherry::Strips::B1>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdateStrip<Cherry,
 							Cherry::Strips::P>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdateStrip<Cherry,
 							Cherry::Strips::V>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdateStrip<Cherry,
 							Cherry::Strips::A1>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 						UpdateStrip<Cherry,
 							Cherry::Strips::B1>(
-							mixer, client, runtime);
+							mixer, voicemeeterRemote, runtime);
 					}
 					UpdateChannels<Cherry,
 						Cherry::Strips::P, 0, 1>(
-						mixer, client, runtime, PostFaderInput);
+						mixer, voicemeeterRemote, runtime, PostFaderInput);
 					UpdateChannels<Cherry,
 						Cherry::Strips::V, 0, 1, 2, 3, 4, 5, 6, 7>(
-						mixer, client, runtime, PostFaderInput);
+						mixer, voicemeeterRemote, runtime, PostFaderInput);
 					UpdateChannels<Cherry,
 						Cherry::Strips::A1, 0, 1, 2, 3, 4, 5, 6, 7>(
-						mixer, client, runtime, Output);
+						mixer, voicemeeterRemote, runtime, Output);
 					UpdateChannels<Cherry,
 						Cherry::Strips::B1, 0, 1, 2, 3, 4, 5, 6, 7>(
-						mixer, client, runtime, Output);
+						mixer, voicemeeterRemote, runtime, Output);
 					if (Voicemeeter < runtime) {
 						if (dirty) {
 							float value{ 0.F };
-							if (client.VBVMR_GetParameterFloat(const_cast<char *>(g_keys[0]), &value)) {
+							if (voicemeeterRemote.VBVMR_GetParameterFloat(const_cast<char *>(g_keys[0]), &value)) {
 								throw ::std::runtime_error{ g_keys[0] };
 							}
 							mixer.set_Vban<bag<Cherry>>(0.01F < value);
 							UpdatePlug<Cherry,
 								Cherry::Strips::P, Cherry::Strips::A2>(
-								mixer, client, runtime);
+								mixer, voicemeeterRemote, runtime);
 							UpdatePlug<Cherry,
 								Cherry::Strips::P, Cherry::Strips::B2>(
-								mixer, client, runtime);
+								mixer, voicemeeterRemote, runtime);
 							UpdatePlug<Cherry,
 								Cherry::Strips::V, Cherry::Strips::A2>(
-								mixer, client, runtime);
+								mixer, voicemeeterRemote, runtime);
 							UpdatePlug<Cherry,
 								Cherry::Strips::V, Cherry::Strips::B2>(
-								mixer, client, runtime);
+								mixer, voicemeeterRemote, runtime);
 							UpdateStrip<Cherry,
 								Cherry::Strips::A2>(
-								mixer, client, runtime);
+								mixer, voicemeeterRemote, runtime);
 							UpdateStrip<Cherry,
 								Cherry::Strips::B2>(
-								mixer, client, runtime);
+								mixer, voicemeeterRemote, runtime);
 						}
 						UpdateChannels<Cherry,
 							Cherry::Strips::A2, 0, 1, 2, 3, 4, 5, 6, 7>(
-							mixer, client, runtime, Output);
+							mixer, voicemeeterRemote, runtime, Output);
 						UpdateChannels<Cherry,
 							Cherry::Strips::B2, 0, 1, 2, 3, 4, 5, 6, 7>(
-							mixer, client, runtime, Output);
+							mixer, voicemeeterRemote, runtime, Output);
 					}
 				};
 			}
