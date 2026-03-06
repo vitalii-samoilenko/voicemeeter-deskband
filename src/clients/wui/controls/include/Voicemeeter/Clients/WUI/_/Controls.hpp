@@ -1,5 +1,5 @@
-#ifndef VOICEMEETER_CLIENTS_UI___CONTROLS_HPP
-#define VOICEMEETER_CLIENTS_UI___CONTROLS_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI___CONTROLS_HPP
+#define VOICEMEETER_CLIENTS_WUI___CONTROLS_HPP
 
 #include <array>
 #include <bitset>
@@ -10,130 +10,41 @@
 #include <type_traits>
 #include <utility>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
 #include "Voicemeeter/Cherry.hpp"
-#include "Voicemeeter/UI/Adapters/Glyph.hpp"
-#include "Voicemeeter/UI/Adapters/Graphics/Animated.hpp"
-#include "Voicemeeter/UI/Adapters/Interactivity/Controllers/Circular.hpp"
-#include "Voicemeeter/UI/Adapters/Interactivity/Controllers/Plug.hpp"
-#include "Voicemeeter/UI/Adapters/Interactivity/Controllers/StripKnob.hpp"
-#include "Voicemeeter/UI/Adapters/Interactivity/Transparent.hpp"
-#include "Voicemeeter/UI/Adapters/State.hpp"
-#include "Voicemeeter/UI/Decorators/HitTest.hpp"
-#include "Voicemeeter/UI/Decorators/Interactivity/Carousel.hpp"
-#include "Voicemeeter/UI/Decorators/Interactivity/Grab.hpp"
-#include "Voicemeeter/UI/Decorators/Interactivity/Point.hpp"
-#include "Voicemeeter/UI/Decorators/Interactivity/StripKnob.hpp"
-#include "Voicemeeter/UI/Decorators/Padding.hpp"
-#include "Voicemeeter/UI/Graphics/Bundles/Knob.hpp"
-#include "Voicemeeter/UI/Graphics/Bundles/Plug.hpp"
-#include "Voicemeeter/UI/Graphics/Bundles/Vban.hpp"
-#include "Voicemeeter/UI/Graphics/Theme.hpp"
-#include "Voicemeeter/UI/Panels/Stack.hpp"
-#include "Voicemeeter/UI/Policies/Control/Updates/Animated/Plug.hpp"
-#include "Voicemeeter/UI/Policies/Control/Updates/Animated/StripKnob.hpp"
-#include "Voicemeeter/UI/Policies/Control/Updates/Animated/Vban.hpp"
-#include "Voicemeeter/UI/Policies/Control/Updates/Plug.hpp"
-#include "Voicemeeter/UI/Policies/Control/Updates/StripKnob.hpp"
-#include "Voicemeeter/UI/Policies/Control/Updates/Vban.hpp"
-#include "Voicemeeter/UI/Policies/Orientation/Directions/Axis.hpp"
-#include "Voicemeeter/UI/Policies/Size/Scales/PreserveRatio.hpp"
-#include "Voicemeeter/UI/States/Plug.hpp"
-#include "Voicemeeter/UI/States/StripKnob.hpp"
-
-namespace Voicemeeter {
-	namespace UI {
-		namespace Layouts {
-			namespace Cherry {
-				namespace Panel {
-					constexpr num_t Height{ push(40) };
-					namespace Advance {
-						constexpr num_t Left{ push(1) };
-						constexpr num_t Top{ 0 };
-						constexpr num_t Right{ 0 };
-						constexpr num_t Bottom{ 0 };
-					}
-					namespace Padding {
-						constexpr num_t Left{ 0 };
-						constexpr num_t Top{ push(1) };
-						constexpr num_t Right{ Advance::Left };
-						constexpr num_t Bottom{ push(1) };
-					}
-				}
-				namespace Vban {
-					constexpr num_t Height{ Panel::Height };
-					constexpr num_t Width{ Panel::Height * 39 / 22 };
-				}
-				namespace Knob {
-					constexpr num_t Height{ Panel::Height };
-					constexpr num_t Width{ Panel::Height };
-				}
-				namespace Plug {
-					constexpr num_t Height{ push(19) };
-					constexpr num_t Width{ push(41) };
-				}
-				namespace Mixer {
-					namespace Block {
-						namespace Advance {
-							constexpr num_t Left{ 0 };
-							constexpr num_t Top{ push(2) };
-							constexpr num_t Right{ 0 };
-							constexpr num_t Bottom{ 0 };
-						}
-						constexpr num_t Height{ Plug::Height + Advance::Top + Plug::Height };
-						constexpr num_t Width{ Plug::Width };
-					}
-				}
-				namespace Input {
-					namespace Block {
-						namespace Advance {
-							constexpr num_t Left{ push(1) };
-							constexpr num_t Top{ 0 };
-							constexpr num_t Right{ 0 };
-							constexpr num_t Bottom{ 0 };
-						}
-						constexpr num_t Height{ Panel::Height };
-						constexpr num_t Width{ Knob::Width + 2 * (Advance::Left + Mixer::Block::Width) };
-					}
-					namespace Section {
-						namespace Advance {
-							constexpr num_t Left{ push(1) };
-							constexpr num_t Top{ 0 };
-							constexpr num_t Right{ 0 };
-							constexpr num_t Bottom{ 0 };
-						}
-						constexpr num_t Height{ Panel::Height };
-						constexpr num_t Width{ Input::Block::Width + Advance::Left + Input::Block::Width };
-					}
-				}
-				namespace Output {
-					namespace Section {
-						namespace Advance {
-							constexpr num_t Left{ push(1) };
-							constexpr num_t Top{ 0 };
-							constexpr num_t Right{ 0 };
-							constexpr num_t Bottom{ 0 };
-						}
-						constexpr num_t Height{ Panel::Height };
-						constexpr num_t Width{ Knob::Width + 3 * (Advance::Left + Knob::Width) };
-					}
-				}
-				namespace Panel {
-					constexpr num_t Width{
-						Advance::Left + Vban::Width
-						+ Advance::Left + Input::Section::Width
-						+ Advance::Left + Output::Section::Width
-					};
-				}
-			}
-		}
-	}
-}
+#include "WUI/Adapters/Glyph.hpp"
+#include "WUI/Adapters/Graphics/Animated.hpp"
+#include "WUI/Adapters/Interactivity/Controllers/Circular.hpp"
+#include "WUI/Adapters/Interactivity/Controllers/Plug.hpp"
+#include "WUI/Adapters/Interactivity/Controllers/StripKnob.hpp"
+#include "WUI/Adapters/Interactivity/Transparent.hpp"
+#include "WUI/Adapters/State.hpp"
+#include "WUI/Decorators/HitTest.hpp"
+#include "WUI/Decorators/Interactivity/Carousel.hpp"
+#include "WUI/Decorators/Interactivity/Grab.hpp"
+#include "WUI/Decorators/Interactivity/Point.hpp"
+#include "WUI/Decorators/Interactivity/StripKnob.hpp"
+#include "WUI/Decorators/Padding.hpp"
+#include "WUI/Graphics/Bundles/Knob.hpp"
+#include "WUI/Graphics/Bundles/Plug.hpp"
+#include "WUI/Graphics/Bundles/Vban.hpp"
+#include "WUI/Graphics/Theme.hpp"
+#include "WUI/Panels/Stack.hpp"
+#include "WUI/Policies/Control/Updates/Animated/Plug.hpp"
+#include "WUI/Policies/Control/Updates/Animated/StripKnob.hpp"
+#include "WUI/Policies/Control/Updates/Animated/Vban.hpp"
+#include "WUI/Policies/Control/Updates/Plug.hpp"
+#include "WUI/Policies/Control/Updates/StripKnob.hpp"
+#include "WUI/Policies/Control/Updates/Vban.hpp"
+#include "WUI/Policies/Orientation/Directions/Axis.hpp"
+#include "WUI/Policies/Size/Scales/PreserveRatio.hpp"
+#include "WUI/States/Plug.hpp"
+#include "WUI/States/StripKnob.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
+		namespace WUI {
 			namespace _ {
 				namespace Controls {
 					enum flags : size_t {
@@ -207,10 +118,94 @@ namespace Voicemeeter {
 					class bag;
 
 					template<typename TMixer>
-					void PickAndUpdateStrip(TMixer &mixer, ::Voicemeeter::UI::States::StripKnob const &state);
+					void PickAndUpdateStrip(TMixer &mixer, ::WUI::States::StripKnob const &state);
 					template<typename TMixer>
-					void PickAndUpdatePlug(TMixer &mixer, ::Voicemeeter::UI::States::Plug const &state);
+					void PickAndUpdatePlug(TMixer &mixer, ::WUI::States::Plug const &state);
 
+					namespace Layouts {
+						namespace Cherry {
+							namespace Panel {
+								constexpr num_t Height{ push(40) };
+								namespace Advance {
+									constexpr num_t Left{ push(1) };
+									constexpr num_t Top{ 0 };
+									constexpr num_t Right{ 0 };
+									constexpr num_t Bottom{ 0 };
+								}
+								namespace Padding {
+									constexpr num_t Left{ 0 };
+									constexpr num_t Top{ push(1) };
+									constexpr num_t Right{ Advance::Left };
+									constexpr num_t Bottom{ push(1) };
+								}
+							}
+							namespace Vban {
+								constexpr num_t Height{ Panel::Height };
+								constexpr num_t Width{ Panel::Height * 39 / 22 };
+							}
+							namespace Knob {
+								constexpr num_t Height{ Panel::Height };
+								constexpr num_t Width{ Panel::Height };
+							}
+							namespace Plug {
+								constexpr num_t Height{ push(19) };
+								constexpr num_t Width{ push(41) };
+							}
+							namespace Mixer {
+								namespace Block {
+									namespace Advance {
+										constexpr num_t Left{ 0 };
+										constexpr num_t Top{ push(2) };
+										constexpr num_t Right{ 0 };
+										constexpr num_t Bottom{ 0 };
+									}
+									constexpr num_t Height{ Plug::Height + Advance::Top + Plug::Height };
+									constexpr num_t Width{ Plug::Width };
+								}
+							}
+							namespace Input {
+								namespace Block {
+									namespace Advance {
+										constexpr num_t Left{ push(1) };
+										constexpr num_t Top{ 0 };
+										constexpr num_t Right{ 0 };
+										constexpr num_t Bottom{ 0 };
+									}
+									constexpr num_t Height{ Panel::Height };
+									constexpr num_t Width{ Knob::Width + 2 * (Advance::Left + Mixer::Block::Width) };
+								}
+								namespace Section {
+									namespace Advance {
+										constexpr num_t Left{ push(1) };
+										constexpr num_t Top{ 0 };
+										constexpr num_t Right{ 0 };
+										constexpr num_t Bottom{ 0 };
+									}
+									constexpr num_t Height{ Panel::Height };
+									constexpr num_t Width{ Input::Block::Width + Advance::Left + Input::Block::Width };
+								}
+							}
+							namespace Output {
+								namespace Section {
+									namespace Advance {
+										constexpr num_t Left{ push(1) };
+										constexpr num_t Top{ 0 };
+										constexpr num_t Right{ 0 };
+										constexpr num_t Bottom{ 0 };
+									}
+									constexpr num_t Height{ Panel::Height };
+									constexpr num_t Width{ Knob::Width + 3 * (Advance::Left + Knob::Width) };
+								}
+							}
+							namespace Panel {
+								constexpr num_t Width{
+									Advance::Left + Vban::Width
+									+ Advance::Left + Input::Section::Width
+									+ Advance::Left + Output::Section::Width
+								};
+							}
+						}
+					}
 					namespace Policies {
 						namespace Control {
 							namespace Notifications {
@@ -244,7 +239,7 @@ namespace Voicemeeter {
 								template<typename TMixer>
 								class StripKnob final {
 								public:
-									using state_t = ::Voicemeeter::UI::States::StripKnob;
+									using state_t = ::WUI::States::StripKnob;
 
 									inline explicit StripKnob(TMixer &mixer)
 										: _mixer{ mixer } {
@@ -271,7 +266,7 @@ namespace Voicemeeter {
 								template<typename TMixer>
 								class Plug final {
 								public:
-									using state_t = ::Voicemeeter::UI::States::Plug;
+									using state_t = ::WUI::States::Plug;
 
 									inline explicit Plug(TMixer &mixer)
 										: _mixer{ mixer } {
@@ -381,27 +376,27 @@ namespace Voicemeeter {
 						typename TMixer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using Vban = ::Voicemeeter::UI::Decorators::HitTest<
-						::Voicemeeter::UI::Decorators::Interactivity::Point<
-							::Voicemeeter::UI::Decorators::Interactivity::Carousel<
-							::Voicemeeter::UI::Adapters::Interactivity::Controllers::Circular<
-							::Voicemeeter::UI::Adapters::State<
-								::Voicemeeter::UI::Adapters::Interactivity::Transparent<
-								::Voicemeeter::UI::Adapters::Glyph<
-									::Voicemeeter::UI::Adapters::Graphics::Animated<
-										::Voicemeeter::UI::Adapters::Graphics::Context<
-											::Voicemeeter::UI::Graphics::Bundles::Vban<TToolkit>,
-											::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanContext<TToolkit>>,
+					using Vban = ::WUI::Decorators::HitTest<
+						::WUI::Decorators::Interactivity::Point<
+							::WUI::Decorators::Interactivity::Carousel<
+							::WUI::Adapters::Interactivity::Controllers::Circular<
+							::WUI::Adapters::State<
+								::WUI::Adapters::Interactivity::Transparent<
+								::WUI::Adapters::Glyph<
+									::WUI::Adapters::Graphics::Animated<
+										::WUI::Adapters::Graphics::Context<
+											::WUI::Graphics::Bundles::Vban<TToolkit>,
+											::WUI::Policies::Control::Updates::Animated::VbanContext<TToolkit>>,
 										TToolkit,
-										::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>,
+										::WUI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>,
 										sub_t>,
-									::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+									::WUI::Policies::Size::Scales::PreserveRatio
 								>>,
 								num_t,
 								Policies::Control::Notifications::Vban<TMixer>,
 								Policies::Control::Updates::ToggleAnimation<
-									::Voicemeeter::UI::Policies::Control::Updates::Animated::Vban<TToolkit>,
-									::Voicemeeter::UI::Policies::Control::Updates::Vban<TToolkit>>
+									::WUI::Policies::Control::Updates::Animated::Vban<TToolkit>,
+									::WUI::Policies::Control::Updates::Vban<TToolkit>>
 							>>>,
 							TFocusTracker
 						>>;
@@ -410,30 +405,30 @@ namespace Voicemeeter {
 						typename TMixer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using StripKnob = ::Voicemeeter::UI::Decorators::HitTest<
-						::Voicemeeter::UI::Decorators::Interactivity::Grab<
-							::Voicemeeter::UI::Decorators::Interactivity::StripKnob<
-								::Voicemeeter::UI::Adapters::Interactivity::Controllers::StripKnob<
-								::Voicemeeter::UI::Adapters::State<
-									::Voicemeeter::UI::Adapters::Interactivity::Transparent<
-									::Voicemeeter::UI::Adapters::Glyph<
-										::Voicemeeter::UI::Adapters::Graphics::Animated<
-											::Voicemeeter::UI::Adapters::Graphics::Context<
-												::Voicemeeter::UI::Graphics::Bundles::Knob<TToolkit>,
-												::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
+					using StripKnob = ::WUI::Decorators::HitTest<
+						::WUI::Decorators::Interactivity::Grab<
+							::WUI::Decorators::Interactivity::StripKnob<
+								::WUI::Adapters::Interactivity::Controllers::StripKnob<
+								::WUI::Adapters::State<
+									::WUI::Adapters::Interactivity::Transparent<
+									::WUI::Adapters::Glyph<
+										::WUI::Adapters::Graphics::Animated<
+											::WUI::Adapters::Graphics::Context<
+												::WUI::Graphics::Bundles::Knob<TToolkit>,
+												::WUI::Policies::Control::Updates::Animated::StripKnobContext<TToolkit>>,
 											TToolkit,
-											::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
+											::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>,
 											sub_t, sub_t>,
-										::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+										::WUI::Policies::Size::Scales::PreserveRatio
 									>>,
-									::Voicemeeter::UI::States::StripKnob,
+									::WUI::States::StripKnob,
 									Policies::Control::Notifications::StripKnob<TMixer>,
 									Policies::Control::Updates::ToggleAnimation<
-										::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-										::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>
+										::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+										::WUI::Policies::Control::Updates::StripKnob<TToolkit>>
 								>>,
 								TTimer,
-								::Voicemeeter::UI::Policies::Orientation::Directions::Axis>,
+								::WUI::Policies::Orientation::Directions::Axis>,
 							TFocusTracker
 						>>;
 					template<
@@ -441,27 +436,27 @@ namespace Voicemeeter {
 						typename TMixer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using Plug = ::Voicemeeter::UI::Decorators::HitTest<
-						::Voicemeeter::UI::Decorators::Interactivity::Point<
-							::Voicemeeter::UI::Decorators::Interactivity::Carousel<
-							::Voicemeeter::UI::Adapters::Interactivity::Controllers::Plug<
-							::Voicemeeter::UI::Adapters::State<
-								::Voicemeeter::UI::Adapters::Interactivity::Transparent<
-								::Voicemeeter::UI::Adapters::Glyph<
-									::Voicemeeter::UI::Adapters::Graphics::Animated<
-										::Voicemeeter::UI::Adapters::Graphics::Context<
-											::Voicemeeter::UI::Graphics::Bundles::Plug<TToolkit>,
-											::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugContext<TToolkit>>,
+					using Plug = ::WUI::Decorators::HitTest<
+						::WUI::Decorators::Interactivity::Point<
+							::WUI::Decorators::Interactivity::Carousel<
+							::WUI::Adapters::Interactivity::Controllers::Plug<
+							::WUI::Adapters::State<
+								::WUI::Adapters::Interactivity::Transparent<
+								::WUI::Adapters::Glyph<
+									::WUI::Adapters::Graphics::Animated<
+										::WUI::Adapters::Graphics::Context<
+											::WUI::Graphics::Bundles::Plug<TToolkit>,
+											::WUI::Policies::Control::Updates::Animated::PlugContext<TToolkit>>,
 										TToolkit,
-										::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>,
+										::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>,
 										sub_t>,
-									::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+									::WUI::Policies::Size::Scales::PreserveRatio
 								>>,
-								::Voicemeeter::UI::States::Plug,
+								::WUI::States::Plug,
 								Policies::Control::Notifications::Plug<TMixer>,
 								Policies::Control::Updates::ToggleAnimation<
-									::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-									::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>
+									::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+									::WUI::Policies::Control::Updates::Plug<TToolkit>>
 							>>>,
 							TFocusTracker
 						>>;
@@ -470,143 +465,143 @@ namespace Voicemeeter {
 						typename TTimer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using CherryOutputSection = ::Voicemeeter::UI::Panels::Stack<
-						::Voicemeeter::UI::Policies::Orientation::Directions::Axis,
-						::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio,
+					using CherryOutputSection = ::WUI::Panels::Stack<
+						::WUI::Policies::Orientation::Directions::Axis,
+						::WUI::Policies::Size::Scales::PreserveRatio,
 						StripKnob<
 							TTimer,
 							Cherry,
 							TToolkit,
 							TFocusTracker>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							StripKnob<
 								TTimer,
 								Cherry,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							StripKnob<
 								TTimer,
 								Cherry,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							StripKnob<
 								TTimer,
 								Cherry,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using CherryMixerBlock = ::Voicemeeter::UI::Panels::Stack<
-						::Voicemeeter::UI::Policies::Orientation::Directions::Axis,
-						::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio,
+					using CherryMixerBlock = ::WUI::Panels::Stack<
+						::WUI::Policies::Orientation::Directions::Axis,
+						::WUI::Policies::Size::Scales::PreserveRatio,
 						Plug<
 							TTimer,
 							Cherry,
 							TToolkit,
 							TFocusTracker>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							Plug<
 								TTimer,
 								Cherry,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using CherryInputBlock = ::Voicemeeter::UI::Panels::Stack<
-						::Voicemeeter::UI::Policies::Orientation::Directions::Axis,
-						::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio,
+					using CherryInputBlock = ::WUI::Panels::Stack<
+						::WUI::Policies::Orientation::Directions::Axis,
+						::WUI::Policies::Size::Scales::PreserveRatio,
 						StripKnob<
 							TTimer,
 							Cherry,
 							TToolkit,
 							TFocusTracker>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							CherryMixerBlock<
 								TTimer,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							CherryMixerBlock<
 								TTimer,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using CherryInputSection = ::Voicemeeter::UI::Panels::Stack<
-						::Voicemeeter::UI::Policies::Orientation::Directions::Axis,
-						::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio,
+					using CherryInputSection = ::WUI::Panels::Stack<
+						::WUI::Policies::Orientation::Directions::Axis,
+						::WUI::Policies::Size::Scales::PreserveRatio,
 						CherryInputBlock<
 							TTimer,
 							TToolkit,
 							TFocusTracker>,
 						Decorators::ToggleVisibility<
-						::Voicemeeter::UI::Decorators::Padding<
+						::WUI::Decorators::Padding<
 							CherryInputBlock<
 								TTimer,
 								TToolkit,
 								TFocusTracker>,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+							::WUI::Policies::Size::Scales::PreserveRatio
 						>>>;
 					template<
 						typename TTimer,
 						typename TToolkit,
 						typename TFocusTracker>
-					using CherryFrontPanel = ::Voicemeeter::UI::Decorators::Padding<
-						::Voicemeeter::UI::Panels::Stack<
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio,
+					using CherryFrontPanel = ::WUI::Decorators::Padding<
+						::WUI::Panels::Stack<
+							::WUI::Policies::Orientation::Directions::Axis,
+							::WUI::Policies::Size::Scales::PreserveRatio,
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								Vban<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>,
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryInputSection<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>,
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryOutputSection<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>>,
-						::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio>;
+						::WUI::Policies::Size::Scales::PreserveRatio>;
 
 					template<typename ...TTokens>
 					class caggregator {
@@ -919,14 +914,14 @@ namespace Voicemeeter {
 					template<
 						typename TMixer,
 						typename TMixer::Strips Target>
-					inline void UpdateStrip(TMixer &mixer, ::Voicemeeter::UI::States::StripKnob const &state) {
+					inline void UpdateStrip(TMixer &mixer, ::WUI::States::StripKnob const &state) {
 						mixer.get_Strip<Target>()
 							.set_Mute<bag<TMixer>>(state.toggle);
 						mixer.get_Strip<Target>()
 							.set_Gain<bag<TMixer>>(state.degree * 4 / 15);
 					};
 					template<>
-					inline void PickAndUpdateStrip<Cherry>(Cherry &mixer, ::Voicemeeter::UI::States::StripKnob const &state) {
+					inline void PickAndUpdateStrip<Cherry>(Cherry &mixer, ::WUI::States::StripKnob const &state) {
 						switch (state.target) {
 						case Cherry::Strips::P:
 							UpdateStrip<Cherry,
@@ -963,12 +958,12 @@ namespace Voicemeeter {
 					template<
 						typename TMixer,
 						typename TMixer::Strips From, typename TMixer::Strips To>
-					inline void UpdatePlug(TMixer &mixer, ::Voicemeeter::UI::States::Plug const &state) {
+					inline void UpdatePlug(TMixer &mixer, ::WUI::States::Plug const &state) {
 						mixer.set_Plug<bag<TMixer>,
 							From, To>(state.toggle);
 					};
 					template<Cherry::Strips From>
-					inline void PickAndUpdateCherryPlug(Cherry &mixer, ::Voicemeeter::UI::States::Plug const &state) {
+					inline void PickAndUpdateCherryPlug(Cherry &mixer, ::WUI::States::Plug const &state) {
 						switch (state.to) {
 						case Cherry::Strips::A1:
 							UpdatePlug<Cherry,
@@ -993,7 +988,7 @@ namespace Voicemeeter {
 						}
 					};
 					template<>
-					inline void PickAndUpdatePlug<Cherry>(Cherry &mixer, ::Voicemeeter::UI::States::Plug const &state) {
+					inline void PickAndUpdatePlug<Cherry>(Cherry &mixer, ::WUI::States::Plug const &state) {
 						switch (state.from) {
 						case Cherry::Strips::P:
 							PickAndUpdateCherryPlug<
@@ -1179,43 +1174,43 @@ namespace Voicemeeter {
 						};
 						auto vban = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								Vban<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							enabled.test(flags::vban),
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
+								Layouts::Cherry::Panel::Advance::Left,
+								Layouts::Cherry::Panel::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
+								Layouts::Cherry::Panel::Advance::Right,
+								Layouts::Cherry::Panel::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							0, 1, 1,
 							Policies::Control::Notifications::Vban<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Vban<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Vban<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Vban<TToolkit>,
+								::WUI::Policies::Control::Updates::Vban<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Vban<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Vban<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Vban<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Vban<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Vban::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Vban::Height
+								Layouts::Cherry::Vban::Width,
+								Layouts::Cherry::Vban::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::VbanFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1 = ::std::make_unique<
 							StripKnob<
@@ -1226,24 +1221,24 @@ namespace Voicemeeter {
 						>(
 							focusTracker,
 							timer,
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
 							Policies::Control::Notifications::StripKnob<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
+								Layouts::Cherry::Knob::Width,
+								Layouts::Cherry::Knob::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
 							sub_t{ 6, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2 = ::std::make_unique<
 							StripKnob<
@@ -1254,24 +1249,24 @@ namespace Voicemeeter {
 						>(
 							focusTracker,
 							timer,
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
 							Policies::Control::Notifications::StripKnob<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
+								Layouts::Cherry::Knob::Width,
+								Layouts::Cherry::Knob::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
 							sub_t{ 6, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o1 = ::std::make_unique<
 							StripKnob<
@@ -1282,150 +1277,150 @@ namespace Voicemeeter {
 						>(
 							focusTracker,
 							timer,
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
 							Policies::Control::Notifications::StripKnob<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
+								Layouts::Cherry::Knob::Width,
+								Layouts::Cherry::Knob::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
 							sub_t{ 6, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								StripKnob<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							1 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
+								Layouts::Cherry::Output::Section::Advance::Left,
+								Layouts::Cherry::Output::Section::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
+								Layouts::Cherry::Output::Section::Advance::Right,
+								Layouts::Cherry::Output::Section::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							timer,
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
 							Policies::Control::Notifications::StripKnob<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
+								Layouts::Cherry::Knob::Width,
+								Layouts::Cherry::Knob::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
 							sub_t{ 6, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o3 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								StripKnob<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							2 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
+								Layouts::Cherry::Output::Section::Advance::Left,
+								Layouts::Cherry::Output::Section::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
+								Layouts::Cherry::Output::Section::Advance::Right,
+								Layouts::Cherry::Output::Section::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							timer,
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
 							Policies::Control::Notifications::StripKnob<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
+								Layouts::Cherry::Knob::Width,
+								Layouts::Cherry::Knob::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
 							sub_t{ 6, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								StripKnob<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							3 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Top
+								Layouts::Cherry::Output::Section::Advance::Left,
+								Layouts::Cherry::Output::Section::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Advance::Bottom
+								Layouts::Cherry::Output::Section::Advance::Right,
+								Layouts::Cherry::Output::Section::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							timer,
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
 							Policies::Control::Notifications::StripKnob<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>,
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::StripKnob<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::StripKnob<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Knob::Height
+								Layouts::Cherry::Knob::Width,
+								Layouts::Cherry::Knob::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 6, 1 },
 							sub_t{ 6, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::StripKnobFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o1 = ::std::make_unique<
 							Plug<
@@ -1437,59 +1432,59 @@ namespace Voicemeeter {
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								Plug<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							1 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
+								Layouts::Cherry::Mixer::Block::Advance::Left,
+								Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
+								Layouts::Cherry::Mixer::Block::Advance::Right,
+								Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o3 = ::std::make_unique<
 							Plug<
@@ -1501,59 +1496,59 @@ namespace Voicemeeter {
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i1o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								Plug<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							3 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
+								Layouts::Cherry::Mixer::Block::Advance::Left,
+								Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
+								Layouts::Cherry::Mixer::Block::Advance::Right,
+								Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o1 = ::std::make_unique<
 							Plug<
@@ -1565,59 +1560,59 @@ namespace Voicemeeter {
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								Plug<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							1 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
+								Layouts::Cherry::Mixer::Block::Advance::Left,
+								Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
+								Layouts::Cherry::Mixer::Block::Advance::Right,
+								Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o3 = ::std::make_unique<
 							Plug<
@@ -1629,59 +1624,59 @@ namespace Voicemeeter {
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						auto i2o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								Plug<
 									TTimer,
 									Cherry,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							3 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Top
+								Layouts::Cherry::Mixer::Block::Advance::Left,
+								Layouts::Cherry::Mixer::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Advance::Bottom
+								Layouts::Cherry::Mixer::Block::Advance::Right,
+								Layouts::Cherry::Mixer::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							focusTracker,
 							Policies::Control::Notifications::Plug<Cherry>{ mixer },
 							Policies::Control::Updates::ToggleAnimation<
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>,
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>>{
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>,
+								::WUI::Policies::Control::Updates::Plug<TToolkit>>{
 								enabled.test(flags::animated),
-								::Voicemeeter::UI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
-								::Voicemeeter::UI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
+								::WUI::Policies::Control::Updates::Animated::Plug<TToolkit>{ toolkit },
+								::WUI::Policies::Control::Updates::Plug<TToolkit>{ toolkit }
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Plug::Height
+								Layouts::Cherry::Plug::Width,
+								Layouts::Cherry::Plug::Height
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							toolkit,
 							sub_t{ 0, 1, 1 },
-							::Voicemeeter::UI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
+							::WUI::Policies::Control::Updates::Animated::PlugFrame<TToolkit>{ toolkit },
 							toolkit);
 						if (enabled.test(flags::vban)) {
 							vban->set_FrameColor(toolkit.get_Theme()
@@ -1856,58 +1851,58 @@ namespace Voicemeeter {
 							*i2o4, tokens);
 						auto i1o1o2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryMixerBlock<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							0 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
+								Layouts::Cherry::Input::Block::Advance::Left,
+								Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
+								Layouts::Cherry::Input::Block::Advance::Right,
+								Layouts::Cherry::Input::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
+								Layouts::Cherry::Mixer::Block::Width,
+								Layouts::Cherry::Mixer::Block::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 1 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 1 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o1),
 							::std::move(i1o2));
 						auto i1o3o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryMixerBlock<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							2 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
+								Layouts::Cherry::Input::Block::Advance::Left,
+								Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
+								Layouts::Cherry::Input::Block::Advance::Right,
+								Layouts::Cherry::Input::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
+								Layouts::Cherry::Mixer::Block::Width,
+								Layouts::Cherry::Mixer::Block::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 1 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 1 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o3),
 							::std::move(i1o4));
 						auto i1o1o2o3o4 = ::std::make_unique<
@@ -1920,158 +1915,158 @@ namespace Voicemeeter {
 								sub(i1->get_BaseSize(), 0)
 								+ (0 < enabledOutputs) * sub(i1o1o2->get_BaseSize(), 0)
 								+ (2 < enabledOutputs) * sub(i1o3o4->get_BaseSize(), 0),
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Height
+								Layouts::Cherry::Input::Block::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1),
 							::std::move(i1o1o2),
 							::std::move(i1o3o4));
 						auto i2o1o2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryMixerBlock<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							0 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
+								Layouts::Cherry::Input::Block::Advance::Left,
+								Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
+								Layouts::Cherry::Input::Block::Advance::Right,
+								Layouts::Cherry::Input::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
+								Layouts::Cherry::Mixer::Block::Width,
+								Layouts::Cherry::Mixer::Block::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 1 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 1 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2o1),
 							::std::move(i2o2));
 						auto i2o3o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryMixerBlock<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							2 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Top
+								Layouts::Cherry::Input::Block::Advance::Left,
+								Layouts::Cherry::Input::Block::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Advance::Bottom
+								Layouts::Cherry::Input::Block::Advance::Right,
+								Layouts::Cherry::Input::Block::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Width,
-								::Voicemeeter::UI::Layouts::Cherry::Mixer::Block::Height
+								Layouts::Cherry::Mixer::Block::Width,
+								Layouts::Cherry::Mixer::Block::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 1 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 1 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2o3),
 							::std::move(i2o4));
 						auto i2o1o2o3o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryInputBlock<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							1 < enabledInputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Top
+								Layouts::Cherry::Input::Section::Advance::Left,
+								Layouts::Cherry::Input::Section::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Advance::Bottom
+								Layouts::Cherry::Input::Section::Advance::Right,
+								Layouts::Cherry::Input::Section::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
 								sub(i2->get_BaseSize(), 0)
 								+ (0 < enabledOutputs) * sub(i2o1o2->get_BaseSize(), 0)
 								+ (2 < enabledOutputs) * sub(i2o3o4->get_BaseSize(), 0),
-								::Voicemeeter::UI::Layouts::Cherry::Input::Block::Height
+								Layouts::Cherry::Input::Block::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i2),
 							::std::move(i2o1o2),
 							::std::move(i2o3o4));
 						auto i1i2 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryInputSection<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							0 < enabledInputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
+								Layouts::Cherry::Panel::Advance::Left,
+								Layouts::Cherry::Panel::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
+								Layouts::Cherry::Panel::Advance::Right,
+								Layouts::Cherry::Panel::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
 								sub(i1o1o2o3o4->get_BaseSize(), 0)
 								+ (1 < enabledInputs) * sub(i2o1o2o3o4->get_BaseSize(), 0),
-								::Voicemeeter::UI::Layouts::Cherry::Input::Section::Height
+								Layouts::Cherry::Input::Section::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(i1o1o2o3o4),
 							::std::move(i2o1o2o3o4));
 						auto o1o2o3o4 = ::std::make_unique<
 							Decorators::ToggleVisibility<
-							::Voicemeeter::UI::Decorators::Padding<
+							::WUI::Decorators::Padding<
 								CherryOutputSection<
 									TTimer,
 									TToolkit,
 									TFocusTracker>,
-								::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio
+								::WUI::Policies::Size::Scales::PreserveRatio
 							>>
 						>(
 							0 < enabledOutputs,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Top
+								Layouts::Cherry::Panel::Advance::Left,
+								Layouts::Cherry::Panel::Advance::Top
 							},
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Advance::Bottom
+								Layouts::Cherry::Panel::Advance::Right,
+								Layouts::Cherry::Panel::Advance::Bottom
 							},
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
 								sub(o1->get_BaseSize(), 0)
 								+ (1 < enabledOutputs) * sub(o2->get_BaseSize(), 0)
 								+ (2 < enabledOutputs) * sub(o3->get_BaseSize(), 0)
 								+ (3 < enabledOutputs) * sub(o4->get_BaseSize(), 0),
-								::Voicemeeter::UI::Layouts::Cherry::Output::Section::Height
+								Layouts::Cherry::Output::Section::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(o1),
 							::std::move(o2),
 							::std::move(o3),
@@ -2085,22 +2080,22 @@ namespace Voicemeeter {
 						>(
 							::std::move(tokens),
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Left,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								Layouts::Cherry::Panel::Padding::Left,
+								Layouts::Cherry::Panel::Padding::Top
 							} + paddingPoint,
 							vec_t{
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Right,
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Padding::Top
+								Layouts::Cherry::Panel::Padding::Right,
+								Layouts::Cherry::Panel::Padding::Top
 							} + paddingVertex,
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							vec_t{
 								enabled.test(flags::vban) * sub(vban->get_BaseSize(), 0)
 								+ (0 < enabledInputs) * sub(i1i2->get_BaseSize(), 0)
 								+ (0 < enabledOutputs) * sub(o1o2o3o4->get_BaseSize(), 0),
-								::Voicemeeter::UI::Layouts::Cherry::Panel::Height
+								Layouts::Cherry::Panel::Height
 							},
-							::Voicemeeter::UI::Policies::Orientation::Directions::Axis{ 0 },
-							::Voicemeeter::UI::Policies::Size::Scales::PreserveRatio{},
+							::WUI::Policies::Orientation::Directions::Axis{ 0 },
+							::WUI::Policies::Size::Scales::PreserveRatio{},
 							::std::move(vban),
 							::std::move(i1i2),
 							::std::move(o1o2o3o4));

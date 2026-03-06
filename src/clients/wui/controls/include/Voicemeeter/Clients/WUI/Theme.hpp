@@ -1,16 +1,16 @@
-#ifndef VOICEMEETER_CLIENTS_UI_THEME_HPP
-#define VOICEMEETER_CLIENTS_UI_THEME_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_THEME_HPP
+#define VOICEMEETER_CLIENTS_WUI_THEME_HPP
 
 #include <memory>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
-#include "Voicemeeter/UI/Graphics/Theme.hpp"
+#include "WUI/Graphics/Theme.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
-			using Theme = ::Voicemeeter::UI::Graphics::Theme;
+		namespace WUI {
+			using Theme = ::WUI::Graphics::Theme;
 
 			class ThemeBuilder {
 			public:

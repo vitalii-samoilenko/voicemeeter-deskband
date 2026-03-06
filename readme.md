@@ -69,7 +69,7 @@ Shut down desk band and remove binaries from your PC
 
 ### Customization
 
-By default UI is animated with target 100 FPS
+By default UI is animated with target 60 FPS
 
 In case if you experience any issues or seek performance boost/power safety you can disable animations via registry key:
 

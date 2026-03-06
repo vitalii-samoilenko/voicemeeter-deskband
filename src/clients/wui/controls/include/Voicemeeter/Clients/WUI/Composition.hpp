@@ -1,18 +1,17 @@
-#ifndef VOICEMEETER_CLIENTS_UI_COMPOSITION_HPP
-#define VOICEMEETER_CLIENTS_UI_COMPOSITION_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_COMPOSITION_HPP
+#define VOICEMEETER_CLIENTS_WUI_COMPOSITION_HPP
 
 #include <bitset>
 #include <memory>
 #include <stdexcept>
 
-#include "wheel.hpp"
+#include "math.hpp"
 
-#include "Voicemeeter/Clients/UI/_/Controls.hpp"
-#include "Voicemeeter/UI/Adapters/IComponent.hpp"
+#include "Voicemeeter/Clients/WUI/_/Controls.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
+		namespace WUI {
 			template<
 				typename TTimer,
 				typename TMixer,

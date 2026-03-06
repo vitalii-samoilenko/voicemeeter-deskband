@@ -18,7 +18,7 @@ target_sources(voicemeeter_clients_vbvmr
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES
-		include/Voicemeeter/Clients/VBVMR.hpp
-		include/Voicemeeter/Clients/_/VBVMR.hpp)
+		include/Voicemeeter/Clients/_/VBVMR.hpp
+		include/Voicemeeter/Clients/VBVMR.hpp)
 
 add_library(Voicemeeter::Clients::VBVMR ALIAS voicemeeter_clients_vbvmr)

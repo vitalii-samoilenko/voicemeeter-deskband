@@ -1,15 +1,24 @@
 cmake_minimum_required(VERSION 3.25.1)
 
-project(Voicemeeter.Clients.UI.Controls.Cherry VERSION 0.9 LANGUAGES CXX)
+project(Voicemeeter::Clients::WUI::Controls::Cherry VERSION 0.9 LANGUAGES CXX)
 
-add_library(voicemeeter_clients_ui_controls_cherry INTERFACE)
-target_compile_features(voicemeeter_clients_ui_controls_cherry INTERFACE cxx_std_17)
-target_link_libraries(voicemeeter_clients_ui_controls_cherry INTERFACE
-	wheel
-	Voicemeeter
-	Voicemeeter::UI
-	Voicemeeter::UI::Controls
-	Voicemeeter::UI::Layouts)
-target_include_directories(voicemeeter_clients_ui_controls_cherry INTERFACE include)
+find_package(WSTD)
+find_package(WUI)
 
-add_library(Voicemeeter::Clients::UI::Controls ALIAS voicemeeter_clients_ui_controls_cherry)
+add_library(voicemeeter_clients_wui_controls_cherry INTERFACE)
+target_compile_features(voicemeeter_clients_wui_controls_cherry INTERFACE cxx_std_17)
+target_link_libraries(voicemeeter_clients_wui_controls_cherry INTERFACE
+	::WSTD
+	::WUI::Scene
+	WUI::Controls::Cherry
+	Voicemeeter)
+target_sources(voicemeeter_clients_wui_controls_cherry
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/Voicemeeter/Clients/WUI/_/Controls.hpp
+		include/Voicemeeter/Clients/WUI/Composition.hpp
+		include/Voicemeeter/Clients/WUI/Theme.hpp)
+
+add_library(Voicemeeter::Clients::WUI::Controls::Cherry ALIAS voicemeeter_clients_wui_controls_cherry)
+add_library(Voicemeeter::Clients::WUI::Controls ALIAS voicemeeter_clients_wui_controls_cherry)

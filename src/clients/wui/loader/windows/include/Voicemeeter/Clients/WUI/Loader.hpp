@@ -1,16 +1,16 @@
-#ifndef VOICEMEETER_CLIENTS_UI_LOADER_HPP
-#define VOICEMEETER_CLIENTS_UI_LOADER_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_LOADER_HPP
+#define VOICEMEETER_CLIENTS_WUI_LOADER_HPP
 
 #include <memory>
 
-#include "Windows/API.hpp"
+#include <windows.h>
 
-#include "Voicemeeter/UI/Graphics/Loader.hpp"
+#include "WUI/Graphics/Loader.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
-			using Loader = ::Voicemeeter::UI::Graphics::Loader;
+		namespace WUI {
+			using Loader = ::WUI::Graphics::Loader;
 
 			class LoaderBuilder {
 			public:

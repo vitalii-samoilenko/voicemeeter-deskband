@@ -1,14 +1,14 @@
-#ifndef VOICEMEETER_CLIENTS_UI_PALETTE_HPP
-#define VOICEMEETER_CLIENTS_UI_PALETTE_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_PALETTE_HPP
+#define VOICEMEETER_CLIENTS_WUI_PALETTE_HPP
 
 #include <memory>
 
-#include "Voicemeeter/UI/Graphics/Palette.hpp"
+#include "WUI/Graphics/Palette.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
-			using Palette = ::Voicemeeter::UI::Graphics::Palette;
+		namespace WUI {
+			using Palette = ::WUI::Graphics::Palette;
 
 			class PaletteBuilder {
 			public:

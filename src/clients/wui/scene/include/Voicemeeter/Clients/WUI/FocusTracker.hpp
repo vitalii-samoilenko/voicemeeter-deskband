@@ -1,16 +1,16 @@
-#ifndef VOICEMEETER_CLIENTS_UI_FOCUSTRACKER_HPP
-#define VOICEMEETER_CLIENTS_UI_FOCUSTRACKER_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_FOCUSTRACKER_HPP
+#define VOICEMEETER_CLIENTS_WUI_FOCUSTRACKER_HPP
 
 #include <memory>
 #include <stdexcept>
 
-#include "Voicemeeter/UI/Trackers/Focus.hpp"
+#include "WUI/Trackers/Focus.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
+		namespace WUI {
 			template<typename TInputTracker>
-			using FocusTracker = ::Voicemeeter::UI::Trackers::Focus<TInputTracker>;
+			using FocusTracker = ::WUI::Trackers::Focus<TInputTracker>;
 
 			template<typename TInputTracker>
 			class FocusTrackerBuilder {
@@ -35,7 +35,7 @@ namespace Voicemeeter {
 
 				inline ::std::unique_ptr<FocusTracker> Build() {
 					if (!_inputTracker) {
-						throw ::std::runtime_error{ "Focus tracker is not set" };
+						throw ::std::runtime_error{ "Input tracker is not set" };
 					}
 					return ::std::make_unique<
 						FocusTracker>(*_inputTracker);

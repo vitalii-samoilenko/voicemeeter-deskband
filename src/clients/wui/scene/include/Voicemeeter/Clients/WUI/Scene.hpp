@@ -1,20 +1,20 @@
-#ifndef VOICEMEETER_CLIENTS_UI_SCENE_HPP
-#define VOICEMEETER_CLIENTS_UI_SCENE_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_SCENE_HPP
+#define VOICEMEETER_CLIENTS_WUI_SCENE_HPP
 
 #include <memory>
 #include <utility>
 
-#include "Voicemeeter/UI/Scene.hpp"
-#include "Voicemeeter/UI/Trackers/Focus.hpp"
+#include "WUI/Scene.hpp"
+#include "WUI/Trackers/Focus.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
+		namespace WUI {
 			template<
 				typename TFocusTracker,
 				typename TCanvas,
 				typename TComposition>
-			using Scene = ::Voicemeeter::UI::Scene<
+			using Scene = ::WUI::Scene<
 				TFocusTracker,
 				TCanvas,
 				TComposition>;

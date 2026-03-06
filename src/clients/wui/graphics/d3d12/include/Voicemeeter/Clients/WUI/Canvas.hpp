@@ -1,44 +1,42 @@
-#ifndef VOICEMEETER_CLIENTS_UI_CANVAS_HPP
-#define VOICEMEETER_CLIENTS_UI_CANVAS_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_CANVAS_HPP
+#define VOICEMEETER_CLIENTS_WUI_CANVAS_HPP
 
 #include <memory>
 #include <stdexcept>
 
-#include "Windows/API.hpp"
-
-#include "Voicemeeter/UI/Adapters/Canvas.hpp"
-#include "Voicemeeter/UI/Graphics/State.hpp"
-#include "Voicemeeter/UI/Graphics/Atlas.hpp"
-#include "Voicemeeter/UI/Graphics/Queue.hpp"
-#include "Voicemeeter/UI/Graphics/Stopwatch.hpp"
-#include "Voicemeeter/UI/Graphics/DirectFrame.hpp"
-#include "Voicemeeter/UI/Graphics/CachedFrame.hpp"
-#include "Voicemeeter/UI/Graphics/Toolkit.hpp"
+#include "WUI/Adapters/Canvas.hpp"
+#include "WUI/Graphics/State.hpp"
+#include "WUI/Graphics/Atlas.hpp"
+#include "WUI/Graphics/Queue.hpp"
+#include "WUI/Graphics/Stopwatch.hpp"
+#include "WUI/Graphics/DirectFrame.hpp"
+#include "WUI/Graphics/CachedFrame.hpp"
+#include "WUI/Graphics/Toolkit.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
+		namespace WUI {
 			template<
 				typename TSurface,
 				typename TLoader,
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
-			using DirectCanvas = ::Voicemeeter::UI::Adapters::Canvas<
-				::Voicemeeter::UI::Graphics::Toolkit<
+			using DirectCanvas = ::WUI::Adapters::Canvas<
+				::WUI::Graphics::Toolkit<
 					TLoader,
-					::Voicemeeter::UI::Graphics::State<TSurface, TLoader>,
-					::Voicemeeter::UI::Graphics::Atlas<
-						::Voicemeeter::UI::Graphics::State<TSurface, TLoader>>,
-					::Voicemeeter::UI::Graphics::Queue,
-					::Voicemeeter::UI::Graphics::Stopwatch,
+					::WUI::Graphics::State<TSurface, TLoader>,
+					::WUI::Graphics::Atlas<
+						::WUI::Graphics::State<TSurface, TLoader>>,
+					::WUI::Graphics::Queue,
+					::WUI::Graphics::Stopwatch,
 					TPalette,
 					TTheme,
-					::Voicemeeter::UI::Graphics::DirectFrame<
+					::WUI::Graphics::DirectFrame<
 						TSurface,
-						::Voicemeeter::UI::Graphics::State<TSurface, TLoader>,
-						::Voicemeeter::UI::Graphics::Queue,
-						::Voicemeeter::UI::Graphics::Stopwatch>>,
+						::WUI::Graphics::State<TSurface, TLoader>,
+						::WUI::Graphics::Queue,
+						::WUI::Graphics::Stopwatch>>,
 				TTimer>;
 			template<
 				typename TSurface,
@@ -46,21 +44,21 @@ namespace Voicemeeter {
 				typename TPalette,
 				typename TTheme,
 				typename TTimer>
-			using CachedCanvas = ::Voicemeeter::UI::Adapters::Canvas<
-				::Voicemeeter::UI::Graphics::Toolkit<
+			using CachedCanvas = ::WUI::Adapters::Canvas<
+				::WUI::Graphics::Toolkit<
 					TLoader,
-					::Voicemeeter::UI::Graphics::State<TSurface, TLoader>,
-					::Voicemeeter::UI::Graphics::Atlas<
-						::Voicemeeter::UI::Graphics::State<TSurface, TLoader>>,
-					::Voicemeeter::UI::Graphics::Queue,
-					::Voicemeeter::UI::Graphics::Stopwatch,
+					::WUI::Graphics::State<TSurface, TLoader>,
+					::WUI::Graphics::Atlas<
+						::WUI::Graphics::State<TSurface, TLoader>>,
+					::WUI::Graphics::Queue,
+					::WUI::Graphics::Stopwatch,
 					TPalette,
 					TTheme,
-					::Voicemeeter::UI::Graphics::CachedFrame<
+					::WUI::Graphics::CachedFrame<
 						TSurface,
-						::Voicemeeter::UI::Graphics::State<TSurface, TLoader>,
-						::Voicemeeter::UI::Graphics::Queue,
-						::Voicemeeter::UI::Graphics::Stopwatch>>,
+						::WUI::Graphics::State<TSurface, TLoader>,
+						::WUI::Graphics::Queue,
+						::WUI::Graphics::Stopwatch>>,
 				TTimer>;
 
 			template<

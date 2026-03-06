@@ -1,17 +1,17 @@
-#ifndef VOICEMEETER_CLIENTS_UI_SURFACE_HPP
-#define VOICEMEETER_CLIENTS_UI_SURFACE_HPP
+#ifndef VOICEMEETER_CLIENTS_WUI_SURFACE_HPP
+#define VOICEMEETER_CLIENTS_WUI_SURFACE_HPP
 
 #include <memory>
 #include <stdexcept>
 
-#include "Windows/API.hpp"
+#include <windows.h>
 
-#include "Voicemeeter/UI/Graphics/Surface.hpp"
+#include "WUI/Graphics/Surface.hpp"
 
 namespace Voicemeeter {
 	namespace Clients {
-		namespace UI {
-			using Surface = ::Voicemeeter::UI::Graphics::Surface;
+		namespace WUI {
+			using Surface = ::WUI::Graphics::Surface;
 
 			class SurfaceBuilder {
 			public:

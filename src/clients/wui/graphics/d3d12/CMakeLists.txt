@@ -1,14 +1,20 @@
 cmake_minimum_required(VERSION 3.25.1)
 
-project(Voicemeeter.Clients.UI.Graphics.D3D12 VERSION 0.9 LANGUAGES CXX)
+project(Voicemeeter::Clients::WUI::Graphics::D3D12 VERSION 0.9 LANGUAGES CXX)
 
-add_library(voicemeeter_clients_ui_graphics_d3d12 INTERFACE)
-target_compile_features(voicemeeter_clients_ui_graphics_d3d12 INTERFACE cxx_std_17)
-target_link_libraries(voicemeeter_clients_ui_graphics_d3d12 INTERFACE
-	Windows
-	Voicemeeter::UI
-	Voicemeeter::UI::Atlas
-	Voicemeeter::UI::Graphics)
-target_include_directories(voicemeeter_clients_ui_graphics_d3d12 INTERFACE include)
+find_package(WUI)
 
-add_library(Voicemeeter::Clients::UI::Graphics ALIAS voicemeeter_clients_ui_graphics_d3d12)
+add_library(voicemeeter_clients_wui_graphics_d3d12 INTERFACE)
+target_compile_features(voicemeeter_clients_wui_graphics_d3d12 INTERFACE cxx_std_11)
+target_link_libraries(voicemeeter_clients_wui_graphics_d3d12 INTERFACE
+	::WUI::Scene
+	::WUI::Graphics::D3D12
+	WUI::Atlas)
+target_sources(voicemeeter_clients_wui_graphics_d3d12
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES
+		include/Voicemeeter/Clients/WUI/Canvas.hpp
+		include/Voicemeeter/Clients/WUI/Surface.hpp)
+
+add_library(Voicemeeter::Clients::WUI::Graphics::D3D12 ALIAS voicemeeter_clients_wui_graphics_d3d12)
