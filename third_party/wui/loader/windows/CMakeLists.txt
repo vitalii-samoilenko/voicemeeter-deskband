@@ -30,11 +30,11 @@ target_sources(wui_loader_windows
 		${LZMA_SDK_PATH}/C/LzmaDec.c
 		${LZMA_SDK_PATH}/C/Alloc.c)
 
-add_executable(rc.pre.compress)
-target_compile_features(rc.pre.compress PRIVATE cxx_std_17)
-target_compile_definitions(rc.pre.compress PRIVATE Z7_ST)
-target_sources(rc.pre.compress PRIVATE compress.cpp)
-target_sources(rc.pre.compress
+add_executable(wui_loader_windows_generate)
+target_compile_features(wui_loader_windows_generate PRIVATE cxx_std_17)
+target_compile_definitions(wui_loader_windows_generate PRIVATE Z7_ST)
+target_sources(wui_loader_windows_generate PRIVATE main.cpp)
+target_sources(wui_loader_windows_generate
 	PRIVATE FILE_SET lzma_enc_h TYPE HEADERS
 	BASE_DIRS ${LZMA_SDK_PATH}/C
 	FILES
@@ -47,18 +47,12 @@ target_sources(rc.pre.compress
 		${LZMA_SDK_PATH}/C/LzHash.h
 		${LZMA_SDK_PATH}/C/LzmaEnc.h
 		${LZMA_SDK_PATH}/C/Alloc.h)
-target_sources(rc.pre.compress
+target_sources(wui_loader_windows_generate
 	PRIVATE
 		${LZMA_SDK_PATH}/C/CpuArch.c
 		${LZMA_SDK_PATH}/C/LzFind.c
 		${LZMA_SDK_PATH}/C/LzmaEnc.c
 		${LZMA_SDK_PATH}/C/Alloc.c)
-add_executable(rc.pre.define)
-target_compile_features(rc.pre.define PRIVATE cxx_std_17)
-target_sources(rc.pre.define PRIVATE rc.pre.define.cpp)
-add_executable(rc.pre.describe)
-target_compile_features(rc.pre.describe PRIVATE cxx_std_17)
-target_sources(rc.pre.describe PRIVATE rc.pre.describe.cpp)
 
 add_library(WUI::Loader::Windows ALIAS wui_loader_windows)
 
@@ -66,9 +60,7 @@ include(GNUInstallDirs)
 install(
 	TARGETS
 		wui_loader_windows
-		rc.pre.compress
-		rc.pre.define
-		rc.pre.describe
+		wui_loader_windows_generate
 	EXPORT _wuiLoaderWindowsTargets
 	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILE_SET lzma_dec_h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
