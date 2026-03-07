@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.25.1)
 
-project(Voicemeeter::DeskBand VERSION 0.9)
+project(Voicemeeter.DeskBand VERSION 0.9)
 
 set(WUI_LOADER Windows CACHE STRING)
 set(WUI_PALETTE Oklab CACHE STRING)
 set(WUI_GRAPHICS D3D12 CACHE STRING)
-set(WUI_ATLAS_GENERATE ON CACHE BOOL)
 
 if(MSVC)
   add_compile_options(/bigobj)

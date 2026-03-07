@@ -46,7 +46,7 @@ void rescale(char c,
 				<< ((y - g_desc) * g_scale);
 			line = match.prefix().str() + re.str() + match.suffix().str();
 		}
-		output << line;
+		output << line << ::std::endl;
 	}
 };
 void combine_and_rescale(char c1, char c2,
@@ -93,7 +93,7 @@ void combine_and_rescale(char c1, char c2,
 				<< ((y - g_desc) * g_scale);
 			line = match.prefix().str() + re.str() + match.suffix().str();
 		}
-		output << line;
+		output << line << ::std::endl;
 	}
 	while (::std::getline(input2, line)) {
 		::std::smatch match{};
@@ -107,7 +107,7 @@ void combine_and_rescale(char c1, char c2,
 				<< ((y - g_desc) * g_scale);
 			line = match.prefix().str() + re.str() + match.suffix().str();
 		}
-		output << line;
+		output << line << ::std::endl;
 	}
 };
 
