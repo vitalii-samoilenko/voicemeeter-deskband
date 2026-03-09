@@ -17,7 +17,7 @@ namespace WUI {
 				constexpr size_t Names{ 6 };
 				constexpr num_t Width{ push(84) };
 				constexpr num_t Height{ push(42) };
-				namespace Offset{
+				namespace Offset {
 					constexpr num_t Width{ push(3) };
 					constexpr num_t Height{ push(3) };
 				}
@@ -35,17 +35,17 @@ namespace WUI {
 				namespace Frame {
 					constexpr num_t X{ push(0) };
 					constexpr num_t Y{ push(0) };
-					namespace Offset{
+					namespace Offset {
 						constexpr num_t Width{ push(2) };
 						constexpr num_t Height{ push(2) };
 					}
 					constexpr num_t Width{ push(48) }; // 40
 					constexpr num_t Height{ push(48) }; // 40
 				}
-				namespace Indicator{
+				namespace Indicator {
 					constexpr num_t X{ push(52) };
 					constexpr num_t Y{ push(21) };
-					namespace Offset{
+					namespace Offset {
 						constexpr num_t Width{ push(4) };
 						constexpr num_t Height{ push(4) };
 					}
@@ -57,7 +57,7 @@ namespace WUI {
 				namespace Frame {
 					constexpr num_t X{ push(52) };
 					constexpr num_t Y{ push(0) };
-					namespace Offset{
+					namespace Offset {
 						constexpr num_t Width{ push(1) };
 						constexpr num_t Height{ push(1) };
 					}
@@ -69,7 +69,7 @@ namespace WUI {
 				namespace Frame {
 					constexpr num_t X{ push(95) };
 					constexpr num_t Y{ push(0) };
-					namespace Offset{
+					namespace Offset {
 						constexpr num_t Width{ push(2) };
 						constexpr num_t Height{ push(2) };
 					}

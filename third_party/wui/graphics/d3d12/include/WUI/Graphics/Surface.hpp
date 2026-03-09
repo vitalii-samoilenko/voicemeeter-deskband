@@ -40,12 +40,12 @@ namespace WUI {
 				bool failed{ true };
 				auto guardEvents = ::wstd::make_guard([
 						&failed,
-						&hEvent = _hEvent
+						this
 					]()->void {
 						if (!failed) {
 							return;
 						}
-						::CloseHandle(hEvent);
+						::CloseHandle(_hEvent);
 					});
 				::Windows::ThrowIfFailed(::CoInitialize(
 					NULL

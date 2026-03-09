@@ -229,7 +229,7 @@ namespace WUI {
 					->SetDescriptorHeaps(1U, &hTextureHeap);
 				_state.get_slots_CommandList(slot)
 					->SetGraphicsRootDescriptorTable(
-						3U, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
+						1U, hTextureHeap->GetGPUDescriptorHandleForHeapStart());
 				_state.get_slots_CommandList(slot)
 					->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 				D3D12_VERTEX_BUFFER_VIEW hSquareBuffer{ _state.get_hSquareBuffer() };
@@ -258,31 +258,24 @@ namespace WUI {
 					->RSSetViewports(1, &viewport);
 				FLOAT u{ static_cast<FLOAT>(sub(from, 0) - sub(_point, 0)) / sub(_vertex, 0) };
 				FLOAT v{ static_cast<FLOAT>(sub(from, 1) - sub(_point, 1)) / (sub(_vertex, 1) * _state.get_layers_Size()) };
-				::std::array<FLOAT, 5> constants{
+				FLOAD d{ 1.F / _state.get_layers_Size() };
+				::std::array<FLOAT, 4> constants{
 					u,
 					v + static_cast<FLOAT>(sub(to, 1) - sub(from, 1)) / (sub(_vertex, 1) * _state.get_layers_Size()),
 					u + static_cast<FLOAT>(sub(to, 0) - sub(from, 0)) / sub(_vertex, 0),
-					v,
-					1.F / _state.get_layers_Size()
+					v
 				};
-				UINT layers{ static_cast<UINT>(_state.get_layers_Size()) };
-				_state.get_slots_CommandList(slot)
-					->SetGraphicsRoot32BitConstants(
-						0,
-						4U, &constants[0],
-						0);
-				_state.get_slots_CommandList(slot)
-					->SetGraphicsRoot32BitConstants(
-						1,
-						1U, &layers,
-						0);
-				_state.get_slots_CommandList(slot)
-					->SetGraphicsRoot32BitConstants(
-						2,
-						1U, &constants[4],
-						0);
-				_state.get_slots_CommandList(slot)
-					->DrawInstanced(4, 1, 0, 0);
+				for (size_t layer{ 0 }; layer < _state.get_layers_Size(); ++layer) {
+					_state.get_slots_CommandList(slot)
+						->SetGraphicsRoot32BitConstants(
+							0,
+							4U, &constants[0],
+							0);
+					_state.get_slots_CommandList(slot)
+						->DrawInstanced(4, 1, 0, 0);
+					constants[1] += d;
+					constants[3] += d;
+				}
 				barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 				barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 				_state.get_slots_CommandList(slot)

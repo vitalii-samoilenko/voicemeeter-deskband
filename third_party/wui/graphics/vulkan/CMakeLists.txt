@@ -10,7 +10,7 @@ target_link_libraries(wui_graphics_vulkan
 	INTERFACE
 		::WSTD
 		WUI::Layouts)
-target_link_libraries(wui_graphics_vulkan INTERFACE vulkan-1)
+target_link_libraries(wui_graphics_vulkan INTERFACE vulkan)
 target_sources(wui_graphics_vulkan
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
