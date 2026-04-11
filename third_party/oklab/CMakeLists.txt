@@ -23,15 +23,15 @@ install(
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-	${PROJECT_SOURCE_DIR}/OklabConfig.cmake.in
-	${PROJECT_BINARY_DIR}/OklabConfig.cmake
+	${PROJECT_SOURCE_DIR}/cmake/OklabConfig.cmake.in
+	${PROJECT_BINARY_DIR}/cmake/OklabConfig.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Oklab)
 write_basic_package_version_file(
-	${PROJECT_BINARY_DIR}/OklabConfigVersion.cmake
+	${PROJECT_BINARY_DIR}/cmake/OklabConfigVersion.cmake
 	VERSION 0.9.0
 	COMPATIBILITY SameMajorVersion)
 install(
 	FILES
-		${PROJECT_BINARY_DIR}/OklabConfig.cmake
-		${PROJECT_BINARY_DIR}/OklabConfigVersion.cmake
+		${PROJECT_BINARY_DIR}/cmake/OklabConfig.cmake
+		${PROJECT_BINARY_DIR}/cmake/OklabConfigVersion.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Oklab)

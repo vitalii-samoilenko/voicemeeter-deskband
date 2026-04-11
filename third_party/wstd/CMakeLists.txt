@@ -32,15 +32,15 @@ install(
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-	${PROJECT_SOURCE_DIR}/WSTDConfig.cmake.in
-	${PROJECT_BINARY_DIR}/WSTDConfig.cmake
+	${PROJECT_SOURCE_DIR}/cmake/WSTDConfig.cmake.in
+	${PROJECT_BINARY_DIR}/cmake/WSTDConfig.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WSTD)
 write_basic_package_version_file(
-	${PROJECT_BINARY_DIR}/WSTDConfigVersion.cmake
+	${PROJECT_BINARY_DIR}/cmake/WSTDConfigVersion.cmake
 	VERSION 0.9.0
 	COMPATIBILITY SameMajorVersion)
 install(
 	FILES
-		${PROJECT_BINARY_DIR}/WSTDConfig.cmake
-		${PROJECT_BINARY_DIR}/WSTDConfigVersion.cmake
+		${PROJECT_BINARY_DIR}/cmake/WSTDConfig.cmake
+		${PROJECT_BINARY_DIR}/cmake/WSTDConfigVersion.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WSTD)

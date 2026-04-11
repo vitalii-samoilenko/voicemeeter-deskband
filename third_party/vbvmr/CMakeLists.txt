@@ -23,15 +23,15 @@ install(
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-	${PROJECT_SOURCE_DIR}/VBVMRConfig.cmake.in
-	${PROJECT_BINARY_DIR}/VBVMRConfig.cmake
+	${PROJECT_SOURCE_DIR}/cmake/VBVMRConfig.cmake.in
+	${PROJECT_BINARY_DIR}/cmake/VBVMRConfig.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/VBVMR)
 write_basic_package_version_file(
-	${PROJECT_BINARY_DIR}/VBVMRConfigVersion.cmake
+	${PROJECT_BINARY_DIR}/cmake/VBVMRConfigVersion.cmake
 	VERSION 0.9.0
 	COMPATIBILITY SameMajorVersion)
 install(
 	FILES
-		${PROJECT_BINARY_DIR}/VBVMRConfig.cmake
-		${PROJECT_BINARY_DIR}/VBVMRConfigVersion.cmake
+		${PROJECT_BINARY_DIR}/cmake/VBVMRConfig.cmake
+		${PROJECT_BINARY_DIR}/cmake/VBVMRConfigVersion.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/VBVMR)

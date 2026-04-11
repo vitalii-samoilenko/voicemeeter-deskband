@@ -26,15 +26,15 @@ install(
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-	${PROJECT_SOURCE_DIR}/WindowsConfig.cmake.in
-	${PROJECT_BINARY_DIR}/WindowsConfig.cmake
+	${PROJECT_SOURCE_DIR}/cmake/WindowsConfig.cmake.in
+	${PROJECT_BINARY_DIR}/cmake/WindowsConfig.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Windows)
 write_basic_package_version_file(
-	${PROJECT_BINARY_DIR}/WindowsConfigVersion.cmake
+	${PROJECT_BINARY_DIR}/cmake/WindowsConfigVersion.cmake
 	VERSION 0.9.0
 	COMPATIBILITY SameMajorVersion)
 install(
 	FILES
-		${PROJECT_BINARY_DIR}/WindowsConfig.cmake
-		${PROJECT_BINARY_DIR}/WindowsConfigVersion.cmake
+		${PROJECT_BINARY_DIR}/cmake/WindowsConfig.cmake
+		${PROJECT_BINARY_DIR}/cmake/WindowsConfigVersion.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Windows)
