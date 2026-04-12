@@ -2,18 +2,18 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(VBVMR VERSION 0.9 LANGUAGES C)
 
-add_library(vbvmr INTERFACE)
-target_compile_features(vbvmr INTERFACE c_std_99)
-target_sources(vbvmr
+add_library(_vbvmr INTERFACE)
+target_compile_features(_vbvmr INTERFACE c_std_99)
+target_sources(_vbvmr
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES include/VoicemeeterRemote.h)
 
-add_library(VBVMR ALIAS vbvmr)
+add_library(VBVMR ALIAS _vbvmr)
 
 include(GNUInstallDirs)
 install(
-	TARGETS vbvmr
+	TARGETS _vbvmr
 	EXPORT vbvmrTargets
 	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(

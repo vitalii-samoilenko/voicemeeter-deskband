@@ -20,7 +20,7 @@ add_custom_command(
 	DEPENDS ${PROJECT_BINARY_DIR}/Loader.rc
 	VERBATIM)
 
-target_link_libraries(::wui_loader_windows INTERFACE ${PROJECT_BINARY_DIR}/Loader.res)
+target_link_libraries(::_wui_loader_windows INTERFACE ${PROJECT_BINARY_DIR}/Loader.res)
 
 target_sources(::wui_layouts
 	INTERFACE FILE_SET HEADERS

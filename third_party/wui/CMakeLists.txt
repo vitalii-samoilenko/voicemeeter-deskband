@@ -18,15 +18,15 @@ add_subdirectory(scene)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-	${PROJECT_SOURCE_DIR}/WUIConfig.cmake.in
-	${PROJECT_BINARY_DIR}/WUIConfig.cmake
+	${PROJECT_SOURCE_DIR}/cmake/WUIConfig.cmake.in
+	${PROJECT_BINARY_DIR}/cmake/WUIConfig.cmake
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)
 write_basic_package_version_file(
-	${PROJECT_BINARY_DIR}/WUIConfigVersion.cmake
+	${PROJECT_BINARY_DIR}/cmake/WUIConfigVersion.cmake
 	VERSION 0.9.0
 	COMPATIBILITY SameMajorVersion)
 install(
 	FILES
-		${PROJECT_BINARY_DIR}/WUIConfig.cmake
-		${PROJECT_BINARY_DIR}/WUIConfigVersion.cmake
+		${PROJECT_BINARY_DIR}/cmake/WUIConfig.cmake
+		${PROJECT_BINARY_DIR}/cmake/WUIConfigVersion.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

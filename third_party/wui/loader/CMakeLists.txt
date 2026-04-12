@@ -6,7 +6,7 @@ add_library(wui_loader INTERFACE)
 
 if(WUI_LOADER STREQUAL Windows)
 	add_subdirectory(windows)
-	add_library(WUI::Loader ALIAS wui_loader_windows)
+	add_library(Loader ALIAS _wui_loader_windows)
 else()
 	message(FATAL_ERROR "Resource manager is not supported")
 endif()
@@ -14,8 +14,8 @@ endif()
 include(GNUInstallDirs)
 install(
 	TARGETS wui_loader
-	EXPORT _wuiLoaderTargets
+	EXPORT _loaderTargets
 	RESOURCE DESTINATION ${CMAKE_INSTALL_DATADIR})
 install(
-	FILES ${PROJECT_SOURCE_DIR}/wuiLoaderTargets.cmake
+	FILES ${PROJECT_SOURCE_DIR}/cmake/loaderTargets.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

@@ -3,6 +3,63 @@ cmake_minimum_required(VERSION 3.25.1)
 project(third_party VERSION 0.9)
 
 block()
+	set(TMP_SOURCE_DIR ${PROJECT_SOURCE_DIR}/lzma)
+	set(TMP_BINARY_DIR ${PROJECT_BINARY_DIR}/lzma)
+	if(NOT EXISTS ${TMP_SOURCE_DIR}/CMakeLists.txt)
+		execute_process(
+			COMMAND git submodule update
+				--init third_party/lzma
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(COMMAND git checkout 0.9.0
+			WORKING_DIRECTORY ${TMP_SOURCE_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+	if(NOT EXISTS ${TMP_BINARY_DIR}/configure.done)
+		execute_process(
+			COMMAND cmake
+				-D CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+				-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+				-D CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+				-D CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
+				-D LZMA_SDK_PATH=${LZMA_SDK_PATH}
+				-B . -S ${TMP_SOURCE_DIR}
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(
+			COMMAND cmake
+				-E touch configure.done
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+	if(NOT EXISTS ${TMP_BINARY_DIR}/build.done)
+		execute_process(
+			COMMAND cmake
+				--build . --config ${CMAKE_BUILD_TYPE}
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(
+			COMMAND cmake
+				-E touch build.done
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+	if(NOT EXISTS ${TMP_BINARY_DIR}/install.done)
+		execute_process(
+			COMMAND cmake
+				--install . --config ${CMAKE_BUILD_TYPE}
+				--prefix ${CMAKE_INSTALL_PREFIX}
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(
+			COMMAND cmake
+				-E touch install.done
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+endblock()
+
+block()
 	set(TMP_SOURCE_DIR ${PROJECT_SOURCE_DIR}/msdfgen)
 	set(TMP_BINARY_DIR ${PROJECT_BINARY_DIR}/msdfgen)
 	if(NOT EXISTS ${TMP_SOURCE_DIR}/CMakeLists.txt)
@@ -178,6 +235,62 @@ block()
 endblock()
 
 block()
+	set(TMP_SOURCE_DIR ${PROJECT_SOURCE_DIR}/vulkan)
+	set(TMP_BINARY_DIR ${PROJECT_BINARY_DIR}/vulkan)
+	if(NOT EXISTS ${TMP_SOURCE_DIR}/CMakeLists.txt)
+		execute_process(
+			COMMAND git submodule update
+				--init third_party/vulkan
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(COMMAND git checkout 0.9.0
+			WORKING_DIRECTORY ${TMP_SOURCE_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+	if(NOT EXISTS ${TMP_BINARY_DIR}/configure.done)
+		execute_process(
+			COMMAND cmake
+				-D CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+				-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+				-D CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+				-D CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
+				-B . -S ${TMP_SOURCE_DIR}
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(
+			COMMAND cmake
+				-E touch configure.done
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+	if(NOT EXISTS ${TMP_BINARY_DIR}/build.done)
+		execute_process(
+			COMMAND cmake
+				--build . --config ${CMAKE_BUILD_TYPE}
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(
+			COMMAND cmake
+				-E touch build.done
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+	if(NOT EXISTS ${TMP_BINARY_DIR}/install.done)
+		execute_process(
+			COMMAND cmake
+				--install . --config ${CMAKE_BUILD_TYPE}
+				--prefix ${CMAKE_INSTALL_PREFIX}
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+		execute_process(
+			COMMAND cmake
+				-E touch install.done
+			WORKING_DIRECTORY ${TMP_BINARY_DIR}
+			COMMAND_ERROR_IS_FATAL ANY)
+	endif()
+endblock()
+
+block()
 	set(TMP_SOURCE_DIR ${PROJECT_SOURCE_DIR}/windows)
 	set(TMP_BINARY_DIR ${PROJECT_BINARY_DIR}/windows)
 	if(NOT EXISTS ${TMP_SOURCE_DIR}/CMakeLists.txt)
@@ -253,6 +366,7 @@ block()
 				-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 				-D CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 				-D CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
+				-D WSTD_EXTENDED_PRESISION=ON
 				-B . -S ${TMP_SOURCE_DIR}
 			WORKING_DIRECTORY ${TMP_BINARY_DIR}
 			COMMAND_ERROR_IS_FATAL ANY)
@@ -309,7 +423,6 @@ block()
 				-D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 				-D CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 				-D CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
-				-D LZMA_SDK_PATH=${LZMA_SDK_PATH}
 				-D WUI_GRAPHICS=${WUI_GRAPHICS}
 				-D WUI_PALETTE=${WUI_PALETTE}
 				-D WUI_LOADER=${WUI_LOADER}

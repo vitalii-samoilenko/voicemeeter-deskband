@@ -2,18 +2,18 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(Oklab VERSION 0.9 LANGUAGES CXX)
 
-add_library(oklab INTERFACE)
-target_compile_features(oklab INTERFACE cxx_std_11)
-target_sources(oklab
+add_library(_oklab INTERFACE)
+target_compile_features(_oklab INTERFACE cxx_std_11)
+target_sources(_oklab
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES include/ok_color.h)
 
-add_library(Oklab ALIAS oklab)
+add_library(Oklab ALIAS _oklab)
 
 include(GNUInstallDirs)
 install(
-	TARGETS oklab
+	TARGETS _oklab
 	EXPORT oklabTargets
 	FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(

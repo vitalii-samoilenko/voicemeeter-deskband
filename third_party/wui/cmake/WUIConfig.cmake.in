@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+include(${CMAKE_CURRENT_LIST_DIR}/layoutsTargets.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/loaderTargets.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/graphicsTargets.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/paletteTargets.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/sceneTargets.cmake)
+
+check_required_components(WUI)

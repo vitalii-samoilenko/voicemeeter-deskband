@@ -1,7 +1,6 @@
-#ifndef VULKAN_HPP
-#define VULKAN_HPP
+#ifndef VULKAN_ERROR_HPP
+#define VULKAN_ERROR_HPP
 
-#include <cstdint>
 #include <stdexcept>
 
 #include "vulkan/vulkan.h"
@@ -21,15 +20,6 @@ namespace Vulkan {
 
 	private:
 		VkResult _code;
-	};
-
-	inline VkResult ThrowIfFailed(
-		VkResult code,
-		char const *what) {
-		if (code != VK_SUCCESS) {
-			throw Error{ code, what };
-		}
-		return code;
 	};
 }
 

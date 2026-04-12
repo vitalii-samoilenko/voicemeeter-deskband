@@ -1,9 +1,0 @@
-@PACKAGE_INIT@
-
-include(${CMAKE_CURRENT_LIST_DIR}/wuiLayoutsTargets.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/wuiLoaderTargets.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/wuiGraphicsTargets.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/wuiPaletteTargets.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/wuiSceneTargets.cmake)
-
-check_required_components(WUI)
