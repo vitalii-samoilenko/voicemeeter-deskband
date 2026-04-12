@@ -4,7 +4,7 @@ project(Voicemeeter::Clients::WUI::Loader VERSION 0.9)
 
 if(WUI_LOADER STREQUAL Windows)
 	add_subdirectory(windows)
-	add_library(Voicemeeter::Clients::WUI::Loader ALIAS voicemeeter_clients_wui_loader_windows)
+	add_library(Voicemeeter::Clients::WUI::Loader ALIAS _voicemeeter_clients_wui_loader_windows)
 else()
 	message(FATAL_ERROR "Resource manager is not supported")
 endif()

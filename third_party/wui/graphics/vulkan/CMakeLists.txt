@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25.1)
 project(WUI::Graphics::Vulkan VERSION 0.9 LANGUAGES CXX)
 
 find_package(WSTD)
-find_package(Vulkan REQUIRED COMPONENTS API)
+find_package(Vulkan)
 
 add_library(_wui_graphics_vulkan INTERFACE)
 target_compile_features(_wui_graphics_vulkan INTERFACE cxx_std_11)
@@ -11,7 +11,7 @@ target_link_libraries(_wui_graphics_vulkan
 	INTERFACE
 		::WSTD
 		::Vulkan::API
-		Layouts)
+		WUI::Layouts)
 target_sources(_wui_graphics_vulkan
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
@@ -22,7 +22,7 @@ target_sources(_wui_graphics_vulkan
 		include/WUI/State.hpp
 		include/WUI/Surface.hpp)
 
-add_library(Graphics::Vulkan ALIAS _wui_graphics_vulkan)
+add_library(WUI::Graphics::Vulkan ALIAS _wui_graphics_vulkan)
 
 set_property(
 	TARGET wui_loader
@@ -39,7 +39,7 @@ install(
 install(
 	EXPORT _graphicsVulkanTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI
-	NAMESPACE ::WUI)
+	NAMESPACE ::)
 install(
 	FILES ${PROJECT_SOURCE_DIR}/cmake/graphicsVulkanTargets.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

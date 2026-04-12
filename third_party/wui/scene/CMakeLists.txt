@@ -34,7 +34,7 @@ target_sources(_wui_scene
 		include/WUI/Scene.hpp
 		include/WUI/Trackers/Focus.hpp)
 
-add_library(Scene ALIAS _wui_scene)
+add_library(WUI::Scene ALIAS _wui_scene)
 
 include(GNUInstallDirs)
 install(

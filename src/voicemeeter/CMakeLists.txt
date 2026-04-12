@@ -4,10 +4,10 @@ project(Voicemeeter VERSION 0.9 LANGUAGES CXX)
 
 find_package(WSTD)
 
-add_library(voicemeeter INTERFACE)
-target_compile_features(voicemeeter INTERFACE cxx_std_11)
-target_link_libraries(voicemeeter INTERFACE ::WSTD)
-target_sources(voicemeeter
+add_library(_voicemeeter INTERFACE)
+target_compile_features(_voicemeeter INTERFACE cxx_std_11)
+target_link_libraries(_voicemeeter INTERFACE ::WSTD)
+target_sources(_voicemeeter
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES
@@ -25,4 +25,4 @@ target_sources(voicemeeter
 		include/Voicemeeter/Channel.hpp
 		include/Voicemeeter/Cherry.hpp)
 
-add_library(Voicemeeter ALIAS voicemeeter)
+add_library(Voicemeeter ALIAS _voicemeeter)

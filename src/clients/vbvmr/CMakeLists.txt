@@ -6,19 +6,19 @@ find_package(WSTD)
 find_package(Windows)
 find_package(VBVMR)
 
-add_library(voicemeeter_clients_vbvmr INTERFACE)
-target_compile_features(voicemeeter_clients_vbvmr INTERFACE cxx_std_17)
-target_link_libraries(voicemeeter_clients_vbvmr
+add_library(_voicemeeter_clients_vbvmr INTERFACE)
+target_compile_features(_voicemeeter_clients_vbvmr INTERFACE cxx_std_17)
+target_link_libraries(_voicemeeter_clients_vbvmr
 	INTERFACE
 		::WSTD
-		::Windows
+		::Windows::API
 		::VBVMR
 		Voicemeeter)
-target_sources(voicemeeter_clients_vbvmr
+target_sources(_voicemeeter_clients_vbvmr
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES
 		include/Voicemeeter/Clients/_/VBVMR.hpp
 		include/Voicemeeter/Clients/VBVMR.hpp)
 
-add_library(Voicemeeter::Clients::VBVMR ALIAS voicemeeter_clients_vbvmr)
+add_library(Voicemeeter::Clients::VBVMR ALIAS _voicemeeter_clients_vbvmr)

@@ -33,7 +33,7 @@ target_sources(lzma
 add_library(_lzma_enc INTERFACE)
 target_compile_features(_lzma_enc INTERFACE c_std_99)
 target_link_libraries(_lzma_enc INTERFACE lzma)
-target_sources(_enc
+target_sources(_lzma_enc
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS ${LZMA_SDK_PATH}/C
 	FILES
@@ -52,8 +52,8 @@ target_sources(_lzma_dec
 		${LZMA_SDK_PATH}/C/LzmaDec.h
 		${LZMA_SDK_PATH}/C/Alloc.h)
 
-add_library(Enc ALIAS _lzma_enc)
-add_library(Dec ALIAS _lzma_dec)
+add_library(LZMA::Enc ALIAS _lzma_enc)
+add_library(LZMA::Dec ALIAS _lzma_dec)
 
 include(GNUInstallDirs)
 install(
@@ -67,7 +67,7 @@ install(
 install(
 	EXPORT lzmaTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LZMA
-	NAMESPACE ::LZMA)
+	NAMESPACE ::)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(

@@ -9,7 +9,7 @@ add_executable(deskbandit WIN32)
 target_compile_features(deskbandit PRIVATE cxx_std_17)
 target_link_libraries(deskbandit PRIVATE
 		::WSTD
-		::Windows
+		::Windows::API
 		Voicemeeter
 		Voicemeeter::Clients::VBVMR
 		Voicemeeter::Clients::WUI::Controls

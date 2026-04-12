@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(WUI::Atlas::Cherry VERSION 0.9 LANGUAGES CXX)
 
-find_package(WUI)
 find_package(msdfgen)
+find_package(WUI)
 
-add_library(wui_atlas_cherry INTERFACE)
+add_library(_wui_atlas_cherry INTERFACE)
 
 add_executable(wui_atlas_cherry_generator)
 target_compile_features(wui_atlas_cherry_generator PRIVATE cxx_std_17)
 target_sources(wui_atlas_cherry_generator PRIVATE main.cpp)
 
-add_library(WUI::Atlas::Cherry ALIAS wui_atlas_cherry)
-add_library(WUI::Atlas ALIAS wui_atlas_cherry)
+add_library(WUI::Atlas::Cherry ALIAS _wui_atlas_cherry)
+add_library(WUI::Atlas ALIAS _wui_atlas_cherry)
 
 add_custom_command(
 	COMMAND wui_atlas_cherry_generator ${PROJECT_SOURCE_DIR}/shapes

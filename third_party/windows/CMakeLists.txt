@@ -28,9 +28,9 @@ target_link_libraries(_windows_d3d12
 		d3d12
 		d3dcompiler)
 
-add_library(API ALIAS _windows_api)
-add_library(COM ALIAS _windows_com)
-add_library(D3D12 ALIAS _windows_d3d12)
+add_library(Windows::API ALIAS _windows_api)
+add_library(Windows::COM ALIAS _windows_com)
+add_library(Windows::D3D12 ALIAS _windows_d3d12)
 
 include(GNUInstallDirs)
 install(
@@ -43,7 +43,7 @@ install(
 install(
 	EXPORT windowsTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Windows
-	NAMESPACE ::Windows)
+	NAMESPACE ::)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(

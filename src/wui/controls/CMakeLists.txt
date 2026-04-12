@@ -5,13 +5,13 @@ project(WUI::Controls::Cherry VERSION 0.9 LANGUAGES CXX)
 find_package(WSTD)
 find_package(WUI)
 
-add_library(wui_controls_cherry INTERFACE)
-target_compile_features(wui_controls_cherry INTERFACE cxx_std_17)
-target_link_libraries(wui_controls_cherry
+add_library(_wui_controls_cherry INTERFACE)
+target_compile_features(_wui_controls_cherry INTERFACE cxx_std_17)
+target_link_libraries(_wui_controls_cherry
 	INTERFACE
 		::WSTD
 		::WUI::Layouts)
-target_sources(wui_controls_cherry
+target_sources(_wui_controls_cherry
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES
@@ -31,5 +31,5 @@ target_sources(wui_controls_cherry
 		include/WUI/States/Plug.hpp
 		include/WUI/States/StripKnob.hpp)
 
-add_library(WUI::Controls::Cherry ALIAS wui_controls_cherry)
-add_library(WUI::Controls ALIAS wui_controls_cherry)
+add_library(WUI::Controls::Cherry ALIAS _wui_controls_cherry)
+add_library(WUI::Controls ALIAS _wui_controls_cherry)

@@ -4,7 +4,7 @@ project(WUI::Palette VERSION 0.9)
 
 if(WUI_PALETTE STREQUAL Oklab)
 	add_subdirectory(oklab)
-	add_library(Palette ALIAS _wui_palette_oklab)
+	add_library(WUI::Palette ALIAS _wui_palette_oklab)
 else()
 	message(FATAL_ERROR "Color space is not supported")
 endif()

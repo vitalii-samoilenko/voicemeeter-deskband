@@ -16,7 +16,7 @@ target_sources(_wui_palette_oklab
 	BASE_DIRS include
 	FILES include/WUI/Graphics/Palette.hpp)
 
-add_library(Palette::Oklab ALIAS _wui_palette_oklab)
+add_library(WUI::Palette::Oklab ALIAS _wui_palette_oklab)
 
 include(GNUInstallDirs)
 install(
@@ -26,7 +26,7 @@ install(
 install(
 	EXPORT _paletteOklabTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI
-	NAMESPACE ::WUI)
+	NAMESPACE ::)
 install(
 	FILES ${PROJECT_SOURCE_DIR}/cmake/paletteOklabTargets.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

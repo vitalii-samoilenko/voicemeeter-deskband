@@ -8,7 +8,7 @@ add_library(wui_layouts INTERFACE)
 target_compile_features(wui_layouts INTERFACE cxx_std_11)
 target_link_libraries(wui_layouts INTERFACE ::WSTD)
 
-add_library(Layouts ALIAS wui_layouts)
+add_library(WUI::Layouts ALIAS wui_layouts)
 
 include(GNUInstallDirs)
 install(
@@ -18,7 +18,7 @@ install(
 install(
 	EXPORT _layoutsTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI
-	NAMESPACE ::WUI)
+	NAMESPACE ::)
 install(
 	FILES ${PROJECT_SOURCE_DIR}/cmake/layoutsTargets.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/WUI)

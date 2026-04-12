@@ -6,7 +6,7 @@ add_library(wui_loader INTERFACE)
 
 if(WUI_LOADER STREQUAL Windows)
 	add_subdirectory(windows)
-	add_library(Loader ALIAS _wui_loader_windows)
+	add_library(WUI::Loader ALIAS _wui_loader_windows)
 else()
 	message(FATAL_ERROR "Resource manager is not supported")
 endif()

@@ -5,14 +5,14 @@ project(Voicemeeter::Clients::WUI::Controls::Cherry VERSION 0.9 LANGUAGES CXX)
 find_package(WSTD)
 find_package(WUI)
 
-add_library(voicemeeter_clients_wui_controls_cherry INTERFACE)
-target_compile_features(voicemeeter_clients_wui_controls_cherry INTERFACE cxx_std_17)
-target_link_libraries(voicemeeter_clients_wui_controls_cherry INTERFACE
+add_library(_voicemeeter_clients_wui_controls_cherry INTERFACE)
+target_compile_features(_voicemeeter_clients_wui_controls_cherry INTERFACE cxx_std_17)
+target_link_libraries(_voicemeeter_clients_wui_controls_cherry INTERFACE
 	::WSTD
 	::WUI::Scene
 	WUI::Controls::Cherry
 	Voicemeeter)
-target_sources(voicemeeter_clients_wui_controls_cherry
+target_sources(_voicemeeter_clients_wui_controls_cherry
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES
@@ -20,5 +20,5 @@ target_sources(voicemeeter_clients_wui_controls_cherry
 		include/Voicemeeter/Clients/WUI/Composition.hpp
 		include/Voicemeeter/Clients/WUI/Theme.hpp)
 
-add_library(Voicemeeter::Clients::WUI::Controls::Cherry ALIAS voicemeeter_clients_wui_controls_cherry)
-add_library(Voicemeeter::Clients::WUI::Controls ALIAS voicemeeter_clients_wui_controls_cherry)
+add_library(Voicemeeter::Clients::WUI::Controls::Cherry ALIAS _voicemeeter_clients_wui_controls_cherry)
+add_library(Voicemeeter::Clients::WUI::Controls ALIAS _voicemeeter_clients_wui_controls_cherry)

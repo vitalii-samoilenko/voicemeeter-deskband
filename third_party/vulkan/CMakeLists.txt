@@ -12,7 +12,7 @@ target_sources(_vulkan_api
 		include/Vulkan/Error.hpp
 		include/Vulkan/API.hpp)
 
-add_library(API ALIAS _vulkan_api)
+add_library(Vulkan::API ALIAS _vulkan_api)
 
 include(GNUInstallDirs)
 install(
@@ -21,7 +21,7 @@ install(
 install(
 	EXPORT vulkanTargets
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Vulkan
-	NAMESPACE ::Vulkan)
+	NAMESPACE ::)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
