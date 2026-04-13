@@ -8,11 +8,7 @@
 
 #include "Windows/API.hpp"
 #include "Windows/COM.hpp"
-#include <d3d12.h>
-#include <d3dcompiler.h>
-#include <dcomp.h>
-#include <dxgi1_6.h>
-#include <wrl/client.h>
+#include "Windows/D3D12.hpp"
 
 #include "WUI/Layouts/Atlas.hpp"
 #include "WUI/Layouts/Loader.hpp"
@@ -49,14 +45,49 @@ namespace WUI {
 				, _atlas{ nullptr }
 				, _squareBuffer{ nullptr }
 				, _hSquareBuffer{} {
+				ID3D12Resource *squareUploadBuffer{ nullptr };
+				ID3D12Resource *textureUploadBuffer{ nullptr };
+				ID3DBlob *layersRootSignature{ nullptr };
+				ID3DBlob *blenderRootSignature{ nullptr };
+				ID3DBlob *vertexShader{ nullptr };
+				ID3DBlob *msdfShader{ nullptr };
+				ID3DBlob *blenderShader{ nullptr };
 				bool failed{ true };
 				auto guardEvents = ::wstd::make_guard([
 						&failed,
+						&squareUploadBuffer,
+						&textureUploadBuffer,
+						&layersRootSignature,
+						&blenderRootSignature,
+						&vertexShader,
+						&msdfShader,
+						&blenderShader,
 						this
 					]()->void {
+						::Windows::SafeRelease(blenderShader);
+						::Windows::SafeRelease(msdfShader);
+						::Windows::SafeRelease(vertexShader);
+						::Windows::SafeRelease(blenderRootSignature);
+						::Windows::SafeRelease(layersRootSignature);
+						::Windows::SafeRelease(textureUploadBuffer);
+						::Windows::SafeRelease(squareUploadBuffer);
 						if (!failed) {
 							return;
 						}
+						::Windows::SafeRelease(_squareBuffer);
+						::Windows::SafeRelease(_atlas);
+						::Windows::SafeRelease(_layers_fence);
+						::Windows::SafeRelease(_layers_rootSignature);
+						::Windows::SafeRelease(_layers_msdfState);
+						::Windows::SafeRelease(_layers_hTextureHeap);
+						::Windows::SafeRelease(_layers_renderTarget);
+						::Windows::SafeRelease(_layers_hRenderTargetHeap);
+						::Windows::SafeRelease(_blender_rootSignature);
+						::Windows::SafeRelease(_blender_state);
+						::Windows::SafeRelease(_blender_hTextureHeap);
+						::Windows::SafeRelease(_slots_fences);
+						::Windows::SafeRelease(_slots_commandLists);
+						::Windows::SafeRelease(_slots_commandAllocators);
 						::CloseHandle(_hEvent);
 					});
 				{
@@ -88,7 +119,6 @@ namespace WUI {
 							nullptr
 					), "Command list reset failed");
 				}
-				::Microsoft::WRL::ComPtr<ID3D12Resource> squareUploadBuffer{ nullptr };
 				{
 					::std::array<FLOAT, 2 * 4> square{
 						-1.F, -1.F,
@@ -138,12 +168,12 @@ namespace WUI {
 					::memcpy(data, square.data(), sizeof(square));
 					squareUploadBuffer->Unmap(0, nullptr);
 					get_slots_CommandList(slot)
-						->CopyResource(_squareBuffer.Get(), squareUploadBuffer.Get());
+						->CopyResource(_squareBuffer, squareUploadBuffer);
 					D3D12_RESOURCE_BARRIER barrier{
 						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 						D3D12_RESOURCE_BARRIER_FLAG_NONE,
 						D3D12_RESOURCE_TRANSITION_BARRIER{
-							_squareBuffer.Get(),
+							_squareBuffer,
 							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 							D3D12_RESOURCE_STATE_COPY_DEST,
 							D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER
@@ -155,7 +185,6 @@ namespace WUI {
 					_hSquareBuffer.StrideInBytes = 2 * sizeof(FLOAT);
 					_hSquareBuffer.SizeInBytes = sizeof(square);
 				}
-				::Microsoft::WRL::ComPtr<ID3D12Resource> textureUploadBuffer{ nullptr };
 				{
 					typename TLoader::resource atlas{
 						loader.LoadResource(
@@ -222,7 +251,7 @@ namespace WUI {
 					}
 					textureUploadBuffer->Unmap(0, nullptr);
 					D3D12_TEXTURE_COPY_LOCATION srcLoc{
-						textureUploadBuffer.Get(),
+						textureUploadBuffer,
 						D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
 						D3D12_PLACED_SUBRESOURCE_FOOTPRINT{
 							0,
@@ -234,7 +263,7 @@ namespace WUI {
 						}
 					};
 					D3D12_TEXTURE_COPY_LOCATION dstLoc{
-						_atlas.Get(),
+						_atlas,
 						D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX
 					};
 					dstLoc.SubresourceIndex = 0;
@@ -248,7 +277,7 @@ namespace WUI {
 						D3D12_RESOURCE_BARRIER_TYPE_TRANSITION,
 						D3D12_RESOURCE_BARRIER_FLAG_NONE,
 						D3D12_RESOURCE_TRANSITION_BARRIER{
-							_atlas.Get(),
+							_atlas,
 							D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES,
 							D3D12_RESOURCE_STATE_COPY_DEST,
 							D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
@@ -275,7 +304,7 @@ namespace WUI {
 					hTextureDesc.Texture2D.MipLevels = 1U;
 					surface.get_Device()
 						->CreateShaderResourceView(
-							_atlas.Get(),
+							_atlas,
 							&hTextureDesc,
 							_layers_hTextureHeap->GetCPUDescriptorHandleForHeapStart());
 				}
@@ -338,7 +367,7 @@ namespace WUI {
 					_layers_hRenderTarget.ptr = SIZE_T(INT64(hRenderTarget.ptr));
 					surface.get_Device()
 						->CreateRenderTargetView(
-							_layers_renderTarget.Get(),
+							_layers_renderTarget,
 							nullptr, _layers_hRenderTarget);
 					D3D12_DESCRIPTOR_HEAP_DESC hTextureHeapDesc{
 						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
@@ -359,7 +388,7 @@ namespace WUI {
 					hTextureDesc.Texture2D.MipLevels = 1U;
 					surface.get_Device()
 						->CreateShaderResourceView(
-							_layers_renderTarget.Get(),
+							_layers_renderTarget,
 							&hTextureDesc,
 							_blender_hTextureHeap->GetCPUDescriptorHandleForHeapStart());
 					::Windows::ThrowIfFailed(surface.get_Device()
@@ -407,16 +436,15 @@ namespace WUI {
 						1, &samplerDesc,
 						D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
 					};
-					::Microsoft::WRL::ComPtr<ID3DBlob> temp{ nullptr };
 					::Windows::ThrowIfFailed(::D3D12SerializeRootSignature(
 						&rootSignatureDesc,
 						D3D_ROOT_SIGNATURE_VERSION_1,
-						&temp, nullptr
+						&layersRootSignature, nullptr
 					), "Root signature serialization failed");
 					::Windows::ThrowIfFailed(surface.get_Device()
 						->CreateRootSignature(
 							0,
-							temp->GetBufferPointer(), temp->GetBufferSize(),
+							layersRootSignature->GetBufferPointer(), layersRootSignature->GetBufferSize(),
 							IID_PPV_ARGS(&_layers_rootSignature)
 					), "Root signature creation failed");
 				}
@@ -451,22 +479,18 @@ namespace WUI {
 						1, &samplerDesc,
 						D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
 					};
-					::Microsoft::WRL::ComPtr<ID3DBlob> temp{ nullptr };
 					::Windows::ThrowIfFailed(::D3D12SerializeRootSignature(
 						&rootSignatureDesc,
 						D3D_ROOT_SIGNATURE_VERSION_1,
-						&temp, nullptr
+						&blenderRootSignature, nullptr
 					), "Root signature serialization failed");
 					::Windows::ThrowIfFailed(surface.get_Device()
 						->CreateRootSignature(
 							0,
-							temp->GetBufferPointer(), temp->GetBufferSize(),
+							blenderRootSignature->GetBufferPointer(), blenderRootSignature->GetBufferSize(),
 							IID_PPV_ARGS(&_blender_rootSignature)
 					), "Root signature creation failed");
 				}
-				::Microsoft::WRL::ComPtr<ID3DBlob> vertexShader{ nullptr };
-				::Microsoft::WRL::ComPtr<ID3DBlob> msdfShader{ nullptr };
-				::Microsoft::WRL::ComPtr<ID3DBlob> blenderShader{ nullptr };
 				{
 					typename TLoader::resource vertexCode{
 						loader.LoadResource(
@@ -525,14 +549,12 @@ namespace WUI {
 						0
 					};
 					D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc{
-						_layers_rootSignature.Get(),
+						_layers_rootSignature,
 						D3D12_SHADER_BYTECODE{
-							vertexShader->GetBufferPointer(),
-							vertexShader->GetBufferSize()
+							vertexShader->GetBufferPointer(), vertexShader->GetBufferSize()
 						},
 						D3D12_SHADER_BYTECODE{
-							msdfShader->GetBufferPointer(),
-							msdfShader->GetBufferSize()
+							msdfShader->GetBufferPointer(), msdfShader->GetBufferSize()
 						},
 						D3D12_SHADER_BYTECODE{}, D3D12_SHADER_BYTECODE{}, D3D12_SHADER_BYTECODE{},
 						D3D12_STREAM_OUTPUT_DESC{},
@@ -599,14 +621,12 @@ namespace WUI {
 						0
 					};
 					D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc{
-						_blender_rootSignature.Get(),
+						_blender_rootSignature,
 						D3D12_SHADER_BYTECODE{
-							vertexShader->GetBufferPointer(),
-							vertexShader->GetBufferSize()
+							vertexShader->GetBufferPointer(), vertexShader->GetBufferSize()
 						},
 						D3D12_SHADER_BYTECODE{
-							blenderShader->GetBufferPointer(),
-							blenderShader->GetBufferSize()
+							blenderShader->GetBufferPointer(), blenderShader->GetBufferSize()
 						},
 						D3D12_SHADER_BYTECODE{}, D3D12_SHADER_BYTECODE{}, D3D12_SHADER_BYTECODE{},
 						D3D12_STREAM_OUTPUT_DESC{},
@@ -663,6 +683,20 @@ namespace WUI {
 			State(State &&) = delete;
 
 			inline ~State() {
+				::Windows::SafeRelease(_squareBuffer);
+				::Windows::SafeRelease(_atlas);
+				::Windows::SafeRelease(_layers_fence);
+				::Windows::SafeRelease(_layers_rootSignature);
+				::Windows::SafeRelease(_layers_msdfState);
+				::Windows::SafeRelease(_layers_hTextureHeap);
+				::Windows::SafeRelease(_layers_renderTarget);
+				::Windows::SafeRelease(_layers_hRenderTargetHeap);
+				::Windows::SafeRelease(_blender_rootSignature);
+				::Windows::SafeRelease(_blender_state);
+				::Windows::SafeRelease(_blender_hTextureHeap);
+				::Windows::SafeRelease(_slots_fences);
+				::Windows::SafeRelease(_slots_commandLists);
+				::Windows::SafeRelease(_slots_commandAllocators);
 				::CloseHandle(_hEvent);
 			};
 
@@ -682,13 +716,13 @@ namespace WUI {
 				return (_slots_current = (_slots_current + 1) % SlotsSize);
 			};
 			inline ID3D12CommandAllocator * get_slots_CommandAllocator(size_t slot) const {
-				return _slots_commandAllocators[slot].Get();
+				return _slots_commandAllocators[slot];
 			};
 			inline ID3D12GraphicsCommandList * get_slots_CommandList(size_t slot) const {
-				return _slots_commandLists[slot].Get();
+				return _slots_commandLists[slot];
 			};
 			inline ID3D12Fence * get_slots_Fence(size_t slot) const {
-				return _slots_fences[slot].Get();
+				return _slots_fences[slot];
 			};
 			inline UINT64 get_slots_Count(size_t slot) const {
 				return _slots_counts[slot];
@@ -698,38 +732,39 @@ namespace WUI {
 			};
 			// blender
 			inline ID3D12DescriptorHeap * get_blender_hTextureHeap() const {
-				return _blender_hTextureHeap.Get();
+				return _blender_hTextureHeap;
 			};
 			inline ID3D12PipelineState * get_blender_State() const {
-				return _blender_state.Get();
+				return _blender_state;
 			};
 			inline ID3D12RootSignature * get_blender_RootSignature() const {
-				return _blender_rootSignature.Get();
+				return _blender_rootSignature;
 			};
 			// layers
 			inline size_t get_layers_Size() const {
 				return _layers_size;
 			};
 			inline ID3D12Resource * get_layers_RenderTarget() const {
-				return _layers_renderTarget.Get();
+				return _layers_renderTarget;
 			};
 			inline ID3D12Resource ** geta_layers_RenderTarget() {
+				::Windows::SafeRelease(_layers_renderTarget);
 				return &_layers_renderTarget;
 			};
 			inline D3D12_CPU_DESCRIPTOR_HANDLE get_layers_hRenderTarget() const {
 				return _layers_hRenderTarget;
 			};
 			inline ID3D12DescriptorHeap * get_layers_hTextureHeap() const {
-				return _layers_hTextureHeap.Get();
+				return _layers_hTextureHeap;
 			};
 			inline ID3D12PipelineState * get_layers_MsdfState() const {
-				return _layers_msdfState.Get();
+				return _layers_msdfState;
 			};
 			inline ID3D12RootSignature * get_layers_RootSignature() const {
-				return _layers_rootSignature.Get();
+				return _layers_rootSignature;
 			};
 			inline ID3D12Fence * get_layers_Fence() const {
-				return _layers_fence.Get();
+				return _layers_fence;
 			};
 			inline UINT64 get_layers_Count() const {
 				return _layers_count;
@@ -739,7 +774,7 @@ namespace WUI {
 			};
 			// ------
 			inline ID3D12Resource * get_Atlas() const {
-				return _atlas.Get();
+				return _atlas;
 			};
 			inline D3D12_VERTEX_BUFFER_VIEW get_hSquareBuffer() const {
 				return _hSquareBuffer;
@@ -749,27 +784,27 @@ namespace WUI {
 			HANDLE _hEvent;
 			// slots
 			size_t _slots_current;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, SlotsSize> _slots_commandAllocators;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, SlotsSize> _slots_commandLists;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, SlotsSize> _slots_fences;
+			::std::array<ID3D12CommandAllocator *, SlotsSize> _slots_commandAllocators;
+			::std::array<ID3D12GraphicsCommandList *, SlotsSize> _slots_commandLists;
+			::std::array<ID3D12Fence *, SlotsSize> _slots_fences;
 			::std::array<UINT64, SlotsSize> _slots_counts;
 			// blender
-			::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _blender_hTextureHeap;
-			::Microsoft::WRL::ComPtr<ID3D12PipelineState> _blender_state;
-			::Microsoft::WRL::ComPtr<ID3D12RootSignature> _blender_rootSignature;
+			ID3D12DescriptorHeap *_blender_hTextureHeap;
+			ID3D12PipelineState *_blender_state;
+			ID3D12RootSignature *_blender_rootSignature;
 			// layers
 			size_t _layers_size;
-			::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _layers_hRenderTargetHeap;
-			::Microsoft::WRL::ComPtr<ID3D12Resource> _layers_renderTarget;
+			ID3D12DescriptorHeap *_layers_hRenderTargetHeap;
+			ID3D12Resource *_layers_renderTarget;
 			D3D12_CPU_DESCRIPTOR_HANDLE _layers_hRenderTarget;
-			::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _layers_hTextureHeap;
-			::Microsoft::WRL::ComPtr<ID3D12PipelineState> _layers_msdfState;
-			::Microsoft::WRL::ComPtr<ID3D12RootSignature> _layers_rootSignature;
-			::Microsoft::WRL::ComPtr<ID3D12Fence> _layers_fence;
+			ID3D12DescriptorHeap *_layers_hTextureHeap;
+			ID3D12PipelineState *_layers_msdfState;
+			ID3D12RootSignature *_layers_rootSignature;
+			ID3D12Fence *_layers_fence;
 			UINT64 _layers_count;
 			// ------
-			::Microsoft::WRL::ComPtr<ID3D12Resource> _atlas;
-			::Microsoft::WRL::ComPtr<ID3D12Resource> _squareBuffer;
+			ID3D12Resource *_atlas;
+			ID3D12Resource *_squareBuffer;
 			D3D12_VERTEX_BUFFER_VIEW _hSquareBuffer;
 		};
 	}

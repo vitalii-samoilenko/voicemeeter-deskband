@@ -13,7 +13,7 @@ target_sources(_windows_api
 
 add_library(_windows_com INTERFACE)
 target_compile_features(_windows_com INTERFACE cxx_std_11)
-target_sources(_com
+target_sources(_windows_com
 	INTERFACE FILE_SET HEADERS
 	BASE_DIRS include
 	FILES
@@ -27,6 +27,10 @@ target_link_libraries(_windows_d3d12
 		dxgi
 		d3d12
 		d3dcompiler)
+target_sources(_windows_d3d12
+	INTERFACE FILE_SET HEADERS
+	BASE_DIRS include
+	FILES include/Windows/D3D12.hpp)
 
 add_library(Windows::API ALIAS _windows_api)
 add_library(Windows::COM ALIAS _windows_com)

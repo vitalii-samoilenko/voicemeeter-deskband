@@ -9,10 +9,7 @@
 
 #include "Windows/API.hpp"
 #include "Windows/COM.hpp"
-#include <d3d12.h>
-#include <dcomp.h>
-#include <dxgi1_6.h>
-#include <wrl/client.h>
+#include "Windows/D3D12.hpp"
 
 namespace WUI {
 	namespace Graphics {
@@ -35,26 +32,44 @@ namespace WUI {
 				, _buffers_fence{ nullptr }
 				, _buffers_count{ 0 }
 				, _buffers_first{ true }
-				, _buffers_invalids{}
-				, _compositionTarget{ nullptr } {
+				, _buffers_invalids{} {
+				IDXGIFactory7 *factory{ nullptr };
+				ID3D12Debug *debug{ nullptr };
+				IDXGIAdapter4 *adapter{ nullptr };
+				IDXGISwapChain1 *swapChain{ nullptr };
 				bool failed{ true };
 				auto guardEvents = ::wstd::make_guard([
 						&failed,
+						&factory,
+						&debug,
+						&adapter,
+						&swapChain,
 						this
 					]()->void {
+						::Windows::SafeRelease(factory);
+						::Windows::SafeRelease(debug);
+						::Windows::SafeRelease(adapter);
+						::Windows::SafeRelease(swapChain);
 						if (!failed) {
 							return;
 						}
+						::Windows::SafeRelease(_buffers_fence);
+						::Windows::SafeRelease(_buffers_renderTargets);
+						::Windows::SafeRelease(_buffers_hRenderTargetHeap);
+						::Windows::SafeRelease(_swapChain);
+						::Windows::SafeRelease(_slots_fences);
+						::Windows::SafeRelease(_slots_commandLists);
+						::Windows::SafeRelease(_slots_commandAllocators);
+						::Windows::SafeRelease(_commandQueue);
+						::Windows::SafeRelease(_device);
 						::CloseHandle(_hEvent);
 					});
 				::Windows::ThrowIfFailed(::CoInitialize(
 					NULL
 				), "COM initialization failed");
-				::Microsoft::WRL::ComPtr<IDXGIFactory7> factory{ nullptr };
 				{
 					UINT factoryFlags{ 0 };
 #ifndef NDEBUG
-					::Microsoft::WRL::ComPtr<ID3D12Debug> debug{ nullptr };
 					::Windows::ThrowIfFailed(::D3D12GetDebugInterface(
 						IID_PPV_ARGS(&debug)
 					), "Could not get debug interface");
@@ -69,14 +84,13 @@ namespace WUI {
 						_hWnd,
 						DXGI_MWA_NO_ALT_ENTER
 					), "Failed to disable fullscreen transition");
-					::Microsoft::WRL::ComPtr<IDXGIAdapter4> adapter{ nullptr };
 					::Windows::ThrowIfFailed(factory->EnumAdapterByGpuPreference(
 						0,
 						DXGI_GPU_PREFERENCE_UNSPECIFIED,
 						IID_PPV_ARGS(&adapter)
 					), "Could not get DXGI adapter");
 					::Windows::ThrowIfFailed(::D3D12CreateDevice(
-						adapter.Get(),
+						adapter,
 						D3D_FEATURE_LEVEL_12_1,
 						IID_PPV_ARGS(&_device)
 					), "D3D12 device creation failed");
@@ -125,15 +139,14 @@ namespace WUI {
 						DXGI_ALPHA_MODE_PREMULTIPLIED,
 						0
 					};
-					::Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain{ nullptr };
 					::Windows::ThrowIfFailed(factory->CreateSwapChainForComposition(
-						_commandQueue.Get(),
+						_commandQueue,
 						&swapChainDesc,
 						nullptr,
 						&swapChain
 					), "DXGI swap chain creation failed");
-					::Windows::ThrowIfFailed(swapChain.As(
-						&_swapChain
+					::Windows::ThrowIfFailed(swapChain->QueryInterface(
+						IID_PPV_ARGS(&_swapChain)
 					), "Could not get swap chain");
 				}
 				{
@@ -161,7 +174,7 @@ namespace WUI {
 						_buffers_hRenderTargets[buffer].ptr = SIZE_T(INT64(hRenderTarget.ptr)
 							+ INT64(buffer * hRenderTargetSize));
 						_device->CreateRenderTargetView(
-							_buffers_renderTargets[buffer].Get(),
+							_buffers_renderTargets[buffer],
 							nullptr, _buffers_hRenderTargets[buffer]);
 					}
 					::Windows::ThrowIfFailed(_device->CreateFence(
@@ -170,29 +183,6 @@ namespace WUI {
 						IID_PPV_ARGS(&_buffers_fence)
 					), "Fence creation failed");
 				}
-				{
-					::Microsoft::WRL::ComPtr<IDCompositionDevice> compositionDevice{ nullptr };
-					::Windows::ThrowIfFailed(::DCompositionCreateDevice(
-						nullptr,
-						IID_PPV_ARGS(&compositionDevice)
-					), "Composition device creation failed");
-					::Windows::ThrowIfFailed(compositionDevice->CreateTargetForHwnd(
-						_hWnd, TRUE,
-						&_compositionTarget
-					), "Composition target creation failed");
-					::Microsoft::WRL::ComPtr<IDCompositionVisual> compositionVisual{ nullptr };
-					::Windows::ThrowIfFailed(compositionDevice->CreateVisual(
-						&compositionVisual
-					), "Composition visual creation failed");
-					::Windows::ThrowIfFailed(compositionVisual->SetContent(
-						_swapChain.Get()
-					), "Could not set swap chain content");
-					::Windows::ThrowIfFailed(_compositionTarget->SetRoot(
-						compositionVisual.Get()
-					), "Could not set composition target root");
-					::Windows::ThrowIfFailed(compositionDevice->Commit(
-					), "Could not commit composition device");
-				}
 				failed = false;
 			};
 			Surface() = delete;
@@ -200,6 +190,15 @@ namespace WUI {
 			Surface(Surface &&) = delete;
 
 			inline ~Surface() {
+				::Windows::SafeRelease(_buffers_fence);
+				::Windows::SafeRelease(_buffers_renderTargets);
+				::Windows::SafeRelease(_buffers_hRenderTargetHeap);
+				::Windows::SafeRelease(_swapChain);
+				::Windows::SafeRelease(_slots_fences);
+				::Windows::SafeRelease(_slots_commandLists);
+				::Windows::SafeRelease(_slots_commandAllocators);
+				::Windows::SafeRelease(_commandQueue);
+				::Windows::SafeRelease(_device);
 				::CloseHandle(_hEvent);
 			};
 
@@ -220,7 +219,7 @@ namespace WUI {
 						get_hEvent(), INFINITE);
 				}
 				for (size_t buffer{ 0 }; buffer < BuffersSize; ++buffer) {
-					*geta_buffers_RenderTarget(buffer) = nullptr;
+					geta_buffers_RenderTarget(buffer);
 				}
 				::Windows::ThrowIfFailed(get_SwapChain()
 					->ResizeBuffers(
@@ -362,10 +361,10 @@ namespace WUI {
 				return _hEvent;
 			};
 			inline ID3D12Device8 * get_Device() const {
-				return _device.Get();
+				return _device;
 			};
 			inline ID3D12CommandQueue * get_CommandQueue() const {
-				return _commandQueue.Get();
+				return _commandQueue;
 			};
 			// slots
 			inline size_t get_slots_Current() const {
@@ -375,13 +374,13 @@ namespace WUI {
 				return (_slots_current = (_slots_current + 1) % SlotsSize);
 			};
 			inline ID3D12CommandAllocator * get_slots_CommandAllocator(size_t slot) const {
-				return _slots_commandAllocators[slot].Get();
+				return _slots_commandAllocators[slot];
 			};
 			inline ID3D12GraphicsCommandList * get_slots_CommandList(size_t slot) const {
-				return _slots_commandLists[slot].Get();
+				return _slots_commandLists[slot];
 			};
 			inline ID3D12Fence * get_slots_Fence(size_t slot) const {
-				return _slots_fences[slot].Get();
+				return _slots_fences[slot];
 			};
 			inline UINT64 get_slots_Count(size_t slot) const {
 				return _slots_counts[slot];
@@ -391,23 +390,24 @@ namespace WUI {
 			};
 			// -----
 			inline IDXGISwapChain4 * get_SwapChain() const {
-				return _swapChain.Get();
+				return _swapChain;
 			};
 			// buffers
 			inline size_t get_buffers_Current() const {
 				return _swapChain->GetCurrentBackBufferIndex();
 			};
 			inline ID3D12Resource * get_buffers_RenderTarget(size_t buffer) const {
-				return _buffers_renderTargets[buffer].Get();
+				return _buffers_renderTargets[buffer];
 			};
 			inline ID3D12Resource ** geta_buffers_RenderTarget(size_t buffer) {
+				::Windows::SafeRelease(_buffers_renderTargets[buffer]);
 				return &_buffers_renderTargets[buffer];
 			};
 			inline D3D12_CPU_DESCRIPTOR_HANDLE get_buffers_hRenderTarget(size_t buffer) const {
 				return _buffers_hRenderTargets[buffer];
 			};
 			inline ID3D12Fence * get_buffers_Fence() const {
-				return _buffers_fence.Get();
+				return _buffers_fence;
 			};
 			inline UINT64 get_buffers_Count() const {
 				return _buffers_count;
@@ -455,26 +455,25 @@ namespace WUI {
 		private:
 			HWND _hWnd;
 			HANDLE _hEvent;
-			::Microsoft::WRL::ComPtr<ID3D12Device8> _device;
-			::Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
+			ID3D12Device8 *_device;
+			ID3D12CommandQueue *_commandQueue;
 			// slots
 			size_t _slots_current;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12CommandAllocator>, SlotsSize> _slots_commandAllocators;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, SlotsSize> _slots_commandLists;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12Fence>, SlotsSize> _slots_fences;
+			::std::array<ID3D12CommandAllocator *, SlotsSize> _slots_commandAllocators;
+			::std::array<ID3D12GraphicsCommandList *, SlotsSize> _slots_commandLists;
+			::std::array<ID3D12Fence *, SlotsSize> _slots_fences;
 			::std::array<UINT64, SlotsSize> _slots_counts;
 			// -----
-			::Microsoft::WRL::ComPtr<IDXGISwapChain4> _swapChain;
+			IDXGISwapChain4 *_swapChain;
 			// buffers
-			::Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _buffers_hRenderTargetHeap;
-			::std::array<::Microsoft::WRL::ComPtr<ID3D12Resource>, BuffersSize> _buffers_renderTargets;
+			ID3D12DescriptorHeap *_buffers_hRenderTargetHeap;
+			::std::array<ID3D12Resource *, BuffersSize> _buffers_renderTargets;
 			::std::array<D3D12_CPU_DESCRIPTOR_HANDLE, BuffersSize> _buffers_hRenderTargets;
-			::Microsoft::WRL::ComPtr<ID3D12Fence> _buffers_fence;
+			ID3D12Fence *_buffers_fence;
 			UINT64 _buffers_count;
 			bool _buffers_first;
 			::std::vector<D3D12_RECT> _buffers_invalids;
 			// -----
-			::Microsoft::WRL::ComPtr<IDCompositionTarget> _compositionTarget;
 		};
 	}
 }

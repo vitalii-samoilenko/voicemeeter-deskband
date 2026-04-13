@@ -8,8 +8,7 @@
 
 #include "Windows/API.hpp"
 #include "Windows/COM.hpp"
-#include <d3d12.h>
-#include <dxgi1_6.h>
+#include "Windows/D3D12.hpp"
 
 namespace WUI {
 	namespace Graphics {

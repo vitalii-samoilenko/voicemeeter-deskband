@@ -7,7 +7,7 @@
 #include "math.hpp"
 
 #include "Windows/API.hpp"
-#include <d3d12.h>
+#include "Windows/D3D12.hpp"
 
 #include "WUI/Layouts/Atlas.hpp"
 
