@@ -7,7 +7,7 @@
 #include "math.hpp"
 #include "memory.hpp"
 
-#include "Vulkan.hpp"
+#include "Vulkan/API.hpp"
 
 #include "windows.h"
 
@@ -25,8 +25,11 @@ namespace WUI {
 					if (!failed) {
 						return;
 					}
+					for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
+						::vkDestroyFence(_device, _slots_fences[slot], NULL);
+					}
 					::vkFreeCommandBuffers(_device, _slots_commandPool,
-						static_cast<uint32_t>(_slots_commandBuffers.size()), &_slots_commandBuffers[0]);
+						static_cast<uint32_t>(SlotsSize), &_slots_commandBuffers[0]);
 					::vkDestroyCommandPool(_device, _commandPool, NULL);
 					::vkDestroyDevice(_device, NULL);
 					::vkDestroyInstance(_instance, NULL);
@@ -103,35 +106,33 @@ namespace WUI {
 					), "Instance creation failed");
 				}
 				{
-					uint32_t physicalDeviceCount;
+					uint32_t physicalDevicesSize;
 					::Vulkan::ThrowIfFailed(::vkEnumeratePhysicalDevices(
 						_instante,
-						&physicalDeviceCount, NULL
+						&physicalDevicesSize, NULL
 					), "Failed to count devices");
-					::std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
+					::std::vector<VkPhysicalDevice> physicalDevices(physicalDevicesSize);
 					::Vulkan::ThrowIfFailed(::vkEnumeratePhysicalDevices(
 						_instance,
-						&physicalDeviceCount, &physicalDevices[0]
+						&physicalDevicesSize, &physicalDevices[0]
 					), "Failed to enumerate devices");
-					_physicalDevice = physicalDevices[0];
 					for (size_t i{ 0 }, p{ 0 }; i < physicalDevices.size(); ++i) {
 						VkPhysicalDevice const &physicalDevice{ physicalDevices[i] };
-						VkPhysicalDeviceProperties2KHR properties;
+						VkPhysicalDeviceProperties2KHR set;
 						::Vulkan::ThrowIfFailed(::vkGetPhysicalDeviceProperties2KHR(
 							physicalDevice,
-							&properties
+							&set
 						), "Failed to get device properties");
-						VkPhysicalDeviceProperties const &coreProperties{ properties.properties };
-						size_t t{ 0 };
-						switch (coreProperties.deviceType) {
+						size_t t{ 1 };
+						switch (set.properties.deviceType) {
 						case VK_PHYSICAL_DEVICE_TYPE_CPU:
-							t = 1;
-							break;
-						case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
 							t = 2;
 							break;
-						case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+						case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
 							t = 3;
+							break;
+						case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+							t = 4;
 							break;
 						};
 						if (p < t) {
@@ -141,45 +142,40 @@ namespace WUI {
 					}
 				}
 				{
-					uint32_t queueFamilyPropertyCount;
+					uint32_t queueFamilyPropertiesSize;
 					::Vulkan::ThrowIfFailed(::vkGetPhysicalDeviceQueueFamilyProperties(
 						_physicalDevice,
-						&queueFamilyPropertyCount, NULL
+						&queueFamilyPropertiesSize, NULL
 					), "Failed to count device queue families");
-					::std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyPropertyCount);
+					::std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyPropertiesSize);
 					::Vulkan::ThrowIfFailed(::vkGetPhysicalDeviceQueueFamilyProperties(
 						_physicalDevice,
-						&queueFamilyPropertyCount, queueFamilyProperties.data()
+						&queueFamilyPropertiesSize, queueFamilyProperties.data()
 					), "Failed to get device queue families");
 					for (size_t i{ 0 }; i < queueFamilyProperties.size(); ++i) {
 						VkQueueFamilyProperties const &queueFamilyProperty{ queueFamilyProperties[i] };
-						if (!(queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
-							continue;
+						if (queueFamilyProperty.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+							_queueFamilyIndex = static_cast<uint32_t>(i);
+							break;
 						}
-						_queueFamilyIndex = static_cast<uint32_t>(i);
-						break;
 					}
 				}
 				{
 					// TODO: Global high priority? 1.4
-					::std::vector<float> queuePriorities{ 1.F };
-					::std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{
-						VkDeviceQueueCreateInfo{
-							VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, NULL,
-							0U,
-							_queueFamilyIndex,
-							static_cast<uint32_t>(queuePriorities.size()), &queuePriorities[0]
-						}
-					};
-					::std::vector<char const *> enabledExtensionNames{
-						"VK_KHR_synchronization2"
-					};
+					float queuePriority{ 1.F };
+					VkDeviceQueueCreateInfo queueCreateInfo{
+						VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, NULL,
+						0U,
+						_queueFamilyIndex,
+						1U, &queuePriority
+					}
+					char const * enabledExtensionName{ "VK_KHR_synchronization2" };
 					VkDeviceCreateInfo createInfo{
 						VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, NULL,
 						0U,
-						static_cast<uint32_t>(queueCreateInfos.size()), &queueCreateInfos[0],
+						1U, &queueCreateInfo,
 						0U, NULL,
-						static_cast<uint32_t>(enabledExtensionNames.size()), &enabledExtensionNames[0],
+						1U, &enabledExtensionName,
 						NULL
 					};
 					::Vulkan::ThrowIfFailed(::vkCreateDevice(
@@ -216,6 +212,18 @@ namespace WUI {
 						&_slots_commandBuffers[0]
 					), "Failed to allocate command buffers");
 				}
+				{
+					VkFenceCreateInfo createInfo{
+						VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, NULL,
+						VK_FENCE_CREATE_SIGNALED_BIT
+					};
+					for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
+						::Vulkan::ThrowIfFailed(::vkCreateFence(
+							_device,
+							&createInfo, NULL,
+							&_slots_fences[slot]
+					}
+				}
 				failed = false;
 			};
 			Surface() = delete;
@@ -223,8 +231,11 @@ namespace WUI {
 			Surface(Surface &&) = delete;
 
 			inline ~Surface() {
+				for (size_t slot{ 0 }; slot < SlotsSize; ++slot) {
+					::vkDestroyFence(_device, _slots_fences[slot], NULL);
+				}
 				::vkFreeCommandBuffers(_device, _slots_commandPool,
-					static_cast<uint32_t>(_slots_commandBuffers.size()), &_slots_commandBuffers[0]);
+					static_cast<uint32_t>(SlotsSize), &_slots_commandBuffers[0]);
 				::vkDestroyCommandPool(_device, _slots_commandPool, NULL);
 				::vkDestroyDevice(_device, NULL);
 				::vkDestroyInstance(_instance, NULL);
@@ -235,6 +246,16 @@ namespace WUI {
 
 			inline void Prepare(vec_t const &point, vec_t const &vertex) {
 				size_t slot{ inc_slots_Current() };
+				VkFence fence{ get_slots_Fence(slot) };
+				::Vulkan::ThrowIfFailed(::vkWaitForFences(
+					get_Device(),
+					1U, &fence,
+					VK_FALSE, 1U * 1000000000U
+				), "Event signaling failed");
+				::Vulkan::ThrowIfFailed(::vkResetFences(
+					get_Device(),
+					1U, &fence
+				), "Event reset failed");
 				VkCommandBufferBeginInfo beginInfo{
 					VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
 					VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
@@ -244,37 +265,82 @@ namespace WUI {
 					get_slots_commandBuffer(slot),
 					&beginInfo
 				), "Command buffer reset failed");
+				// TODO: resource barrier from present to render target
 				::Vulkan::ThrowIfFailed(::vkEndCommandBuffer(
 					get_slots_commandBuffer(slot)
 				), "Command buffer close failed");
-				::std::vector<VkCommandBufferSubmitInfo> commandBufferInfos{
-					VkCommandBufferSubmitInfo{
-						VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO, NULL,
-						get_slots_commandBuffer(slot),
-						0U
-					}
+				VkCommandBufferSubmitInfo commandBufferInfo{
+					VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO, NULL,
+					get_slots_commandBuffer(slot),
+					0U
 				};
-				::std::vector<VkSubmitInfo2> submits{
-					VkSubmitInfo2{
-						VK_STRUCTURE_TYPE_SUBMIT_INFO_2, NULL,
-						0U,
-						0U, NULL,
-						static_cast<uint32_t>(commandBufferInfos.size()), &commandBufferInfos[0],
-						0U, NULL
-					}
-				};
+				VkSubmitInfo2 submitInfo{
+					VK_STRUCTURE_TYPE_SUBMIT_INFO_2, NULL,
+					0U,
+					0U, NULL,
+					1U, &commandBufferInfo,
+					0U, NULL
+				}
 				::Vulkan::ThrowIfFailed(::vkQueueSubmit2KHR(
 					_queue,
-					static_cast<uint32_t>(submits.size()), &submits[0],
-					NULL
+					1U, &submitInfo,
+					get_slots_Fence(slot)
 				), "Queue submit failed");
 			};
 			inline void Commit() {
+				size_t slot{ inc_slots_Current() };
+				VkFence fence{ get_slots_Fence(slot) };
+				::Vulkan::ThrowIfFailed(::vkWaitForFences(
+					get_Device(),
+					1U, &fence,
+					VK_FALSE, 1U * 1000000000U
+				), "Event signaling failed");
+				::Vulkan::ThrowIfFailed(::vkResetFences(
+					get_Device(),
+					1U, &fence
+				), "Event reset failed");
+				VkCommandBufferBeginInfo beginInfo{
+					VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
+					VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+					NULL
+				};
+				::Vulkan::ThrowIfFailed(::vkBeginCommandBuffer(
+					get_slots_commandBuffer(slot),
+					&beginInfo
+				), "Command buffer reset failed");
+				// TODO: resource barrier from render target to present
+				::Vulkan::ThrowIfFailed(::vkEndCommandBuffer(
+					get_slots_commandBuffer(slot)
+				), "Command buffer close failed");
+				VkCommandBufferSubmitInfo commandBufferInfo{
+					VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO, NULL,
+					get_slots_commandBuffer(slot),
+					0U
+				};
+				VkSubmitInfo2 submitInfo{
+					VK_STRUCTURE_TYPE_SUBMIT_INFO_2, NULL,
+					0U,
+					0U, NULL,
+					1U, &commandBufferInfo,
+					0U, NULL
+				}
+				::Vulkan::ThrowIfFailed(::vkQueueSubmit2KHR(
+					_queue,
+					1U, &submitInfo,
+					get_slots_Fence(slot)
+				), "Queue submit failed");
+				Present();
 			};
 
 			static constexpr size_t BuffersSize{ 2 };
 			static constexpr size_t SlotsSize{ 3 };
 
+			inline VkDevice get_Device() const {
+				return _device;
+			};
+			inline VkQueue get_Queue() const {
+				return _queue;
+			};
 			// slots
 			inline size_t get_slots_Current() const {
 				return _slots_current;
@@ -285,7 +351,14 @@ namespace WUI {
 			inline VkCommandBuffer get_slots_CommandBuffer(size_t slot) const {
 				return _slots_commandBuffers[slot];
 			}
+			inline VkFence get_slots_Fence(size_t slot) const {
+				return _slots_fences[slot];
+			};
 			// -----
+
+			inline void Present() {
+				// TODO: present swapchain
+			};
 
 		private:
 			HWND _hWnd;
@@ -298,6 +371,7 @@ namespace WUI {
 			size_t _slots_current;
 			VkCommandPool _slots_commandPool;
 			::std::array<VkCommandBuffer, SlotsSize> _slots_commandBuffers;
+			::std::array<VkFence, SlotsSize> _slots_fences;
 			// -----
 		};
 	}
